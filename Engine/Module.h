@@ -49,3 +49,5 @@ public:
 		return true; 
 	}
 };
+
+#endif //_MODULE
