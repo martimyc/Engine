@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _MODULE
+#define _MODULE
 
 class Application;
 struct PhysBody3D;
@@ -50,3 +51,5 @@ public:
 	virtual void OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	{}
 };
+
+#endif //_MODULE

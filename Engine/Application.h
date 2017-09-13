@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _APPLICATION
+#define _APPLICATION
 
 #include <vector>
 #include "Globals.h"
@@ -38,3 +39,5 @@ private:
 	void PrepareUpdate();
 	void FinishUpdate();
 };
+
+#endif //_APPLICATION
