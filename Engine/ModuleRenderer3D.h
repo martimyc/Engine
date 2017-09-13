@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _MODULE_RENDERER_3D
+#define _MODULE_RENDERER_3D
+
 #include "Module.h"
 #include "Globals.h"
 #include "glmath.h"
@@ -26,3 +28,5 @@ public:
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 };
+
+#endif //_MODULE_RENDERER_3D

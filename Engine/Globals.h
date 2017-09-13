@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _GLOBALS
+#define _GLOBALS
 
 // Warning disabled ---
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
@@ -36,4 +37,6 @@ enum UPDATE_STATUS
 #define WIN_BORDERLESS false
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
-#define TITLE "3D Engine - Marc & Martí"
+#define TITLE "3D Physics Playground"
+
+#endif _GLOBALS

@@ -1,5 +1,7 @@
 
-#pragma once
+#ifndef _PRIMITIVE
+#define _PRIMITIVE
+
 #include "glmath.h"
 #include "Color.h"
 
@@ -93,3 +95,5 @@ public:
 	vec3 normal;
 	float constant;
 };
+
+#endif //_PRIMITIVE

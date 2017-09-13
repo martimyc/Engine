@@ -1,0 +1,69 @@
+_______________________________________________________
+
+MACROS
+
+Use of all caps and underscore between words.
+
+i.e.:
+#define WIN_FULLSCREEN true
+ 
+_______________________________________________________
+
+FUNCTIONS
+
+Use of capitalization at the begining of each word
+
+i.e.:
+void ModuleCamera3D::CalculateViewMatrix()
+{
+	ViewMatrix = mat4x4(X.x, Y.x, Z.x, 0.0f, X.y, Y.y, Z.y, 0.0f, X.z, Y.z, Z.z, 0.0f, -dot(X, Position), -dot(Y, Position), -dot(Z, Position), 1.0f);
+	ViewMatrixInverse = inverse(ViewMatrix);
+}
+
+_______________________________________________________
+
+IF/ELSE
+
+In the case they have 1 line afterwards, we won't use braces "{ }".
+
+i.e.:
+if(is_sensor == true)
+	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+else
+	body->setCollisionFlags(body->getCollisionFlags() &~ btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+in the case they do have more than one line we will use braces "{ }" this way:
+if(is_sensor == true)
+	{
+	  int i = 0;
+	  body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	}
+else
+	{
+	  int i = 0;
+	  body->setCollisionFlags(body->getCollisionFlags() &~ btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	}
+
+_______________________________________________________
+
+VARIABLES
+
+Use of lowercase on the word. Use of underscore between words.
+
+i.e.:
+int mouse_x_motion;
+
+_______________________________________________________
+
+ENUMERATIONS
+
+Use of enumerations names and enumerations components will be all in uppercase, with  underscore between words.
+
+enum UPDATE_STATUS
+{
+	UPDATE_CONTINUE = 1,
+	UPDATE_STOP,
+	UPDATE_ERROR
+};
+
+_______________________________________________________

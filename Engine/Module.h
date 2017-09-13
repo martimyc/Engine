@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _MODULE
+#define _MODULE
 
 #include "Globals.h"
 
