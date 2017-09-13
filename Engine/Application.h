@@ -9,6 +9,7 @@ class ModuleWindow;
 class ModuleInput;
 class ModuleAudio;
 class ModuleRenderer3D;
+class ModuleCamera3D;
 
 class Application
 {
@@ -17,6 +18,7 @@ public:
 	ModuleInput* input;
 	ModuleAudio* audio;
 	ModuleRenderer3D* renderer_3d;
+	ModuleCamera3D* camera;
 
 private:
 	Timer	ms_timer;
@@ -29,7 +31,7 @@ public:
 	~Application();
 
 	bool Init();
-	update_status Update();
+	UPDATE_STATUS Update();
 	bool CleanUp();
 
 private:

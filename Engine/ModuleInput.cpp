@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "Application.h"
+#include "ModuleRenderer3D.h"
 #include "ModuleInput.h"
 
 #define MAX_KEYS 300
@@ -34,7 +35,7 @@ bool ModuleInput::Init()
 }
 
 // Called every draw update
-update_status ModuleInput::PreUpdate(float dt)
+UPDATE_STATUS ModuleInput::PreUpdate(float dt)
 {
 	SDL_PumpEvents();
 
@@ -109,7 +110,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_WINDOWEVENT:
 			{
 				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
-					App->renderer3D->OnResize(e.window.data1, e.window.data2);
+					App->renderer_3d->OnResize(e.window.data1, e.window.data2);
 			}
 		}
 	}

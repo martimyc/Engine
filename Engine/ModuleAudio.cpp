@@ -50,16 +50,10 @@ bool ModuleAudio::CleanUp()
 	LOG("Freeing sound FX, closing Mixer and Audio subsystem");
 
 	if(music != NULL)
-	{
 		Mix_FreeMusic(music);
-	}
 
-	p2List_item<Mix_Chunk*>* item;
-
-	for(item = fx.getFirst(); item != NULL; item = item->next)
-	{
-		Mix_FreeChunk(item->data);
-	}
+	for (std::vector<Mix_Chunk*>::const_iterator it = fx.begin(); it != fx.end(); ++it)
+		Mix_FreeChunk(*it);
 
 	fx.clear();
 	Mix_CloseAudio();
@@ -132,8 +126,8 @@ unsigned int ModuleAudio::LoadFx(const char* path)
 	}
 	else
 	{
-		fx.add(chunk);
-		ret = fx.count();
+		fx.push_back(chunk);
+		ret = fx.size();
 	}
 
 	return ret;
@@ -144,9 +138,10 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 {
 	bool ret = false;
 
-	Mix_Chunk* chunk = NULL;
-	
-	if(fx.at(id-1, chunk) == true)
+	Mix_Chunk* chunk = nullptr;
+	chunk = fx[id - 1];
+
+	if(chunk != nullptr)
 	{
 		Mix_PlayChannel(-1, chunk, repeat);
 		ret = true;

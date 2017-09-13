@@ -1,7 +1,7 @@
 #ifndef __ModuleAudio_H__
 #define __ModuleAudio_H__
 
-#include <list>
+#include <vector>
 #include "Module.h"
 #include "SDL_mixer\include\SDL_mixer.h"
 
@@ -28,7 +28,7 @@ public:
 private:
 
 	Mix_Music*			music;
-	std::list<Mix_Chunk*>	fx;
+	std::vector<Mix_Chunk*>	fx;
 };
 
 #endif // __ModuleAudio_H__

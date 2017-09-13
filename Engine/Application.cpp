@@ -2,6 +2,7 @@
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
 #include "Application.h"
 
 Application::Application()
@@ -10,6 +11,7 @@ Application::Application()
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
 	renderer_3d = new ModuleRenderer3D(this);
+	camera = new ModuleCamera3D(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -19,6 +21,7 @@ Application::Application()
 	AddModule(window);
 	AddModule(input);
 	AddModule(audio);
+	AddModule(camera);
 	
 	// Scenes
 
@@ -35,25 +38,17 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	std::vector<Module*>::const_iterator it = modules.begin();
 
 	// Call Init() in all modules
-	p2List_item<Module*>* item = list_modules.getFirst();
-
-	while(item != NULL && ret == true)
-	{
-		ret = item->data->Init();
-		item = item->next;
-	}
+	for(; it != modules.end() && ret == true; ++it)
+		ret = (*it)->Init();
 
 	// After all Init calls we call Start() in all modules
 	LOG("Application Start --------------");
-	item = list_modules.getFirst();
-
-	while(item != NULL && ret == true)
-	{
-		ret = item->data->Start();
-		item = item->next;
-	}
+	
+	for(it = modules.begin(); it != modules.end() && ret == true; ++it)
+		ret = (*it)->Start();
 	
 	ms_timer.Start();
 	return ret;
@@ -72,34 +67,21 @@ void Application::FinishUpdate()
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
-update_status Application::Update()
+UPDATE_STATUS Application::Update()
 {
-	update_status ret = UPDATE_CONTINUE;
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 	
-	p2List_item<Module*>* item = list_modules.getFirst();
+	std::vector<Module*>::const_iterator it = modules.begin();
 	
-	while(item != NULL && ret == UPDATE_CONTINUE)
-	{
-		ret = item->data->PreUpdate(dt);
-		item = item->next;
-	}
+	for(; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		ret = (*it)->PreUpdate(dt);
 
-	item = list_modules.getFirst();
+	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		ret = (*it)->Update(dt);
 
-	while(item != NULL && ret == UPDATE_CONTINUE)
-	{
-		ret = item->data->Update(dt);
-		item = item->next;
-	}
-
-	item = list_modules.getFirst();
-
-	while(item != NULL && ret == UPDATE_CONTINUE)
-	{
-		ret = item->data->PostUpdate(dt);
-		item = item->next;
-	}
+	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		ret = (*it)->PostUpdate(dt);
 
 	FinishUpdate();
 	return ret;
@@ -108,17 +90,14 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	bool ret = true;
-	p2List_item<Module*>* item = list_modules.getLast();
 
-	while(item != NULL && ret == true)
-	{
-		ret = item->data->CleanUp();
-		item = item->prev;
-	}
+	for (std::vector<Module*>::const_reverse_iterator it = modules.rbegin(); it != modules.rend() && ret == true; ++it)
+		ret = (*it)->CleanUp();
+
 	return ret;
 }
 
 void Application::AddModule(Module* mod)
 {
-	list_modules.add(mod);
+	modules.push_back(mod);
 }
