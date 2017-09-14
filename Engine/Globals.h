@@ -38,4 +38,13 @@ enum UPDATE_STATUS
 #define VSYNC true
 #define TITLE "3D Engine - Marc Latorre & Martí Majó"
 
-#endif _GLOBALS
+#define DELETE_PTR( x )		\
+{							\
+	if (x != nullptr)		\
+	{						\
+		delete x;			\
+		x = nullptr;		\
+	}						\
+}							\
+
+#endif //_GLOBALS

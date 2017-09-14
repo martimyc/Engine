@@ -1,3 +1,4 @@
+#include "imgui-master\imgui.h"
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleWindow.h"
@@ -56,6 +57,7 @@ bool ModuleWindow::Init()
 		}
 
 		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		SDL_GL_CreateContext(window);
 
 		if(window == NULL)
 		{
@@ -80,6 +82,8 @@ bool ModuleWindow::CleanUp()
 	//Destroy window
 	if(window != NULL)
 	{
+		SDL_GLContext glcontext = SDL_GL_GetCurrentContext();
+		SDL_GL_DeleteContext(glcontext);
 		SDL_DestroyWindow(window);
 	}
 
