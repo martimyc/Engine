@@ -3,6 +3,7 @@
 #include "ModuleAudio.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
+#include "ModuleGUI.h"
 #include "Application.h"
 
 Application::Application()
@@ -12,6 +13,7 @@ Application::Application()
 	audio = new ModuleAudio(this, true);
 	renderer_3d = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
+	gui = new ModuleGUI(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -22,6 +24,7 @@ Application::Application()
 	AddModule(input);
 	AddModule(audio);
 	AddModule(camera);
+	AddModule(gui);
 	
 	// Scenes
 

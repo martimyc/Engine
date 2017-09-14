@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleGUI.h"
 #include "ModuleInput.h"
 
 #define MAX_KEYS 300
@@ -93,6 +94,12 @@ UPDATE_STATUS ModuleInput::PreUpdate(float dt)
 		{
 			case SDL_MOUSEWHEEL:
 			mouse_z = e.wheel.y;
+
+			if (e.wheel.y > 0)
+				App->gui->SetMouseWeel(WM_UP);
+			if (e.wheel.y < 0)
+				App->gui->SetMouseWeel(WM_DOWN);
+
 			break;
 
 			case SDL_MOUSEMOTION:

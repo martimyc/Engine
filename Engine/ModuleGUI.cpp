@@ -4,6 +4,12 @@
 #include "Application.h"
 #include "ModuleInput.h"
 
+ModuleGUI::ModuleGUI(Application * app, bool start_enabled): Module(app,start_enabled)
+{}
+
+ModuleGUI::~ModuleGUI()
+{}
+
 bool ModuleGUI::Init()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -21,6 +27,20 @@ bool ModuleGUI::Init()
 
 UPDATE_STATUS ModuleGUI::Update(float dt)
 {
+	UpdateGUIInputs(dt);
+
+	ImGui::NewFrame();
+
+	ImGui::Begin("My window");
+	ImGui::Text("Hello, world!");
+
+	ImGui::Render();
+
+	return UPDATE_CONTINUE;
+}
+
+void ModuleGUI::UpdateGUIInputs(float dt)
+{
 	ImGuiIO& io = ImGui::GetIO();
 
 	io.MousePos.x = App->input->GetMouseX();
@@ -33,17 +53,17 @@ UPDATE_STATUS ModuleGUI::Update(float dt)
 	//io.MouseWheel = App->input->
 
 	// Setup time step
-	Uint32	time = SDL_GetTicks();
-	double current_time = time / 1000.0;
-	io.DeltaTime = g_time > 0.0 ? (float)(current_time - g_time) : (float)(1.0f / 60.0f);
-	g_time = current_time;
+	io.DeltaTime = g_time > 0.0 ? (float)(dt - g_time) : (float)(1.0f / 60.0f);
+	g_time = dt;
 
-	ImGui::NewFrame();
+	if (g_mouse_weel != WM_NO_MOVEMENT)
+	{
+		io.MouseWheel = (int)g_mouse_weel;
+		g_mouse_weel = WM_NO_MOVEMENT;
+	}
+}
 
-	ImGui::Begin("My window");
-	ImGui::Text("Hello, world!");
-
-	ImGui::Render();
-
-	return UPDATE_CONTINUE;
+void ModuleGUI::SetMouseWeel(WEEL_MOVEMENT movement)
+{
+	g_mouse_weel = movement;
 }
