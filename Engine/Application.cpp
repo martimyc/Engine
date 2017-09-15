@@ -66,8 +66,7 @@ void Application::PrepareUpdate()
 
 // ---------------------------------------------
 void Application::FinishUpdate()
-{
-}
+{}
 
 // Call PreUpdate, Update and PostUpdate on all modules
 UPDATE_STATUS Application::Update()

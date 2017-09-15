@@ -4,6 +4,11 @@
 #include "Module.h"
 #include "imgui-master\imgui.h"
 
+enum UI_TYPE;
+class UI_Element;
+class UI_Test;
+class UI_MainMenu;
+
 enum WEEL_MOVEMENT
 {	
 	WM_DOWN = -1,
@@ -21,6 +26,8 @@ private:
 	bool show_menu_window = false;
 	ImVec4 clear_color = ImColor(114, 144, 154);
 
+	std::vector<UI_Element*> ui_elements;
+
 public:
 
 	ModuleGUI(Application* app, bool start_enabled = true);
@@ -35,6 +42,13 @@ public:
 	void PreRender();
 
 	void SetMouseWeel(WEEL_MOVEMENT movement);
+
+	UI_Test* CreateTestMenu(bool active = true);
+	UI_MainMenu* CreateMainMenu(bool active = true);
+
+	void Activate(UI_TYPE element);
+	bool GetActive(UI_TYPE element) const;
+	void Deactivate(UI_TYPE element);
 };
 
 #endif // _MODULE_GUI

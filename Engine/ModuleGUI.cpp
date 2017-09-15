@@ -5,6 +5,9 @@
 #include "ModuleWindow.h"
 #include "Application.h"
 #include "ModuleInput.h"
+#include "UI_Element.h"
+#include "UI_Test.h"
+#include "UI_MainMenu.h"
 #include "ModuleGUI.h"
 
 ModuleGUI::ModuleGUI(Application * app, bool start_enabled): Module(app,start_enabled)
@@ -20,44 +23,30 @@ bool ModuleGUI::Init()
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
 
+	CreateMainMenu();
+	CreateTestMenu(false);
+
 	return true;
 }
 
 UPDATE_STATUS ModuleGUI::Update(float dt)
 {
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
+
 	ImGui_ImplSdlGL2_NewFrame(App->window->window);
 
-	// ui updates loop
-
-	// 1. Show a simple window
-	// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+	// UI_Elements updates loop
+	for (std::vector<UI_Element*>::iterator it = ui_elements.begin(); it != ui_elements.end(); ++it)
 	{
-		static float f = 0.0f;
-		ImGui::Text("Hello, world!");
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-		ImGui::ColorEdit3("clear color", (float*)&clear_color);
-		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		if (ImGui::Button("Another Window")) show_menu_window ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		if ((*it)->Active())
+			if (!(*it)->Update())
+			{
+				ret = UPDATE_ERROR;
+				break;
+			}
 	}
 
-	// 2. Show another simple window, this time using an explicit Begin/End pair
-	if (show_menu_window)
-	{
-		ImGui::Begin("Menu Window", &show_menu_window);
-		ImGui::Text("Hello from another window!");
-		ImGui::End();
-	}
-
-	// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-	if (show_test_window)
-	{
-		ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
-		ImGui::ShowTestWindow(&show_test_window);
-	}
-
-
-	return UPDATE_CONTINUE;
+	return ret;
 }
 
 bool ModuleGUI::CleanUp()
@@ -76,6 +65,47 @@ void ModuleGUI::PreRender()
 void ModuleGUI::SetMouseWeel(WEEL_MOVEMENT movement)
 {
 	g_mouse_weel = movement;
+}
+
+UI_Test * ModuleGUI::CreateTestMenu( bool active)
+{
+	UI_Test* ptr = new UI_Test(active);
+	ui_elements.push_back((UI_Element*)ptr);
+	return ptr;
+}
+
+UI_MainMenu * ModuleGUI::CreateMainMenu(bool active)
+{
+	UI_MainMenu* ptr = new UI_MainMenu(this, active);
+	ui_elements.push_back((UI_Element*)ptr);
+	return ptr;
+}
+
+void ModuleGUI::Activate(UI_TYPE element)
+{
+	for (std::vector<UI_Element*>::iterator it = ui_elements.begin(); it != ui_elements.end(); ++it)
+		if (element == (*it)->GetType())
+		{
+			(*it)->Activate();
+			break;
+		}
+}
+
+bool ModuleGUI::GetActive(UI_TYPE element) const
+{
+	for (std::vector<UI_Element*>::const_iterator it = ui_elements.begin(); it != ui_elements.end(); ++it)
+		if (element == (*it)->GetType())
+			return (*it)->Active();
+}
+
+void ModuleGUI::Deactivate(UI_TYPE element)
+{
+	for (std::vector<UI_Element*>::iterator it = ui_elements.begin(); it != ui_elements.end(); ++it)
+		if (element == (*it)->GetType())
+		{
+			(*it)->Deactivate();
+			break;
+		}
 }
 
 

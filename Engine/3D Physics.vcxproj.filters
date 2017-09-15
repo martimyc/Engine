@@ -19,6 +19,9 @@
     <Filter Include="Sources\ImGui">
       <UniqueIdentifier>{76aa1d22-fa5b-4f55-b96e-3441b77420f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\UI_Elements">
+      <UniqueIdentifier>{ebc82a97-dc5a-44f3-9ce3-366d2aed3f92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -87,6 +90,15 @@
     <ClInclude Include="imgui-master\imgui_impl_sdl.h">
       <Filter>Sources\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="UI_Test.h">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Element.h">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_MainMenu.h">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -143,5 +155,12 @@
     <ClCompile Include="imgui-master\imgui_impl_sdl.cpp">
       <Filter>Sources\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="UI_Element.cpp">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Test.cpp">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_MainMenu.cpp" />
   </ItemGroup>
 </Project>
