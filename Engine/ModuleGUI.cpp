@@ -18,7 +18,11 @@ bool ModuleGUI::Init()
 	ImGui_ImplSdlGL2_Init(App->window->window);
 
 	ImGuiIO& io = ImGui::GetIO();
+	//ImFont* font0 = 
 	io.Fonts->AddFontDefault();
+
+	//ImFont* font1 = io.Fonts->AddFontFromFileTTF("imgui-master/extra_fonts/Cousine-Regular.ttf", 13.0f);
+	//ImFont* font2 = io.Fonts->AddFontFromFileTTF("Cousine-Regular.ttf", 13.0f);
 
 	return true;
 }
@@ -37,7 +41,7 @@ UPDATE_STATUS ModuleGUI::Update(float dt)
 		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 		ImGui::ColorEdit3("clear color", (float*)&clear_color);
 		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		if (ImGui::Button("Another Window")) show_menu_window ^= 1;
+		if (ImGui::Button("Menu Window")) show_menu_window ^= 1;
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 
