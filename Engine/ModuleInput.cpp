@@ -3,6 +3,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleGUI.h"
 #include "ModuleInput.h"
+#include "imgui-master\imgui_impl_sdl.h"
 
 #define MAX_KEYS 300
 
@@ -90,15 +91,12 @@ UPDATE_STATUS ModuleInput::PreUpdate(float dt)
 	SDL_Event e;
 	while(SDL_PollEvent(&e))
 	{
+		ImGui_ImplSdlGL2_ProcessEvent(&e);
+
 		switch(e.type)
 		{
 			case SDL_MOUSEWHEEL:
 			mouse_z = e.wheel.y;
-
-			if (e.wheel.y > 0)
-				App->gui->SetMouseWeel(WM_UP);
-			if (e.wheel.y < 0)
-				App->gui->SetMouseWeel(WM_DOWN);
 
 			break;
 

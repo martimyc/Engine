@@ -2,6 +2,7 @@
 #define _MODULE_GUI
 
 #include "Module.h"
+#include "imgui-master\imgui.h"
 
 enum WEEL_MOVEMENT
 {	
@@ -18,8 +19,7 @@ private:
 
 	bool show_test_window = true;
 	bool show_menu_window = false;
-
-	SDL_Texture* font = nullptr;
+	ImVec4 clear_color = ImColor(114, 144, 154);
 
 public:
 
@@ -30,13 +30,11 @@ public:
 
 	UPDATE_STATUS Update(float dt);
 
-	void UpdateGUIInputs(float dt);
+	bool CleanUp();
+
+	void PreRender();
 
 	void SetMouseWeel(WEEL_MOVEMENT movement);
-
-	bool SetImGUIKeyCodes(SDL_Window* window);
-
-	bool CreateDeviceObjects(SDL_Window* window);
 };
 
 #endif // _MODULE_GUI
