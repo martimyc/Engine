@@ -21,8 +21,16 @@ bool ModuleGUI::Init()
 	ImGui_ImplSdlGL2_Init(App->window->window);
 	
 	ImGuiIO& io = ImGui::GetIO();
-	//io.Fonts->AddFontFromFileTTF("extra_fonts/Cousine-Regular.ttf", 15.0f);
+	//ImFont* font0 = 
 	io.Fonts->AddFontDefault();
+	//ImFont* font1 = io.Fonts->AddFontFromFileTTF("imgui-master/extra_fonts/Cousine-Regular.ttf", 13.0f);
+	//ImFont* font2 = io.Fonts->AddFontFromFileTTF("Cousine-Regular.ttf", 13.0f);
+
+	
+	//ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);						//Reduces alpha
+	//ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(50, 0, 50, 1.0f));	//Changes ALL windows bg color
+	//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255, 0, 0, 1.0f));		//Changes letters color
+	//ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(50, 0, 50, 1.0f));		// Changes bg of checkbox, radio button, plot, slider, text input
 
 	CreateMainMenu();
 	CreateTestMenu(false);
