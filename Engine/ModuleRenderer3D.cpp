@@ -76,7 +76,7 @@ bool ModuleRenderer3D::Init()
 			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
-		
+	
 		GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 		
@@ -117,8 +117,8 @@ UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 	// light 0 on cam pos
 	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 
-	for(uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();
+	//for(uint i = 0; i < MAX_LIGHTS; ++i)
+		//lights[i].Render();
 
 	return UPDATE_CONTINUE;
 }
