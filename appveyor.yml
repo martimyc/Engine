@@ -24,7 +24,7 @@ configuration:
 platform: x86
 
 build:
-  project: 3D Engine.sln
+  project: Engine\3D Engine.sln
   
   # MSBuild verbosity level
   verbosity: normal
