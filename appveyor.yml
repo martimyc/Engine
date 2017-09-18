@@ -67,4 +67,5 @@ deploy:
   draft: false
   prerelease: false
   on:
+    branch: master
     CONFIGURATION: Release
