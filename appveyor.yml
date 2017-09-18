@@ -11,14 +11,6 @@
 # version format
 version: 1.0.{build}
 
-# you can use {branch} name in version format too
-# version: 1.0.{build}-{branch}
-
-# Skipping commits with particular message or from specific user
-skip_commits:
-  message: /Created.*\.(png|jpg|jpeg|bmp|gif)/      # Regex for matching commit message
-  author: John                                      # Commit author's username, name, email or regexp maching one of these.
- 
 #---------------------------------#
 #    environment configuration    #
 #---------------------------------#
@@ -31,7 +23,7 @@ init:
   - git config --global core.autocrlf input
 
 # clone directory
-clone_folder: c:\projects\myproject
+clone_folder: c:\projects\Engine
 
 # setting up etc\hosts file
 hosts:
@@ -53,14 +45,14 @@ configuration:
 #  - Release
 
 build:
-  parallel: true                  # enable MSBuild parallel builds
-  project: Engine\3D_Engine.sln   # path to Visual Studio solution or project
-  publish_wap: true               # package Web Application Projects (WAP) for Web Deploy
-  publish_wap_xcopy: true         # package Web Application Projects (WAP) for XCopy deployment
-  publish_azure: true             # package Azure Cloud Service projects and push to artifacts
-  publish_nuget: true             # package projects with .nuspec files and push to artifacts
-  publish_nuget_symbols: true     # generate and publish NuGet symbol packages
-  include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
+  parallel: true                                     # enable MSBuild parallel builds
+  project: c:\projects\Engine\Engine\3D_Engine.sln   # path to Visual Studio solution or project
+  publish_wap: true                                  # package Web Application Projects (WAP) for Web Deploy
+  publish_wap_xcopy: true                            # package Web Application Projects (WAP) for XCopy deployment
+  publish_azure: true                                # package Azure Cloud Service projects and push to artifacts
+  publish_nuget: true                                # package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: true                        # generate and publish NuGet symbol packages
+  include_nuget_references: true                     # add -IncludeReferencedProjects option while packaging NuGet artifacts
 
   # MSBuild verbosity level quiet|minimal|normal|detailed
   verbosity: detailed
@@ -91,7 +83,7 @@ notifications:
   - provider: Email
     to:
       - martimyc@gmail.com
-      - user2@email.com
+      - marc.lafrwy@gmail.com
     subject: 'Build {{status}}'                  # optional
     message: "{{message}}, {{commitId}}, ..."    # optional
     on_build_status_changed: true
