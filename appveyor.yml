@@ -22,13 +22,13 @@ image: Visual Studio 2015
 #       build configuration       #
 #---------------------------------#
 
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: x86
+
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
 - Debug
 - Release
-
-# build platform, i.e. x86, x64, Any CPU. This setting is optional.
-platform: Any CPU
 
 build:
   project: Engine\3D Engine.sln
