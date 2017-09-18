@@ -12,25 +12,6 @@
 version: 1.0.{build}
 
 #---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
-# Build worker image (VM template)
-image: Visual Studio 2015
-
-# scripts that are called at very beginning, before repo cloning
-init:
-  - git config --global core.autocrlf input
-
-# clone directory
-clone_folder: c:\projects\Engine
-
-# setting up etc\hosts file
-hosts:
-  queue-server: 127.0.0.1
-  db.server.com: 127.0.0.2
-  
-#---------------------------------#
 #       build configuration       #
 #---------------------------------#
 
@@ -39,40 +20,22 @@ configuration:
 - Debug
 - Release
 
-# to add several configurations to build matrix:
-#configuration:
-#  - Debug
-#  - Release
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: x86
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
 
 build:
-  parallel: true                                     # enable MSBuild parallel builds
-  project: Engine\3D Engine.sln                      # path to Visual Studio solution or project
-  publish_wap: true                                  # package Web Application Projects (WAP) for Web Deploy
-  publish_wap_xcopy: true                            # package Web Application Projects (WAP) for XCopy deployment
-  publish_azure: true                                # package Azure Cloud Service projects and push to artifacts
-  publish_nuget: true                                # package projects with .nuspec files and push to artifacts
-  publish_nuget_symbols: true                        # generate and publish NuGet symbol packages
-  include_nuget_references: true                     # add -IncludeReferencedProjects option while packaging NuGet artifacts
-
-  # MSBuild verbosity level quiet|minimal|normal|detailed
-  verbosity: detailed
-
-# scripts to run before build
-before_build:
-
-# scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
-before_package:
-
-# scripts to run after build
-after_build:
-
-#---------------------------------#
-#       tests configuration       #
-#---------------------------------#
-
-# scripts to run after tests
-after_test:
-
+  project: 3D Engine.sln
+  
+  # MSBuild verbosity level
+  verbosity: normal
+  
+artifacts:
+- path: Game
+  name: game_files
+  
 #---------------------------------#
 #         notifications           #
 #---------------------------------#
@@ -87,3 +50,23 @@ notifications:
     subject: 'Build {{status}}'                  # optional
     message: "{{message}}, {{commitId}}, ..."    # optional
     on_build_status_changed: true
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
+# provider names are case-sensitive!
+
+# Deploy to GitHub Releases
+deploy:
+- provider: GitHub
+  description: Release
+  on:
+      branch: master 
+  artifact: game_files
+  draft: false
+  prerelease: false
+  on:
+    CONFIGURATION: Release
+
