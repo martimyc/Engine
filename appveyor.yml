@@ -23,9 +23,6 @@ configuration:
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
 platform: x86
 
-# build Configuration, i.e. Debug, Release, etc.
-configuration: Release
-
 build:
   project: 3D Engine.sln
   
