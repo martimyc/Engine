@@ -66,9 +66,9 @@ notifications:
 deploy:
 - provider: GitHub
   description: Release
-  on:
-      branch: master
-      CONFIGURATION: Release
   artifact: game_files
   draft: false
   prerelease: false
+    on:
+      branch: master
+      CONFIGURATION: Release
