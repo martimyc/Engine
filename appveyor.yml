@@ -60,10 +60,8 @@ deploy:
 - provider: GitHub
   description: Release
   on:
-      branch: master 
+      branch: master
+      CONFIGURATION: Release
   artifact: game_files
   draft: false
   prerelease: false
-  on:
-    CONFIGURATION: Release
-
