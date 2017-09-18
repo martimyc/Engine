@@ -72,11 +72,6 @@ void ModuleGUI::PreRender()
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void ModuleGUI::SetMouseWeel(WEEL_MOVEMENT movement)
-{
-	g_mouse_weel = movement;
-}
-
 UI_Test * ModuleGUI::CreateTestMenu( bool active)
 {
 	UI_Test* ptr = new UI_Test(active);

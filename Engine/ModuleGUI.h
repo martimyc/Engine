@@ -41,8 +41,6 @@ public:
 
 	void PreRender();
 
-	void SetMouseWeel(WEEL_MOVEMENT movement);
-
 	UI_Test* CreateTestMenu(bool active = true);
 	UI_MainMenu* CreateMainMenu(bool active = true);
 
