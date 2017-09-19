@@ -9,6 +9,7 @@
 #include "UI_Test.h"
 #include "UI_Rand_Test.h"
 #include "UI_MainMenu.h"
+#include "UI_GeometryCollisionTest.h"
 #include "ModuleGUI.h"
 
 ModuleGUI::ModuleGUI(Application * app, bool start_enabled): Module(app,start_enabled)
@@ -36,6 +37,7 @@ bool ModuleGUI::Init()
 	CreateMainMenu();
 	CreateTestMenu(false);
 	CreateRandomNumMenu(false);
+	CreateGeometryTest(true);
 
 	return true;
 }
@@ -91,6 +93,13 @@ UI_Rand_Test * ModuleGUI::CreateRandomNumMenu(bool active)
 UI_MainMenu * ModuleGUI::CreateMainMenu(bool active)
 {
 	UI_MainMenu* ptr = new UI_MainMenu(this, active);
+	ui_elements.push_back((UI_Element*)ptr);
+	return ptr;
+}
+
+UI_GeometryCollisionTest * ModuleGUI::CreateGeometryTest(bool active)
+{
+	UI_GeometryCollisionTest* ptr = new UI_GeometryCollisionTest(active);
 	ui_elements.push_back((UI_Element*)ptr);
 	return ptr;
 }

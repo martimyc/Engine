@@ -327,6 +327,9 @@
     <ClInclude Include="PCG-rng\pcg_uint128.hpp">
       <Filter>Sources\PCG-RNG</Filter>
     </ClInclude>
+    <ClInclude Include="UI_GeometryCollisionTest.h">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -389,7 +392,6 @@
     <ClCompile Include="UI_Test.cpp">
       <Filter>Sources\UI_Elements</Filter>
     </ClCompile>
-    <ClCompile Include="UI_MainMenu.cpp" />
     <ClCompile Include="MathGeoLib-master\src\Math\BitOps.cpp">
       <Filter>Sources\MathGeoLib\Math</Filter>
     </ClCompile>
@@ -499,6 +501,12 @@
       <Filter>Sources\MathGeoLib\Time</Filter>
     </ClCompile>
     <ClCompile Include="UI_Rand_Test.cpp">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_MainMenu.cpp">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_GeometryCollisionTest.cpp">
       <Filter>Sources\UI_Elements</Filter>
     </ClCompile>
   </ItemGroup>

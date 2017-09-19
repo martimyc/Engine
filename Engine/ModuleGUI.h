@@ -9,6 +9,7 @@ class UI_Element;
 class UI_Test;
 class UI_Rand_Test;
 class UI_MainMenu;
+class UI_GeometryCollisionTest;
 
 enum WEEL_MOVEMENT
 {	
@@ -45,6 +46,7 @@ public:
 	UI_Test* CreateTestMenu(bool active = true);
 	UI_Rand_Test* CreateRandomNumMenu(bool active = true);
 	UI_MainMenu* CreateMainMenu(bool active = true);
+	UI_GeometryCollisionTest* CreateGeometryTest(bool active = true);
 
 	void Activate(UI_TYPE element);
 	bool GetActive(UI_TYPE element) const;
