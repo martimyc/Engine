@@ -34,7 +34,7 @@ build:
   verbosity: normal
   
 artifacts:
-- path: Game
+- path: Engine\Game
   name: game_files
   
 #---------------------------------#
