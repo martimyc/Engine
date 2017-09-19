@@ -13,7 +13,8 @@ UI_MainMenu::~UI_MainMenu()
 
 bool UI_MainMenu::Update()
 {
-	ImGui::SetNextWindowPos(ImVec2(100, 400), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(100, 50), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
 
 	ImGui::Begin("Menu Window");
 	if (ImGui::Button("Test Window"))

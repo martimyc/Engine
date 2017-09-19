@@ -11,6 +11,9 @@ UI_GeometryCollisionTest::~UI_GeometryCollisionTest()
 bool UI_GeometryCollisionTest::Update()
 {
 	//A
+	ImGui::SetNextWindowPos(ImVec2(100, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 700), ImGuiCond_Once);
+
 	ImGui::Begin("A:", &active);
 
 	ButtonsA();
@@ -33,6 +36,9 @@ bool UI_GeometryCollisionTest::Update()
 	ImGui::End();
 
 	//B
+	ImGui::SetNextWindowPos(ImVec2(500, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 700), ImGuiCond_Once);
+
 	ImGui::Begin("B:", &active);
 	
 	ButtonsB();
@@ -55,6 +61,9 @@ bool UI_GeometryCollisionTest::Update()
 	ImGui::End();
 
 	//Result
+	ImGui::SetNextWindowPos(ImVec2(900, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 300), ImGuiCond_Once);
+
 	ImGui::Begin("Geometry Collision Test Result:", &active);
 
 	Collisions();
@@ -1165,7 +1174,6 @@ void UI_GeometryCollisionTest::PlaneRayCollision()
 		ImGui::Text("Plane does not collide with Ray\nDistance apart: %f", distance);
 	else
 		ImGui::Text("Plane and Ray do collide");
-}
 }
 
 void UI_GeometryCollisionTest::SegmentRayCollision()

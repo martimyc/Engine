@@ -56,6 +56,9 @@ UI_Rand_Test::~UI_Rand_Test()
 
 bool UI_Rand_Test::Update()
 {
+	ImGui::SetNextWindowPos(ImVec2(100, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 500), ImGuiCond_Once);
+
 	ImGui::Begin("Random Numbers Generator Testing", &active);
 	if (ImGui::Button("Generate!"))
 	{
