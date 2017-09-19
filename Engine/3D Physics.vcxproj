@@ -162,7 +162,6 @@
     <ClInclude Include="PCG-rng\pcg_extras.hpp" />
     <ClInclude Include="PCG-rng\pcg_random.hpp" />
     <ClInclude Include="PCG-rng\pcg_uint128.hpp" />
-    <ClInclude Include="Primitive.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UI_Element.h" />
     <ClInclude Include="UI_MainMenu.h" />
@@ -223,7 +222,6 @@
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
-    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UI_Element.cpp" />
     <ClCompile Include="UI_MainMenu.cpp" />

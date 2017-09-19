@@ -146,7 +146,6 @@ public:
 	void OBBRayCollision();
 
 	void PlaneSphereCollision();
-	void PlaneCylinderCollision();
 	void PlaneCapsuleCollision();
 	void PlaneAABBCollision();
 	void PlaneOBBCollision();

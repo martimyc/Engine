@@ -665,6 +665,509 @@ void UI_GeometryCollisionTest::TwoSphereCollision()
 		ImGui::Text("Spheres do collide");
 }
 
+void UI_GeometryCollisionTest::SphereCapsuleCollision()
+{
+	Sphere a(vec(a_x, a_y, a_z), a_r);
+	Capsule b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Sphere does not collide with capsule\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Sphere and capsule do collide");
+}
+
+void UI_GeometryCollisionTest::SphereAABBCollision()
+{
+	Sphere a(vec(a_x, a_y, a_z), a_r);
+	AABB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Sphere does not collide with AABB\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Sphere and AABB do collide");
+}
+
+void UI_GeometryCollisionTest::SphereOBBCollision()
+{
+	Sphere a(vec(a_x, a_y, a_z), a_r);
+	OBB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), vec(b_x3, b_y3, b_z3), vec(b_x4, b_y4, b_z4), vec(b_x5, b_y5, b_z5));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Sphere does not collide with OBB\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Sphere and OBB do collide");
+}
+
+void UI_GeometryCollisionTest::SpherePlaneCollision()
+{
+	Sphere a(vec(a_x, a_y, a_z), a_r);
+	Plane b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Sphere does not collide with Plane\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Sphere and Plane do collide");
+}
+
+void UI_GeometryCollisionTest::SphereSegmentCollision()
+{
+	Sphere a(vec(a_x, a_y, a_z), a_r);
+	LineSegment b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Sphere does not collide with Line Segment\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Sphere and Line Segment do collide");
+}
+
+void UI_GeometryCollisionTest::SphereRayCollision()
+{
+	Sphere a(vec(a_x, a_y, a_z), a_r);
+	Ray b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Sphere does not collide with Ray\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Sphere and Ray do collide");
+}
+
+void UI_GeometryCollisionTest::CapsuleSphereCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	Sphere b(vec(b_x, b_y, b_z), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Capsule does not collide with Sphere\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Capsule and Sphere do collide");
+}
+
+void UI_GeometryCollisionTest::TwoCapsuleCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	Capsule b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Capsule does not collide with Capsule\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Capsule and Capsule do collide");
+}
+
+void UI_GeometryCollisionTest::CapsuleAABBCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	AABB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		ImGui::Text("Capsule does not collide with AABB");
+	}
+	else
+		ImGui::Text("Capsule and AABB do collide");
+}
+
+void UI_GeometryCollisionTest::CapsuleOBBCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	OBB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), vec(b_x3, b_y3, b_z3), vec(b_x4, b_y4, b_z4), vec(b_x5, b_y5, b_z5));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		ImGui::Text("Capsule does not collide with OBB");
+	}
+	else
+		ImGui::Text("Capsule and OBB do collide"); 
+}
+
+void UI_GeometryCollisionTest::CapsulePlaneCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	Plane b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Capsule does not collide with Plane\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Capsule and Plane do collide");
+}
+
+void UI_GeometryCollisionTest::CapsuleSegmentCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	LineSegment b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Capsule does not collide with Line Segment\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Capsule and Line Segment do collide");
+}
+
+void UI_GeometryCollisionTest::CapsuleRayCollision()
+{
+	Capsule a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), a_r);
+	Ray b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Capsule does not collide with Ray\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Capsule and Ray do collide");
+}
+
+void UI_GeometryCollisionTest::AABBSphereCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Sphere b(vec(b_x, b_y, b_z), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("AABB does not collide with Sphere \nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("AABB and Sphere do collide");
+}
+
+void UI_GeometryCollisionTest::AABBCapsuleCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Capsule b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		ImGui::Text("AABB does not collide with Capsule");
+	}
+	else
+		ImGui::Text("AABB and Capsule do collide"); 
+}
+
+void UI_GeometryCollisionTest::TwoAABBCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	AABB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		ImGui::Text("AABB does not collide with Sphere");
+	}
+	else
+		ImGui::Text("AABB and Sphere do collide"); 
+}
+
+void UI_GeometryCollisionTest::AABBOBBCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	OBB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), vec(b_x3, b_y3, b_z3), vec(b_x4, b_y4, b_z4), vec(b_x5, b_y5, b_z5));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		ImGui::Text("AABB does not collide with Sphere");
+	}
+	else
+		ImGui::Text("AABB and Sphere do collide");
+}
+
+void UI_GeometryCollisionTest::AABBPlaneCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Plane b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		ImGui::Text("AABB does not collide with Sphere");
+	}
+	else
+		ImGui::Text("AABB and Sphere do collide");
+}
+
+void UI_GeometryCollisionTest::AABBSegmentCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	LineSegment b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("AABB does not collide with Line Segment");
+	else
+		ImGui::Text("AABB and Line Segment do collide");
+}
+
+void UI_GeometryCollisionTest::AABBRayCollision()
+{
+	AABB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Ray b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("AABB does not collide with Ray");
+	else
+		ImGui::Text("AABB and Ray do collide");
+}
+
+void UI_GeometryCollisionTest::OBBSphereCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	Sphere b(vec(b_x, b_y, b_z), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("OBB does not collide with Sphere\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("OBB and Sphere do collide");
+}
+
+void UI_GeometryCollisionTest::OBBCapsuleCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	Capsule b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("OBB does not collide with Capsule");
+	else
+		ImGui::Text("OBB and Capsule do collide");
+}
+
+void UI_GeometryCollisionTest::OBBAABBCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	AABB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("OBB does not collide with AABB");
+	else
+		ImGui::Text("OBB and AABB do collide");
+}
+
+void UI_GeometryCollisionTest::TwoOBBCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	OBB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), vec(b_x3, b_y3, b_z3), vec(b_x4, b_y4, b_z4), vec(b_x5, b_y5, b_z5));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("OBB does not collide with OBB");
+	else
+		ImGui::Text("OBB and OBB do collide");
+}
+
+void UI_GeometryCollisionTest::OBBPlaneCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	Plane b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("OBB does not collide with Plane");
+	else
+		ImGui::Text("OBB and Plane do collide");
+}
+
+void UI_GeometryCollisionTest::OBBSegmentCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	LineSegment b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("OBB does not collide with Line Segment");
+	else
+		ImGui::Text("OBB and Plane do collide");
+}
+
+void UI_GeometryCollisionTest::OBBRayCollision()
+{
+	OBB a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2), vec(a_x3, a_y3, a_z3), vec(a_x4, a_y4, a_z4), vec(a_x5, a_y5, a_z5));
+	Ray b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("OBB does not collide with Ray");
+	else
+		ImGui::Text("OBB and Ray do collide");
+}
+
+void UI_GeometryCollisionTest::PlaneSphereCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Sphere b(vec(b_x, b_y, b_z), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Plane does not collide with Sphere\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Plane and Sphere do collide");
+}
+
+void UI_GeometryCollisionTest::PlaneCapsuleCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Capsule b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), b_r);
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Plane does not collide with Capsule\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Plane and Capsule do collide");
+}
+
+void UI_GeometryCollisionTest::PlaneAABBCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	AABB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("Plane does not collide with AABB");
+	else
+		ImGui::Text("Plane and AABB do collide");
+}
+
+void UI_GeometryCollisionTest::PlaneOBBCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	OBB b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2), vec(b_x3, b_y3, b_z3), vec(b_x4, b_y4, b_z4), vec(b_x5, b_y5, b_z5));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("Plane does not collide with OBB");
+	else
+		ImGui::Text("Plane and OBB do collide");
+}
+
+void UI_GeometryCollisionTest::TwoPlaneCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Plane b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("Plane does not collide with Plane");
+	else
+		ImGui::Text("Plane and Plane do collide");
+}
+
+void UI_GeometryCollisionTest::PlaneSegmentCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	LineSegment b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+	{
+		distance = a.Distance(b);
+		ImGui::Text("Plane does not collide with Line Segment\nDistance apart: %f", distance);
+	}
+	else
+		ImGui::Text("Plane and Line Segment do collide");
+}
+
+void UI_GeometryCollisionTest::PlaneRayCollision()
+{
+	Plane a(vec(a_x, a_y, a_z), vec(a_x2, a_y2, a_z2));
+	Ray b(vec(b_x, b_y, b_z), vec(b_x2, b_y2, b_z2));
+
+	collision = a.Intersects(b);
+
+	if (!collision)
+		ImGui::Text("Plane does not collide with Ray\nDistance apart: %f", distance);
+	else
+		ImGui::Text("Plane and Ray do collide");
+}
+}
+
 void UI_GeometryCollisionTest::SegmentRayCollision()
 {
 	ImGui::Text("Not in MathGeoLib");
