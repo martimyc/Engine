@@ -13,7 +13,7 @@ UI_MainMenu::~UI_MainMenu()
 
 bool UI_MainMenu::Update()
 {
-	ImGui::Begin("Menu Window", &active);
+	ImGui::Begin("Menu Window");
 	if (ImGui::Button("Test Window"))
 	{
 		if (!gui->GetActive(UI_TEST))
