@@ -118,91 +118,58 @@ public:
 	void Collisions();
 
 	void TwoSphereCollision();
-	void SphereCylinderCollision();
 	void SphereCapsuleCollision();
 	void SphereAABBCollision();
 	void SphereOBBCollision();
-	void SphereFrustumCollision();
 	void SpherePlaneCollision();
 	void SphereSegmentCollision();
 	void SphereRayCollision();
 
-	void CylinderSphereCollision();
-	void TwoCylinderCollision();
-	void CylinderCapsuleCollision();
-	void CylinderAABBCollision();
-	void CylinderOBBCollision();
-	void CylinderFrustumCollision();
-	void CylinderPlaneCollision();
-	void CylinderSegmentCollision();
-	void CylinderRayCollision();
-
 	void CapsuleSphereCollision();
-	void CapsuleCylinderCollision();
 	void TwoCapsuleCollision();
 	void CapsuleAABBCollision();
 	void CapsuleOBBCollision();
-	void CapsuleFrustumCollision();
 	void CapsulePlaneCollision();
 	void CapsuleSegmentCollision();
 	void CapsuleRayCollision();
 
 	void AABBSphereCollision();
-	void AABBCylinderCollision();
 	void AABBCapsuleCollision();
 	void TwoAABBCollision();
 	void AABBOBBCollision();
-	void AABBFrustumCollision();
 	void AABBPlaneCollision();
 	void AABBSegmentCollision();
 	void AABBRayCollision();
 
 	void OBBSphereCollision();
-	void OBBCylinderCollision();
 	void OBBCapsuleCollision();
 	void OBBAABBCollision();
 	void TwoOBBCollision();
-	void OBBFrustumCollision();
 	void OBBPlaneCollision();
 	void OBBSegmentCollision();
 	void OBBRayCollision();
-
-	void FrustumSphereCollision();
-	void FrustumCylinderCollision();
-	void FrustumCapsuleCollision();
-	void FrustumAABBCollision();
-	void FrustumOBBCollision();
-	void TwoFrustumCollision();
-	void FrustumPlaneCollision();
-	void FrustumSegmentCollision();
-	void FrustumRayCollision();
 
 	void PlaneSphereCollision();
 	void PlaneCylinderCollision();
 	void PlaneCapsuleCollision();
 	void PlaneAABBCollision();
 	void PlaneOBBCollision();
-	void PlaneFrustumCollision();
 	void TwoPlaneCollision();
 	void PlaneSegmentCollision();
 	void PlaneRayCollision();
 
 	void SegmentSphereCollision();
-	void SegmentCylinderCollision();
 	void SegmentCapsuleCollision();
 	void SegmentAABBCollision();
 	void SegmentOBBCollision();
-	void SegmentFrustumCollision();
 	void SegmentPlaneCollision();
 	void TwoSegmentCollision();
 	void SegmentRayCollision();
 
 	void RaySphereCollision();
-	void RayCylinderCollision();
 	void RayCapsuleCollision();
 	void RayAABBCollision();
 	void RayOBBCollision();
-	void RayFrustumCollision();
 	void RayPlaneCollision();
 	void RaySegmentCollision();
 	void TwoRayCollision();
