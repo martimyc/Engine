@@ -1,5 +1,6 @@
 #include "UI_Rand_Test.h"
 #include "imgui-master\imgui.h"
+#include "PCG-rng\pcg_random.hpp"
 
 UI_Rand_Test::UI_Rand_Test(bool active) : UI_Element(UI_RAND_TEST, active)
 {
