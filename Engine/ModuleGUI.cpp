@@ -7,6 +7,7 @@
 #include "ModuleInput.h"
 #include "UI_Element.h"
 #include "UI_Test.h"
+#include "UI_Rand_Test.h"
 #include "UI_MainMenu.h"
 #include "ModuleGUI.h"
 
@@ -34,6 +35,7 @@ bool ModuleGUI::Init()
 
 	CreateMainMenu();
 	CreateTestMenu(false);
+	CreateRandomNumMenu(false);
 
 	return true;
 }
@@ -75,6 +77,13 @@ void ModuleGUI::PreRender()
 UI_Test * ModuleGUI::CreateTestMenu( bool active)
 {
 	UI_Test* ptr = new UI_Test(active);
+	ui_elements.push_back((UI_Element*)ptr);
+	return ptr;
+}
+
+UI_Rand_Test * ModuleGUI::CreateRandomNumMenu(bool active)
+{
+	UI_Rand_Test* ptr = new UI_Rand_Test(active);
 	ui_elements.push_back((UI_Element*)ptr);
 	return ptr;
 }

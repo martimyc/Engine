@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "UI_MainMenu.h"
 #include "ModuleGUI.h"
+#include "MathGeoLib-master\src\Geometry\Capsule.h"
 
 UI_MainMenu::UI_MainMenu(ModuleGUI * gui, bool active): UI_Element(UI_MAINMENU, active), gui(gui)
 {}
@@ -12,7 +13,6 @@ UI_MainMenu::~UI_MainMenu()
 
 bool UI_MainMenu::Update()
 {
-	ImGui::SetNextWindowSize(ImVec2(350, 100));
 	ImGui::Begin("Menu Window", &active);
 	if (ImGui::Button("Test Window"))
 	{
@@ -20,6 +20,15 @@ bool UI_MainMenu::Update()
 			gui->Activate(UI_TEST);
 		else
 			gui->Deactivate(UI_TEST);
+	}
+
+	if (ImGui::Button("Random numbers test"))
+	{
+		if (!gui->GetActive(UI_RAND_TEST))
+			gui->Activate(UI_RAND_TEST);
+		else
+			gui->Deactivate(UI_RAND_TEST);
+			//SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
 	}
 
 	if (ImGui::Button("Quit"))

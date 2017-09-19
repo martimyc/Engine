@@ -312,6 +312,9 @@
     <ClInclude Include="MathGeoLib-master\src\Time\Clock.h">
       <Filter>Sources\MathGeoLib\Time</Filter>
     </ClInclude>
+    <ClInclude Include="UI_Rand_Test.h">
+      <Filter>Sources\UI_Elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -482,6 +485,9 @@
     </ClCompile>
     <ClCompile Include="MathGeoLib-master\src\Time\Clock.cpp">
       <Filter>Sources\MathGeoLib\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Rand_Test.cpp">
+      <Filter>Sources\UI_Elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

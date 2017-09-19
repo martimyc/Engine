@@ -162,6 +162,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UI_Element.h" />
     <ClInclude Include="UI_MainMenu.h" />
+    <ClInclude Include="UI_Rand_Test.h" />
     <ClInclude Include="UI_Test.h" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +222,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UI_Element.cpp" />
     <ClCompile Include="UI_MainMenu.cpp" />
+    <ClCompile Include="UI_Rand_Test.cpp" />
     <ClCompile Include="UI_Test.cpp" />
   </ItemGroup>
   <ItemGroup>

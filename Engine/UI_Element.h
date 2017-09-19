@@ -5,7 +5,8 @@ enum UI_TYPE
 {
 	UI_NO_ELEMENT = 0,
 	UI_TEST,
-	UI_MAINMENU
+	UI_MAINMENU,
+	UI_RAND_TEST
 };
 
 class UI_Element

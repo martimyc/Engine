@@ -9,7 +9,7 @@ UI_Test::~UI_Test()
 
 bool UI_Test::Update()
 {
-	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(715, 15), ImGuiCond_Once);
 	ImGui::ShowTestWindow(&active);
 
 	return true;

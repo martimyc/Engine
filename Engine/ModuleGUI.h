@@ -7,6 +7,7 @@
 enum UI_TYPE;
 class UI_Element;
 class UI_Test;
+class UI_Rand_Test;
 class UI_MainMenu;
 
 enum WEEL_MOVEMENT
@@ -42,6 +43,7 @@ public:
 	void PreRender();
 
 	UI_Test* CreateTestMenu(bool active = true);
+	UI_Rand_Test* CreateRandomNumMenu(bool active = true);
 	UI_MainMenu* CreateMainMenu(bool active = true);
 
 	void Activate(UI_TYPE element);
