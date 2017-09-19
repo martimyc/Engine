@@ -13,6 +13,8 @@ UI_MainMenu::~UI_MainMenu()
 
 bool UI_MainMenu::Update()
 {
+	ImGui::SetNextWindowPos(ImVec2(100, 400), ImGuiCond_Once);
+
 	ImGui::Begin("Menu Window");
 	if (ImGui::Button("Test Window"))
 	{
@@ -29,6 +31,15 @@ bool UI_MainMenu::Update()
 		else
 			gui->Deactivate(UI_RAND_TEST);
 			//SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
+	}
+
+	if (ImGui::Button("Geometry collision test"))
+	{
+		if (!gui->GetActive(UI_GEOMETRY_COLLISION_TEST))
+			gui->Activate(UI_GEOMETRY_COLLISION_TEST);
+		else
+			gui->Deactivate(UI_GEOMETRY_COLLISION_TEST);
+		//SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
 	}
 
 	if (ImGui::Button("Quit"))

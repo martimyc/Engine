@@ -29,11 +29,9 @@ private:
 
 	//A
 	bool a_sphere = false;
-	bool a_cylinder = false;
 	bool a_capsule = false;
 	bool a_aabb = false;
 	bool a_obb = false;
-	bool a_frustum = false;
 	bool a_plane = false;
 	bool a_segment = false;
 	bool a_ray = false;
@@ -58,11 +56,9 @@ private:
 
 	//B
 	bool b_sphere = false;
-	bool b_cylinder = false;
 	bool b_capsule = false;
 	bool b_aabb = false;
 	bool b_obb = false;
-	bool b_frustum = false;
 	bool b_plane = false;
 	bool b_segment = false;
 	bool b_ray = false;

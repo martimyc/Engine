@@ -37,7 +37,7 @@ bool ModuleGUI::Init()
 	CreateMainMenu();
 	CreateTestMenu(false);
 	CreateRandomNumMenu(false);
-	CreateGeometryTest(true);
+	CreateGeometryTest(false);
 
 	return true;
 }
