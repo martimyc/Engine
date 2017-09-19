@@ -196,6 +196,92 @@ void UI_GeometryCollisionTest::CylinderA()
 	ImGui::InputFloat("Height", &a_h);
 }
 
+void UI_GeometryCollisionTest::CapsuleA()
+{
+	ImGui::Text("Point 1 position:");
+	ImGui::InputFloat("X1", &a_x);
+	ImGui::InputFloat("Y1", &a_y);
+	ImGui::InputFloat("Z1", &a_z);
+	ImGui::Text("Radius:");
+	ImGui::InputFloat("", &a_r);
+	ImGui::Text("Point 2 position:");
+	ImGui::InputFloat("X2", &a_x2);
+	ImGui::InputFloat("Y2", &a_y2);
+	ImGui::InputFloat("Z2", &a_z2);
+}
+
+void UI_GeometryCollisionTest::AABBA()
+{
+	ImGui::Text("Point 1 position:");
+	ImGui::InputFloat("X1", &a_x);
+	ImGui::InputFloat("Y1", &a_y);
+	ImGui::InputFloat("Z1", &a_z);
+	ImGui::Text("Point 2 position:");
+	ImGui::InputFloat("X2", &a_x2);
+	ImGui::InputFloat("Y2", &a_y2);
+	ImGui::InputFloat("Z2", &a_z2);
+}
+
+void UI_GeometryCollisionTest::OBBA()
+{
+	ImGui::Text("Position:");
+	ImGui::InputFloat("X1", &a_x);
+	ImGui::InputFloat("Y1", &a_y);
+	ImGui::InputFloat("Z1", &a_z);
+	ImGui::Text("R:");
+	ImGui::InputFloat("RX", &a_x2);
+	ImGui::InputFloat("RY", &a_y2);
+	ImGui::InputFloat("RZ", &a_z2);
+	ImGui::Text("Axis 1:");
+	ImGui::InputFloat("X2", &a_x3);
+	ImGui::InputFloat("Y2", &a_y3);
+	ImGui::InputFloat("Z2", &a_z3);
+	ImGui::Text("Axis 2:");
+	ImGui::InputFloat("X2", &a_x4);
+	ImGui::InputFloat("Y2", &a_y4);
+	ImGui::InputFloat("Z2", &a_z4);
+	ImGui::Text("Axis 3:");
+	ImGui::InputFloat("X2", &a_x5);
+	ImGui::InputFloat("Y2", &a_y5);
+	ImGui::InputFloat("Z2", &a_z5);
+}
+
+void UI_GeometryCollisionTest::PlaneA()
+{
+	ImGui::Text("Point:");
+	ImGui::InputFloat("X", &a_x);
+	ImGui::InputFloat("Y", &a_y);
+	ImGui::InputFloat("Z", &a_z);
+	ImGui::Text("Normal:");
+	ImGui::InputFloat("X", &a_x2);
+	ImGui::InputFloat("Y", &a_y2);
+	ImGui::InputFloat("Z", &a_z2);
+}
+
+void UI_GeometryCollisionTest::SegmentA()
+{
+	ImGui::Text("Point1:");
+	ImGui::InputFloat("X", &a_x);
+	ImGui::InputFloat("Y", &a_y);
+	ImGui::InputFloat("Z", &a_z);
+	ImGui::Text("Point2:");
+	ImGui::InputFloat("X", &a_x2);
+	ImGui::InputFloat("Y", &a_y2);
+	ImGui::InputFloat("Z", &a_z2);
+}
+
+void UI_GeometryCollisionTest::RayA()
+{
+	ImGui::Text("Point:");
+	ImGui::InputFloat("X", &a_x);
+	ImGui::InputFloat("Y", &a_y);
+	ImGui::InputFloat("Z", &a_z);
+	ImGui::Text("Direction:");
+	ImGui::InputFloat("X", &a_x2);
+	ImGui::InputFloat("Y", &a_y2);
+	ImGui::InputFloat("Z", &a_z2);
+}
+
 void UI_GeometryCollisionTest::SphereB()
 {
 	ImGui::Text("Center position:");
@@ -213,6 +299,92 @@ void UI_GeometryCollisionTest::CylinderB()
 	ImGui::InputFloat("Z", &b_z);
 	ImGui::InputFloat("Radius", &b_r);
 	ImGui::InputFloat("Height", &b_h);
+}
+
+void UI_GeometryCollisionTest::CapsuleB()
+{
+	ImGui::Text("Center position:");
+	ImGui::InputFloat("X1", &b_x);
+	ImGui::InputFloat("Y1", &b_y);
+	ImGui::InputFloat("Z1", &b_z);
+	ImGui::InputFloat("Radius", &b_r);
+	ImGui::InputFloat("X2", &b_x2);
+	ImGui::InputFloat("Y2", &b_y2);
+	ImGui::InputFloat("Z2", &b_z2);
+}
+
+void UI_GeometryCollisionTest::AABBB()
+{
+	ImGui::Text("Point 1 position:");
+	ImGui::InputFloat("X1", &b_x);
+	ImGui::InputFloat("Y1", &b_y);
+	ImGui::InputFloat("Z1", &b_z);
+	ImGui::Text("Radius:");
+	ImGui::InputFloat("", &b_r);
+	ImGui::Text("Point 2 position:");
+	ImGui::InputFloat("X2", &b_x2);
+	ImGui::InputFloat("Y2", &b_y2);
+	ImGui::InputFloat("Z2", &b_z2);
+}
+
+void UI_GeometryCollisionTest::OBBB()
+{
+	ImGui::Text("Position:");
+	ImGui::InputFloat("X1", &b_x);
+	ImGui::InputFloat("Y1", &b_y);
+	ImGui::InputFloat("Z1", &b_z);
+	ImGui::Text("R:");
+	ImGui::InputFloat("RX", &b_x2);
+	ImGui::InputFloat("RY", &b_y2);
+	ImGui::InputFloat("RZ", &b_z2);
+	ImGui::Text("Axis 1:");
+	ImGui::InputFloat("X2", &b_x3);
+	ImGui::InputFloat("Y2", &b_y3);
+	ImGui::InputFloat("Z2", &b_z3);
+	ImGui::Text("Axis 2:");
+	ImGui::InputFloat("X2", &b_x4);
+	ImGui::InputFloat("Y2", &b_y4);
+	ImGui::InputFloat("Z2", &b_z4);
+	ImGui::Text("Axis 3:");
+	ImGui::InputFloat("X2", &b_x5);
+	ImGui::InputFloat("Y2", &b_y5);
+	ImGui::InputFloat("Z2", &b_z5);
+}
+
+void UI_GeometryCollisionTest::PlaneB()
+{
+	ImGui::Text("Point:");
+	ImGui::InputFloat("X", &b_x);
+	ImGui::InputFloat("Y", &b_y);
+	ImGui::InputFloat("Z", &b_z);
+	ImGui::Text("Normal:");
+	ImGui::InputFloat("X", &b_x2);
+	ImGui::InputFloat("Y", &b_y2);
+	ImGui::InputFloat("Z", &b_z2);
+}
+
+void UI_GeometryCollisionTest::SegmentB()
+{
+	ImGui::Text("Point1:");
+	ImGui::InputFloat("X", &b_x);
+	ImGui::InputFloat("Y", &b_y);
+	ImGui::InputFloat("Z", &b_z);
+	ImGui::Text("Point2:");
+	ImGui::InputFloat("X", &b_x2);
+	ImGui::InputFloat("Y", &b_y2);
+	ImGui::InputFloat("Z", &b_z2);
+}
+
+void UI_GeometryCollisionTest::RayB()
+{
+	ImGui::Text("Point:");
+	ImGui::InputFloat("X", &b_x);
+	ImGui::InputFloat("Y", &b_y);
+	ImGui::InputFloat("Z", &b_z);
+	ImGui::Text("Direction:");
+	ImGui::InputFloat("X", &b_x2);
+	ImGui::InputFloat("Y", &b_y2);
+	ImGui::InputFloat("Z", &b_z2);
 }
 
 void UI_GeometryCollisionTest::ResetA()

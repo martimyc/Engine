@@ -43,6 +43,18 @@ private:
 	float a_z = 0.0f;
 	float a_r = 0.0f;
 	float a_h = 0.0f;
+	float a_x2 = 0.0f;
+	float a_y2 = 0.0f;
+	float a_z2 = 0.0f;
+	float a_x3 = 0.0f;
+	float a_y3 = 0.0f;
+	float a_z3 = 0.0f;
+	float a_x4 = 0.0f;
+	float a_y4 = 0.0f;
+	float a_z4 = 0.0f;
+	float a_x5 = 0.0f;
+	float a_y5 = 0.0f;
+	float a_z5 = 0.0f;
 
 	//B
 	bool b_sphere = false;
@@ -60,6 +72,18 @@ private:
 	float b_z = 0.0f;
 	float b_r = 0.0f;
 	float b_h = 0.0f;
+	float b_x2 = 0.0f;
+	float b_y2 = 0.0f;
+	float b_z2 = 0.0f;
+	float b_x3 = 0.0f;
+	float b_y3 = 0.0f;
+	float b_z3 = 0.0f;
+	float b_x4 = 0.0f;
+	float b_y4 = 0.0f;
+	float b_z4 = 0.0f;
+	float b_x5 = 0.0f;
+	float b_y5 = 0.0f;
+	float b_z5 = 0.0f;
 
 public:
 	UI_GeometryCollisionTest(bool active = true);
@@ -75,7 +99,6 @@ public:
 	void CapsuleA();
 	void AABBA();
 	void OBBA();
-	void FrustumA();
 	void PlaneA();
 	void SegmentA();
 	void RayA();
@@ -85,7 +108,6 @@ public:
 	void CapsuleB();
 	void AABBB();
 	void OBBB();
-	void FrustumB();
 	void PlaneB();
 	void SegmentB();
 	void RayB();
