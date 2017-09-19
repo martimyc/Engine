@@ -24,8 +24,9 @@ image: Visual Studio 2015
 
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
-- Release
 - Debug
+- Release
+
 
 build:
   project: Engine\3D Engine.sln
@@ -67,7 +68,7 @@ deploy:
     secure: MLJSjeQsqEuvGjUiYZ81RCDge8DndlnAqavPyd6dXZ8B+XW20IaFnwVlFYf2Zixe
   artifact: game_files
   draft: false
-  prerelease: false
+  prerelease: true
   on:
     branch: master
     CONFIGURATION: Release
