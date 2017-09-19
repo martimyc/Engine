@@ -24,8 +24,8 @@ image: Visual Studio 2015
 
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
-- Debug
 - Release
+- Debug
 
 build:
   project: Engine\3D Engine.sln
