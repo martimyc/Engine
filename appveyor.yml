@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: 1.0.{build}
+version: Engine_1.0.{build}
 
 #---------------------------------#
 #    environment configuration    #
@@ -27,7 +27,6 @@ configuration:
 - Debug
 - Release
 
-
 build:
   project: Engine\3D Engine.sln
   
@@ -36,7 +35,8 @@ build:
   
 artifacts:
 - path: Engine\Game
-  name: game_files
+  name: exe
+- path: Engine\Release\3D Engine.exe
   
 #---------------------------------#
 #         notifications           #
