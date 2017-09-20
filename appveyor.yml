@@ -18,6 +18,9 @@ version: Engine_1.0.{build}
 # Build worker image (VM template)
 image: Visual Studio 2015
 
+# clone directory
+clone_folder: c:\projects\myproject
+
 #---------------------------------#
 #       build configuration       #
 #---------------------------------#
@@ -32,6 +35,9 @@ build:
   
   # MSBuild verbosity level
   verbosity: normal
+  
+after_build:
+  7z a Game_files.zip C:\projects\engine\Engine\release\Engine.exe
   
 artifacts:
 - path: Engine\Game
