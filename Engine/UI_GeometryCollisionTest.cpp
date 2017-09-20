@@ -233,11 +233,11 @@ void UI_GeometryCollisionTest::PlaneA()
 
 void UI_GeometryCollisionTest::SegmentA()
 {
-	ImGui::Text("Point1:");
+	ImGui::Text("Point 1:");
 	ImGui::InputFloat("X", &a_x);
 	ImGui::InputFloat("Y", &a_y);
 	ImGui::InputFloat("Z", &a_z);
-	ImGui::Text("Point2:");
+	ImGui::Text("Point 2:");
 	ImGui::InputFloat("X", &a_x2);
 	ImGui::InputFloat("Y", &a_y2);
 	ImGui::InputFloat("Z", &a_z2);
@@ -338,11 +338,11 @@ void UI_GeometryCollisionTest::PlaneB()
 
 void UI_GeometryCollisionTest::SegmentB()
 {
-	ImGui::Text("Point1:");
+	ImGui::Text("Point 1:");
 	ImGui::InputFloat("X", &b_x);
 	ImGui::InputFloat("Y", &b_y);
 	ImGui::InputFloat("Z", &b_z);
-	ImGui::Text("Point2:");
+	ImGui::Text("Point 2:");
 	ImGui::InputFloat("X", &b_x2);
 	ImGui::InputFloat("Y", &b_y2);
 	ImGui::InputFloat("Z", &b_z2);
