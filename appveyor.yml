@@ -69,6 +69,7 @@ deploy:
   artifact: game_files
   draft: false
   prerelease: true
+  force_update: true
   on:
     branch: master
     CONFIGURATION: Release
