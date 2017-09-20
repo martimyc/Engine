@@ -33,11 +33,14 @@ build:
   # MSBuild verbosity level
   verbosity: normal
   
+after_build:
+  7z a Game_files.zip Engine\Release\3D Engine.exe
+  
 artifacts:
 - path: Engine\Game
   name: Game_files
-- path: Engine\Release\3D Engine.exe
-  name: Exe
+#- path: Engine\Release\3D Engine.exe
+ # name: Exe
   
 #---------------------------------#
 #         notifications           #
