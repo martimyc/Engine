@@ -19,7 +19,7 @@ version: Engine_1.0.{build}
 image: Visual Studio 2015
 
 # clone directory
-clone_folder: c:\projects\myproject
+clone_folder: c:\projects\engine
 
 #---------------------------------#
 #       build configuration       #
