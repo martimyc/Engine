@@ -35,8 +35,9 @@ build:
   
 artifacts:
 - path: Engine\Game
-  name: exe
+  name: Game_files
 - path: Engine\Release\3D Engine.exe
+  name: Exe
   
 #---------------------------------#
 #         notifications           #
