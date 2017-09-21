@@ -37,7 +37,7 @@ build:
   verbosity: normal
   
 after_build:
-  7z a Game_files.zip C:\projects\engine\Engine\release\Engine.exe
+  7z a Game_files.zip .\release\Engine.exe
   
 artifacts:
 - path: Engine\Game
