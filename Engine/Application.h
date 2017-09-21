@@ -37,6 +37,8 @@ public:
 	UPDATE_STATUS Update();
 	bool CleanUp();
 
+	void OpenWebsite(const char* url);
+
 private:
 
 	void AddModule(Module* mod);

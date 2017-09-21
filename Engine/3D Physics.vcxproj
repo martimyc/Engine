@@ -79,6 +79,8 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="mmgr.h" />
+    <ClInclude Include="nommgr.h" />
     <ClInclude Include="UI_GeometryCollisionTest.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
@@ -162,9 +164,6 @@
     <ClInclude Include="ModuleRenderer3D.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="p2Point.h" />
-    <ClInclude Include="PCG-rng\pcg_extras.hpp" />
-    <ClInclude Include="PCG-rng\pcg_random.hpp" />
-    <ClInclude Include="PCG-rng\pcg_uint128.hpp" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UI_Element.h" />
     <ClInclude Include="UI_MainMenu.h" />
@@ -174,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="UI_GeometryCollisionTest.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="imgui-master\imgui.cpp" />

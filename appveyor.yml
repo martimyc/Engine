@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: 1.0.{build}
+version: Engine_1.0.{build}
 
 #---------------------------------#
 #    environment configuration    #
@@ -17,6 +17,9 @@ version: 1.0.{build}
 
 # Build worker image (VM template)
 image: Visual Studio 2015
+
+# clone directory
+clone_folder: C:\projects\engine
 
 #---------------------------------#
 #       build configuration       #
@@ -27,16 +30,18 @@ configuration:
 - Debug
 - Release
 
-
 build:
   project: Engine\3D Engine.sln
   
   # MSBuild verbosity level
   verbosity: normal
   
+before_package:
+- ps: Copy-Item C:\projects\engine\Engine\$env:CONFIGURATION\Engine.exe C:\projects\engine\Engine\Game\.
+  
 artifacts:
 - path: Engine\Game
-  name: game_files
+  name: Game_files
   
 #---------------------------------#
 #         notifications           #
@@ -65,11 +70,10 @@ deploy:
 - provider: GitHub
   description: Release
   auth_token:
-    secure: MLJSjeQsqEuvGjUiYZ81RCDge8DndlnAqavPyd6dXZ8B+XW20IaFnwVlFYf2Zixe
+    secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
   artifact: game_files
   draft: false
   prerelease: true
   force_update: true
   on:
-    branch: master
     CONFIGURATION: Release

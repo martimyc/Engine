@@ -30,6 +30,8 @@ private:
 
 	std::vector<UI_Element*> ui_elements;
 
+	bool CreateMainMenuBar();
+
 public:
 
 	ModuleGUI(Application* app, bool start_enabled = true);
@@ -48,6 +50,7 @@ public:
 	UI_MainMenu* CreateMainMenu(bool active = true);
 	UI_GeometryCollisionTest* CreateGeometryTest(bool active = true);
 
+	void SwitchActivation(UI_TYPE element);
 	void Activate(UI_TYPE element);
 	bool GetActive(UI_TYPE element) const;
 	void Deactivate(UI_TYPE element);

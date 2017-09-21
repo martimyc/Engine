@@ -12,6 +12,53 @@
 #include "UI_GeometryCollisionTest.h"
 #include "ModuleGUI.h"
 
+bool ModuleGUI::CreateMainMenuBar()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Exit"))
+			{
+				SDL_Event e;
+				e.type = SDL_QUIT;
+				SDL_PushEvent(&e);
+			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Window"))
+		{
+			if (ImGui::MenuItem("Random number Test"))
+				Activate(UI_RAND_TEST);
+
+			if (ImGui::MenuItem("Geometry collision Test"))
+				Activate(UI_GEOMETRY_COLLISION_TEST);
+
+			if (ImGui::MenuItem("ImGui Demo"))
+				Activate(UI_TEST);
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::MenuItem("Download latest"))
+				App->OpenWebsite("https://github.com/martimyc/Engine/releases");		
+
+			if (ImGui::MenuItem("Report a bug"))
+				App->OpenWebsite("https://github.com/martimyc/Engine/issues");;
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+		return true;
+	}
+	return false;
+}
+
 ModuleGUI::ModuleGUI(Application * app, bool start_enabled): Module(app,start_enabled)
 {}
 
@@ -48,6 +95,8 @@ UPDATE_STATUS ModuleGUI::Update(float dt)
 
 	ImGui_ImplSdlGL2_NewFrame(App->window->window);
 
+	CreateMainMenuBar();
+
 	// UI_Elements updates loop
 	for (std::vector<UI_Element*>::iterator it = ui_elements.begin(); it != ui_elements.end(); ++it)
 	{
@@ -58,6 +107,7 @@ UPDATE_STATUS ModuleGUI::Update(float dt)
 				break;
 			}
 	}
+
 
 	return ret;
 }
@@ -102,6 +152,14 @@ UI_GeometryCollisionTest * ModuleGUI::CreateGeometryTest(bool active)
 	UI_GeometryCollisionTest* ptr = new UI_GeometryCollisionTest(active);
 	ui_elements.push_back((UI_Element*)ptr);
 	return ptr;
+}
+
+void ModuleGUI::SwitchActivation(UI_TYPE element)
+{
+	if (!GetActive(element))
+		Activate(element);
+	else
+		Deactivate(element);
 }
 
 void ModuleGUI::Activate(UI_TYPE element)
