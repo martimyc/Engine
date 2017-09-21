@@ -18,28 +18,18 @@ bool UI_MainMenu::Update()
 
 	ImGui::Begin("Menu Window");
 	if (ImGui::Button("Test Window"))
-	{
-		if (!gui->GetActive(UI_TEST))
-			gui->Activate(UI_TEST);
-		else
-			gui->Deactivate(UI_TEST);
-	}
+		gui->SwitchActivation(UI_TEST);
+		
 
 	if (ImGui::Button("Random numbers test"))
 	{
-		if (!gui->GetActive(UI_RAND_TEST))
-			gui->Activate(UI_RAND_TEST);
-		else
-			gui->Deactivate(UI_RAND_TEST);
+		gui->SwitchActivation(UI_RAND_TEST);
 			//SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
 	}
 
 	if (ImGui::Button("Geometry collision test"))
 	{
-		if (!gui->GetActive(UI_GEOMETRY_COLLISION_TEST))
-			gui->Activate(UI_GEOMETRY_COLLISION_TEST);
-		else
-			gui->Deactivate(UI_GEOMETRY_COLLISION_TEST);
+		gui->SwitchActivation(UI_GEOMETRY_COLLISION_TEST);
 		//SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
 	}
 

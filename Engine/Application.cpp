@@ -99,6 +99,11 @@ bool Application::CleanUp()
 	return ret;
 }
 
+void Application::OpenWebsite(const char * url)
+{
+	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
 void Application::AddModule(Module* mod)
 {
 	modules.push_back(mod);
