@@ -19,7 +19,7 @@ version: Engine_1.0.{build}
 image: Visual Studio 2015
 
 # clone directory
-clone_folder: c:\projects\engine
+clone_folder: C:\projects\engine
 
 #---------------------------------#
 #       build configuration       #
@@ -36,8 +36,8 @@ build:
   # MSBuild verbosity level
   verbosity: normal
   
-after_build:
-  7z a Game_files.zip .\Engine\release\Engine.exe
+before_package:
+- ps: Copy-Item C:\projects\engine\$env:CONFIGURATION\Engine.exe C:\projects\engine\Game\.
   
 artifacts:
 - path: Engine\Game
