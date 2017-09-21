@@ -161,9 +161,6 @@
     <ClInclude Include="ModuleRenderer3D.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="p2Point.h" />
-    <ClInclude Include="PCG-rng\pcg_extras.hpp" />
-    <ClInclude Include="PCG-rng\pcg_random.hpp" />
-    <ClInclude Include="PCG-rng\pcg_uint128.hpp" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UI_Element.h" />
     <ClInclude Include="UI_MainMenu.h" />

@@ -43,9 +43,6 @@
     <Filter Include="Sources\MathGeoLib\Time">
       <UniqueIdentifier>{0d18b17e-20ac-442c-87db-4956be5a4ac2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\PCG-RNG">
-      <UniqueIdentifier>{891c2769-06f6-4c13-bb19-7ce3e041f3e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\mmgr">
       <UniqueIdentifier>{de4c96d9-5ffc-48e3-908d-4ade2866dd9e}</UniqueIdentifier>
     </Filter>
@@ -317,15 +314,6 @@
     </ClInclude>
     <ClInclude Include="UI_Rand_Test.h">
       <Filter>Sources\UI_Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="PCG-rng\pcg_extras.hpp">
-      <Filter>Sources\PCG-RNG</Filter>
-    </ClInclude>
-    <ClInclude Include="PCG-rng\pcg_random.hpp">
-      <Filter>Sources\PCG-RNG</Filter>
-    </ClInclude>
-    <ClInclude Include="PCG-rng\pcg_uint128.hpp">
-      <Filter>Sources\PCG-RNG</Filter>
     </ClInclude>
     <ClInclude Include="UI_GeometryCollisionTest.h">
       <Filter>Sources\UI_Elements</Filter>
