@@ -43,11 +43,14 @@
     <Filter Include="Sources\MathGeoLib\Time">
       <UniqueIdentifier>{0d18b17e-20ac-442c-87db-4956be5a4ac2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\mmgr">
-      <UniqueIdentifier>{de4c96d9-5ffc-48e3-908d-4ade2866dd9e}</UniqueIdentifier>
+    <Filter Include="Sources\PCG-RNG">
+      <UniqueIdentifier>{891c2769-06f6-4c13-bb19-7ce3e041f3e7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Brofiller">
       <UniqueIdentifier>{13ea4ea2-fc9c-4792-bcb5-4f71586fbd16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\mmgr">
+      <UniqueIdentifier>{1d3b80cd-fe5d-41af-98d1-399b506631be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,14 +324,14 @@
     <ClInclude Include="UI_GeometryCollisionTest.h">
       <Filter>Sources\UI_Elements</Filter>
     </ClInclude>
-    <ClInclude Include="nommgr.h">
-      <Filter>Sources\mmgr</Filter>
+    <ClInclude Include="Brofiler\Brofiler.h">
+      <Filter>Sources\Brofiller</Filter>
     </ClInclude>
     <ClInclude Include="mmgr.h">
       <Filter>Sources\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="Brofiler\Brofiler.h">
-      <Filter>Sources\Brofiller</Filter>
+    <ClInclude Include="nommgr.h">
+      <Filter>Sources\mmgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
