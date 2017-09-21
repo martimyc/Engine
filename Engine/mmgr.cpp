@@ -132,20 +132,20 @@
 // cluttered and hard to read.
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-//#define	TEST_MEMORY_MANAGER
+#define	TEST_MEMORY_MANAGER
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 // -DOC- Enable this sucker if you really want to stress-test your app's memory usage, or to help find hard-to-find bugs
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-//#define	STRESS_TEST
+#define	STRESS_TEST
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 // -DOC- Enable this sucker if you want to stress-test your app's error-handling. Set RANDOM_FAIL to the percentage of failures you
 //       want to test with (0 = none, >100 = all failures).
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-//#define	RANDOM_FAILURE 10.0
+//#define	RANDOM_FAILURE 0.0
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 // -DOC- Locals -- modify these flags to suit your needs
