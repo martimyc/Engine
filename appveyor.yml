@@ -37,7 +37,7 @@ build:
   verbosity: normal
   
 before_package:
-- ps: Copy-Item C:\projects\engine\Engine\$env:CONFIGURATION\Engine.exe C:\projects\engine\Game\.
+- ps: Copy-Item C:\projects\engine\Engine\$env:CONFIGURATION\Engine.exe C:\projects\engine\Engine\Game\.
   
 artifacts:
 - path: Engine\Game
