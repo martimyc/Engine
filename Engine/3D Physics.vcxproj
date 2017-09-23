@@ -78,6 +78,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="mmgr.h" />
     <ClInclude Include="nommgr.h" />
+    <ClInclude Include="Parson\parson.h" />
     <ClInclude Include="UI_GeometryCollisionTest.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="mmgr.cpp" />
+    <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="UI_GeometryCollisionTest.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="imgui-master\imgui.cpp" />

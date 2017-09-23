@@ -5,6 +5,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleGUI.h"
 #include "Application.h"
+#include "Parson\parson.h"
 
 Application::Application()
 {
@@ -41,6 +42,23 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	//Charge config	 TEST
+	JSON_Value* config = json_parse_file("config.json");
+	JSON_Object* obj = json_value_get_object(config);	//Gets starting doc
+	JSON_Object* app = json_object_dotget_object(obj, "App"); //Gets App son
+	std::string name = json_object_get_string(app, "name");	//Gets name from App
+	int max_fps = json_object_get_number(app, "max_fps"); //Gets max_fps from App
+
+														  
+	//Save
+	float f = 28.3;
+	JSON_Value* test = json_value_init_object();
+	json_object_set_string(json_object(test), "Test", "");
+	json_object_dotset_value(obj, "Test2", test);
+	json_serialize_to_file(config, "config.json");
+	//------------------
+
+
 	std::vector<Module*>::const_iterator it = modules.begin();
 
 	// Call Init() in all modules

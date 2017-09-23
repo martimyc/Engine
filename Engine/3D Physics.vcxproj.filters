@@ -46,6 +46,9 @@
     <Filter Include="Sources\mmgr">
       <UniqueIdentifier>{de4c96d9-5ffc-48e3-908d-4ade2866dd9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Parson">
+      <UniqueIdentifier>{3780ffa8-93ab-4a96-a970-df8ca10b56c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -324,6 +327,9 @@
     <ClInclude Include="mmgr.h">
       <Filter>Sources\mmgr</Filter>
     </ClInclude>
+    <ClInclude Include="Parson\parson.h">
+      <Filter>Sources\Parson</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -502,6 +508,9 @@
     </ClCompile>
     <ClCompile Include="mmgr.cpp">
       <Filter>Sources\mmgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Parson\parson.c">
+      <Filter>Sources\Parson</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
