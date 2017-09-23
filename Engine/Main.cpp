@@ -1,4 +1,9 @@
 #include <stdlib.h>
+
+//TODO
+//#include "Brofiler\Brofiler.h"
+//#pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
+
 #include "Application.h"
 #include "Globals.h"
 #include "imgui-master\imgui.h"
@@ -26,6 +31,8 @@ int main(int argc, char ** argv)
 	
 	while (state != MAIN_EXIT)
 	{
+		//BROFILER_FRAME("MAIN");
+
 		switch (state)
 		{
 		case MAIN_CREATION:
