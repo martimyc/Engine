@@ -29,7 +29,7 @@ private:
 	Timer	ms_timer;
 	float	dt;
 	std::vector<Module*> modules;
-	int fps_cap = 60;
+	int fps_cap = 0;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 

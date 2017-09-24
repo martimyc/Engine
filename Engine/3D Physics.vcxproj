@@ -79,6 +79,8 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="gpudetect\DeviceId.h" />
+    <ClInclude Include="gpudetect\dxgi1_4.h" />
     <ClInclude Include="mmgr.h" />
     <ClInclude Include="nommgr.h" />
     <ClInclude Include="Parson\parson.h" />
@@ -174,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="gpudetect\DeviceId.cpp" />
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="UI_GeometryCollisionTest.cpp" />

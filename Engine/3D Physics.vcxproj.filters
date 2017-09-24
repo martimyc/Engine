@@ -55,6 +55,9 @@
     <Filter Include="Sources\Parson">
       <UniqueIdentifier>{3780ffa8-93ab-4a96-a970-df8ca10b56c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\GPUDetect">
+      <UniqueIdentifier>{7c6b409d-cca7-4191-9b70-a137f1fd84c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -339,6 +342,12 @@
     <ClInclude Include="Parson\parson.h">
       <Filter>Sources\Parson</Filter>
     </ClInclude>
+    <ClInclude Include="gpudetect\DeviceId.h">
+      <Filter>Sources\GPUDetect</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\dxgi1_4.h">
+      <Filter>Sources\GPUDetect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -520,6 +529,9 @@
     </ClCompile>
     <ClCompile Include="Parson\parson.c">
       <Filter>Sources\Parson</Filter>
+    </ClCompile>
+    <ClCompile Include="gpudetect\DeviceId.cpp">
+      <Filter>Sources\GPUDetect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

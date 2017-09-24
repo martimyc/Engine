@@ -1,4 +1,6 @@
 #include <string>
+#include "glut\glut.h"
+#include "gpudetect\DeviceId.h"
 #include "Parson\parson.h"
 #include "imgui-master\imgui.h"
 #include "imgui-master\imgui_impl_sdl.h"
@@ -181,6 +183,37 @@ UPDATE_STATUS Application::EndConfigMenu()
 	ImGui::Text(caps.c_str());
 
 	ImGui::Separator();
+
+	ImGui::Text("OpenGL Version %c", glGetString(GL_VERSION));
+
+	ImGui::Separator();
+
+	uint vendor, device_id;
+	std::wstring brand;
+	unsigned long long video_mem_budget;
+	unsigned long long video_mem_usage;
+	unsigned long long video_mem_available;
+	unsigned long long video_mem_reserved;
+
+	if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
+	{
+		ImGui::Text("Vendor %i device: %i", vendor, device_id);
+		std::string brand_name("Brand: ");
+		char char_array[250];
+		sprintf_s(char_array, 250, "%S", brand.c_str());
+		brand_name += char_array;
+		ImGui::Text(brand_name.c_str());
+		ImGui::Text("VRAM Budget: %u", (unsigned __int64)video_mem_budget);
+		ImGui::Text("VRAM Usage: %u", (unsigned __int64)video_mem_usage);
+		ImGui::Text("VRAM Available: %u", (unsigned __int64)video_mem_available);
+		ImGui::Text("VRAM Reserved: %u", (unsigned __int64)video_mem_reserved);
+
+		// I don't understean this
+		/*info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
+		info.vram_mb_usage = float(video_mem_usage) / (1024.f * 1024.f * 1024.f);
+		info.vram_mb_available = float(video_mem_available) / (1024.f * 1024.f * 1024.f);
+		info.vram_mb_reserved = float(video_mem_reserved) / (1024.f * 1024.f * 1024.f);*/
+	}
 
 	ImGui::End();
 	return ret;
