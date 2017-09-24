@@ -143,7 +143,7 @@ UPDATE_STATUS Application::EndConfigMenu()
 	ImGui::Separator();
 
 	ImGui::Text("CPUs: %i (cache:%i)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
-	ImGui::Text("System RAM: %.1f Gb", SDL_GetSystemRAM());
+	ImGui::Text("System RAM: %.3f Gb", (float)SDL_GetSystemRAM() / 1000.0f);
 
 	std::string caps("Caps: ");
 
