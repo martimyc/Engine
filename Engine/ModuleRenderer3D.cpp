@@ -3,6 +3,7 @@
 #include <gl/GLU.h>
 #include "SDL\include\SDL_opengl.h"
 #include "imgui-master\imgui.h"
+#include "Parson\parson.h"
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
@@ -25,6 +26,11 @@ bool ModuleRenderer3D::Init()
 	LOG("Creating 3D Renderer context");
 	bool ret = true;
 	
+	JSON_Value* config = json_parse_file("config.json");
+	JSON_Object* obj = json_value_get_object(config);
+	JSON_Object* rend = json_object_dotget_object(obj, "3DRenderer");
+	bool VSYNC = json_object_get_boolean(rend, "VSYNC");
+
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 	if(context == NULL)
@@ -100,7 +106,9 @@ bool ModuleRenderer3D::Init()
 	}
 
 	// Projection matrix for
-	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+	OnResize(w, h);
 
 	return ret;
 }

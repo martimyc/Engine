@@ -25,6 +25,7 @@ public:
 	ModuleGUI* gui;
 
 private:
+	std::string title;
 	Timer	ms_timer;
 	float	dt;
 	std::vector<Module*> modules;
@@ -42,6 +43,7 @@ public:
 	bool CleanUp();
 
 	void OpenWebsite(const char* url);
+	std::string GetTitle();
 
 private:
 

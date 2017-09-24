@@ -28,7 +28,7 @@ enum UPDATE_STATUS
 };
 
 // Configuration -----------
-#define SCREEN_WIDTH 1280
+/*#define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 1024
 #define SCREEN_SIZE 1
 #define WIN_FULLSCREEN false
@@ -36,7 +36,7 @@ enum UPDATE_STATUS
 #define WIN_BORDERLESS false
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
-#define TITLE "3D Engine - Marc Latorre & Martí Majó"
+#define TITLE "3D Engine - Marc Latorre & Martí Majó"*/
 
 #define DELETE_PTR( x )		\
 {							\
