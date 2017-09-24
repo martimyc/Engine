@@ -1,3 +1,4 @@
+#include <string>
 #include "Parson\parson.h"
 #include "imgui-master\imgui.h"
 #include "imgui-master\imgui_impl_sdl.h"
@@ -131,6 +132,49 @@ UPDATE_STATUS Application::CreateConfigMenu()
 UPDATE_STATUS Application::EndConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
+
+	ImGui::CollapsingHeader("HardWare");
+
+	SDL_version version;
+	SDL_GetVersion(&version);
+
+	ImGui::Text("SDL Version %i,%i,%i", version.major, version.minor, version.patch);
+
+	ImGui::Separator();
+
+	ImGui::Text("CPUs: %i (cache:%i)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+	ImGui::Text("System RAM: %.1f Gb", SDL_GetSystemRAM());
+
+	std::string caps("Caps: ");
+
+	if (SDL_Has3DNow())
+		caps += "3DNow, ";
+	if(SDL_HasAVX())
+		caps += "AVX, ";
+	// With this program crashes cus of not finding entry point
+	//if (SDL_HasAVX2())
+		//caps += "AVX2";
+	if(SDL_HasAltiVec())
+		caps += "AltiVec, ";
+	if(SDL_HasMMX())
+		caps += "MMX, ";
+	if(SDL_HasRDTSC())
+		caps += "RDTSC, ";
+	if(SDL_HasSSE())
+		caps += "SSE, ";
+	if(SDL_HasSSE2())
+		caps += "SSE 2, ";
+	if(SDL_HasSSE3())
+		caps += "SSE 3, ";
+	if(SDL_HasSSE41())
+		caps += "SSE 4.1, ";
+	if(SDL_HasSSE42())
+		caps += "SSE 4.2";
+
+	ImGui::Text(caps.c_str());
+
+	ImGui::Separator();
+
 	ImGui::End();
 	return ret;
 }

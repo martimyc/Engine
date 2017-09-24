@@ -2,6 +2,7 @@
 #define _APPLICATION
 
 #include <vector>
+#include <string>
 #include "Globals.h"
 #include "Timer.h"
 #include "Module.h"
