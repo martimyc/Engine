@@ -145,7 +145,7 @@ UPDATE_STATUS Application::EndConfigMenu()
 	SDL_version version;
 	SDL_GetVersion(&version);
 
-	ImGui::Text("SDL Version %i,%i,%i", version.major, version.minor, version.patch);
+	ImGui::Text("SDL Version %i.%i.%i", version.major, version.minor, version.patch);
 
 	ImGui::Separator();
 
@@ -232,7 +232,7 @@ void Application::OpenWebsite(const char * url)
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
-std::string Application::GetTitle()
+const std::string Application::GetTitle() const
 {
 	return title;
 }

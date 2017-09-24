@@ -43,7 +43,8 @@ public:
 	bool CleanUp();
 
 	void OpenWebsite(const char* url);
-	std::string GetTitle();
+
+	const std::string GetTitle() const;
 
 private:
 
