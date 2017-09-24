@@ -4,7 +4,7 @@
 #include "ModuleGUI.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
-#include "imgui-master\imgui_impl_sdl.h"
+#include "imgui\imgui_impl_sdl.h"
 
 #define MAX_KEYS 300
 

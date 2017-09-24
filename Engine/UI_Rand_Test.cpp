@@ -1,6 +1,6 @@
 #include "UI_Rand_Test.h"
-#include "imgui-master\imgui.h"
-#include "MathGeoLib-master\src\Algorithm\Random\LCG.h"
+#include "imgui\imgui.h"
+#include "MathGeoLib\src\Algorithm\Random\LCG.h"
 
 int UI_Rand_Test::GetNum(int i)
 {

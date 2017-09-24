@@ -1,9 +1,9 @@
-#include "imgui-master\imgui.h"
+#include "imgui\imgui.h"
 #include "SDL\include\SDL.h"
 #include "Application.h"
 #include "UI_MainMenu.h"
 #include "ModuleGUI.h"
-#include "MathGeoLib-master\src\Geometry\Capsule.h"
+#include "MathGeoLib\src\Geometry\Capsule.h"
 
 UI_MainMenu::UI_MainMenu(ModuleGUI * gui, bool active): UI_Element(UI_MAINMENU, active), gui(gui)
 {}

@@ -1,5 +1,5 @@
-#include "imgui-master\imgui.h"
-#include "MathGeoLib-master\src\MathGeoLib.h"
+#include "imgui\imgui.h"
+#include "MathGeoLib\src\MathGeoLib.h"
 #include "UI_GeometryCollisionTest.h"
 
 UI_GeometryCollisionTest::UI_GeometryCollisionTest(bool active) : UI_Element(UI_GEOMETRY_COLLISION_TEST, active)

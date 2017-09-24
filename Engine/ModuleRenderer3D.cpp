@@ -2,7 +2,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "SDL\include\SDL_opengl.h"
-#include "imgui-master\imgui.h"
+#include "imgui\imgui.h"
 #include "Parson\parson.h"
 #include "Application.h"
 #include "ModuleWindow.h"

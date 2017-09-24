@@ -2,8 +2,8 @@
 #include "glut\glut.h"
 #include "gpudetect\DeviceId.h"
 #include "Parson\parson.h"
-#include "imgui-master\imgui.h"
-#include "imgui-master\imgui_impl_sdl.h"
+#include "imgui\imgui.h"
+#include "imgui\imgui_impl_sdl.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
@@ -188,14 +188,30 @@ UPDATE_STATUS Application::EndConfigMenu()
 
 	ImGui::Separator();
 
-	uint vendor, device_id;
-	std::wstring brand;
-	unsigned long long video_mem_budget;
-	unsigned long long video_mem_usage;
-	unsigned long long video_mem_available;
-	unsigned long long video_mem_reserved;
+	unsigned int vendor_id;
+	unsigned int device_id;
+	unsigned long long video_memory_budget;
+	unsigned long long video_memory_usage;
+	unsigned long long video_memory_available;
+	unsigned long long video_memory_reserved;
+	std::string brand("Brand: ");
+	std::wstring gfx_brand;
 
-	if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
+	if (getGraphicsDeviceInfo(&vendor_id, &device_id, &gfx_brand, &video_memory_budget, &video_memory_usage, &video_memory_available, &video_memory_reserved))
+	{
+		ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
+		char char_array[250];
+		sprintf_s(char_array, 250, "%S", gfx_brand.c_str());
+		brand += char_array;
+		ImGui::Text("Brand: %s", brand.c_str());
+		ImGui::Text("VRAM Budget: %f", (float) video_memory_budget / 1073741824.0f);
+		ImGui::Text("VRAM Usage: %f", (float)video_memory_usage / (1024.f * 1024.f * 1024.f));
+		ImGui::Text("VRAM Available: %f", (float)video_memory_available / (1024.f * 1024.f * 1024.f));
+		ImGui::Text("VRAM Reserved: %f", (float)video_memory_reserved / (1024.f * 1024.f * 1024.f));
+	}
+
+
+	/*if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
 	{
 		ImGui::Text("Vendor %i device: %i", vendor, device_id);
 		std::string brand_name("Brand: ");
@@ -209,11 +225,11 @@ UPDATE_STATUS Application::EndConfigMenu()
 		ImGui::Text("VRAM Reserved: %.1f", float(video_mem_reserved) / (1024.f * 1024.f * 1024.f));
 
 		// I don't understean this
-		/*info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
+		info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
 		info.vram_mb_usage = float(video_mem_usage) / (1024.f * 1024.f * 1024.f);
 		info.vram_mb_available = float(video_mem_available) / (1024.f * 1024.f * 1024.f);
-		info.vram_mb_reserved = float(video_mem_reserved) / (1024.f * 1024.f * 1024.f);*/
-	}
+		info.vram_mb_reserved = float(video_mem_reserved) / (1024.f * 1024.f * 1024.f);
+	}*/
 
 	ImGui::End();
 	return ret;

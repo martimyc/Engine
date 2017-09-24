@@ -1,6 +1,6 @@
-#include "imgui-master/imgui.h"
+#include "imgui/imgui.h"
 #include "SDL\include\SDL.h"
-#include "imgui-master\imgui_impl_sdl.h"
+#include "imgui\imgui_impl_sdl.h"
 #include "glut\glut.h"
 #include "ModuleWindow.h"
 #include "Application.h"
