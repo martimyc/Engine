@@ -1,3 +1,6 @@
+#include "Parson\parson.h"
+#include "imgui-master\imgui.h"
+#include "imgui-master\imgui_impl_sdl.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
@@ -5,7 +8,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleGUI.h"
 #include "Application.h"
-#include "Parson\parson.h"
+
 
 Application::Application()
 {
@@ -80,21 +83,76 @@ void Application::PrepareUpdate()
 {
 	dt = (float)ms_timer.Read() / 1000.0f;
 	ms_timer.Start();
+
+	ImGui_ImplSdlGL2_NewFrame(window->window);
 }
 
 // ---------------------------------------------
 void Application::FinishUpdate()
-{}
+{
+	float fps = ImGui::GetIO().Framerate;
+	float ms = 1000.0f / fps;
+
+	if (fps_cap != 0)
+	{
+		float cap_time = 1000.0f / fps_cap;
+		float wait = ms - cap_time;
+
+		if (wait < 0.0f)
+		{
+			LOG("Running below desired fps");
+		}
+		else
+			Sleep(wait);
+	}
+
+	ms_log.push_back(ms);
+	fps_log.push_back(fps);
+}
+
+UPDATE_STATUS Application::CreateConfigMenu()
+{
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
+
+	ImGui::Begin("Configuration");
+
+	if (fps_log.size() > 0 && ms_log.size() > 0)
+	{
+		char title[25];
+		sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+		sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
+		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+	}
+
+	return ret;
+}
+
+UPDATE_STATUS Application::EndConfigMenu()
+{
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
+	ImGui::End();
+	return ret;
+}
 
 // Call PreUpdate, Update and PostUpdate on all modules
 UPDATE_STATUS Application::Update()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 	PrepareUpdate();
-	
+
 	std::vector<Module*>::const_iterator it = modules.begin();
-	
-	for(; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+
+	//Configuration menu
+	ret = CreateConfigMenu();
+
+	for (; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		ret = (*it)->Configuration(dt);
+
+	ret = EndConfigMenu();
+	//--
+
+	for(it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate(dt);
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
@@ -104,6 +162,7 @@ UPDATE_STATUS Application::Update()
 		ret = (*it)->PostUpdate(dt);
 
 	FinishUpdate();
+
 	return ret;
 }
 

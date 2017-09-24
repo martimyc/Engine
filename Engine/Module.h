@@ -44,6 +44,11 @@ public:
 		return UPDATE_CONTINUE;
 	}
 
+	virtual UPDATE_STATUS Configuration(float dt)
+	{
+		return UPDATE_CONTINUE;
+	}
+
 	virtual bool CleanUp() 
 	{ 
 		return true; 

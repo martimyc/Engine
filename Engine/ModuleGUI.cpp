@@ -93,8 +93,6 @@ UPDATE_STATUS ModuleGUI::Update(float dt)
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	ImGui_ImplSdlGL2_NewFrame(App->window->window);
-
 	CreateMainMenuBar();
 
 	// UI_Elements updates loop

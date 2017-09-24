@@ -1,7 +1,1 @@
-{
-  "App": {
-    "name": "Test",
-    "max_fps": 46
-  },
-  "Test2": { "Test": "" }
-}
+{"App":{"name":"Test","max_fps":46},"Test2":{"Test":""}}

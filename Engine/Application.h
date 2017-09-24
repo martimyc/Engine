@@ -27,6 +27,9 @@ private:
 	Timer	ms_timer;
 	float	dt;
 	std::vector<Module*> modules;
+	int fps_cap = 60;
+	std::vector<float> fps_log;
+	std::vector<float> ms_log;
 
 public:
 
@@ -44,6 +47,8 @@ private:
 	void AddModule(Module* mod);
 	void PrepareUpdate();
 	void FinishUpdate();
+	UPDATE_STATUS CreateConfigMenu();
+	UPDATE_STATUS EndConfigMenu();
 };
 
 #endif //_APPLICATION
