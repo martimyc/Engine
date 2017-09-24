@@ -203,10 +203,10 @@ UPDATE_STATUS Application::EndConfigMenu()
 		sprintf_s(char_array, 250, "%S", brand.c_str());
 		brand_name += char_array;
 		ImGui::Text(brand_name.c_str());
-		ImGui::Text("VRAM Budget: %u", (unsigned __int64)video_mem_budget);
-		ImGui::Text("VRAM Usage: %u", (unsigned __int64)video_mem_usage);
-		ImGui::Text("VRAM Available: %u", (unsigned __int64)video_mem_available);
-		ImGui::Text("VRAM Reserved: %u", (unsigned __int64)video_mem_reserved);
+		ImGui::Text("VRAM Budget: %.1f", float(video_mem_budget) / 1073741824.0f);
+		ImGui::Text("VRAM Usage: %.1f", float(video_mem_usage) / (1024.f * 1024.f * 1024.f));
+		ImGui::Text("VRAM Available: %.1f", float(video_mem_available) / (1024.f * 1024.f * 1024.f));
+		ImGui::Text("VRAM Reserved: %.1f", float(video_mem_reserved) / (1024.f * 1024.f * 1024.f));
 
 		// I don't understean this
 		/*info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
