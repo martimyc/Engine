@@ -1,7 +1,21 @@
 {
   "App": {
-    "name": "Test",
-    "max_fps": 46
+    "title": "Engine 3D - Marc Latorre && Martí Majó",
+    "max_fps": 60
   },
-  "Test2": { "Test": "" }
+  "Audio": {
+    "default_music_fade_time": 2.0
+  },
+  "3DRenderer": {
+    "VSYNC": true
+  },
+  "Window": {
+    "screen_width": 1280,
+    "screen_height": 1024,
+    "screen_size": 1,
+    "fullscreen": false,
+    "resizable": true,
+    "borderless": false,
+    "fullscreen_desktop": false
+  }
 }

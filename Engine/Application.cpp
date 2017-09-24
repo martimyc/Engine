@@ -42,6 +42,13 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	
+	JSON_Value* config = json_parse_file("config.json");
+	JSON_Object* obj = json_value_get_object(config);
+	JSON_Object* app = json_object_dotget_object(obj, "App"); 
+	title = json_object_get_string(app, "title");
+
+	/*
 	//Charge config	 TEST
 	JSON_Value* config = json_parse_file("config.json");
 	JSON_Object* obj = json_value_get_object(config);	//Gets starting doc
@@ -57,7 +64,7 @@ bool Application::Init()
 	json_object_dotset_value(obj, "Test2", test);
 	json_serialize_to_file(config, "config.json");
 	//------------------
-
+	*/
 
 	std::vector<Module*>::const_iterator it = modules.begin();
 
@@ -120,6 +127,11 @@ bool Application::CleanUp()
 void Application::OpenWebsite(const char * url)
 {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
+std::string Application::GetTitle()
+{
+	return title;
 }
 
 void Application::AddModule(Module* mod)
