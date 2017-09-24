@@ -1,23 +1,26 @@
-/////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2017 Intel Corporation
+// Copyright 2010 Intel Corporation
+// All Rights Reserved
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-/////////////////////////////////////////////////////////////////////////////////////////////
+// Permission is granted to use, copy, distribute and prepare derivative works of this
+// software for any purpose and without fee, provided, that the above copyright notice
+// and this statement appear in all copies.  Intel makes no representations about the
+// suitability of this software for any purpose.  THIS SOFTWARE IS PROVIDED ""AS IS.""
+// INTEL SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, AND ALL LIABILITY,
+// INCLUDING CONSEQUENTIAL AND OTHER INDIRECT DAMAGES, FOR THE USE OF THIS SOFTWARE,
+// INCLUDING LIABILITY FOR INFRINGEMENT OF ANY PROPRIETARY RIGHTS, AND INCLUDING THE
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
+// assume any responsibility for any errors which may appear in this software nor any
+// responsibility to update it.
 
 //
 // DeviceId.h
 //
 #pragma once
+
+
+// Warning disabled ---
+#pragma warning( disable : 4577 ) // Warning that exceptions are disabled
+#pragma warning( disable : 4530 ) // Warning that exceptions are disabled
 
 #include <windows.h>
 #include <string>
@@ -32,8 +35,7 @@ typedef enum
     IGFX_HASWELL,
 	IGFX_VALLEYVIEW,
 	IGFX_BROADWELL,
-	IGFX_SKYLAKE,
-	IGFX_KABYLAKE
+	IGFX_SKYLAKE
 } PRODUCT_FAMILY;
 
 //
@@ -75,9 +77,12 @@ struct IntelDeviceInfoHeader
  *****************************************************************************************/
 
 bool getGraphicsDeviceInfo( unsigned int* VendorId,
-                          unsigned int* DeviceId,
-						  unsigned __int64* VideoMemory,
-						  std::wstring* GFXBrand);
+							unsigned int* DeviceId,
+							std::wstring* GFXBrand,
+							unsigned __int64* VideoMemoryBudget,
+							unsigned __int64* VideoMemoryCurrentUsage,
+							unsigned __int64* VideoMemoryAvailable,
+							unsigned __int64* VideoMemoryReserved);
 
 /*****************************************************************************************
  * getIntelDeviceInfo
@@ -95,7 +100,6 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
  *     This function is only valid on Intel graphics devices SNB and later.
  *****************************************************************************************/
 
-//long getIntelDeviceInfo( unsigned int VendorId, IntelDeviceInfoHeader *pIntelDeviceInfoHeader, void *pIntelDeviceInfoBuffer );
 
 
 /*****************************************************************************************
@@ -106,7 +110,6 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
  *      instant access of graphics memory
  *
  *****************************************************************************************/
-//unsigned int checkDxExtensionVersion();
 
 
 /*****************************************************************************************

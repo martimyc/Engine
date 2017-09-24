@@ -58,6 +58,9 @@
     <Filter Include="Sources\gpudetect">
       <UniqueIdentifier>{932cf93a-ce40-4af6-bceb-d64fc8d813cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\gpudetect\old">
+      <UniqueIdentifier>{4ae5d12b-7bcf-45c4-bb2e-30363d8aea71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -348,6 +351,12 @@
     <ClInclude Include="gpudetect\ID3D10Extensions.h">
       <Filter>Sources\gpudetect</Filter>
     </ClInclude>
+    <ClInclude Include="gpudetect\old\DeviceId.h">
+      <Filter>Sources\gpudetect\old</Filter>
+    </ClInclude>
+    <ClInclude Include="gpudetect\old\dxgi1_4.h">
+      <Filter>Sources\gpudetect\old</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -527,11 +536,14 @@
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp">
       <Filter>Sources\MathGeoLib\Time</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Sources\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="gpudetect\DeviceId.cpp">
       <Filter>Sources\gpudetect</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>Sources\ImGui</Filter>
+    <ClCompile Include="gpudetect\old\DeviceId.cpp">
+      <Filter>Sources\gpudetect\old</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

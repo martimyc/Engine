@@ -1,6 +1,7 @@
 #include <string>
 #include "glut\glut.h"
-#include "gpudetect\DeviceId.h"
+//#include "gpudetect\DeviceId.h"
+#include "gpudetect\old\DeviceId.h"
 #include "Parson\parson.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
@@ -188,6 +189,23 @@ UPDATE_STATUS Application::EndConfigMenu()
 
 	ImGui::Separator();
 
+	//new
+	/*unsigned int vendor_id;
+	unsigned int device_id;
+	unsigned long long video_memory;
+	std::string brand("Brand: ");
+	std::wstring gfx_brand;
+	
+	if (getGraphicsDeviceInfo(&vendor_id, &device_id,  &video_memory, &gfx_brand))
+	{
+		ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
+		char char_array[250];
+		sprintf_s(char_array, 250, "%S", gfx_brand.c_str());
+		brand += char_array;
+		ImGui::Text("Brand: %s", brand.c_str());
+		ImGui::Text("VRAM: %i", video_memory);
+	}*/
+
 	unsigned int vendor_id;
 	unsigned int device_id;
 	unsigned long long video_memory_budget;
@@ -209,7 +227,6 @@ UPDATE_STATUS Application::EndConfigMenu()
 		ImGui::Text("VRAM Available: %f", (float)video_memory_available / (1024.f * 1024.f * 1024.f));
 		ImGui::Text("VRAM Reserved: %f", (float)video_memory_reserved / (1024.f * 1024.f * 1024.f));
 	}
-
 
 	/*if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
 	{
