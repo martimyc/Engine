@@ -52,10 +52,26 @@ bool ModuleHardware::Start()
 	unsigned long long video_memory;
 	if (!getGraphicsDeviceInfo(&vendor_id, &device_id, &video_memory, &gfx_brand))
 	{
-		gpudetect = false;
-		App->LOG("Can not identify GPU and VRAM");
+		unsigned long long video_memory_budget;
+		unsigned long long video_memory_usage;
+		unsigned long long video_memory_available;
+		unsigned long long video_memory_reserved;
+
+		if (!getGraphicsDeviceInfo(&vendor_id, &device_id, &gfx_brand, &video_memory_budget, &video_memory_usage, &video_memory_available, &video_memory_reserved))
+		{
+			gpudetect = false;
+			App->LOG("Can not identify GPU and VRAM");
+		}
+		else
+		{
+			vram_budget = (float)video_memory_budget / (1024.f * 1024.f * 1024.f);
+			vram_usage = (float)video_memory_usage / (1024.f * 1024.f * 1024.f);
+			vram_available = (float)video_memory_available / (1024.f * 1024.f * 1024.f);
+			vram_reserved = (float)video_memory_reserved / (1024.f * 1024.f * 1024.f);
+		}
 	}
-	vram = (float)video_memory / (1024.f * 1024.f * 1024.f);
+	else
+		vram = (float)video_memory / (1024.f * 1024.f * 1024.f);
 
 	return ret;
 }
@@ -116,7 +132,6 @@ UPDATE_STATUS ModuleHardware::Configuration(float dt)
 		unsigned long long video_memory_usage;
 		unsigned long long video_memory_available;
 		unsigned long long video_memory_reserved;
-		std::string brand("Brand: ");
 		std::wstring gfx_brand;
 
 		if (getGraphicsDeviceInfo(&vendor_id, &device_id, &gfx_brand, &video_memory_budget, &video_memory_usage, &video_memory_available, &video_memory_reserved))

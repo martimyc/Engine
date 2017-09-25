@@ -15,8 +15,13 @@ private:
 	bool gpudetect = true;
 	unsigned int vendor_id;
 	unsigned int device_id;
+	//new
 	float vram;
-	std::string brand;
+	//old (only if new doesnt work)
+	float vram_budget;
+	float vram_usage;
+	float vram_available;
+	float vram_reserved;
 	std::wstring gfx_brand;
 
 public:

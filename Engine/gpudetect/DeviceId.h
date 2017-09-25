@@ -79,6 +79,15 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
 						  unsigned __int64* VideoMemory,
 						  std::wstring* GFXBrand);
 
+bool getGraphicsDeviceInfo(unsigned int* VendorId,
+	unsigned int* DeviceId,
+	std::wstring* GFXBrand,
+	unsigned __int64* VideoMemoryBudget,
+	unsigned __int64* VideoMemoryCurrentUsage,
+	unsigned __int64* VideoMemoryAvailable,
+	unsigned __int64* VideoMemoryReserved);
+
+
 /*****************************************************************************************
  * getIntelDeviceInfo
  *
