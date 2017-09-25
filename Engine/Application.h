@@ -13,8 +13,8 @@ class ModuleInput;
 class ModuleAudio;
 class ModuleRenderer3D;
 class ModuleCamera3D;
-//class ModuleGUI;
 class ModuleConsole;
+class ModuleHardware;
 
 class Application
 {
@@ -24,8 +24,8 @@ public:
 	ModuleAudio* audio;
 	ModuleRenderer3D* renderer_3d;
 	ModuleCamera3D* camera;
-	//ModuleGUI* gui;
 	ModuleConsole* console;
+	ModuleHardware* hardware;
 
 private:
 	std::string title;

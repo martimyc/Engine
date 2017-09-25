@@ -24,7 +24,7 @@ public:
 
 	bool Start();
 
-	UPDATE_STATUS Configuration();
+	UPDATE_STATUS Configuration(float dt);
 
 };
 

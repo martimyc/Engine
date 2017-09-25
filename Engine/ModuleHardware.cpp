@@ -53,7 +53,7 @@ bool ModuleHardware::Start()
 	return ret;
 }
 
-UPDATE_STATUS ModuleHardware::Configuration()
+UPDATE_STATUS ModuleHardware::Configuration(float dt)
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 

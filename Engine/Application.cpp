@@ -9,6 +9,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
 #include "ModuleConsole.h"
+#include "ModuleHardware.h"
 #include "Application.h"
 
 Application::Application()
@@ -18,8 +19,8 @@ Application::Application()
 	audio = new ModuleAudio(this, true);
 	renderer_3d = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
-	//gui = new ModuleGUI(this);
 	console = new ModuleConsole(this);
+	hardware = new ModuleHardware(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -31,7 +32,7 @@ Application::Application()
 	AddModule(input);
 	AddModule(audio);
 	AddModule(camera);
-	//AddModule(gui);
+	AddModule(hardware);
 	
 	// Scenes
 
@@ -159,6 +160,7 @@ UPDATE_STATUS Application::CreateConfigMenu()
 
 UPDATE_STATUS Application::EndConfigMenu()
 {
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 	return UPDATE_CONTINUE;
 }
