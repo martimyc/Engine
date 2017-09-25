@@ -23,9 +23,9 @@ bool ModuleHardware::Start()
 		caps += "3DNow, ";
 	if (SDL_HasAVX())
 		caps += "AVX, ";
-	// With this program crashes cus of not finding entry point
-	if (SDL_HasAVX2())
-		caps += "AVX2";
+	// With this program crashes cus of not finding entry point only in debug
+	//if (SDL_HasAVX2())
+		//caps += "AVX2";
 	if (SDL_HasAltiVec())
 		caps += "AltiVec, ";
 	if (SDL_HasMMX())

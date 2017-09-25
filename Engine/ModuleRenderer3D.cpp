@@ -134,7 +134,7 @@ UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 {
-	ImVec4 clear_color = ImColor(114, 144, 154);
+	ImVec4 clear_color = ImColor(0, 0, 0);
 	ImGuiIO io = ImGui::GetIO();
 	glViewport(0, 0, (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x), (int)(io.DisplaySize.y* io.DisplayFramebufferScale.y));
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);

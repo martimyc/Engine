@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "imgui\imgui_impl_sdl.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Parson\parson.h"
@@ -81,6 +82,7 @@ bool ModuleWindow::Init()
 
 		window = SDL_CreateWindow(App->GetTitle().c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 		SDL_GL_CreateContext(window);
+		ImGui_ImplSdlGL2_Init(window);
 
 		if(window == NULL)
 		{
