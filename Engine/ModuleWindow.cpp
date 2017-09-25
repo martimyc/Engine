@@ -14,8 +14,7 @@ ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, "
 
 // Destructor
 ModuleWindow::~ModuleWindow()
-{
-}
+{}
 
 // Called before render is available
 bool ModuleWindow::Init()
