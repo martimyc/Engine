@@ -118,9 +118,7 @@ void Application::FinishUpdate()
 		}
 		else
 			ms_timer.Sleep(wait);
-	}
-
-
+	}	
 }
 
 UPDATE_STATUS Application::CreateConfigMenu()
@@ -251,10 +249,9 @@ UPDATE_STATUS Application::EndConfigMenu()
 			ImGui::Text("VRAM Available: %f", (float)video_memory_available / (1024.f * 1024.f * 1024.f));
 			ImGui::Text("VRAM Reserved: %f", (float)video_memory_reserved / (1024.f * 1024.f * 1024.f));
 		}
-
-		ImGui::End();
-		return ret;
 	}
+	ImGui::End();
+	return ret;
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
@@ -264,10 +261,12 @@ UPDATE_STATUS Application::Update()
 	PrepareUpdate();
 
 	std::vector<Module*>::const_iterator it = modules.begin();
+	Timer t;
 
 	for(; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate(dt);
-	
+	LOG("PREUPDATE %f", t.Read() / 1000.0f);
+	t.Start();
 	//Configuration menu
 	if(ret == UPDATE_CONTINUE)
 		ret = CreateConfigMenu();
@@ -278,13 +277,15 @@ UPDATE_STATUS Application::Update()
 	if (ret == UPDATE_CONTINUE)
 		ret = EndConfigMenu();
 	//--
-
+	LOG("CONFIG %f", t.Read() / 1000.0f);
+	t.Start();
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->Update(dt);
-
+	LOG("UPDATE %f", t.Read() / 1000.0f);
+	t.Start();
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate(dt);
-
+	LOG("POSTUPDATE %f", t.Read() / 1000.0f);
 	FinishUpdate();
 
 	return ret;

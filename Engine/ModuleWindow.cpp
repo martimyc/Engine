@@ -109,12 +109,12 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 		JSON_Object* win_obj = json_object_dotget_object(obj, "Window");
 		JSON_Value* win = json_value_init_object();
 
-		if (ImGui::SliderInt("Screen Width", &screen_width, 256, 1920))
+		if (ImGui::SliderInt("Screen Width", &screen_width, 512, 1920))
 			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
 		json_object_set_number(json_object(win), "screen_width", screen_width);
 		json_object_dotset_value(obj, "Window", win);
 		
-		if (ImGui::SliderInt("Screen Height", &screen_height, 128, 1080))
+		if (ImGui::SliderInt("Screen Height", &screen_height, 256, 1080))
 			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
 		json_object_set_number(json_object(win), "screen_height", screen_height);
 		json_object_dotset_value(obj, "Window", win);
@@ -126,53 +126,69 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 		
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))
 		{
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-			json_object_set_boolean(json_object(win), "fullscreen", true);
-			json_object_dotset_value(obj, "Window", win);
+			if (!fullscreen)
+			{
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+				fullscreen = true;
+			}
+			else
+			{
+				SDL_SetWindowFullscreen(window, NULL);
+				fullscreen = false;
+			}
 		}
-		else
-		{
-			json_object_set_boolean(json_object(win), "fullscreen", false);
-			json_object_dotset_value(obj, "Window", win);
-		}
-		
+		json_object_set_boolean(json_object(win), "fullscreen", fullscreen);
+		json_object_dotset_value(obj, "Window", win);
+
 		if (ImGui::Checkbox("Resizable", &resizable))
 		{
-			//SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, true);
-			json_object_set_boolean(json_object(win), "resizable", true);
-			json_object_dotset_value(obj, "Window", win);
+			if (!resizable)
+			{
+				resizable = true;
+				//SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
+			}
+			else
+			{
+				resizable = false;
+				//SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
+			}
 		}
-		else
-		{
-			//SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, false);
-			json_object_set_boolean(json_object(win), "resizable", false);
-			json_object_dotset_value(obj, "Window", win);
-		}
+		json_object_set_boolean(json_object(win), "resizable", resizable);
+		json_object_dotset_value(obj, "Window", win);
 		
 		if (ImGui::Checkbox("Borderless", &borderless))
 		{
-			SDL_SetWindowBordered(window, SDL_TRUE);
-			json_object_set_boolean(json_object(win), "borderless", true);
-			json_object_dotset_value(obj, "Window", win);
+			if (!borderless)
+			{
+				borderless = true;
+				SDL_SetWindowBordered(window, SDL_TRUE);
+			}
+			else
+			{
+				borderless = false;
+				SDL_SetWindowBordered(window, SDL_FALSE);
+			}
+
 		}
-		else
-		{
-			SDL_SetWindowBordered(window, SDL_FALSE);
-			json_object_set_boolean(json_object(win), "borderless", false);
-			json_object_dotset_value(obj, "Window", win);
-		}
+		json_object_set_boolean(json_object(win), "borderless", borderless);
+		json_object_dotset_value(obj, "Window", win);
 		
 		if (ImGui::Checkbox("Fullscreen Desktop", &fullscreen_desktop))
 		{
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			json_object_set_boolean(json_object(win), "fullscreen_desktop", true);
-			json_object_dotset_value(obj, "Window", win);
+			if(!fullscreen_desktop)
+			{
+				fullscreen_desktop = true;
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			}
+			else
+			{
+				fullscreen_desktop = false;
+				SDL_SetWindowFullscreen(window, NULL);
+			}
 		}
-		else
-		{
-			json_object_set_boolean(json_object(win), "fullscreen_desktop", false);
-			json_object_dotset_value(obj, "Window", win);
-		}
+		json_object_set_boolean(json_object(win), "fullscreen_desktop", fullscreen_desktop);
+		json_object_dotset_value(obj, "Window", win); 
+
 
 		json_serialize_to_file(config, "config.json");
 	}
