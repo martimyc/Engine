@@ -6,11 +6,13 @@
 
 #include "Application.h"
 #include "Globals.h"
-#include "imgui-master\imgui.h"
+#include "imgui\imgui.h"
 
 #include "SDL/include/SDL.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
+
+#include "ModuleConsole.h"
 
 enum MAIN_STATES
 {
@@ -23,8 +25,6 @@ enum MAIN_STATES
 
 int main(int argc, char ** argv)
 {
-	LOG("Starting game");
-
 	int main_return = EXIT_FAILURE;
 	MAIN_STATES state = MAIN_CREATION;
 	Application* App = NULL;
@@ -37,23 +37,21 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			LOG("-------------- Application Creation --------------");
 			App = new Application();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
-			LOG("-------------- Application Init --------------");
 			if (App->Init() == false)
 			{
-				LOG("Application Init exits with ERROR");
+				App->LOG("Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_UPDATE;
-				LOG("-------------- Application Update --------------");
+				App->LOG("-------------- Application Update --------------");
 			}
 
 			break;
@@ -64,7 +62,7 @@ int main(int argc, char ** argv)
 
 			if (update_return == UPDATE_ERROR)
 			{
-				LOG("Application Update exits with ERROR");
+				App->LOG("Application Update exits with ERROR");
 				state = MAIN_EXIT;
 			}
 
@@ -75,10 +73,10 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			LOG("-------------- Application CleanUp --------------");
+			App->LOG("-------------- Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
-				LOG("Application CleanUp exits with ERROR");
+				App->LOG("Application CleanUp exits with ERROR");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -89,8 +87,6 @@ int main(int argc, char ** argv)
 
 		}
 	}
-
 	delete App;
-	LOG("Exiting game");
 	return main_return;
 }

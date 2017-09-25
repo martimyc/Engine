@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "MathGeoLib\src\Time\Clock.h"
 #include "Globals.h"
 #include "Timer.h"
 #include "Module.h"
@@ -13,6 +14,7 @@ class ModuleAudio;
 class ModuleRenderer3D;
 class ModuleCamera3D;
 class ModuleGUI;
+class ModuleConsole;
 
 class Application
 {
@@ -23,9 +25,13 @@ public:
 	ModuleRenderer3D* renderer_3d;
 	ModuleCamera3D* camera;
 	ModuleGUI* gui;
+	ModuleConsole* console;
 
 private:
 	std::string title;
+	Clock	ms_timer;
+	unsigned long last_frame_time = 0;
+	unsigned int total_frames;
 	std::string organization;
 	Timer	ms_timer;
 	float	dt;

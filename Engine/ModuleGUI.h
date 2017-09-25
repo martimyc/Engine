@@ -2,7 +2,7 @@
 #define _MODULE_GUI
 
 #include "Module.h"
-#include "imgui-master\imgui.h"
+#include "imgui\imgui.h"
 
 enum UI_TYPE;
 class UI_Element;
