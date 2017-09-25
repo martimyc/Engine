@@ -2,7 +2,7 @@
 #include "ModuleConsole.h"
 
 
-ModuleConsole::ModuleConsole(Application * parent, bool start_enabled): Module(parent, start_enabled)
+ModuleConsole::ModuleConsole(Application * parent, bool start_enabled): Module(parent, "Console", start_enabled)
 {}
 
 ModuleConsole::~ModuleConsole()
@@ -11,10 +11,8 @@ ModuleConsole::~ModuleConsole()
 UPDATE_STATUS ModuleConsole::Update(float dt)
 {
 	ImGui::Begin("Console");
-	for (std::vector<std::string>::const_reverse_iterator it = log_vec.rbegin(); it != log_vec.rend(); ++it)
-	{
+	for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
 		ImGui::Text(it->c_str());
-	}
 	ImGui::End();
 	return UPDATE_CONTINUE;
 }
@@ -32,5 +30,8 @@ void ModuleConsole::Log(const char file[], int line, const char* format, ...)
 	sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
 	OutputDebugString(tmp_string2);
 
-	log_vec.push_back(std::string(tmp_string2));
+	if (log_vec.size() >= MAX_LOGS)
+		log_vec.pop_back();
+
+	log_vec.push_front(std::string(tmp_string2));
 }

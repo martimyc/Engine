@@ -9,12 +9,11 @@
 #include "ModuleCamera3D.h"
 #include "ModuleConsole.h"
 #include "ModuleRenderer3D.h"
-#include "ModuleGUI.h"
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
-ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, "Renderer3D", start_enabled)
 {}
 
 // Destructor
@@ -135,8 +134,12 @@ UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 {
-	// Rendering UI
-	App->gui->PreRender();
+	ImVec4 clear_color = ImColor(114, 144, 154);
+	ImGuiIO io = ImGui::GetIO();
+	glViewport(0, 0, (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x), (int)(io.DisplaySize.y* io.DisplayFramebufferScale.y));
+	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	ImGui::Render();
 
 	SDL_GL_SwapWindow(App->window->window);

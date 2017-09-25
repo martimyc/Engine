@@ -13,7 +13,7 @@ class ModuleInput;
 class ModuleAudio;
 class ModuleRenderer3D;
 class ModuleCamera3D;
-class ModuleGUI;
+//class ModuleGUI;
 class ModuleConsole;
 
 class Application
@@ -24,7 +24,7 @@ public:
 	ModuleAudio* audio;
 	ModuleRenderer3D* renderer_3d;
 	ModuleCamera3D* camera;
-	ModuleGUI* gui;
+	//ModuleGUI* gui;
 	ModuleConsole* console;
 
 private:

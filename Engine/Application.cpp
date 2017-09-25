@@ -1,7 +1,5 @@
 #include <string>
 #include "glut\glut.h"
-//#include "gpudetect\DeviceId.h"
-#include "gpudetect\old\DeviceId.h"
 #include "Parson\parson.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
@@ -10,7 +8,6 @@
 #include "ModuleAudio.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
-#include "ModuleGUI.h"
 #include "ModuleConsole.h"
 #include "Application.h"
 
@@ -21,7 +18,7 @@ Application::Application()
 	audio = new ModuleAudio(this, true);
 	renderer_3d = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
-	gui = new ModuleGUI(this);
+	//gui = new ModuleGUI(this);
 	console = new ModuleConsole(this);
 
 	// The order of calls is very important!
@@ -34,7 +31,7 @@ Application::Application()
 	AddModule(input);
 	AddModule(audio);
 	AddModule(camera);
-	AddModule(gui);
+	//AddModule(gui);
 	
 	// Scenes
 
@@ -164,97 +161,8 @@ UPDATE_STATUS Application::CreateConfigMenu()
 
 UPDATE_STATUS Application::EndConfigMenu()
 {
-	UPDATE_STATUS ret = UPDATE_CONTINUE;
-
-	if (ImGui::CollapsingHeader("HardWare"))
-	{
-
-		SDL_version version;
-		SDL_GetVersion(&version);
-
-		ImGui::Text("SDL Version %i.%i.%i", version.major, version.minor, version.patch);
-
-		ImGui::Separator();
-
-		ImGui::Text("CPUs: %i (cache:%i)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
-		ImGui::Text("System RAM: %.3f Gb", (float)SDL_GetSystemRAM() / 1000.0f);
-
-		std::string caps("Caps: ");
-
-		if (SDL_Has3DNow())
-			caps += "3DNow, ";
-		if (SDL_HasAVX())
-			caps += "AVX, ";
-		// With this program crashes cus of not finding entry point
-		//if (SDL_HasAVX2())
-			//caps += "AVX2";
-		if (SDL_HasAltiVec())
-			caps += "AltiVec, ";
-		if (SDL_HasMMX())
-			caps += "MMX, ";
-		if (SDL_HasRDTSC())
-			caps += "RDTSC, ";
-		if (SDL_HasSSE())
-			caps += "SSE, ";
-		if (SDL_HasSSE2())
-			caps += "SSE 2, ";
-		if (SDL_HasSSE3())
-			caps += "SSE 3, ";
-		if (SDL_HasSSE41())
-			caps += "SSE 4.1, ";
-		if (SDL_HasSSE42())
-			caps += "SSE 4.2";
-
-		ImGui::Text(caps.c_str());
-
-		ImGui::Separator();
-
-		ImGui::Text("OpenGL Version %c", glGetString(GL_VERSION));
-
-		ImGui::Separator();
-
-		//new
-		/*unsigned int vendor_id;
-		unsigned int device_id;
-		unsigned long long video_memory;
-		std::string brand("Brand: ");
-		std::wstring gfx_brand;
-
-		if (getGraphicsDeviceInfo(&vendor_id, &device_id,  &video_memory, &gfx_brand))
-		{
-			ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
-			char char_array[250];
-			sprintf_s(char_array, 250, "%S", gfx_brand.c_str());
-			brand += char_array;
-			ImGui::Text("Brand: %s", brand.c_str());
-			ImGui::Text("VRAM: %i", video_memory);
-		}*/
-
-		unsigned int vendor_id;
-		unsigned int device_id;
-		unsigned long long video_memory_budget;
-		unsigned long long video_memory_usage;
-		unsigned long long video_memory_available;
-		unsigned long long video_memory_reserved;
-		std::string brand("Brand: ");
-		std::wstring gfx_brand;
-
-		if (getGraphicsDeviceInfo(&vendor_id, &device_id, &gfx_brand, &video_memory_budget, &video_memory_usage, &video_memory_available, &video_memory_reserved))
-		{
-			ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
-			char char_array[250];
-			sprintf_s(char_array, 250, "%S", gfx_brand.c_str());
-			brand += char_array;
-			ImGui::Text("Brand: %s", brand.c_str());
-			ImGui::Text("VRAM Budget: %f", (float)video_memory_budget / 1073741824.0f);
-			ImGui::Text("VRAM Usage: %f", (float)video_memory_usage / (1024.f * 1024.f * 1024.f));
-			ImGui::Text("VRAM Available: %f", (float)video_memory_available / (1024.f * 1024.f * 1024.f));
-			ImGui::Text("VRAM Reserved: %f", (float)video_memory_reserved / (1024.f * 1024.f * 1024.f));
-		}
-
-		ImGui::End();
-		return ret;
-	}
+	ImGui::End();
+	return UPDATE_CONTINUE;
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
@@ -265,8 +173,17 @@ UPDATE_STATUS Application::Update()
 
 	std::vector<Module*>::const_iterator it = modules.begin();
 
-	for(; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PreUpdate(dt);
+	ImGui::Begin("PreUpdates");
+	for (; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+	{
+		int ms;
+		ret = (*it)->PreUpdateWithTimer(dt, ms_timer, ms);
+		std::string s("Module ");
+		s += (*it)->name;
+		s += " preupdate time : %i";
+		ImGui::Text(s.c_str(), ms);
+	}
+	ImGui::End();
 	
 	//Configuration menu
 	if(ret == UPDATE_CONTINUE)
@@ -279,11 +196,22 @@ UPDATE_STATUS Application::Update()
 		ret = EndConfigMenu();
 	//--
 
+	ImGui::Begin("Updates");
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->Update(dt);
+	{
+		int ms;
+		ret = (*it)->UpdateWithTimer(dt, ms_timer, ms);
+		std::string s("Module ");
+		s += (*it)->name;
+		s += " update time : %i";
+		ImGui::Text(s.c_str(), ms);
+	}
+	ImGui::End();
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+	{
 		ret = (*it)->PostUpdate(dt);
+	}
 
 	FinishUpdate();
 

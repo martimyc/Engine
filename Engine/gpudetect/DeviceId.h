@@ -115,7 +115,7 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
 *      Parses CPUID output to find the brand and vendor strings.
 *
 *****************************************************************************************/
-void getCPUInfo(std::string* cpubrand, std::string* cpuvendor);
+//void getCPUInfo(std::string* cpubrand, std::string* cpuvendor);
 
 
 /*****************************************************************************************
@@ -129,9 +129,7 @@ void getCPUInfo(std::string* cpubrand, std::string* cpuvendor);
 *      another) does not always work.
 *
 *****************************************************************************************/
-PRODUCT_FAMILY getGTGeneration(unsigned int deviceId);
-
-
+//PRODUCT_FAMILY getGTGeneration(unsigned int deviceId);
 
 
 #define GGF_SUCCESS 0

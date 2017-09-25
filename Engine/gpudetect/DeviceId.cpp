@@ -320,15 +320,15 @@ long getIntelDeviceInfo( unsigned int VendorId, IntelDeviceInfoHeader *pIntelDev
 	memcpy( pIntelDeviceInfoBuffer, pDeviceInfoBuffer, pIntelDeviceInfoHeader->Size );
 
 	return GGF_SUCCESS;
-}*/
-
+}
+*/
 /*****************************************************************************************
 * getCPUInfo
 *
 *      Parses CPUID output to find the brand and vendor strings.
 *
 *****************************************************************************************/
-
+/*
 void getCPUInfo(std::string* cpubrand, std::string* cpuvendor)
 {
 
@@ -367,7 +367,7 @@ void getCPUInfo(std::string* cpubrand, std::string* cpuvendor)
 	}
 	*cpubrand = CPUBrandString;
 
-}
+}*/
 
 /*****************************************************************************************
 * getGTGeneration
@@ -380,7 +380,7 @@ void getCPUInfo(std::string* cpubrand, std::string* cpuvendor)
 *      another) does not always work.
 *
 *****************************************************************************************/
-
+/*
 PRODUCT_FAMILY getGTGeneration(unsigned int deviceId)
 {
 	unsigned int maskedDeviceId = deviceId & 0xFF00;
@@ -420,10 +420,11 @@ PRODUCT_FAMILY getGTGeneration(unsigned int deviceId)
 	}
 
 	return IGFX_UNKNOWN;
-}
+}*/
 
+/*
 #include "ID3D10Extensions.h"
-/*UINT checkDxExtensionVersion( )
+UINT checkDxExtensionVersion( )
 {
     UINT extensionVersion = 0;
     ID3D10::CAPS_EXTENSION intelExtCaps;

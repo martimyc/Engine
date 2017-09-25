@@ -16,9 +16,6 @@
     <Filter Include="Sources\Helpers">
       <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\UI_Elements">
-      <UniqueIdentifier>{ebc82a97-dc5a-44f3-9ce3-366d2aed3f92}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\PCG-RNG">
       <UniqueIdentifier>{891c2769-06f6-4c13-bb19-7ce3e041f3e7}</UniqueIdentifier>
     </Filter>
@@ -57,9 +54,6 @@
     </Filter>
     <Filter Include="Sources\gpudetect">
       <UniqueIdentifier>{932cf93a-ce40-4af6-bceb-d64fc8d813cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\gpudetect\old">
-      <UniqueIdentifier>{4ae5d12b-7bcf-45c4-bb2e-30363d8aea71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,24 +95,6 @@
     </ClInclude>
     <ClInclude Include="ModuleCamera3D.h">
       <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleGUI.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Test.h">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Element.h">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_MainMenu.h">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Rand_Test.h">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_GeometryCollisionTest.h">
-      <Filter>Sources\UI_Elements</Filter>
     </ClInclude>
     <ClInclude Include="Brofiler\Brofiler.h">
       <Filter>Sources\Brofiller</Filter>
@@ -351,13 +327,10 @@
     <ClInclude Include="gpudetect\ID3D10Extensions.h">
       <Filter>Sources\gpudetect</Filter>
     </ClInclude>
-    <ClInclude Include="gpudetect\old\DeviceId.h">
-      <Filter>Sources\gpudetect\old</Filter>
-    </ClInclude>
-    <ClInclude Include="gpudetect\old\dxgi1_4.h">
-      <Filter>Sources\gpudetect\old</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleConsole.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleHardware.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
@@ -397,24 +370,6 @@
     </ClCompile>
     <ClCompile Include="ModuleCamera3D.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleGUI.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Element.cpp">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Test.cpp">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Rand_Test.cpp">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_MainMenu.cpp">
-      <Filter>Sources\UI_Elements</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_GeometryCollisionTest.cpp">
-      <Filter>Sources\UI_Elements</Filter>
     </ClCompile>
     <ClCompile Include="mmgr.cpp">
       <Filter>Sources\mmgr</Filter>
@@ -545,10 +500,10 @@
     <ClCompile Include="gpudetect\DeviceId.cpp">
       <Filter>Sources\gpudetect</Filter>
     </ClCompile>
-    <ClCompile Include="gpudetect\old\DeviceId.cpp">
-      <Filter>Sources\gpudetect\old</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleConsole.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleHardware.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>

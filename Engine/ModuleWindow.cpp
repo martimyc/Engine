@@ -5,7 +5,7 @@
 #include "ModuleConsole.h"
 #include "ModuleWindow.h"
 
-ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, "Window", start_enabled)
 {
 	window = NULL;
 	screen_surface = NULL;
