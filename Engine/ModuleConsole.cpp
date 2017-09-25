@@ -10,6 +10,8 @@ ModuleConsole::~ModuleConsole()
 
 UPDATE_STATUS ModuleConsole::Update(float dt)
 {
+	BROFILER_CATEGORY("Console Update", Profiler::Color::AliceBlue)
+
 	ImGui::Begin("Console");
 	for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
 		ImGui::Text(it->c_str());

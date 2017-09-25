@@ -12,6 +12,7 @@ private:
 	unsigned int cpu_cache = 0;
 	float sys_ram = 0.0f;
 	GLubyte ogl;
+	bool gpudetect = true;
 	unsigned int vendor_id;
 	unsigned int device_id;
 	float vram;

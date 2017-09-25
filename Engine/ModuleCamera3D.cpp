@@ -39,6 +39,8 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 UPDATE_STATUS ModuleCamera3D::Update(float dt)
 {
+	BROFILER_CATEGORY("Camera Update", Profiler::Color::AliceBlue)
+
 	// Implement a debug camera with keys and mouse
 	// Now we can make this movememnt frame rate independant!
 

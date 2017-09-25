@@ -4,6 +4,7 @@
 #include <string>
 #include "Globals.h"
 #include "MathGeoLib\src\Time\Clock.h"
+#include "Brofiler\Brofiler.h"
 
 class Application;
 
@@ -37,44 +38,14 @@ public:
 		return UPDATE_CONTINUE;
 	}
 
-	UPDATE_STATUS PreUpdateWithTimer(float dt, const Clock& c, int& ms)
-	{
-		UPDATE_STATUS ret = UPDATE_CONTINUE;
-		int start = c.Time();
-		ret = PreUpdate(dt);
-		int end = c.Time();
-		ms = end - start;
-		return ret;
-	}
-
 	virtual UPDATE_STATUS Update(float dt)
 	{
 		return UPDATE_CONTINUE;
 	}
 
-	UPDATE_STATUS UpdateWithTimer(float dt, const Clock& c, int& ms)
-	{
-		UPDATE_STATUS ret = UPDATE_CONTINUE;
-		int start = c.Time();
-		ret = Update(dt);
-		int end = c.Time();
-		ms = end - start;
-		return ret;
-	}
-
 	virtual UPDATE_STATUS PostUpdate(float dt)
 	{
 		return UPDATE_CONTINUE;
-	}
-
-	UPDATE_STATUS PostUpdateWithTimer(float dt, const Clock& c, int& ms)
-	{
-		UPDATE_STATUS ret = UPDATE_CONTINUE;
-		int start = c.Time();
-		ret = PostUpdate(dt);
-		int end = c.Time();
-		ms = end - start;
-		return ret;
 	}
 
 	virtual UPDATE_STATUS Configuration(float dt)

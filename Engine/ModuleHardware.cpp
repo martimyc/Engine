@@ -2,6 +2,9 @@
 #include "SDL\include\SDL.h"
 #include "gpudetect\DeviceId.h"
 #include "glut\glut.h"
+#include "Globals.h"
+#include "Application.h"
+#include "ModuleConsole.h"
 #include "ModuleHardware.h"
 
 ModuleHardware::ModuleHardware(Application * app, bool start_enabled): Module(app, "Hardware", start_enabled)
@@ -47,7 +50,11 @@ bool ModuleHardware::Start()
 
 	//new
 	unsigned long long video_memory;
-	getGraphicsDeviceInfo(&vendor_id, &device_id, &video_memory, &gfx_brand);
+	if (!getGraphicsDeviceInfo(&vendor_id, &device_id, &video_memory, &gfx_brand))
+	{
+		gpudetect = false;
+		App->LOG("Can not identify GPU and VRAM");
+	}
 	vram = (float)video_memory / (1024.f * 1024.f * 1024.f);
 
 	return ret;
@@ -55,6 +62,8 @@ bool ModuleHardware::Start()
 
 UPDATE_STATUS ModuleHardware::Configuration(float dt)
 {
+	BROFILER_CATEGORY("Hardware Configuration", Profiler::Color::BlanchedAlmond)
+
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
 	if (ImGui::CollapsingHeader("HardWare"))
@@ -65,19 +74,20 @@ UPDATE_STATUS ModuleHardware::Configuration(float dt)
 		ImGui::Text("System RAM: %.3f Gb", sys_ram);
 		ImGui::Text("Caps: ");
 		ImGui::SameLine();
-		ImGui::Text(caps.c_str());
+		ImGui::TextColored(ImVec4(255, 255, 0, 255),caps.c_str());
 		ImGui::Separator();
 		ImGui::Text("OpenGL Version %c", ogl);
 		ImGui::Separator();
-
-		ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
-		char char_array[250];
-		sprintf_s(char_array, 250, "%S", gfx_brand.c_str());
-		brand += char_array;
-		ImGui::Text("Brand:");
-		ImGui::SameLine();
-		ImGui::Text(brand.c_str());
-		ImGui::Text("VRAM: %f", vram);
+		if (gpudetect)
+		{
+			ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
+			ImGui::Text("Brand:");
+			ImGui::SameLine();
+			ImGui::Text("%S", gfx_brand.c_str());
+			ImGui::Text("VRAM: %f", vram);
+		}
+		else
+			ImGui::Text("Could not detect GPU & VRAM properlly");
 	}
 	return ret;
 }

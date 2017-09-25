@@ -40,6 +40,8 @@ bool ModuleInput::Init()
 // Called every draw update
 UPDATE_STATUS ModuleInput::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("Input PreUpdate", Profiler::Color::Beige)
+
 	SDL_PumpEvents();
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);

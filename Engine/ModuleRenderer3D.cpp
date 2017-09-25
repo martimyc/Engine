@@ -116,6 +116,8 @@ bool ModuleRenderer3D::Init()
 // PreUpdate: clear buffer
 UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("Renderer PreUpdate", Profiler::Color::Aqua)
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
@@ -134,6 +136,8 @@ UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
+
 	ImVec4 clear_color = ImColor(25, 25, 25);
 	ImGuiIO io = ImGui::GetIO();
 	glViewport(0, 0, (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x), (int)(io.DisplaySize.y* io.DisplayFramebufferScale.y));

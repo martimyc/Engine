@@ -3,6 +3,7 @@
 #include "Parson\parson.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
+#include "Brofiler\Brofiler.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
@@ -11,6 +12,7 @@
 #include "ModuleConsole.h"
 #include "ModuleHardware.h"
 #include "Application.h"
+
 
 Application::Application()
 {
@@ -102,7 +104,8 @@ void Application::PrepareUpdate()
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
-	float fps = ImGui::GetIO().Framerate;
+	//TODO cap fps (done whreng here)
+	/*float fps = ImGui::GetIO().Framerate;
 	float ms = 1000.0f / fps;
 
 	if (fps_cap != 0)
@@ -116,15 +119,15 @@ void Application::FinishUpdate()
 		}
 		else
 			ms_timer.Sleep(wait);
-	}	
+	}*/	
 }
 
 UPDATE_STATUS Application::CreateConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::Begin("Configuration"));
-	//ImGui::
+	ImGui::Begin("Configuration");
+
 	if (ImGui::CollapsingHeader("Application"))
 	{
 		ImGui::InputText("Engine name", buf1, 128);		
@@ -172,19 +175,9 @@ UPDATE_STATUS Application::Update()
 	PrepareUpdate();
 
 	std::vector<Module*>::const_iterator it = modules.begin();
-	Timer t;
 
-	ImGui::Begin("PreUpdates");
 	for (; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-	{
-		int ms;
-		ret = (*it)->PreUpdateWithTimer(dt, ms_timer, ms);
-		std::string s("Module ");
-		s += (*it)->name;
-		s += " preupdate time : %i";
-		ImGui::Text(s.c_str(), ms);
-	}
-	ImGui::End();
+		ret = (*it)->PreUpdate(dt);
 	
 	//Configuration menu
 	if(ret == UPDATE_CONTINUE)
@@ -197,22 +190,12 @@ UPDATE_STATUS Application::Update()
 		ret = EndConfigMenu();
 	//--
 
-	ImGui::Begin("Updates");
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-	{
-		int ms;
-		ret = (*it)->UpdateWithTimer(dt, ms_timer, ms);
-		std::string s("Module ");
-		s += (*it)->name;
-		s += " update time : %i";
-		ImGui::Text(s.c_str(), ms);
-	}
-	ImGui::End();
+		ret = (*it)->Update(dt);
+
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-	{
 		ret = (*it)->PostUpdate(dt);
-	}
 
 	FinishUpdate();
 

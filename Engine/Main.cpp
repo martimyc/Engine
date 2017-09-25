@@ -1,8 +1,6 @@
 #include <stdlib.h>
 
-//TODO
-//#include "Brofiler\Brofiler.h"
-//#pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
+#include "Brofiler\Brofiler.h"
 
 #include "Application.h"
 #include "Globals.h"
@@ -31,7 +29,7 @@ int main(int argc, char ** argv)
 	
 	while (state != MAIN_EXIT)
 	{
-		//BROFILER_FRAME("MAIN");
+		BROFILER_FRAME("Unice_Frame");
 
 		switch (state)
 		{

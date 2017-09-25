@@ -100,6 +100,8 @@ bool ModuleWindow::Init()
 
 UPDATE_STATUS ModuleWindow::Configuration(float dt)
 {
+	BROFILER_CATEGORY("Window Configuration", Profiler::Color::Coral)
+
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
 	if (ImGui::CollapsingHeader("Window"))
