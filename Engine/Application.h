@@ -33,7 +33,6 @@ private:
 	unsigned long last_frame_time = 0;
 	unsigned int total_frames;
 	std::string organization;
-	Timer	ms_timer;
 	float	dt;
 	std::vector<Module*> modules;
 	int fps_cap = 0;
