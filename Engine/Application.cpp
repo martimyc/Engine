@@ -11,8 +11,8 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
 #include "ModuleGUI.h"
+#include "ModuleConsole.h"
 #include "Application.h"
-
 
 Application::Application()
 {
@@ -22,12 +22,14 @@ Application::Application()
 	renderer_3d = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
 	gui = new ModuleGUI(this);
+	console = new ModuleConsole(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
-
+	
 	// Main Modules
+	AddModule(console);	//console first for init logs
 	AddModule(window);
 	AddModule(input);
 	AddModule(audio);
@@ -84,16 +86,15 @@ bool Application::Init()
 	
 	for(it = modules.begin(); it != modules.end() && ret == true; ++it)
 		ret = (*it)->Start();
-	
-	ms_timer.Start();
+
 	return ret;
 }
 
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
-	dt = (float)ms_timer.Read() / 1000.0f;
-	ms_timer.Start();
+	dt = (ms_timer.Time() - last_frame_time) / 1000.0f;
+	last_frame_time = ms_timer.Time();
 
 	ImGui_ImplSdlGL2_NewFrame(window->window);
 }
@@ -114,7 +115,7 @@ void Application::FinishUpdate()
 			LOG("Running below desired fps");
 		}
 		else
-			Sleep(wait);
+			ms_timer.Sleep(wait);
 	}
 
 	ms_log.push_back(ms);
@@ -227,26 +228,6 @@ UPDATE_STATUS Application::EndConfigMenu()
 		ImGui::Text("VRAM Available: %f", (float)video_memory_available / (1024.f * 1024.f * 1024.f));
 		ImGui::Text("VRAM Reserved: %f", (float)video_memory_reserved / (1024.f * 1024.f * 1024.f));
 	}
-
-	/*if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
-	{
-		ImGui::Text("Vendor %i device: %i", vendor, device_id);
-		std::string brand_name("Brand: ");
-		char char_array[250];
-		sprintf_s(char_array, 250, "%S", brand.c_str());
-		brand_name += char_array;
-		ImGui::Text(brand_name.c_str());
-		ImGui::Text("VRAM Budget: %.1f", float(video_mem_budget) / 1073741824.0f);
-		ImGui::Text("VRAM Usage: %.1f", float(video_mem_usage) / (1024.f * 1024.f * 1024.f));
-		ImGui::Text("VRAM Available: %.1f", float(video_mem_available) / (1024.f * 1024.f * 1024.f));
-		ImGui::Text("VRAM Reserved: %.1f", float(video_mem_reserved) / (1024.f * 1024.f * 1024.f));
-
-		// I don't understean this
-		info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
-		info.vram_mb_usage = float(video_mem_usage) / (1024.f * 1024.f * 1024.f);
-		info.vram_mb_available = float(video_mem_available) / (1024.f * 1024.f * 1024.f);
-		info.vram_mb_reserved = float(video_mem_reserved) / (1024.f * 1024.f * 1024.f);
-	}*/
 
 	ImGui::End();
 	return ret;

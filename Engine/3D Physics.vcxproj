@@ -155,6 +155,7 @@
     <ClInclude Include="MathGeoLib\src\Math\TransformOps.h" />
     <ClInclude Include="MathGeoLib\src\Time\Clock.h" />
     <ClInclude Include="mmgr.h" />
+    <ClInclude Include="ModuleConsole.h" />
     <ClInclude Include="nommgr.h" />
     <ClInclude Include="Parson\parson.h" />
     <ClInclude Include="UI_GeometryCollisionTest.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
     <ClCompile Include="mmgr.cpp" />
+    <ClCompile Include="ModuleConsole.cpp" />
     <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="UI_GeometryCollisionTest.cpp" />
     <ClCompile Include="glmath.cpp" />

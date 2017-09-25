@@ -357,6 +357,9 @@
     <ClInclude Include="gpudetect\old\dxgi1_4.h">
       <Filter>Sources\gpudetect\old</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleConsole.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -544,6 +547,9 @@
     </ClCompile>
     <ClCompile Include="gpudetect\old\DeviceId.cpp">
       <Filter>Sources\gpudetect\old</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleConsole.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
