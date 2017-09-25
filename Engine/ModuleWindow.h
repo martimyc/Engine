@@ -8,6 +8,13 @@ class Application;
 
 class ModuleWindow : public Module
 {
+private:
+	int screen_width = 0;
+	int screen_height = 0;
+	bool fullscreen = false;
+	bool resizable = false;
+	bool borderless = false;
+	bool fullscreen_desktop = false;
 public:
 
 	ModuleWindow(Application* app, bool start_enabled = true);
@@ -16,6 +23,7 @@ public:
 	virtual ~ModuleWindow();
 
 	bool Init();
+	UPDATE_STATUS Configuration(float dt);
 	bool CleanUp();
 
 	void SetTitle(const char* title);
@@ -23,7 +31,7 @@ public:
 public:
 	//The window we'll be rendering to
 	SDL_Window* window;
-	bool screen_size = 1;
+	int screen_size = 1;
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface;

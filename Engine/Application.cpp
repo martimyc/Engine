@@ -53,6 +53,8 @@ bool Application::Init()
 	JSON_Object* obj = json_value_get_object(config);
 	JSON_Object* app = json_object_dotget_object(obj, "App"); 
 	title = json_object_get_string(app, "title");
+	organization = json_object_get_string(app, "organization");
+	fps_cap = json_object_get_number(app, "max_fps");
 
 	/*
 	//Charge config	 TEST
@@ -106,35 +108,59 @@ void Application::FinishUpdate()
 	if (fps_cap != 0)
 	{
 		float cap_time = 1000.0f / fps_cap;
-		float wait = ms - cap_time;
+		float wait = cap_time - ms;
 
 		if (wait < 0.0f)
 		{
 			LOG("Running below desired fps");
 		}
 		else
-			Sleep(wait);
+		{
+			SDL_Delay(wait);
+			ms_log.push_back(ms);
+			fps_log.push_back(fps);
+		}
 	}
 
-	ms_log.push_back(ms);
-	fps_log.push_back(fps);
+
 }
 
 UPDATE_STATUS Application::CreateConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	ImGui::Begin("Configuration");
-
-	if (fps_log.size() > 0 && ms_log.size() > 0)
+	if (ImGui::Begin("Configuration"));
+	//ImGui::
+	if (ImGui::CollapsingHeader("Application"))
 	{
-		char title[25];
-		sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
-		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-		sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
-		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
-	}
+		ImGui::InputText("Engine name", buf1, 128);		
+		title = buf1;
+	
+		ImGui::InputText("Organization", buf2, 128);
+		organization = buf2;
 
+		if (ImGui::Button("Update Engine name/organization"))
+		{
+			/*JSON_Value* config = json_parse_file("config.json");
+			JSON_Value* new_title = json_value_init_object();
+			JSON_Object* obj = json_value_get_object(config);
+			JSON_Object* app = json_object_dotget_object(obj, "App");
+			json_object_set_string(json_object(new_title), "title", title.c_str());
+			json_object_dotset_value(obj, "App", new_title);
+			json_serialize_to_file(config, "config.json");
+			window->SetTitle(title.c_str());
+			*/
+		}
+
+		if (fps_log.size() > 0 && ms_log.size() > 0)
+		{
+			char title[25];
+			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+			sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
+			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+		}
+	}
 	return ret;
 }
 
@@ -142,79 +168,80 @@ UPDATE_STATUS Application::EndConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	ImGui::CollapsingHeader("HardWare");
-
-	SDL_version version;
-	SDL_GetVersion(&version);
-
-	ImGui::Text("SDL Version %i.%i.%i", version.major, version.minor, version.patch);
-
-	ImGui::Separator();
-
-	ImGui::Text("CPUs: %i (cache:%i)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
-	ImGui::Text("System RAM: %.3f Gb", (float)SDL_GetSystemRAM() / 1000.0f);
-
-	std::string caps("Caps: ");
-
-	if (SDL_Has3DNow())
-		caps += "3DNow, ";
-	if(SDL_HasAVX())
-		caps += "AVX, ";
-	// With this program crashes cus of not finding entry point
-	//if (SDL_HasAVX2())
-		//caps += "AVX2";
-	if(SDL_HasAltiVec())
-		caps += "AltiVec, ";
-	if(SDL_HasMMX())
-		caps += "MMX, ";
-	if(SDL_HasRDTSC())
-		caps += "RDTSC, ";
-	if(SDL_HasSSE())
-		caps += "SSE, ";
-	if(SDL_HasSSE2())
-		caps += "SSE 2, ";
-	if(SDL_HasSSE3())
-		caps += "SSE 3, ";
-	if(SDL_HasSSE41())
-		caps += "SSE 4.1, ";
-	if(SDL_HasSSE42())
-		caps += "SSE 4.2";
-
-	ImGui::Text(caps.c_str());
-
-	ImGui::Separator();
-
-	ImGui::Text("OpenGL Version %c", glGetString(GL_VERSION));
-
-	ImGui::Separator();
-
-	uint vendor, device_id;
-	std::wstring brand;
-	unsigned long long video_mem_budget;
-	unsigned long long video_mem_usage;
-	unsigned long long video_mem_available;
-	unsigned long long video_mem_reserved;
-
-	if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
+	if (ImGui::CollapsingHeader("HardWare"))
 	{
-		ImGui::Text("Vendor %i device: %i", vendor, device_id);
-		std::string brand_name("Brand: ");
-		char char_array[250];
-		sprintf_s(char_array, 250, "%S", brand.c_str());
-		brand_name += char_array;
-		ImGui::Text(brand_name.c_str());
-		ImGui::Text("VRAM Budget: %.1f", float(video_mem_budget) / 1073741824.0f);
-		ImGui::Text("VRAM Usage: %.1f", float(video_mem_usage) / (1024.f * 1024.f * 1024.f));
-		ImGui::Text("VRAM Available: %.1f", float(video_mem_available) / (1024.f * 1024.f * 1024.f));
-		ImGui::Text("VRAM Reserved: %.1f", float(video_mem_reserved) / (1024.f * 1024.f * 1024.f));
 
-		// I don't understean this
-		/*info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
-		info.vram_mb_usage = float(video_mem_usage) / (1024.f * 1024.f * 1024.f);
-		info.vram_mb_available = float(video_mem_available) / (1024.f * 1024.f * 1024.f);
-		info.vram_mb_reserved = float(video_mem_reserved) / (1024.f * 1024.f * 1024.f);*/
+		SDL_version version;
+		SDL_GetVersion(&version);
+
+		ImGui::Text("SDL Version %i.%i.%i", version.major, version.minor, version.patch);
+
+		ImGui::Separator();
+
+		ImGui::Text("CPUs: %i (cache:%i)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+		ImGui::Text("System RAM: %.3f Gb", (float)SDL_GetSystemRAM() / 1000.0f);
+
+		std::string caps("Caps: ");
+
+		if (SDL_Has3DNow())
+			caps += "3DNow, ";
+		if (SDL_HasAVX())
+			caps += "AVX, ";
+		// With this program crashes cus of not finding entry point
+		//if (SDL_HasAVX2())
+			//caps += "AVX2";
+		if (SDL_HasAltiVec())
+			caps += "AltiVec, ";
+		if (SDL_HasMMX())
+			caps += "MMX, ";
+		if (SDL_HasRDTSC())
+			caps += "RDTSC, ";
+		if (SDL_HasSSE())
+			caps += "SSE, ";
+		if (SDL_HasSSE2())
+			caps += "SSE 2, ";
+		if (SDL_HasSSE3())
+			caps += "SSE 3, ";
+		if (SDL_HasSSE41())
+			caps += "SSE 4.1, ";
+		if (SDL_HasSSE42())
+			caps += "SSE 4.2";
+
+		ImGui::Text(caps.c_str());
+
+		ImGui::Separator();
+
+		ImGui::Text("OpenGL Version %c", glGetString(GL_VERSION));
+
+		ImGui::Separator();
+
+		uint vendor, device_id;
+		std::wstring brand;
+		unsigned long long video_mem_budget;
+		unsigned long long video_mem_usage;
+		unsigned long long video_mem_available;
+		unsigned long long video_mem_reserved;
+
+		if (getGraphicsDeviceInfo(&vendor, &device_id, &brand, &video_mem_budget, &video_mem_usage, &video_mem_available, &video_mem_reserved))
+		{
+			ImGui::Text("Vendor %i device: %i", vendor, device_id);
+			std::string brand_name("Brand: ");
+			char char_array[250];
+			sprintf_s(char_array, 250, "%S", brand.c_str());
+			brand_name += char_array;
+			ImGui::Text(brand_name.c_str());
+			ImGui::Text("VRAM Budget: %.1f", float(video_mem_budget) / 1073741824.0f);
+			ImGui::Text("VRAM Usage: %.1f", float(video_mem_usage) / (1024.f * 1024.f * 1024.f));
+			ImGui::Text("VRAM Available: %.1f", float(video_mem_available) / (1024.f * 1024.f * 1024.f));
+			ImGui::Text("VRAM Reserved: %.1f", float(video_mem_reserved) / (1024.f * 1024.f * 1024.f));
+
+			// I don't understean this
+			/*info.vram_mb_budget = float(video_mem_budget) / 1073741824.0f;
+			info.vram_mb_usage = float(video_mem_usage) / (1024.f * 1024.f * 1024.f);
+			info.vram_mb_available = float(video_mem_available) / (1024.f * 1024.f * 1024.f);
+			info.vram_mb_reserved = float(video_mem_reserved) / (1024.f * 1024.f * 1024.f);*/
+		}
 	}
-
 	ImGui::End();
 	return ret;
 }
@@ -227,17 +254,19 @@ UPDATE_STATUS Application::Update()
 
 	std::vector<Module*>::const_iterator it = modules.begin();
 
+	for(; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		ret = (*it)->PreUpdate(dt);
+	
 	//Configuration menu
-	ret = CreateConfigMenu();
+	if(ret == UPDATE_CONTINUE)
+		ret = CreateConfigMenu();
 
-	for (; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->Configuration(dt);
 
-	ret = EndConfigMenu();
+	if (ret == UPDATE_CONTINUE)
+		ret = EndConfigMenu();
 	//--
-
-	for(it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PreUpdate(dt);
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->Update(dt);

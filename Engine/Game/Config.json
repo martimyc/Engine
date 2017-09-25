@@ -1,6 +1,7 @@
 {
   "App": {
     "title": "Engine 3D - Marc Latorre && Martí Majó",
+    "organization": "UPC CITM",
     "max_fps": 60
   },
   "Audio": {

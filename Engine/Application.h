@@ -26,12 +26,15 @@ public:
 
 private:
 	std::string title;
+	std::string organization;
 	Timer	ms_timer;
 	float	dt;
 	std::vector<Module*> modules;
 	int fps_cap = 0;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
+	char buf1[128] = "Engine 3D - Marc Latorre && Martí Majó";
+	char buf2[128] = "UPC CITM";
 
 public:
 
