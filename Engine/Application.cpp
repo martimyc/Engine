@@ -115,9 +115,7 @@ void Application::FinishUpdate()
 		}
 		else
 			ms_timer.Sleep(wait);
-	}
-
-
+	}	
 }
 
 UPDATE_STATUS Application::CreateConfigMenu()
@@ -172,6 +170,7 @@ UPDATE_STATUS Application::Update()
 	PrepareUpdate();
 
 	std::vector<Module*>::const_iterator it = modules.begin();
+	Timer t;
 
 	ImGui::Begin("PreUpdates");
 	for (; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
