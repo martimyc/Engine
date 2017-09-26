@@ -41,6 +41,7 @@ private:
 	std::vector<float> ms_log;
 	char buf1[128] = "Engine 3D - Marc Latorre && Marti Majo";
 	char buf2[128] = "UPC CITM";
+	bool conf_active = true;
 
 public:
 
@@ -55,6 +56,7 @@ public:
 
 	const std::string GetTitle() const;
 	const std::string GetOrganization() const;
+	void OpenCloseConfigWindow();
 
 private:
 
