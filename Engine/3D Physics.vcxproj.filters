@@ -16,9 +16,6 @@
     <Filter Include="Sources\Helpers">
       <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\PCG-RNG">
-      <UniqueIdentifier>{891c2769-06f6-4c13-bb19-7ce3e041f3e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Brofiller">
       <UniqueIdentifier>{13ea4ea2-fc9c-4792-bcb5-4f71586fbd16}</UniqueIdentifier>
     </Filter>
@@ -112,6 +109,9 @@
       <Filter>Sources\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_sdl.h">
       <Filter>Sources\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_internal.h">
@@ -330,8 +330,8 @@
     <ClInclude Include="ModuleHardware.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_sdl.h">
-      <Filter>Sources\ImGui</Filter>
+    <ClInclude Include="MainMenuBar.h">
+      <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -381,6 +381,9 @@
       <Filter>Sources\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Sources\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_sdl.cpp">
       <Filter>Sources\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="MathGeoLib\src\Algorithm\Random\LCG.cpp">
@@ -503,8 +506,8 @@
     <ClCompile Include="ModuleHardware.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_sdl.cpp">
-      <Filter>Sources\ImGui</Filter>
+    <ClCompile Include="MainMenuBar.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

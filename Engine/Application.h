@@ -15,6 +15,7 @@ class ModuleRenderer3D;
 class ModuleCamera3D;
 class ModuleConsole;
 class ModuleHardware;
+class ModuleMainMenuBar;
 
 class Application
 {
@@ -26,18 +27,19 @@ public:
 	ModuleCamera3D* camera;
 	ModuleConsole* console;
 	ModuleHardware* hardware;
+	ModuleMainMenuBar* main_menu_bar;
 
 private:
 	std::string title;
+	std::string organization;
 	Clock	ms_timer;
 	unsigned long last_frame_time = 0;
 	unsigned int total_frames;
-	std::string organization;
 	float	dt;
 	std::vector<Module*> modules;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
-	char buf1[128] = "Engine 3D - Marc Latorre && Martí Majó";
+	char buf1[128] = "Engine 3D - Marc Latorre && Marti Majo";
 	char buf2[128] = "UPC CITM";
 
 public:
@@ -52,6 +54,7 @@ public:
 	void OpenWebsite(const char* url);
 
 	const std::string GetTitle() const;
+	const std::string GetOrganization() const;
 
 private:
 

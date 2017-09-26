@@ -104,7 +104,6 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 
 	if (ImGui::CollapsingHeader("Window"))
 	{
-		//TODO CHANGE THIS
 		JSON_Value* config = json_parse_file("config.json");
 		JSON_Object* obj = json_value_get_object(config);
 		JSON_Object* win_obj = json_object_dotget_object(obj, "Window");
@@ -127,65 +126,43 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 		
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))
 		{
-			if (!fullscreen)
-			{
+			if (fullscreen)
 				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-				fullscreen = true;
-			}
 			else
-			{
 				SDL_SetWindowFullscreen(window, NULL);
-				fullscreen = false;
-			}
 		}
+
 		json_object_set_boolean(json_object(win), "fullscreen", fullscreen);
 		json_object_dotset_value(obj, "Window", win);
 
 		if (ImGui::Checkbox("Resizable", &resizable))
 		{
-			if (!resizable)
-			{
-				resizable = true;
-				//SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
-			}
+			/*
+			if (resizable)
+				SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
 			else
-			{
-				resizable = false;
-				//SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
-			}
+				SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
+			*/
 		}
 		json_object_set_boolean(json_object(win), "resizable", resizable);
 		json_object_dotset_value(obj, "Window", win);
 		
 		if (ImGui::Checkbox("Borderless", &borderless))
 		{
-			if (!borderless)
-			{
-				borderless = true;
-				SDL_SetWindowBordered(window, SDL_TRUE);
-			}
-			else
-			{
-				borderless = false;
+			if (borderless)
 				SDL_SetWindowBordered(window, SDL_FALSE);
-			}
-
+			else
+				SDL_SetWindowBordered(window, SDL_TRUE);
 		}
 		json_object_set_boolean(json_object(win), "borderless", borderless);
 		json_object_dotset_value(obj, "Window", win);
 		
 		if (ImGui::Checkbox("Fullscreen Desktop", &fullscreen_desktop))
 		{
-			if(!fullscreen_desktop)
-			{
-				fullscreen_desktop = true;
+			if(fullscreen_desktop)
 				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			}
 			else
-			{
-				fullscreen_desktop = false;
 				SDL_SetWindowFullscreen(window, NULL);
-			}
 		}
 		json_object_set_boolean(json_object(win), "fullscreen_desktop", fullscreen_desktop);
 		json_object_dotset_value(obj, "Window", win); 

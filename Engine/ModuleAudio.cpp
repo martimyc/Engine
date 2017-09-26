@@ -1,4 +1,6 @@
 #include "Globals.h"
+#include "Parson\parson.h"
+#include "imgui\imgui.h"
 #include "Application.h"
 #include "ModuleConsole.h"
 #include "ModuleAudio.h"
@@ -42,6 +44,34 @@ bool ModuleAudio::Init()
 		ret = true;
 	}
 
+	JSON_Value* config = json_parse_file("config.json");
+	JSON_Object* obj = json_value_get_object(config);
+	JSON_Object* audio = json_object_dotget_object(obj, "Audio"); 
+	volume = json_object_get_number(audio, "volume");
+
+	return ret;
+}
+
+UPDATE_STATUS ModuleAudio::Configuration(float dt)
+{
+	BROFILER_CATEGORY("Audio Configuration", Profiler::Color::Crimson);
+		
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
+
+	if (ImGui::CollapsingHeader("Audio"))
+	{
+		JSON_Value* config = json_parse_file("config.json");
+		JSON_Object* obj = json_value_get_object(config);
+		JSON_Object* audio_obj = json_object_dotget_object(obj, "Audio");
+		JSON_Value* audio = json_value_init_object();
+
+		if (ImGui::SliderInt("Volume", &volume, 0, 100))
+		{
+			json_object_set_number(json_object(audio), "volume", volume);
+			json_object_dotset_value(obj, "Audio", audio);
+			json_serialize_to_file(config, "config.json");
+		}
+	}
 	return ret;
 }
 

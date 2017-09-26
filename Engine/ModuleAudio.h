@@ -14,6 +14,7 @@ public:
 	~ModuleAudio();
 
 	bool Init();
+	UPDATE_STATUS Configuration(float dt);
 	bool CleanUp();
 
 	// Play a music file
@@ -29,6 +30,7 @@ private:
 
 	Mix_Music*			music;
 	std::vector<Mix_Chunk*>	fx;
+	int volume;
 };
 
 #endif // __ModuleAudio_H__

@@ -89,6 +89,7 @@
     <ClInclude Include="imgui\stb_rect_pack.h" />
     <ClInclude Include="imgui\stb_textedit.h" />
     <ClInclude Include="imgui\stb_truetype.h" />
+    <ClInclude Include="MainMenuBar.h" />
     <ClInclude Include="MathGeoLib\src\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\src\Algorithm\Random\LCG.h" />
     <ClInclude Include="MathGeoLib\src\Algorithm\SAT.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="MainMenuBar.cpp" />
     <ClCompile Include="MathGeoLib\src\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\src\Algorithm\Random\LCG.cpp" />
     <ClCompile Include="MathGeoLib\src\Geometry\AABB.cpp" />

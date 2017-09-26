@@ -11,6 +11,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleConsole.h"
 #include "ModuleHardware.h"
+#include "MainMenuBar.h"
 #include "Application.h"
 
 
@@ -23,6 +24,7 @@ Application::Application()
 	camera = new ModuleCamera3D(this);
 	console = new ModuleConsole(this);
 	hardware = new ModuleHardware(this);
+	main_menu_bar = new ModuleMainMenuBar(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -35,6 +37,7 @@ Application::Application()
 	AddModule(audio);
 	AddModule(camera);
 	AddModule(hardware);
+	AddModule(main_menu_bar);
 	
 	// Scenes
 
@@ -94,24 +97,24 @@ UPDATE_STATUS Application::CreateConfigMenu()
 
 	if (ImGui::CollapsingHeader("Application"))
 	{
-		ImGui::InputText("Engine name", buf1, 128);		
-		title = buf1;
-	
-		ImGui::InputText("Organization", buf2, 128);
-		organization = buf2;
+		JSON_Value* config = json_parse_file("config.json");
+		JSON_Object* obj = json_value_get_object(config);
+		JSON_Object* app_obj = json_object_dotget_object(obj, "App");
+		JSON_Value* app = json_value_init_object();
+		
+		if (ImGui::InputText("Engine name", buf1, 128))
+			title = buf1;		
+		json_object_set_string(json_object(app), "title", title.c_str());
+		json_object_dotset_value(obj, "App", app);
 
-		if (ImGui::Button("Update Engine name/organization"))
-		{
-			/*JSON_Value* config = json_parse_file("config.json");
-			JSON_Value* new_title = json_value_init_object();
-			JSON_Object* obj = json_value_get_object(config);
-			JSON_Object* app = json_object_dotget_object(obj, "App");
-			json_object_set_string(json_object(new_title), "title", title.c_str());
-			json_object_dotset_value(obj, "App", new_title);
-			json_serialize_to_file(config, "config.json");
-			window->SetTitle(title.c_str());
-			*/
-		}
+		if (ImGui::InputText("Organization", buf2, 128))
+			organization = buf2;
+		json_object_set_string(json_object(app), "organization", organization.c_str());
+		json_object_dotset_value(obj, "App", app);
+
+		json_serialize_to_file(config, "config.json");
+
+
 
 		if (fps_log.size() > 0 && ms_log.size() > 0)
 		{
@@ -185,6 +188,11 @@ void Application::OpenWebsite(const char * url)
 const std::string Application::GetTitle() const
 {
 	return title;
+}
+
+const std::string Application::GetOrganization() const
+{
+	return organization;
 }
 
 void Application::AddModule(Module* mod)
