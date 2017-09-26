@@ -17,7 +17,7 @@ public:
 
 	UPDATE_STATUS Update(float dt);
 	
-	void Log(const char file[], int line, const char* format, ...);
+	void Log( const char* format, ...);
 };
 
 #endif // _MODULE_CONSOLE
