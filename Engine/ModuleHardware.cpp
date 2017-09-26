@@ -1,6 +1,6 @@
 #include "glew-2.1.0\include\GL\glew.h"
 #include "imgui\imgui.h"
-#include "SDL\include\SDL.h"
+#include "SDL2-2.0.6\include\SDL.h"
 #include "gpudetect\DeviceId.h"
 #include "glut\glut.h"
 #include "Globals.h"

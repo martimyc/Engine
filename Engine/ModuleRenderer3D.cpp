@@ -1,6 +1,6 @@
 #include "Globals.h"
 #include "glew-2.1.0\include\GL\glew.h"
-#include "SDL\include\SDL_opengl.h"
+#include "SDL2-2.0.6\include\SDL_opengl.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
 #include "Parson\parson.h"
