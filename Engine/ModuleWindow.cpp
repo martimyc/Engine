@@ -106,7 +106,6 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 
 	if (ImGui::CollapsingHeader("Window"))
 	{
-		//TODO CHANGE THIS
 		JSON_Value* config = json_parse_file("config.json");
 		JSON_Object* obj = json_value_get_object(config);
 		JSON_Object* win_obj = json_object_dotget_object(obj, "Window");

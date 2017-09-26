@@ -60,7 +60,6 @@ bool Application::Init()
 	JSON_Object* app = json_object_dotget_object(obj, "App"); 
 	title = json_object_get_string(app, "title");
 	organization = json_object_get_string(app, "organization");
-	fps_cap = json_object_get_number(app, "max_fps");
 
 	/*
 	//Charge config	 TEST
@@ -133,24 +132,24 @@ UPDATE_STATUS Application::CreateConfigMenu()
 
 	if (ImGui::CollapsingHeader("Application"))
 	{
-		ImGui::InputText("Engine name", buf1, 128);		
-		title = buf1;
-	
-		ImGui::InputText("Organization", buf2, 128);
-		organization = buf2;
+		JSON_Value* config = json_parse_file("config.json");
+		JSON_Object* obj = json_value_get_object(config);
+		JSON_Object* app_obj = json_object_dotget_object(obj, "App");
+		JSON_Value* app = json_value_init_object();
+		
+		if (ImGui::InputText("Engine name", buf1, 128))
+			title = buf1;		
+		json_object_set_string(json_object(app), "title", title.c_str());
+		json_object_dotset_value(obj, "App", app);
 
-		if (ImGui::Button("Update Engine name/organization"))
-		{
-			/*JSON_Value* config = json_parse_file("config.json");
-			JSON_Value* new_title = json_value_init_object();
-			JSON_Object* obj = json_value_get_object(config);
-			JSON_Object* app = json_object_dotget_object(obj, "App");
-			json_object_set_string(json_object(new_title), "title", title.c_str());
-			json_object_dotset_value(obj, "App", new_title);
-			json_serialize_to_file(config, "config.json");
-			window->SetTitle(title.c_str());
-			*/
-		}
+		if (ImGui::InputText("Organization", buf2, 128))
+			organization = buf2;
+		json_object_set_string(json_object(app), "organization", organization.c_str());
+		json_object_dotset_value(obj, "App", app);
+
+		json_serialize_to_file(config, "config.json");
+
+
 
 		if (fps_log.size() > 0 && ms_log.size() > 0)
 		{
