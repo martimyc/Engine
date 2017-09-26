@@ -15,6 +15,7 @@ private:
 	bool resizable = false;
 	bool borderless = false;
 	bool fullscreen_desktop = false;
+
 public:
 
 	ModuleWindow(Application* app, bool start_enabled = true);
@@ -31,6 +32,7 @@ public:
 public:
 	//The window we'll be rendering to
 	SDL_Window* window;
+	SDL_GLContext context;
 	int screen_size = 1;
 
 	//The surface contained by the window

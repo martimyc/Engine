@@ -1,3 +1,4 @@
+#include "glew-2.1.0\include\GL\glew.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
 #include "Globals.h"
@@ -34,7 +35,6 @@ bool ModuleWindow::Init()
 	borderless = json_object_get_boolean(win, "borderless");
 	fullscreen_desktop = json_object_get_boolean(win, "fullscreen_desktop");
 
-
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		App->LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -48,7 +48,7 @@ bool ModuleWindow::Init()
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 		//Use OpenGL 2.1
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
 		//---
@@ -58,6 +58,9 @@ bool ModuleWindow::Init()
 		SDL_DisplayMode current;
 		SDL_GetCurrentDisplayMode(0, &current);
 		//---
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 
 		if(fullscreen == true)
 		{
@@ -91,6 +94,18 @@ bool ModuleWindow::Init()
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
 		}
+
+		//context
+		context = SDL_GL_CreateContext(window);
+		if (context == NULL)
+		{
+			App->LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+			ret = false;
+		}
+
+		//Glew
+		GLenum err = glewInit();
+		App->LOG("Using Glew %s", glewGetString(GLEW_VERSION));
 	}
 
 	return ret;
@@ -181,8 +196,7 @@ bool ModuleWindow::CleanUp()
 	//Destroy window
 	if(window != NULL)
 	{
-		SDL_GLContext glcontext = SDL_GL_GetCurrentContext();
-		SDL_GL_DeleteContext(glcontext);
+		SDL_GL_DeleteContext(context);
 		SDL_DestroyWindow(window);
 	}
 

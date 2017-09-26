@@ -1,3 +1,4 @@
+#include "glew-2.1.0\include\GL\glew.h"
 #include "imgui\imgui.h"
 #include "SDL\include\SDL.h"
 #include "gpudetect\DeviceId.h"
@@ -46,7 +47,10 @@ bool ModuleHardware::Start()
 	if (SDL_HasSSE42())
 		caps += "SSE 4.2";
 
-	ogl = *glGetString(GL_VERSION);
+	gl_vendor = *glGetString(GL_VENDOR);
+	gl_renderer = *glGetString(GL_RENDERER);
+	gl_version = *glGetString(GL_VERSION);
+	gl_shading_language_version = *glGetString(GL_SHADING_LANGUAGE_VERSION);
 
 	//new
 	unsigned long long video_memory;
@@ -92,7 +96,17 @@ UPDATE_STATUS ModuleHardware::Configuration(float dt)
 		ImGui::SameLine();
 		ImGui::TextColored(ImVec4(255, 255, 0, 255),caps.c_str());
 		ImGui::Separator();
-		ImGui::Text("OpenGL Version %c", ogl);
+		ImGui::Text("OpenGL Vendor: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_vendor);
+		ImGui::Text("OpenGL Renederer: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_renderer);
+		ImGui::Text("OpenGL Version: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_version);
+		ImGui::Text("OpenGL Shading Language Version: ", gl_version);
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_shading_language_version);
 		ImGui::Separator();
 		if (gpudetect)
 		{

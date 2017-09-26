@@ -11,7 +11,10 @@ private:
 	unsigned int cpu_count = 0;
 	unsigned int cpu_cache = 0;
 	float sys_ram = 0.0f;
-	GLubyte ogl;
+	GLubyte gl_vendor;
+	GLubyte gl_renderer;
+	GLubyte gl_version;
+	GLubyte gl_shading_language_version;
 	bool gpudetect = true;
 	unsigned int vendor_id;
 	unsigned int device_id;
