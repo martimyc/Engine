@@ -31,10 +31,10 @@ public:
 
 private:
 	std::string title;
+	std::string organization;
 	Clock	ms_timer;
 	unsigned long last_frame_time = 0;
 	unsigned int total_frames;
-	std::string organization;
 	float	dt;
 	std::vector<Module*> modules;
 	int fps_cap = 0;
@@ -55,6 +55,7 @@ public:
 	void OpenWebsite(const char* url);
 
 	const std::string GetTitle() const;
+	const std::string GetOrganization() const;
 
 private:
 

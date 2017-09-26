@@ -225,6 +225,11 @@ const std::string Application::GetTitle() const
 	return title;
 }
 
+const std::string Application::GetOrganization() const
+{
+	return organization;
+}
+
 void Application::AddModule(Module* mod)
 {
 	modules.push_back(mod);

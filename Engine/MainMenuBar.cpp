@@ -66,12 +66,51 @@ UPDATE_STATUS ModuleMainMenuBar::Update(float dt)
 		if (show_about)
 		{
 			ImGui::Begin("About", &show_about);
+
+			ImGui::Text("%s", App->GetTitle().c_str());
+			ImGui::Text("Organization: %s", App->GetOrganization().c_str());
+
+			ImGui::Text("Authors:");
+
+			if (ImGui::Button("Marc Latorre"))
+				App->OpenWebsite("https://github.com/marclafr");
+
+			if (ImGui::Button("Marti Majo"))
+				App->OpenWebsite("https://github.com/martimyc");
+
+			ImGui::Separator();
+			ImGui::Text("Licenses:");
+
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.7f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.7f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.7f, 0.8f, 0.8f));
-			if(ImGui::Button("License"))
-				App->OpenWebsite("https://github.com/martimyc/Engine/blob/master/LICENSE");
 
+			if (ImGui::Button("ImGui V.1.51"))
+				App->OpenWebsite("https://github.com/ocornut/imgui");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Brofiler"))
+				App->OpenWebsite("http://brofiler.com/");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Math Geo Lib V.1.5"))
+				App->OpenWebsite("https://github.com/juj/MathGeoLib");
+
+
+			if (ImGui::Button("SDL 2.0.3"))
+				App->OpenWebsite("https://www.libsdl.org/download-2.0.php");
+
+			ImGui::SameLine();
+			if (ImGui::Button("OPENGL Version 4"))
+				App->OpenWebsite("https://www.opengl.org/");
+
+			ImGui::SameLine();
+			if (ImGui::Button("MMGR"))
+				App->OpenWebsite("https://github.com/martimyc/Engine/blob/master/Engine/mmgr/README.txt");
+
+			if (ImGui::Button("License"))
+				App->OpenWebsite("https://github.com/martimyc/Engine/blob/master/LICENSE"); 
+			
 			ImGui::PopStyleColor(3);
 			ImGui::End();
 		}
