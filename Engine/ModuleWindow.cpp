@@ -49,7 +49,7 @@ bool ModuleWindow::Init()
 
 		//Use OpenGL 2.1
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 		//---
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -59,7 +59,7 @@ bool ModuleWindow::Init()
 		SDL_GetCurrentDisplayMode(0, &current);
 		//---
 
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 
 		if(fullscreen == true)
@@ -103,9 +103,20 @@ bool ModuleWindow::Init()
 			ret = false;
 		}
 
+		glewExperimental = GL_TRUE;
+
 		//Glew
-		GLenum err = glewInit();
-		App->LOG("Using Glew %s", glewGetString(GLEW_VERSION));
+		if (GLEW_OK == glewInit())
+		{
+			App->LOG("Using Glew %s", glewGetString(GLEW_VERSION));
+		}
+		else
+		{
+			App->LOG("Can not initialise glew");
+			ret = false;
+		}
+
+		glViewport(0, 0, screen_width, screen_height);
 	}
 
 	return ret;
