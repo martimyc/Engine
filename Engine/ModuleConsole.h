@@ -11,6 +11,7 @@ class ModuleConsole : public Module
 {
 private: 
 	std::deque<std::string> log_vec;
+	bool console_active = true;
 public:
 	ModuleConsole(Application* parent, bool start_enabled = true);
 	~ModuleConsole();
@@ -18,6 +19,7 @@ public:
 	UPDATE_STATUS Update(float dt);
 	
 	void Log(const char file[], int line, const char* format, ...);
+	void OpenCloseConsoleWindow();
 };
 
 #endif // _MODULE_CONSOLE

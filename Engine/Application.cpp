@@ -93,36 +93,38 @@ UPDATE_STATUS Application::CreateConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	ImGui::Begin("Configuration");
-
-	if (ImGui::CollapsingHeader("Application"))
+	if (ImGui::Begin("Configuration", &conf_active))
 	{
-		JSON_Value* config = json_parse_file("config.json");
-		JSON_Object* obj = json_value_get_object(config);
-		JSON_Object* app_obj = json_object_dotget_object(obj, "App");
-		JSON_Value* app = json_value_init_object();
-		
-		if (ImGui::InputText("Engine name", buf1, 128))
-			title = buf1;		
-		json_object_set_string(json_object(app), "title", title.c_str());
-		json_object_dotset_value(obj, "App", app);
 
-		if (ImGui::InputText("Organization", buf2, 128))
-			organization = buf2;
-		json_object_set_string(json_object(app), "organization", organization.c_str());
-		json_object_dotset_value(obj, "App", app);
-
-		json_serialize_to_file(config, "config.json");
-
-
-
-		if (fps_log.size() > 0 && ms_log.size() > 0)
+		if (ImGui::CollapsingHeader("Application"))
 		{
-			char title[25];
-			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
-			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-			sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
-			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+			JSON_Value* config = json_parse_file("config.json");
+			JSON_Object* obj = json_value_get_object(config);
+			JSON_Object* app_obj = json_object_dotget_object(obj, "App");
+			JSON_Value* app = json_value_init_object();
+
+			if (ImGui::InputText("Engine name", buf1, 128))
+				title = buf1;
+			json_object_set_string(json_object(app), "title", title.c_str());
+			json_object_dotset_value(obj, "App", app);
+
+			if (ImGui::InputText("Organization", buf2, 128))
+				organization = buf2;
+			json_object_set_string(json_object(app), "organization", organization.c_str());
+			json_object_dotset_value(obj, "App", app);
+
+			json_serialize_to_file(config, "config.json");
+
+
+
+			if (fps_log.size() > 0 && ms_log.size() > 0)
+			{
+				char title[25];
+				sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+				ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+				sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
+				ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+			}
 		}
 	}
 	return ret;
@@ -149,14 +151,17 @@ UPDATE_STATUS Application::Update()
 		ret = (*it)->PreUpdate(dt);
 
 	//Configuration menu
-	if(ret == UPDATE_CONTINUE)
-		ret = CreateConfigMenu();
+	if (conf_active)
+	{
+		if (ret == UPDATE_CONTINUE)
+			ret = CreateConfigMenu();
 
-	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->Configuration(dt);
+		for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->Configuration(dt);
 
-	if (ret == UPDATE_CONTINUE)
-		ret = EndConfigMenu();
+		if (ret == UPDATE_CONTINUE)
+			ret = EndConfigMenu();
+	}
 	//--
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
@@ -193,6 +198,11 @@ const std::string Application::GetTitle() const
 const std::string Application::GetOrganization() const
 {
 	return organization;
+}
+
+void Application::OpenCloseConfigWindow()
+{
+	conf_active = !conf_active;
 }
 
 void Application::AddModule(Module* mod)

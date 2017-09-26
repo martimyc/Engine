@@ -12,10 +12,14 @@ UPDATE_STATUS ModuleConsole::Update(float dt)
 {
 	BROFILER_CATEGORY("Console Update", Profiler::Color::AliceBlue)
 
-	ImGui::Begin("Console");
-	for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
-		ImGui::Text(it->c_str());
-	ImGui::End();
+		if (console_active)
+		{
+			ImGui::Begin("Console", &console_active);
+			for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
+				ImGui::Text(it->c_str());
+			ImGui::End();
+		}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -36,4 +40,9 @@ void ModuleConsole::Log(const char file[], int line, const char* format, ...)
 		log_vec.pop_back();
 
 	log_vec.push_front(std::string(tmp_string2));
+}
+
+void ModuleConsole::OpenCloseConsoleWindow()
+{
+	console_active = !console_active;
 }
