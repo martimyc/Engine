@@ -153,9 +153,9 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 		if (ImGui::Checkbox("Borderless", &borderless))
 		{
 			if (borderless)
-				SDL_SetWindowBordered(window, SDL_TRUE);
-			else
 				SDL_SetWindowBordered(window, SDL_FALSE);
+			else
+				SDL_SetWindowBordered(window, SDL_TRUE);
 		}
 		json_object_set_boolean(json_object(win), "borderless", borderless);
 		json_object_dotset_value(obj, "Window", win);

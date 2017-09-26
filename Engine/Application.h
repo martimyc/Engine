@@ -15,6 +15,7 @@ class ModuleRenderer3D;
 class ModuleCamera3D;
 class ModuleConsole;
 class ModuleHardware;
+class ModuleMainMenuBar;
 
 class Application
 {
@@ -26,6 +27,7 @@ public:
 	ModuleCamera3D* camera;
 	ModuleConsole* console;
 	ModuleHardware* hardware;
+	ModuleMainMenuBar* main_menu_bar;
 
 private:
 	std::string title;
