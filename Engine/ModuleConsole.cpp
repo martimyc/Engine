@@ -23,7 +23,7 @@ UPDATE_STATUS ModuleConsole::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleConsole::Log(const char file[], int line, const char* format, ...)
+void ModuleConsole::Log(const char* format, ...)
 {
 	static char tmp_string[4096];
 	static char tmp_string2[4096];
@@ -33,7 +33,7 @@ void ModuleConsole::Log(const char file[], int line, const char* format, ...)
 	va_start(ap, format);
 	vsprintf_s(tmp_string, 4096, format, ap);
 	va_end(ap);
-	sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
+	sprintf_s(tmp_string2, 4096, "\n %s", tmp_string);
 	OutputDebugString(tmp_string2);
 
 	if (log_vec.size() >= MAX_LOGS)
