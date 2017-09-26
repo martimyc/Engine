@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "Brofiler\Brofiler.h"
+#pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 
 #include "Application.h"
 #include "Globals.h"
