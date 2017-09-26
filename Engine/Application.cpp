@@ -57,25 +57,6 @@ bool Application::Init()
 	JSON_Object* app = json_object_dotget_object(obj, "App"); 
 	title = json_object_get_string(app, "title");
 	organization = json_object_get_string(app, "organization");
-	fps_cap = json_object_get_number(app, "max_fps");
-
-	/*
-	//Charge config	 TEST
-	JSON_Value* config = json_parse_file("config.json");
-	JSON_Object* obj = json_value_get_object(config);	//Gets starting doc
-	JSON_Object* app = json_object_dotget_object(obj, "App"); //Gets App son
-	std::string name = json_object_get_string(app, "name");	//Gets name from App
-	int max_fps = json_object_get_number(app, "max_fps"); //Gets max_fps from App
-
-														  
-	//Save
-	float f = 28.3;
-	JSON_Value* test = json_value_init_object();
-	json_object_set_string(json_object(test), "Test", "");
-	json_object_dotset_value(obj, "Test2", test);
-	json_serialize_to_file(config, "config.json");
-	//------------------
-	*/
 
 	std::vector<Module*>::const_iterator it = modules.begin();
 
@@ -103,24 +84,7 @@ void Application::PrepareUpdate()
 
 // ---------------------------------------------
 void Application::FinishUpdate()
-{
-	//TODO cap fps (done whreng here)
-	/*float fps = ImGui::GetIO().Framerate;
-	float ms = 1000.0f / fps;
-
-	if (fps_cap != 0)
-	{
-		float cap_time = 1000.0f / fps_cap;
-		float wait = cap_time - ms;
-
-		if (wait < 0.0f)
-		{
-			LOG("Running below desired fps");
-		}
-		else
-			ms_timer.Sleep(wait);
-	}*/	
-}
+{}
 
 UPDATE_STATUS Application::CreateConfigMenu()
 {
@@ -171,6 +135,8 @@ UPDATE_STATUS Application::EndConfigMenu()
 // Call PreUpdate, Update and PostUpdate on all modules
 UPDATE_STATUS Application::Update()
 {
+	BROFILER_CATEGORY("Aplication Update", Profiler::Color::LightYellow)
+
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 
@@ -178,7 +144,7 @@ UPDATE_STATUS Application::Update()
 
 	for (; it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate(dt);
-	
+
 	//Configuration menu
 	if(ret == UPDATE_CONTINUE)
 		ret = CreateConfigMenu();
@@ -192,7 +158,6 @@ UPDATE_STATUS Application::Update()
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->Update(dt);
-
 
 	for (it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate(dt);

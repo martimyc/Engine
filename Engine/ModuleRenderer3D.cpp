@@ -3,6 +3,7 @@
 #include <gl/GLU.h>
 #include "SDL\include\SDL_opengl.h"
 #include "imgui\imgui.h"
+#include "imgui\imgui_impl_sdl.h"
 #include "Parson\parson.h"
 #include "Application.h"
 #include "ModuleWindow.h"
@@ -36,6 +37,12 @@ bool ModuleRenderer3D::Init()
 	if(context == NULL)
 	{
 		App->LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		ret = false;
+	}
+
+	if (!ImGui_ImplSdlGL2_Init(App->window->window))
+	{
+		App->LOG("ImGui could not be Initialized!");
 		ret = false;
 	}
 	
@@ -124,12 +131,6 @@ UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
-	// light 0 on cam pos
-	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-
-	//for(uint i = 0; i < MAX_LIGHTS; ++i)
-		//lights[i].Render();
-
 	return UPDATE_CONTINUE;
 }
 
@@ -147,6 +148,7 @@ UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 	ImGui::Render();
 
 	SDL_GL_SwapWindow(App->window->window);
+
 	return UPDATE_CONTINUE;
 }
 

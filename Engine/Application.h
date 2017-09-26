@@ -35,7 +35,6 @@ private:
 	std::string organization;
 	float	dt;
 	std::vector<Module*> modules;
-	int fps_cap = 0;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 	char buf1[128] = "Engine 3D - Marc Latorre && Martí Majó";
