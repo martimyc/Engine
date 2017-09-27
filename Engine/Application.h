@@ -16,6 +16,8 @@ class ModuleCamera3D;
 class ModuleConsole;
 class ModuleHardware;
 class ModuleMainMenuBar;
+class ModuleHardwareSoftwareInfo;
+class ModuleLevel;
 
 class Application
 {
@@ -28,6 +30,8 @@ public:
 	ModuleConsole* console;
 	ModuleHardware* hardware;
 	ModuleMainMenuBar* main_menu_bar;
+	ModuleHardwareSoftwareInfo* hardware_software_info;
+	ModuleLevel* level;
 
 private:
 	std::string title;

@@ -348,6 +348,9 @@
     <ClInclude Include="ModuleHardwareSoftwareInfo.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleLevel.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -522,6 +525,9 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleHardwareSoftwareInfo.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleLevel.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>

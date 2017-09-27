@@ -12,6 +12,7 @@
 #include "ModuleConsole.h"
 #include "ModuleHardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
+#include "ModuleLevel.h"
 #include "Application.h"
 
 
@@ -23,8 +24,9 @@ Application::Application()
 	renderer_3d = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
 	console = new ModuleConsole(this);
-	hardware = new ModuleHardware(this);
+	hardware_software_info = new ModuleHardwareSoftwareInfo(this);
 	main_menu_bar = new ModuleMainMenuBar(this);
+	level = new ModuleLevel(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -36,8 +38,9 @@ Application::Application()
 	AddModule(input);
 	AddModule(audio);
 	AddModule(camera);
-	AddModule(hardware);
+	AddModule(hardware_software_info);
 	AddModule(main_menu_bar);
+	AddModule(level);
 	
 	// Scenes
 

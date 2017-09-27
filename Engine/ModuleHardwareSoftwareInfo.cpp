@@ -7,13 +7,13 @@
 #include "ModuleConsole.h"
 #include "ModuleHardwareSoftwareInfo.h"
 
-ModuleHardware::ModuleHardware(Application * app, bool start_enabled): Module(app, "Hardware", start_enabled)
+ModuleHardwareSoftwareInfo::ModuleHardwareSoftwareInfo(Application * app, bool start_enabled): Module(app, "Hardware", start_enabled)
 {}
 
-ModuleHardware::~ModuleHardware()
+ModuleHardwareSoftwareInfo::~ModuleHardwareSoftwareInfo()
 {}
 
-bool ModuleHardware::Start()
+bool ModuleHardwareSoftwareInfo::Start()
 {
 	bool ret = true;
 
@@ -83,7 +83,7 @@ bool ModuleHardware::Start()
 	return ret;
 }
 
-UPDATE_STATUS ModuleHardware::Configuration(float dt)
+UPDATE_STATUS ModuleHardwareSoftwareInfo::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Hardware Configuration", Profiler::Color::BlanchedAlmond)
 

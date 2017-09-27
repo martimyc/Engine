@@ -8,6 +8,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
 #include "ModuleConsole.h"
+#include "ModuleLevel.h"
 #include "ModuleRenderer3D.h"
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -42,6 +43,7 @@ bool ModuleRenderer3D::Init()
 		//Use Vsync
 		if(VSYNC && SDL_GL_SetSwapInterval(1) < 0)
 			App->LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+		
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -49,10 +51,6 @@ bool ModuleRenderer3D::Init()
 
 		//Check for error
 		GLenum error = glGetError();
-		const GLubyte er = *gluErrorString(error);
-		char c [250];
-		sprintf_s(c, 250, "%s", &er);
-
 		if(error != GL_NO_ERROR)
 		{
 			App->LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
@@ -73,6 +71,8 @@ bool ModuleRenderer3D::Init()
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearDepth(1.0f);
+		glClearColor(0.f, 0.f, 0.f, 1.f);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -105,6 +105,7 @@ bool ModuleRenderer3D::Init()
 		lights[0].Active(true);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_TEXTURE_2D);
 	}
 
 	// Projection matrix for
@@ -141,6 +142,17 @@ UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	//first geometry, then debug and then UI
+	//App->level->Draw();
+	App->level->DrawTriangle();
+	/*
+	if (debug_draw == true)
+	{
+		BeginDebugDraw();
+		App->DebugDraw();
+		EndDebugDraw();
+	}*/
+
 	ImGui::Render();
 
 	SDL_GL_SwapWindow(App->window->window);
@@ -167,4 +179,8 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->GetViewMatrix());
 }

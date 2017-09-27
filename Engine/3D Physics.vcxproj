@@ -87,6 +87,7 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
+    <ClInclude Include="ModuleLevel.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_sdl.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="ModuleConsole.cpp" />
     <ClCompile Include="ModuleHardwareSoftwareInfo.cpp" />
+    <ClCompile Include="ModuleLevel.cpp" />
     <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="Light.cpp" />
