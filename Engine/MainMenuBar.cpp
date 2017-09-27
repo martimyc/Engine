@@ -1,4 +1,4 @@
-#include "SDL2-2.0.6\include\SDL.h"
+#include "SDL2\include\SDL.h"
 #include "imgui\imgui.h"
 #include "Application.h"
 #include "ModuleConsole.h"

@@ -10,7 +10,7 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
 #include "ModuleConsole.h"
-#include "ModuleHardware.h"
+#include "ModuleHardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
 #include "Application.h"
 

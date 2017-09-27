@@ -1,12 +1,11 @@
+#include "SDL2\include\SDL.h"
 #include "glew-2.1.0\include\GL\glew.h"
 #include "imgui\imgui.h"
-#include "SDL2-2.0.6\include\SDL.h"
 #include "gpudetect\DeviceId.h"
-#include "glut\glut.h"
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleConsole.h"
-#include "ModuleHardware.h"
+#include "ModuleHardwareSoftwareInfo.h"
 
 ModuleHardware::ModuleHardware(Application * app, bool start_enabled): Module(app, "Hardware", start_enabled)
 {}
@@ -47,15 +46,19 @@ bool ModuleHardware::Start()
 	if (SDL_HasSSE42())
 		caps += "SSE 4.2";
 
-	gl_vendor = *glGetString(GL_VENDOR);
-	gl_renderer = *glGetString(GL_RENDERER);
-	gl_version = *glGetString(GL_VERSION);
-	gl_shading_language_version = *glGetString(GL_SHADING_LANGUAGE_VERSION);
+	glew_version = glewGetString(GLEW_VERSION);
+
+	gl_vendor = glGetString(GL_VENDOR);
+	gl_renderer = glGetString(GL_RENDERER);
+	gl_version = glGetString(GL_VERSION);
+	gl_shading_language_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
 	//new
 	unsigned long long video_memory;
 	if (!getGraphicsDeviceInfo(&vendor_id, &device_id, &video_memory, &gfx_brand))
 	{
+		gpudetect_new = false;
+
 		unsigned long long video_memory_budget;
 		unsigned long long video_memory_usage;
 		unsigned long long video_memory_available;
@@ -63,7 +66,7 @@ bool ModuleHardware::Start()
 
 		if (!getGraphicsDeviceInfo(&vendor_id, &device_id, &gfx_brand, &video_memory_budget, &video_memory_usage, &video_memory_available, &video_memory_reserved))
 		{
-			gpudetect = false;
+			
 			App->LOG("Can not identify GPU and VRAM");
 		}
 		else
@@ -88,36 +91,87 @@ UPDATE_STATUS ModuleHardware::Configuration(float dt)
 
 	if (ImGui::CollapsingHeader("HardWare"))
 	{
-		ImGui::Text("SDL Version %i.%i.%i", version.major, version.minor, version.patch);
-		ImGui::Separator();
-		ImGui::Text("CPUs: %i (cache:%i)", cpu_count, cpu_cache);
-		ImGui::Text("System RAM: %.3f Gb", sys_ram);
+		ImGui::TextColored(ImVec4(0, 255, 0, 255), "CPU");
+		ImGui::Text("CPUs: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", cpu_count);
+		ImGui::SameLine(); 
+		ImGui::Text("(cache:");
+		ImGui::SameLine(); 
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i)", cpu_cache);
+		ImGui::Text("System RAM: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%.3f Gb", sys_ram);
 		ImGui::Text("Caps: ");
 		ImGui::SameLine();
 		ImGui::TextColored(ImVec4(255, 255, 0, 255),caps.c_str());
 		ImGui::Separator();
+		ImGui::TextColored(ImVec4(0, 255, 0, 255), "SDL, OpenGL & Glew");
+		ImGui::Text("SDL Version: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i.%i.%i", version.major, version.minor, version.patch);
+		ImGui::Text("Glew Version:");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", glew_version);
 		ImGui::Text("OpenGL Vendor: ");
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_vendor);
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", gl_vendor);
 		ImGui::Text("OpenGL Renederer: ");
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_renderer);
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", gl_renderer);
 		ImGui::Text("OpenGL Version: ");
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_version);
-		ImGui::Text("OpenGL Shading Language Version: ", gl_version);
-		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%c", gl_shading_language_version);
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", gl_version);
+		ImGui::Text("OpenGL Shading Language Version: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(255, 255, 0, 255), "%s", gl_shading_language_version);
 		ImGui::Separator();
-		if (gpudetect)
+		ImGui::TextColored(ImVec4(0, 255, 0, 255), "GPU");
+		if (gpudetect_new)
 		{
-			ImGui::Text("Vendor %i device: %i", vendor_id, device_id);
+			ImGui::Text("Vendor: ");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i ", vendor_id);
+			ImGui::SameLine();
+			ImGui::Text("device: ");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", device_id);
 			ImGui::Text("Brand:");
 			ImGui::SameLine();
-			ImGui::Text("%S", gfx_brand.c_str());
-			ImGui::Text("VRAM: %f", vram);
+			ImGui::TextColored(ImVec4(255, 255, 0, 255), "%S", gfx_brand.c_str());
+			ImGui::Text("VRAM: ");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", vram);
 		}
 		else
-			ImGui::Text("Could not detect GPU & VRAM properlly");
+			if (gpudetect_old)
+			{
+				ImGui::Text("Vendor: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i ", vendor_id);
+				ImGui::SameLine(); 
+				ImGui::Text("device: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%i", device_id);
+				ImGui::Text("Brand:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%S", gfx_brand.c_str());
+				ImGui::Text("VRAM budget: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", vram_budget);
+				ImGui::Text("VRAM usage: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", vram_usage);
+				ImGui::Text("VRAM available: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", vram_available);
+				ImGui::Text("VRAM reserved: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(255, 255, 0, 255), "%f", vram_reserved);
+			}
+			else
+				ImGui::Text("Could not detect GPU & VRAM properlly");
+		ImGui::Separator();
 	}
 	return ret;
 }

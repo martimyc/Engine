@@ -48,7 +48,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\glew-2.1.0\include;C:\Users\Marti\Desktop\Github\Engine\Engine\SDL2-2.0.6\include;C:\Users\Marti\Desktop\Github\Engine\Engine\Brofiler;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -161,7 +161,7 @@
     <ClInclude Include="MathGeoLib\src\Time\Clock.h" />
     <ClInclude Include="mmgr.h" />
     <ClInclude Include="ModuleConsole.h" />
-    <ClInclude Include="ModuleHardware.h" />
+    <ClInclude Include="ModuleHardwareSoftwareInfo.h" />
     <ClInclude Include="nommgr.h" />
     <ClInclude Include="Parson\parson.h" />
     <ClInclude Include="glmath.h" />
@@ -223,7 +223,7 @@
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="ModuleConsole.cpp" />
-    <ClCompile Include="ModuleHardware.cpp" />
+    <ClCompile Include="ModuleHardwareSoftwareInfo.cpp" />
     <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="Light.cpp" />

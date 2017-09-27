@@ -1,6 +1,7 @@
-#ifndef _MODULE_HARDWARE
-#define _MODULE_HARDWARE
+#ifndef _MODULE_HARDWARE_SOFTWARE_INFO
+#define _MODULE_HARDWARE_SOFTWARE_INFO
 
+#include <string>
 #include "Module.h"
 
 class ModuleHardware : public Module
@@ -11,11 +12,13 @@ private:
 	unsigned int cpu_count = 0;
 	unsigned int cpu_cache = 0;
 	float sys_ram = 0.0f;
-	GLubyte gl_vendor;
-	GLubyte gl_renderer;
-	GLubyte gl_version;
-	GLubyte gl_shading_language_version;
-	bool gpudetect = true;
+	const GLubyte* glew_version;
+	const GLubyte* gl_vendor;
+	const GLubyte* gl_renderer;
+	const GLubyte* gl_version;
+	const GLubyte* gl_shading_language_version;
+	bool gpudetect_new = true;
+	bool gpudetect_old = true;
 	unsigned int vendor_id;
 	unsigned int device_id;
 	//new
@@ -37,5 +40,5 @@ public:
 
 };
 
-#endif // !_MODULE_HARDWARE
+#endif // !_MODULE_HARDWARE_INFO
 
