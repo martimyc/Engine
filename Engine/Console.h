@@ -7,14 +7,14 @@
 
 #define MAX_LOGS 10
 
-class ModuleConsole : public Module
+class Console : public Module
 {
 private: 
 	std::deque<std::string> log_vec;
 	bool console_active = true;
 public:
-	ModuleConsole(Application* parent, bool start_enabled = true);
-	~ModuleConsole();
+	Console(Application* parent, bool start_enabled = true);
+	~Console();
 
 	UPDATE_STATUS Update(float dt);
 	

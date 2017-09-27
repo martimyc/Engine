@@ -1,21 +1,22 @@
-#include "Globals.h"
-#include "Parson\parson.h"
 #include "imgui\imgui.h"
+#include "Brofiler\Brofiler.h"
+#include "Parson\parson.h"
+#include "Globals.h"
 #include "Application.h"
-#include "ModuleConsole.h"
-#include "ModuleAudio.h"
+#include "Console.h"
+#include "Audio.h"
 
 #pragma comment( lib, "SDL_mixer/libx86/SDL2_mixer.lib" )
 
-ModuleAudio::ModuleAudio(Application* app, bool start_enabled) : Module(app, "Audio", start_enabled), music(NULL)
+Audio::Audio(Application* app, bool start_enabled) : Module(app, "Audio", start_enabled), music(NULL)
 {}
 
 // Destructor
-ModuleAudio::~ModuleAudio()
+Audio::~Audio()
 {}
 
 // Called before render is available
-bool ModuleAudio::Init()
+bool Audio::Init()
 {
 	App->LOG("Loading Audio Mixer");
 	bool ret = true;
@@ -52,7 +53,7 @@ bool ModuleAudio::Init()
 	return ret;
 }
 
-UPDATE_STATUS ModuleAudio::Configuration(float dt)
+UPDATE_STATUS Audio::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Audio Configuration", Profiler::Color::Crimson);
 		
@@ -76,7 +77,7 @@ UPDATE_STATUS ModuleAudio::Configuration(float dt)
 }
 
 // Called before quitting
-bool ModuleAudio::CleanUp()
+bool Audio::CleanUp()
 {
 	App->LOG("Freeing sound FX, closing Mixer and Audio subsystem");
 
@@ -94,7 +95,7 @@ bool ModuleAudio::CleanUp()
 }
 
 // Play a music file
-bool ModuleAudio::PlayMusic(const char* path, float fade_time)
+bool Audio::PlayMusic(const char* path, float fade_time)
 {
 	bool ret = true;
 	
@@ -145,7 +146,7 @@ bool ModuleAudio::PlayMusic(const char* path, float fade_time)
 }
 
 // Load WAV
-unsigned int ModuleAudio::LoadFx(const char* path)
+unsigned int Audio::LoadFx(const char* path)
 {
 	unsigned int ret = 0;
 
@@ -165,7 +166,7 @@ unsigned int ModuleAudio::LoadFx(const char* path)
 }
 
 // Play WAV
-bool ModuleAudio::PlayFx(unsigned int id, int repeat)
+bool Audio::PlayFx(unsigned int id, int repeat)
 {
 	bool ret = false;
 

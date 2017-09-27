@@ -1,19 +1,20 @@
 #include "SDL2\include\SDL.h"
-#include "glew-2.1.0\include\GL\glew.h"
+#include "glew\include\GL\glew.h"
 #include "imgui\imgui.h"
 #include "gpudetect\DeviceId.h"
+#include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Application.h"
-#include "ModuleConsole.h"
-#include "ModuleHardwareSoftwareInfo.h"
+#include "Console.h"
+#include "HardwareSoftwareInfo.h"
 
-ModuleHardwareSoftwareInfo::ModuleHardwareSoftwareInfo(Application * app, bool start_enabled): Module(app, "Hardware", start_enabled)
+HardwareSoftwareInfo::HardwareSoftwareInfo(Application * app, bool start_enabled): Module(app, "HardwareSoftwareInfo", start_enabled)
 {}
 
-ModuleHardwareSoftwareInfo::~ModuleHardwareSoftwareInfo()
+HardwareSoftwareInfo::~HardwareSoftwareInfo()
 {}
 
-bool ModuleHardwareSoftwareInfo::Start()
+bool HardwareSoftwareInfo::Start()
 {
 	bool ret = true;
 
@@ -83,7 +84,7 @@ bool ModuleHardwareSoftwareInfo::Start()
 	return ret;
 }
 
-UPDATE_STATUS ModuleHardwareSoftwareInfo::Configuration(float dt)
+UPDATE_STATUS HardwareSoftwareInfo::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Hardware Configuration", Profiler::Color::BlanchedAlmond)
 

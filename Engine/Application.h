@@ -8,30 +8,30 @@
 #include "Timer.h"
 #include "Module.h"
 
-class ModuleWindow;
-class ModuleInput;
-class ModuleAudio;
-class ModuleRenderer3D;
-class ModuleCamera3D;
-class ModuleConsole;
-class ModuleHardware;
-class ModuleMainMenuBar;
-class ModuleHardwareSoftwareInfo;
-class ModuleLevel;
+class Window;
+class Input;
+class Audio;
+class Renderer3D;
+class Camera3D;
+class Console;
+class Hardware;
+class MainMenuBar;
+class HardwareSoftwareInfo;
+class OpenGLTest;
 
 class Application
 {
 public:
-	ModuleWindow* window;
-	ModuleInput* input;
-	ModuleAudio* audio;
-	ModuleRenderer3D* renderer_3d;
-	ModuleCamera3D* camera;
-	ModuleConsole* console;
-	ModuleHardware* hardware;
-	ModuleMainMenuBar* main_menu_bar;
-	ModuleHardwareSoftwareInfo* hardware_software_info;
-	ModuleLevel* level;
+	Window* window;
+	Input* input;
+	Audio* audio;
+	Renderer3D* renderer_3d;
+	Camera3D* camera;
+	Console* console;
+	Hardware* hardware;
+	MainMenuBar* main_menu_bar;
+	HardwareSoftwareInfo* hardware_software_info;
+	OpenGLTest* open_gl_test;
 
 private:
 	std::string title;

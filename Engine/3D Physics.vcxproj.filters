@@ -60,15 +60,6 @@
     <ClInclude Include="Module.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleAudio.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleInput.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleWindow.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="p2Point.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
@@ -89,12 +80,6 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleRenderer3D.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleCamera3D.h">
-      <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Brofiler\Brofiler.h">
       <Filter>Sources\Brofiller</Filter>
@@ -324,9 +309,6 @@
     <ClInclude Include="gpudetect\ID3D10Extensions.h">
       <Filter>Sources\gpudetect</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleConsole.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imgui_impl_sdl.h">
       <Filter>Sources\ImGui</Filter>
     </ClInclude>
@@ -345,23 +327,32 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h">
       <Filter>Sources\Glew</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleHardwareSoftwareInfo.h">
+    <ClInclude Include="Audio.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleLevel.h">
+    <ClInclude Include="Camera3D.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="HardwareSoftwareInfo.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer3D.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLTest.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ModuleAudio.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleInput.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleWindow.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="log.cpp">
       <Filter>Sources\Tools</Filter>
     </ClCompile>
@@ -382,12 +373,6 @@
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Sources\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleRenderer3D.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleCamera3D.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="mmgr.cpp">
       <Filter>Sources\mmgr</Filter>
@@ -515,19 +500,34 @@
     <ClCompile Include="gpudetect\DeviceId.cpp">
       <Filter>Sources\gpudetect</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleConsole.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_impl_sdl.cpp">
       <Filter>Sources\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="MainMenuBar.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleHardwareSoftwareInfo.cpp">
+    <ClCompile Include="Audio.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleLevel.cpp">
+    <ClCompile Include="Camera3D.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="HardwareSoftwareInfo.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer3D.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLTest.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>

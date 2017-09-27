@@ -87,7 +87,7 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
-    <ClInclude Include="ModuleLevel.h" />
+    <ClInclude Include="OpenGLTest.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_sdl.h" />
@@ -161,19 +161,19 @@
     <ClInclude Include="MathGeoLib\src\Math\TransformOps.h" />
     <ClInclude Include="MathGeoLib\src\Time\Clock.h" />
     <ClInclude Include="mmgr.h" />
-    <ClInclude Include="ModuleConsole.h" />
-    <ClInclude Include="ModuleHardwareSoftwareInfo.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="HardwareSoftwareInfo.h" />
     <ClInclude Include="nommgr.h" />
     <ClInclude Include="Parson\parson.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Module.h" />
-    <ClInclude Include="ModuleAudio.h" />
-    <ClInclude Include="ModuleCamera3D.h" />
-    <ClInclude Include="ModuleInput.h" />
-    <ClInclude Include="ModuleRenderer3D.h" />
-    <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="Camera3D.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="Renderer3D.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
@@ -223,19 +223,19 @@
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
     <ClCompile Include="mmgr.cpp" />
-    <ClCompile Include="ModuleConsole.cpp" />
-    <ClCompile Include="ModuleHardwareSoftwareInfo.cpp" />
-    <ClCompile Include="ModuleLevel.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="HardwareSoftwareInfo.cpp" />
+    <ClCompile Include="OpenGLTest.cpp" />
     <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="ModuleAudio.cpp" />
-    <ClCompile Include="ModuleCamera3D.cpp" />
-    <ClCompile Include="ModuleInput.cpp" />
-    <ClCompile Include="ModuleRenderer3D.cpp" />
-    <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Camera3D.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Renderer3D.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>

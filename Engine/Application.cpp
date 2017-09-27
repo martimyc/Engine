@@ -1,32 +1,32 @@
 #include <string>
-#include "glut\glut.h"
+#include "glew\include\GL\glew.h"
 #include "Parson\parson.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
 #include "Brofiler\Brofiler.h"
-#include "ModuleWindow.h"
-#include "ModuleInput.h"
-#include "ModuleAudio.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleCamera3D.h"
-#include "ModuleConsole.h"
-#include "ModuleHardwareSoftwareInfo.h"
+#include "Window.h"
+#include "Input.h"
+#include "Audio.h"
+#include "Renderer3D.h"
+#include "Camera3D.h"
+#include "Console.h"
+#include "HardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
-#include "ModuleLevel.h"
+#include "OpenGLTest.h"
 #include "Application.h"
 
 
 Application::Application()
 {
-	window = new ModuleWindow(this);
-	input = new ModuleInput(this);
-	audio = new ModuleAudio(this, true);
-	renderer_3d = new ModuleRenderer3D(this);
-	camera = new ModuleCamera3D(this);
-	console = new ModuleConsole(this);
-	hardware_software_info = new ModuleHardwareSoftwareInfo(this);
-	main_menu_bar = new ModuleMainMenuBar(this);
-	level = new ModuleLevel(this);
+	window = new Window(this);
+	input = new Input(this);
+	audio = new Audio(this, true);
+	renderer_3d = new Renderer3D(this);
+	camera = new Camera3D(this);
+	console = new Console(this);
+	hardware_software_info = new HardwareSoftwareInfo(this);
+	main_menu_bar = new MainMenuBar(this);
+	open_gl_test = new OpenGLTest(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -40,7 +40,7 @@ Application::Application()
 	AddModule(camera);
 	AddModule(hardware_software_info);
 	AddModule(main_menu_bar);
-	AddModule(level);
+	AddModule(open_gl_test);
 	
 	// Scenes
 

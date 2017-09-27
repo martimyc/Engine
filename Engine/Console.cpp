@@ -1,14 +1,14 @@
 #include "imgui\imgui.h"
-#include "ModuleConsole.h"
+#include "Brofiler\Brofiler.h"
+#include "Console.h"
 
-
-ModuleConsole::ModuleConsole(Application * parent, bool start_enabled): Module(parent, "Console", start_enabled)
+Console::Console(Application * parent, bool start_enabled): Module(parent, "Console", start_enabled)
 {}
 
-ModuleConsole::~ModuleConsole()
+Console::~Console()
 {}
 
-UPDATE_STATUS ModuleConsole::Update(float dt)
+UPDATE_STATUS Console::Update(float dt)
 {
 	BROFILER_CATEGORY("Console Update", Profiler::Color::AliceBlue)
 
@@ -23,7 +23,7 @@ UPDATE_STATUS ModuleConsole::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleConsole::Log(const char* format, ...)
+void Console::Log(const char* format, ...)
 {
 	static char tmp_string[4096];
 	static char tmp_string2[4096];
@@ -42,7 +42,7 @@ void ModuleConsole::Log(const char* format, ...)
 	log_vec.push_front(std::string(tmp_string2));
 }
 
-void ModuleConsole::OpenCloseConsoleWindow()
+void Console::OpenCloseConsoleWindow()
 {
 	console_active = !console_active;
 }

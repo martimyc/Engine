@@ -6,7 +6,7 @@
 
 class Application;
 
-class ModuleWindow : public Module
+class Window : public Module
 {
 private:
 	int screen_width = 0;
@@ -18,10 +18,10 @@ private:
 
 public:
 
-	ModuleWindow(Application* app, bool start_enabled = true);
+	Window(Application* app, bool start_enabled = true);
 
 	// Destructor
-	virtual ~ModuleWindow();
+	virtual ~Window();
 
 	bool Init();
 	UPDATE_STATUS Configuration(float dt);

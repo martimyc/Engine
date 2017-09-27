@@ -11,15 +11,15 @@ class UI_MainMenu;
 class UI_GeometryCollisionTest;
 
 
-class ModuleMainMenuBar : public Module
+class MainMenuBar : public Module
 {
 private:
 	bool show_about = false;
 
 public:
 
-	ModuleMainMenuBar(Application* app, bool start_enabled = true);
-	~ModuleMainMenuBar();
+	MainMenuBar(Application* app, bool start_enabled = true);
+	~MainMenuBar();
 
 	UPDATE_STATUS Update(float dt);
 

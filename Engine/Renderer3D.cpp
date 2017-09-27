@@ -1,28 +1,29 @@
 #include "Globals.h"
-#include "glew-2.1.0\include\GL\glew.h"
+#include "glew\include\GL\glew.h"
 #include "SDL2\include\SDL_opengl.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
+#include "Brofiler\Brofiler.h"
 #include "Parson\parson.h"
 #include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleCamera3D.h"
-#include "ModuleConsole.h"
-#include "ModuleLevel.h"
-#include "ModuleRenderer3D.h"
+#include "Window.h"
+#include "Camera3D.h"
+#include "Console.h"
+#include "OpenGLTest.h"
+#include "Renderer3D.h"
 
-#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
-#pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
+//#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 
-ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, "Renderer3D", start_enabled)
+
+Renderer3D::Renderer3D(Application* app, bool start_enabled) : Module(app, "Renderer3D", start_enabled)
 {}
 
 // Destructor
-ModuleRenderer3D::~ModuleRenderer3D()
+Renderer3D::~Renderer3D()
 {}
 
 // Called before render is available
-bool ModuleRenderer3D::Init()
+bool Renderer3D::Init()
 {
 	App->LOG("Creating 3D Renderer context");
 	bool ret = true;
@@ -53,7 +54,7 @@ bool ModuleRenderer3D::Init()
 		GLenum error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			App->LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
 		}
 
@@ -65,7 +66,7 @@ bool ModuleRenderer3D::Init()
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			App->LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
 		}
 		
@@ -81,7 +82,7 @@ bool ModuleRenderer3D::Init()
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			App->LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
 		}
 	
@@ -117,7 +118,7 @@ bool ModuleRenderer3D::Init()
 }
 
 // PreUpdate: clear buffer
-UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
+UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PreUpdate", Profiler::Color::Aqua)
 
@@ -131,7 +132,7 @@ UPDATE_STATUS ModuleRenderer3D::PreUpdate(float dt)
 }
 
 // PostUpdate present buffer to screen
-UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
+UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
 
@@ -144,7 +145,7 @@ UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 
 	//first geometry, then debug and then UI
 	//App->level->Draw();
-	App->level->DrawTriangle();
+	App->open_gl_test->DrawTriangle();
 	/*
 	if (debug_draw == true)
 	{
@@ -161,14 +162,14 @@ UPDATE_STATUS ModuleRenderer3D::PostUpdate(float dt)
 }
 
 // Called before quitting
-bool ModuleRenderer3D::CleanUp()
+bool Renderer3D::CleanUp()
 {
 	App->LOG("Destroying 3D Renderer");
 	return true;
 }
 
 
-void ModuleRenderer3D::OnResize(int width, int height)
+void Renderer3D::OnResize(int width, int height)
 {
 	glViewport(0, 0, width, height);
 

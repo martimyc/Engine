@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "SDL2/include/SDL.h"
-#include "glew-2.1.0\include\GL\glew.h"
+#include "glew\include\GL\glew.h"
 #include "SDL2/include/SDL_opengl.h"
 #include "Brofiler\Brofiler.h"
 #include "imgui\imgui.h"
@@ -9,11 +9,11 @@
 
 #pragma comment( lib, "SDL2/lib/x86/SDL2.lib" )
 #pragma comment( lib, "SDL2/lib/x86/SDL2main.lib" )
-#pragma comment( lib, "glew-2.1.0/lib/Release/Win32/glew32.lib" )
+#pragma comment( lib, "glew/lib/Release/Win32/glew32.lib" )
+#pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 
-
-#include "ModuleConsole.h"
+#include "Console.h"
 
 enum MAIN_STATES
 {

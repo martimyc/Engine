@@ -3,8 +3,6 @@
 
 #include <string>
 #include "Globals.h"
-#include "MathGeoLib\src\Time\Clock.h"
-#include "Brofiler\Brofiler.h"
 
 class Application;
 

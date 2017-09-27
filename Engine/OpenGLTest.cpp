@@ -1,17 +1,17 @@
-#include "glew-2.1.0\include\GL\glew.h"
+#include "glew\include\GL\glew.h"
 #include "imgui\imgui.h"
-#include "ModuleLevel.h"
+#include "Brofiler\Brofiler.h"
+#include "OpenGLTest.h"
 
-
-ModuleLevel::ModuleLevel(Application * app, bool start_enabled): Module(app, "Level", start_enabled)
+OpenGLTest::OpenGLTest(Application * app, bool start_enabled): Module(app, "Level", start_enabled)
 {}
 
-ModuleLevel::~ModuleLevel()
+OpenGLTest::~OpenGLTest()
 {}
 
-UPDATE_STATUS ModuleLevel::Configuration(float dt)
+UPDATE_STATUS OpenGLTest::Configuration(float dt)
 {
-	BROFILER_CATEGORY("Hardware Configuration", Profiler::Color::BlanchedAlmond)
+	BROFILER_CATEGORY("Open GL Test Configuration", Profiler::Color::BlanchedAlmond)
 
 		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
@@ -23,7 +23,7 @@ UPDATE_STATUS ModuleLevel::Configuration(float dt)
 	return ret;
 }
 
-bool ModuleLevel::Init()
+bool OpenGLTest::Init()
 {
 	vertices[0] = 0.0;
 	vertices[1] = 0.5;
@@ -37,7 +37,7 @@ bool ModuleLevel::Init()
 	return true;
 }
 
-void ModuleLevel::DrawTriangle()
+void OpenGLTest::DrawTriangle()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, vertices);

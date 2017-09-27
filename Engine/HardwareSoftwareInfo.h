@@ -4,7 +4,7 @@
 #include <string>
 #include "Module.h"
 
-class ModuleHardwareSoftwareInfo : public Module
+class HardwareSoftwareInfo : public Module
 {
 private:
 	SDL_version version;
@@ -31,8 +31,8 @@ private:
 	std::wstring gfx_brand;
 
 public:
-	ModuleHardwareSoftwareInfo(Application* app, bool start_enabled = true);
-	~ModuleHardwareSoftwareInfo();
+	HardwareSoftwareInfo(Application* app, bool start_enabled = true);
+	~HardwareSoftwareInfo();
 
 	bool Start();
 

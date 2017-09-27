@@ -1,24 +1,25 @@
-#include "glew-2.1.0\include\GL\glew.h"
+#include "glew\include\GL\glew.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
+#include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Parson\parson.h"
-#include "ModuleConsole.h"
-#include "ModuleWindow.h"
+#include "Console.h"
+#include "Window.h"
 
-ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, "Window", start_enabled)
+Window::Window(Application* app, bool start_enabled) : Module(app, "Window", start_enabled)
 {
 	window = NULL;
 	screen_surface = NULL;
 }
 
 // Destructor
-ModuleWindow::~ModuleWindow()
+Window::~Window()
 {}
 
 // Called before render is available
-bool ModuleWindow::Init()
+bool Window::Init()
 {
 	App->LOG("Init SDL window & surface");
 	bool ret = true;
@@ -123,7 +124,7 @@ bool ModuleWindow::Init()
 	return ret;
 }
 
-UPDATE_STATUS ModuleWindow::Configuration(float dt)
+UPDATE_STATUS Window::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Window Configuration", Profiler::Color::Coral)
 
@@ -201,7 +202,7 @@ UPDATE_STATUS ModuleWindow::Configuration(float dt)
 }
 
 // Called before quitting
-bool ModuleWindow::CleanUp()
+bool Window::CleanUp()
 {
 	App->LOG("Destroying SDL window and quitting all SDL systems");
 
@@ -217,7 +218,7 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
-void ModuleWindow::SetTitle(const char* title)
+void Window::SetTitle(const char* title)
 {
 	SDL_SetWindowTitle(window, title);
 }

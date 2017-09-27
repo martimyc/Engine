@@ -2,16 +2,16 @@
 #define __ModuleAudio_H__
 
 #include <vector>
-#include "Module.h"
 #include "SDL_mixer\include\SDL_mixer.h"
+#include "Module.h"
 
 #define DEFAULT_MUSIC_FADE_TIME 2.0f
 
-class ModuleAudio : public Module
+class Audio : public Module
 {
 public:
-	ModuleAudio(Application* app, bool start_enabled = true);
-	~ModuleAudio();
+	Audio(Application* app, bool start_enabled = true);
+	~Audio();
 
 	bool Init();
 	UPDATE_STATUS Configuration(float dt);

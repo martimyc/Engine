@@ -1,14 +1,15 @@
+#include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Application.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleWindow.h"
-#include "ModuleInput.h"
-#include "ModuleConsole.h"
+#include "Renderer3D.h"
+#include "Window.h"
+#include "Input.h"
+#include "Console.h"
 #include "imgui\imgui_impl_sdl.h"
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput(Application* app, bool start_enabled) : Module(app, "Input", start_enabled)
+Input::Input(Application* app, bool start_enabled) : Module(app, "Input", start_enabled)
 {
 	keyboard = new KEY_STATE[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KEY_STATE) * MAX_KEYS);
@@ -16,13 +17,13 @@ ModuleInput::ModuleInput(Application* app, bool start_enabled) : Module(app, "In
 }
 
 // Destructor
-ModuleInput::~ModuleInput()
+Input::~Input()
 {
 	delete[] keyboard;
 }
 
 // Called before render is available
-bool ModuleInput::Init()
+bool Input::Init()
 {
 	App->LOG("Init SDL input event system");
 	bool ret = true;
@@ -38,7 +39,7 @@ bool ModuleInput::Init()
 }
 
 // Called every draw update
-UPDATE_STATUS ModuleInput::PreUpdate(float dt)
+UPDATE_STATUS Input::PreUpdate(float dt)
 {
 	BROFILER_CATEGORY("Input PreUpdate", Profiler::Color::Beige)
 
@@ -130,7 +131,7 @@ UPDATE_STATUS ModuleInput::PreUpdate(float dt)
 }
 
 // Called before quitting
-bool ModuleInput::CleanUp()
+bool Input::CleanUp()
 {
 	App->LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);

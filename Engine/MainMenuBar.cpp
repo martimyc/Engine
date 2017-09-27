@@ -1,18 +1,18 @@
 #include "SDL2\include\SDL.h"
 #include "imgui\imgui.h"
 #include "Application.h"
-#include "ModuleConsole.h"
+#include "Console.h"
 #include "MainMenuBar.h"
 
-ModuleMainMenuBar::ModuleMainMenuBar(Application * app, bool start_enabled) : Module(app, "Main Menu Bar", start_enabled)
+MainMenuBar::MainMenuBar(Application * app, bool start_enabled) : Module(app, "Main Menu Bar", start_enabled)
 {
 }
 
-ModuleMainMenuBar::~ModuleMainMenuBar()
+MainMenuBar::~MainMenuBar()
 {
 }
 
-UPDATE_STATUS ModuleMainMenuBar::Update(float dt)
+UPDATE_STATUS MainMenuBar::Update(float dt)
 {
 	UPDATE_STATUS ret = UPDATE_ERROR;
 	if (ImGui::BeginMainMenuBar())
