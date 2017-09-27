@@ -136,19 +136,94 @@ UPDATE_STATUS Window::Configuration(float dt)
 		JSON_Object* obj = json_value_get_object(config);
 		JSON_Object* win_obj = json_object_dotget_object(obj, "Window");
 		JSON_Value* win = json_value_init_object();
-
-		if (ImGui::SliderInt("Screen Width", &screen_width, 512, 1920))
+		
+		static int win_size = 0;
+		switch (screen_height)
+		{
+		case 480:
+			win_size = 0;
+			break;
+		case 600:
+			win_size = 1;
+			break;
+		case 768:
+			win_size = 2;
+			break;
+		case 720:
+			win_size = 3;
+			break;
+		case 1024:
+			win_size = 4;
+			break;
+		case 900:
+			win_size = 5;
+			break;
+		case 1080:
+			win_size = 6;
+			break;
+		default:
+			break;
+		}
+			
+		if (ImGui::Combo("Window Size", &win_size, " 720 x 480\0 800 x 600\0 1024 x 768\0 1280 x 720\0 1280 x 1024\0 1600 x 900\0 1920 x 1080\0\0"))
+		{
+			switch (win_size)
+			{
+			case 0:
+				screen_width = 720;
+				screen_height = 480;
+				break;
+			case 1:
+				screen_width = 800;
+				screen_height = 600;
+				break;
+			case 2:
+				screen_width = 1024;
+				screen_height = 768;
+				break;
+			case 3:
+				screen_width = 1280;
+				screen_height = 720;
+				break;
+			case 4:
+				screen_width = 1280;
+				screen_height = 1024;
+				break;
+			case 5:
+				screen_width = 1600;
+				screen_height = 900;
+				break;
+			case 6:
+				screen_width = 1920;
+				screen_height = 1080;
+				break;
+			default:
+				break;
+			}
 			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
+		}
+
 		json_object_set_number(json_object(win), "screen_width", screen_width);
 		json_object_dotset_value(obj, "Window", win);
-		
-		if (ImGui::SliderInt("Screen Height", &screen_height, 256, 1080))
-			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
 		json_object_set_number(json_object(win), "screen_height", screen_height);
 		json_object_dotset_value(obj, "Window", win);
 		
-		if (ImGui::SliderInt("Screen Size", &screen_size, 1, 2))
+		win_size = screen_size - 1;
+		if (ImGui::Combo("Window Size Multiplier", &win_size, " 1\0 2\0\0"))
+		{
+			switch (win_size)
+			{
+			case 0:
+				screen_size = 1;
+				break;
+			case 1:
+				screen_size = 2;
+				break;
+			default:
+				break;
+			}
 			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
+		}
 		json_object_set_number(json_object(win), "screen_size", screen_size);
 		json_object_dotset_value(obj, "Window", win);
 		
@@ -165,12 +240,10 @@ UPDATE_STATUS Window::Configuration(float dt)
 
 		if (ImGui::Checkbox("Resizable", &resizable))
 		{
-			/*
 			if (resizable)
-				SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
+				SDL_SetWindowResizable(window, SDL_TRUE);
 			else
-				SDL_SetWindowResizable(SDL_WINDOW_RESIZABLE, resizable);
-			*/
+				SDL_SetWindowResizable(window, SDL_FALSE);
 		}
 		json_object_set_boolean(json_object(win), "resizable", resizable);
 		json_object_dotset_value(obj, "Window", win);
