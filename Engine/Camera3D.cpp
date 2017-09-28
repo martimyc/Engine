@@ -1,6 +1,8 @@
+#include "glew\include\GL\glew.h"
 #include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Application.h"
+#include "Window.h"
 #include "Input.h"
 #include "Console.h"
 #include "Camera3D.h"
@@ -19,6 +21,17 @@ Camera3D::Camera3D(Application* app, bool start_enabled) : Module(app, "Camera",
 
 Camera3D::~Camera3D()
 {}
+
+bool Camera3D::Init()
+{
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+
+	//Initialize Projection Matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, App->window->GetWidth(), 0, App->window->GetHeight(), 0.0f, 1.0f);
+	return true;
+}
 
 // -----------------------------------------------------------------
 bool Camera3D::Start()

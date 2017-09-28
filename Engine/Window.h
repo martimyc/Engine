@@ -11,6 +11,7 @@ class Window : public Module
 private:
 	int screen_width = 0;
 	int screen_height = 0;
+	int scale = 1;
 	bool fullscreen = false;
 	bool resizable = false;
 	bool borderless = false;
@@ -27,13 +28,16 @@ public:
 	UPDATE_STATUS Configuration(float dt);
 	bool CleanUp();
 
+	const int GetHeight() const;
+	const int GetWidth() const;
+	const int GetScale() const;
+
 	void SetTitle(const char* title);
 
 public:
 	//The window we'll be rendering to
 	SDL_Window* window;
 	SDL_GLContext context;
-	int screen_size = 1;
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface;

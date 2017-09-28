@@ -30,7 +30,7 @@ bool Window::Init()
 	JSON_Object* win = json_object_dotget_object(obj, "Window");
 	screen_width = json_object_get_number(win, "screen_width");
 	screen_height = json_object_get_number(win, "screen_height"); 
-	screen_size = json_object_get_number(win, "screen_size");
+	scale = json_object_get_number(win, "scale");
 	fullscreen = json_object_get_boolean(win, "fullscreen");
 	resizable = json_object_get_boolean(win, "resizable");
 	borderless = json_object_get_boolean(win, "borderless");
@@ -44,8 +44,8 @@ bool Window::Init()
 	else
 	{
 		//Create window
-		int width = screen_width * screen_size;
-		int height = screen_height * screen_size;
+		int width = screen_width * scale;
+		int height = screen_height * scale;
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 		//Use OpenGL 2.1
@@ -117,8 +117,6 @@ bool Window::Init()
 			App->LOG("Can not initialise glew");
 			ret = false;
 		}
-
-		glViewport(0, 0, screen_width, screen_height);
 	}
 
 	return ret;
@@ -200,7 +198,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 			default:
 				break;
 			}
-			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
+			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
 		}
 
 		json_object_set_number(json_object(win), "screen_width", screen_width);
@@ -208,23 +206,23 @@ UPDATE_STATUS Window::Configuration(float dt)
 		json_object_set_number(json_object(win), "screen_height", screen_height);
 		json_object_dotset_value(obj, "Window", win);
 		
-		win_size = screen_size - 1;
+		win_size = scale - 1;
 		if (ImGui::Combo("Window Size Multiplier", &win_size, " 1\0 2\0\0"))
 		{
 			switch (win_size)
 			{
 			case 0:
-				screen_size = 1;
+				scale = 1;
 				break;
 			case 1:
-				screen_size = 2;
+				scale = 2;
 				break;
 			default:
 				break;
 			}
-			SDL_SetWindowSize(window, screen_width*screen_size, screen_height*screen_size);
+			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
 		}
-		json_object_set_number(json_object(win), "screen_size", screen_size);
+		json_object_set_number(json_object(win), "screen_size", scale);
 		json_object_dotset_value(obj, "Window", win);
 		
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))
@@ -289,6 +287,21 @@ bool Window::CleanUp()
 	//Quit SDL subsystems
 	SDL_Quit();
 	return true;
+}
+
+const int Window::GetHeight() const
+{
+	return screen_height * scale;
+}
+
+const int Window::GetWidth() const
+{
+	return screen_width * scale;
+}
+
+const int Window::GetScale() const
+{
+	return scale;
 }
 
 void Window::SetTitle(const char* title)

@@ -44,11 +44,6 @@ bool Renderer3D::Init()
 		//Use Vsync
 		if(VSYNC && SDL_GL_SetSwapInterval(1) < 0)
 			App->LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
-		
-
-		//Initialize Projection Matrix
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
 
 		//Check for error
 		GLenum error = glGetError();

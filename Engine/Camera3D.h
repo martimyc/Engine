@@ -9,6 +9,7 @@ public:
 	Camera3D(Application* app, bool start_enabled = true);
 	~Camera3D();
 
+	bool Init();
 	bool Start();
 	UPDATE_STATUS Update(float dt);
 	bool CleanUp();

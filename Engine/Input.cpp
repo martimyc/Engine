@@ -67,8 +67,8 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 
 	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
 
-	mouse_x /= App->window->screen_size;
-	mouse_y /= App->window->screen_size;
+	mouse_x /= App->window->GetScale();
+	mouse_y /= App->window->GetScale();
 	mouse_z = 0;
 
 	for(int i = 0; i < 5; ++i)
@@ -105,11 +105,11 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 			break;
 
 			case SDL_MOUSEMOTION:
-			mouse_x = e.motion.x / App->window->screen_size;
-			mouse_y = e.motion.y / App->window->screen_size;
+			mouse_x = e.motion.x / App->window->GetScale();
+			mouse_y = e.motion.y / App->window->GetScale();
 
-			mouse_x_motion = e.motion.xrel / App->window->screen_size;
-			mouse_y_motion = e.motion.yrel / App->window->screen_size;
+			mouse_x_motion = e.motion.xrel / App->window->GetScale();
+			mouse_y_motion = e.motion.yrel / App->window->GetScale();
 			break;
 
 			case SDL_QUIT:
