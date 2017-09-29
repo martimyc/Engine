@@ -10,6 +10,10 @@
 
 class Renderer3D : public Module
 {
+private:
+	void DrawCubeWithVertexArrays();
+	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
+
 public:
 	Renderer3D(Application* app, bool start_enabled = true);
 	~Renderer3D();

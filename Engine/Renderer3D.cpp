@@ -15,6 +15,100 @@
 //#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 
 
+void Renderer3D::DrawCubeWithVertexArrays()
+{
+	glBegin(GL_TRIANGLES);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//Front	
+	glVertex3f(0.f, 0.f, 0.f);		//B
+	glVertex3f(0.f, 0.f, 1.f);		//C
+	glVertex3f(0.f, 1.f, 0.f);		//A
+
+	glVertex3f(0.f, 1.f, 0.f);		//A
+	glVertex3f(0.f, 0.f, 1.f);		//C
+	glVertex3f(0.f, 1.f, 1.f);		//D
+
+									//Right
+	glVertex3f(1.f, 1.f, 1.f);		//E
+	glVertex3f(0.f, 1.f, 1.f);		//D
+	glVertex3f(0.f, 0.f, 1.f);		//C
+
+	glVertex3f(1.f, 1.f, 1.f);		//E
+	glVertex3f(0.f, 0.f, 1.f);		//C
+	glVertex3f(1.f, 0.f, 1.f);		//F
+
+									//Left
+	glVertex3f(1.f, 0.f, 0.f);		//H
+	glVertex3f(0.f, 0.f, 0.f);		//B
+	glVertex3f(0.f, 1.f, 0.f);		//A
+
+	glVertex3f(1.f, 0.f, 0.f);		//H
+	glVertex3f(0.f, 1.f, 0.f);		//A
+	glVertex3f(1.f, 1.f, 0.f);		//G
+
+									//Bottom
+	glVertex3f(0.f, 0.f, 0.f);		//B
+	glVertex3f(1.f, 0.f, 0.f);		//H
+	glVertex3f(0.f, 0.f, 1.f);		//C
+
+	glVertex3f(1.f, 0.f, 0.f);		//H
+	glVertex3f(1.f, 0.f, 1.f);		//F
+	glVertex3f(0.f, 0.f, 1.f);		//C
+
+									//Top
+	glVertex3f(0.f, 1.f, 0.f);		//A
+	glVertex3f(1.f, 1.f, 1.f);		//E
+	glVertex3f(1.f, 1.f, 0.f);		//G
+
+	glVertex3f(0.f, 1.f, 0.f);		//A
+	glVertex3f(0.f, 1.f, 1.f);		//D
+	glVertex3f(1.f, 1.f, 1.f);		//E
+
+									//Behind
+	glVertex3f(1.f, 0.f, 0.f);		//H
+	glVertex3f(1.f, 1.f, 0.f);		//G
+	glVertex3f(1.f, 1.f, 1.f);		//E
+
+	glVertex3f(1.f, 0.f, 0.f);		//H
+	glVertex3f(1.f, 1.f, 1.f);		//E
+	glVertex3f(1.f, 0.f, 1.f);		//F
+
+	glEnd();
+}
+
+void Renderer3D::DrawWorldAxis()
+{
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+	glEnd();
+
+	glLineWidth(1.0f);
+}
+
 Renderer3D::Renderer3D(Application* app, bool start_enabled) : Module(app, "Renderer3D", start_enabled)
 {}
 
@@ -145,7 +239,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//first geometry, then debug and then UI
 	//App->level->Draw();
-	App->open_gl_test->DrawTriangle();
+	//App->open_gl_test->DrawTriangle();
 	/*
 	if (debug_draw == true)
 	{
@@ -153,6 +247,9 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		App->DebugDraw();
 		EndDebugDraw();
 	}*/
+
+	DrawCubeWithVertexArrays();
+	DrawWorldAxis();
 
 	ImGui::Render();
 
