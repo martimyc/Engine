@@ -13,10 +13,10 @@ private:
 		0.5f, -0.5f, 0.0f //bot-right
 	};
 	float quad_vertices[12] = {
-		-0.5f, 0.5f, 1.0f,
-		0.5f, 0.5f, 1.0f,
-		0.5f, -0.5f, 1.0f,
-		-0.5f, -0.5f, 1.0f
+		50.0f, 50.0f, 0.0f,
+		300.0f, 50.0f, 0.0f,
+		300.0f, 300.0f, 0.0f,
+		50.0f, 300.0f, 0.0f
 	};
 	bool wireframe = false;
 

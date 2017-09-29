@@ -48,7 +48,7 @@ bool Renderer3D::Init()
 		/*//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		//glOrtho(0, App->window->GetWidth(), 0, App->window->GetHeight(), 0.0f, 1.0f);
+		glOrtho(0, App->window->GetWidth(), 0, App->window->GetHeight(), 0.0f, 1.0f);
 		//Check for error
 		GLenum error = glGetError();
 		if(error != GL_NO_ERROR)
@@ -145,7 +145,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	//first geometry, then debug and then UI
 	//App->level->Draw();
 	//App->open_gl_test->DrawTriangle();
-	App->open_gl_test->DrawTriangle();
+	App->open_gl_test->DrawQuad();
 	/*
 	if (debug_draw == true)
 	{
