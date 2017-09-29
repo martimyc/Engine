@@ -7,8 +7,17 @@
 class OpenGLTest: public Module
 {
 private:
-	float triangle_vertices[9];
-	float quad_vertices[12];
+	float triangle_vertices[9] = {
+		0.0f, 0.5f, 0.0f, //top
+		-0.5f, -0.5f, 0.0f, //bot-left
+		0.5f, -0.5f, 0.0f //bot-right
+	};
+	float quad_vertices[12] = {
+		-0.5f, 0.5f, 1.0f,
+		0.5f, 0.5f, 1.0f,
+		0.5f, -0.5f, 1.0f,
+		-0.5f, -0.5f, 1.0f
+	};
 	bool wireframe = false;
 
 public:
@@ -16,8 +25,6 @@ public:
 	~OpenGLTest();
 
 	UPDATE_STATUS Configuration(float dt);
-
-	bool Init();
 
 	void DrawTriangle() const;
 	void DrawQuad() const;

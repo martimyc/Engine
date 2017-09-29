@@ -23,36 +23,6 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 	return ret;
 }
 
-bool OpenGLTest::Init()
-{
-	triangle_vertices[0] = 0.0;
-	triangle_vertices[1] = 0.5;
-	triangle_vertices[2] = 1.0;
-	triangle_vertices[3] = -0.5;
-	triangle_vertices[4] = -0.5;
-	triangle_vertices[5] = 1.0;
-	triangle_vertices[6] = 0.5;
-	triangle_vertices[7] = -0.5;
-	triangle_vertices[8] = 1.0;
-
-
-	quad_vertices[0] = 0.0f;
-	quad_vertices[1] = 300.0f;
-	quad_vertices[2] = 1.0f;
-	quad_vertices[3] = 300.0f;
-	quad_vertices[4] = 300.0f;
-	quad_vertices[5] = 1.0f;
-	quad_vertices[6] = 300.0f;
-	quad_vertices[7] = 0.0f;
-	quad_vertices[8] = 1.0f;
-	quad_vertices[9] = 0.0f;
-	quad_vertices[10] = 0.0f;
-	quad_vertices[11] = 1.0f;
-		
-
-	return true;
-}
-
 void OpenGLTest::DrawTriangle() const
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -69,8 +39,8 @@ void OpenGLTest::DrawQuad() const
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, quad_vertices);
 	if (!wireframe)
-		glDrawArrays(GL_QUADS, 0, 3);
+		glDrawArrays(GL_QUADS, 0, 4);
 	else
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		glDrawArrays(GL_LINE_LOOP, 0, 4);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }

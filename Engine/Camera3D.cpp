@@ -24,12 +24,8 @@ Camera3D::~Camera3D()
 
 bool Camera3D::Init()
 {
-	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	//glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 
-	//Initialize Projection Matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	//glOrtho(0, App->window->GetWidth(), 0, App->window->GetHeight(), 0.0f, 1.0f);
 	return true;
 }
 

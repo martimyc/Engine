@@ -45,15 +45,19 @@ bool Renderer3D::Init()
 		if(VSYNC && SDL_GL_SetSwapInterval(1) < 0)
 			App->LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
+		/*//Initialize Projection Matrix
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		//glOrtho(0, App->window->GetWidth(), 0, App->window->GetHeight(), 0.0f, 1.0f);
 		//Check for error
 		GLenum error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
 			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
-		}
+		}*/
 
-		//Initialize Modelview Matrix
+		/*//Initialize Modelview Matrix
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
@@ -63,9 +67,9 @@ bool Renderer3D::Init()
 		{
 			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
-		}
+		}*/
 		
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		/*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearDepth(1.0f);
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -101,13 +105,13 @@ bool Renderer3D::Init()
 		lights[0].Active(true);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
-		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);*/
 	}
 
 	// Projection matrix for
-	int w, h;
+	/*int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);
-	OnResize(w, h);
+	OnResize(w, h);*/
 
 	return ret;
 }
@@ -117,11 +121,11 @@ UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PreUpdate", Profiler::Color::Aqua)
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glLoadIdentity();
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadMatrixf(App->camera->GetViewMatrix());
 
 	return UPDATE_CONTINUE;
 }
@@ -131,17 +135,17 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
 
-	ImVec4 clear_color = ImColor(25, 25, 25);
-	ImGuiIO io = ImGui::GetIO();
-	glViewport(0, 0, (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x), (int)(io.DisplaySize.y* io.DisplayFramebufferScale.y));
+	//ImVec4 clear_color = ImColor(25, 25, 25);
+	//ImGuiIO io = ImGui::GetIO();
+	//glViewport(0, 0, (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x), (int)(io.DisplaySize.y* io.DisplayFramebufferScale.y));
 	
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+	//glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//first geometry, then debug and then UI
 	//App->level->Draw();
+	//App->open_gl_test->DrawTriangle();
 	App->open_gl_test->DrawTriangle();
-	App->open_gl_test->DrawQuad();
 	/*
 	if (debug_draw == true)
 	{
@@ -151,7 +155,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	}*/
 
 	ImGui::Render();
-
+	
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UPDATE_CONTINUE;
@@ -171,8 +175,8 @@ void Renderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-	glLoadMatrixf(&ProjectionMatrix);
+	//ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
+	//glLoadMatrixf(&ProjectionMatrix);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
