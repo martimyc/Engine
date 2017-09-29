@@ -245,6 +245,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->open_gl_test->DrawQuad();
 	App->open_gl_test->Draw2DPoint();
 	App->open_gl_test->DrawLine();
+	App->open_gl_test->DrawPolygon();
 	/*
 	if (debug_draw == true)
 	{

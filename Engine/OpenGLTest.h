@@ -25,12 +25,14 @@ private:
 	};
 
 	GLfloat polygon[15] = {
-	20.0f, 100.0f, 0.0f,
-	100.0f, 100.0f, 0.0f,
-	500.0f, 50.0f, 0.0f,
-	320.0f, 10.0f, 0.0f,
-	40.0f, 40.0f, 0.0f
+	20.0f, 400.0f, 0.0f,
+	100.0f, 400.0f, 0.0f,
+	500.0f, 350.0f, 0.0f,
+	320.0f, 310.0f, 0.0f,
+	40.0f, 340.0f, 0.0f
 	};
+
+	GLenum poly_draw_mode = GL_FILL;
 	
 	bool wireframe = false;
 
@@ -46,6 +48,7 @@ public:
 	void DrawQuad() const;
 	void Draw2DPoint() const;
 	void DrawLine() const;
+	void DrawPolygon() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST

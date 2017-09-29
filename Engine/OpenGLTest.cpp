@@ -2,6 +2,7 @@
 #include "imgui\imgui.h"
 #include "Brofiler\Brofiler.h"
 #include "Application.h"
+#include "Window.h"
 #include "Input.h"
 #include "OpenGLTest.h"
 
@@ -21,6 +22,15 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 	{
 		if (ImGui::Button("Wireframe"))
 			wireframe = !wireframe;
+		ImGui::Text("Pollygon mode:");
+		if (ImGui::Button("Fill"))
+			poly_draw_mode = GL_FILL;
+		ImGui::SameLine();
+		if (ImGui::Button("Line"))
+			poly_draw_mode = GL_LINE;
+		ImGui::SameLine();
+		if (ImGui::Button("Point"))
+			poly_draw_mode = GL_POINT;
 	}
 	return ret;
 }
@@ -30,7 +40,7 @@ UPDATE_STATUS OpenGLTest::Update(float dt)
 	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
 		point[0] = App->input->GetMouseX();
-		point[1] = App->input->GetMouseY();
+		point[1] = App->window->GetHeight() - App->input->GetMouseY();
 	}
 
 	return UPDATE_CONTINUE;
@@ -70,4 +80,13 @@ void OpenGLTest::DrawLine() const
 	glVertexPointer(3, GL_FLOAT, 0, line);
 	glDrawArrays(GL_LINES, 0, 2);
 	glDisable(GL_LINE_SMOOTH);
+}
+
+void OpenGLTest::DrawPolygon() const
+{
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, poly_draw_mode);
+	glVertexPointer(3, GL_FLOAT, 0, polygon);
+	glDrawArrays(GL_POLYGON, 0, 5);
+	glPopAttrib();
 }
