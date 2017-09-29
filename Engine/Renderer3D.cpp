@@ -237,9 +237,13 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//first geometry, then debug and then UI
-	//App->level->Draw();
-	//App->open_gl_test->DrawTriangle();
+
+	//Vertex arrays
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	App->open_gl_test->DrawTriangle();
 	App->open_gl_test->DrawQuad();
+	App->open_gl_test->Draw2DPoint();
 	/*
 	if (debug_draw == true)
 	{
@@ -248,8 +252,11 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		EndDebugDraw();
 	}*/
 
-	DrawCubeWithVertexArrays();
-	DrawWorldAxis();
+	//DrawCubeWithVertexArrays();
+	//DrawWorldAxis();
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	//------
 
 	ImGui::Render();
 	

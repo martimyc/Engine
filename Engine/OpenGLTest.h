@@ -7,17 +7,18 @@
 class OpenGLTest: public Module
 {
 private:
-	float triangle_vertices[9] = {
-		0.0f, 0.5f, 0.0f, //top
-		-0.5f, -0.5f, 0.0f, //bot-left
-		0.5f, -0.5f, 0.0f //bot-right
+	GLfloat triangle_vertices[9] = {
+		400.0f, 300.0f, 0.0f, //top
+		300.0f, 50.0f, 0.0f, //bot-left
+		500.0f, 50.0f, 0.0f //bot-right
 	};
-	float quad_vertices[12] = {
+	GLfloat quad_vertices[12] = {
 		50.0f, 50.0f, 0.0f,
 		300.0f, 50.0f, 0.0f,
 		300.0f, 300.0f, 0.0f,
 		50.0f, 300.0f, 0.0f
 	};
+	GLfloat point[2] = { 0, 0 };
 	bool wireframe = false;
 
 public:
@@ -26,8 +27,11 @@ public:
 
 	UPDATE_STATUS Configuration(float dt);
 
+	UPDATE_STATUS Update(float dt);
+
 	void DrawTriangle() const;
 	void DrawQuad() const;
+	void Draw2DPoint() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST

@@ -9,7 +9,7 @@
 
 #pragma comment( lib, "SDL2/lib/x86/SDL2.lib" )
 #pragma comment( lib, "SDL2/lib/x86/SDL2main.lib" )
-#pragma comment( lib, "glew-2.1.0/lib/Release/Win32/glew32.lib" )
+#pragma comment( lib, "glew/lib/Release/Win32/glew32.lib" )
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 
