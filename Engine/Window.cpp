@@ -222,7 +222,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 			}
 			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
 		}
-		json_object_set_number(json_object(win), "screen_size", scale);
+		json_object_set_number(json_object(win), "scale", scale);
 		json_object_dotset_value(obj, "Window", win);
 		
 		if (ImGui::Checkbox("Fullscreen", &fullscreen))

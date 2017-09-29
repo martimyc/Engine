@@ -33,6 +33,14 @@ private:
 	};
 
 	GLenum poly_draw_mode = GL_FILL;
+
+	GLfloat triangle_strip[15] = {
+		520.0f, 400.0f, 0.0f,
+		600.0f, 600.0f, 0.0f,
+		1000.0f, 350.0f, 0.0f,
+		1000.0f, 750.0f, 0.0f,
+		1100.0f, 620.0f, 0.0f
+	};
 	
 	bool wireframe = false;
 
@@ -49,6 +57,7 @@ public:
 	void Draw2DPoint() const;
 	void DrawLine() const;
 	void DrawPolygon() const;
+	void DrawTriangleStrip() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
