@@ -19,6 +19,19 @@ private:
 		50.0f, 300.0f, 0.0f
 	};
 	GLfloat point[2] = { 0, 0 };
+	GLfloat line[6] = {
+		550.0f, 50.0f, 0.0f,
+		600.0f, 300.0f, 0.0f
+	};
+
+	GLfloat polygon[15] = {
+	20.0f, 100.0f, 0.0f,
+	100.0f, 100.0f, 0.0f,
+	500.0f, 50.0f, 0.0f,
+	320.0f, 10.0f, 0.0f,
+	40.0f, 40.0f, 0.0f
+	};
+	
 	bool wireframe = false;
 
 public:
@@ -32,6 +45,7 @@ public:
 	void DrawTriangle() const;
 	void DrawQuad() const;
 	void Draw2DPoint() const;
+	void DrawLine() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST

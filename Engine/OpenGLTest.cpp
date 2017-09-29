@@ -17,7 +17,7 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 
 		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("Triangle"))
+	if (ImGui::CollapsingHeader("OpenGL Test"))
 	{
 		if (ImGui::Button("Wireframe"))
 			wireframe = !wireframe;
@@ -57,6 +57,17 @@ void OpenGLTest::DrawQuad() const
 
 void OpenGLTest::Draw2DPoint() const
 {
+	glEnable(GL_POINT_SMOOTH);
 	glVertexPointer(2, GL_FLOAT, 0, point);
-	glDrawArrays(GL_POINTS, 0, 2);
+	glPointSize(10);
+	glDrawArrays(GL_POINTS, 0, 1);
+	glDisable(GL_POINT_SMOOTH);
+}
+
+void OpenGLTest::DrawLine() const
+{
+	glEnable(GL_LINE_SMOOTH);
+	glVertexPointer(3, GL_FLOAT, 0, line);
+	glDrawArrays(GL_LINES, 0, 2);
+	glDisable(GL_LINE_SMOOTH);
 }
