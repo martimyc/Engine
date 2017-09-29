@@ -141,6 +141,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	//first geometry, then debug and then UI
 	//App->level->Draw();
 	App->open_gl_test->DrawTriangle();
+	App->open_gl_test->DrawQuad();
 	/*
 	if (debug_draw == true)
 	{

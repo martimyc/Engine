@@ -7,7 +7,8 @@
 class OpenGLTest: public Module
 {
 private:
-	float vertices[9];
+	float triangle_vertices[9];
+	float quad_vertices[12];
 	bool wireframe = false;
 
 public:
@@ -18,7 +19,8 @@ public:
 
 	bool Init();
 
-	void DrawTriangle();
+	void DrawTriangle() const;
+	void DrawQuad() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
