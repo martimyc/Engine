@@ -245,9 +245,10 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	/*App->open_gl_test->DrawTriangle();
 	App->open_gl_test->DrawQuad();
 	App->open_gl_test->Draw2DPoint();
-	App->open_gl_test->DrawLine();*/
+	App->open_gl_test->DrawLine();
 	App->open_gl_test->DrawPolygon();
-	App->open_gl_test->DrawTriangleStrip();
+	App->open_gl_test->DrawTriangleStrip();*/
+	App->open_gl_test->DrawTriangleFan();
 
 	/*
 	if (debug_draw == true)

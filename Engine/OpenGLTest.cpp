@@ -99,3 +99,12 @@ void OpenGLTest::DrawTriangleStrip() const
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 5);
 	glPopAttrib();
 }
+
+void OpenGLTest::DrawTriangleFan() const
+{
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, poly_draw_mode);
+	glVertexPointer(3, GL_FLOAT, 0, polygon);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
+	glPopAttrib();
+}

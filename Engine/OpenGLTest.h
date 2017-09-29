@@ -41,6 +41,14 @@ private:
 		1000.0f, 750.0f, 0.0f,
 		1100.0f, 620.0f, 0.0f
 	};
+
+	GLfloat triangle_fan [15] = {
+		320, 240, 0,
+		370, 290, 0,
+		420, 240, 0,
+		370, 190, 0,
+		200, 100, 0
+	};
 	
 	bool wireframe = false;
 
@@ -58,6 +66,7 @@ public:
 	void DrawLine() const;
 	void DrawPolygon() const;
 	void DrawTriangleStrip() const;
+	void DrawTriangleFan() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
