@@ -1,4 +1,5 @@
 #include "glew\include\GL\glew.h"
+#include "MathGeoLib\src\MathGeoLib.h"
 #include "imgui\imgui.h"
 #include "Brofiler\Brofiler.h"
 #include "Application.h"
@@ -31,6 +32,7 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 		ImGui::SameLine();
 		if (ImGui::Button("Point"))
 			poly_draw_mode = GL_POINT;
+		ImGui::SliderInt("Circle sides", &circle_sides, 3, 100, "%i");
 	}
 	return ret;
 }
@@ -107,4 +109,49 @@ void OpenGLTest::DrawTriangleFan() const
 	glVertexPointer(3, GL_FLOAT, 0, polygon);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
 	glPopAttrib();
+}
+
+void OpenGLTest::DrawCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sides) const
+{
+	GLint number_of_vertices = number_of_sides + 2;
+	GLfloat double_pi = pi * 2.0f;
+
+	GLfloat* circle_vertices_x = new GLfloat[number_of_vertices];
+	GLfloat* circle_vertices_y = new GLfloat[number_of_vertices];
+	GLfloat* circle_vertices_z = new GLfloat[number_of_vertices];
+
+	circle_vertices_x[0] = x;
+	circle_vertices_y[0] = y;
+	circle_vertices_z[0] = z;
+
+	for (int i = 1; i < number_of_vertices; i++)
+	{
+		circle_vertices_x[i] = x + (radius * cos(i * double_pi / number_of_sides));
+		circle_vertices_y[i] = y + (radius * sin(i * double_pi / number_of_sides));
+		circle_vertices_z[i] = z;
+	}
+
+	GLfloat* all_circle_vertices = new GLfloat[number_of_vertices * 3];
+
+	for (int i = 0; i < number_of_vertices; i++)
+	{
+		all_circle_vertices[i * 3] = circle_vertices_x[i];
+		all_circle_vertices[(i * 3) + 1] = circle_vertices_y[i];
+		all_circle_vertices[(i * 3) + 2] = circle_vertices_z[i];
+	}
+
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, poly_draw_mode);
+	glVertexPointer(3, GL_FLOAT, 0, all_circle_vertices);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, number_of_vertices);
+	glPopAttrib();
+
+	delete[] circle_vertices_x;
+	delete[] circle_vertices_y;
+	delete[] circle_vertices_z;
+	delete[] all_circle_vertices;
+}
+
+void OpenGLTest::DrawHollowCircle() const
+{
 }

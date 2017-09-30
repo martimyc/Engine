@@ -49,6 +49,8 @@ private:
 		370, 190, 0,
 		200, 100, 0
 	};
+
+	GLint circle_sides = 3;
 	
 	bool wireframe = false;
 
@@ -67,6 +69,8 @@ public:
 	void DrawPolygon() const;
 	void DrawTriangleStrip() const;
 	void DrawTriangleFan() const;
+	void DrawCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sifes) const;
+	void DrawHollowCircle() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
