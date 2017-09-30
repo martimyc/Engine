@@ -248,8 +248,9 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->open_gl_test->DrawLine();
 	App->open_gl_test->DrawPolygon();
 	App->open_gl_test->DrawTriangleStrip();
-	App->open_gl_test->DrawTriangleFan();*/
-	App->open_gl_test->DrawCircle(App->window->GetWidth() / 2.0f, App->window->GetHeight() / 2.0f, 0.0f, 50, 15);
+	App->open_gl_test->DrawTriangleFan();
+	App->open_gl_test->DrawCircle(App->window->GetWidth() / 2.0f, App->window->GetHeight() / 2.0f, 0.0f, 50, 15);*/
+	App->open_gl_test->DrawHollowCircle(App->window->GetWidth() / 2.0f, App->window->GetHeight() / 2.0f, 0.0f, 50, 30);
 
 	/*
 	if (debug_draw == true)

@@ -152,6 +152,39 @@ void OpenGLTest::DrawCircle(const GLfloat x, const GLfloat y, const GLfloat z, c
 	delete[] all_circle_vertices;
 }
 
-void OpenGLTest::DrawHollowCircle() const
+void OpenGLTest::DrawHollowCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sides) const
 {
+	GLint number_of_vertices = number_of_sides + 1;
+	GLfloat double_pi = pi * 2.0f;
+
+	GLfloat* circle_vertices_x = new GLfloat[number_of_vertices];
+	GLfloat* circle_vertices_y = new GLfloat[number_of_vertices];
+	GLfloat* circle_vertices_z = new GLfloat[number_of_vertices];
+
+	for (int i = 0; i < number_of_vertices; i++)
+	{
+		circle_vertices_x[i] = x + (radius * cos(i * double_pi / number_of_sides));
+		circle_vertices_y[i] = y + (radius * sin(i * double_pi / number_of_sides));
+		circle_vertices_z[i] = z;
+	}
+
+	GLfloat* all_circle_vertices = new GLfloat[number_of_vertices * 3];
+
+	for (int i = 0; i < number_of_vertices; i++)
+	{
+		all_circle_vertices[i * 3] = circle_vertices_x[i];
+		all_circle_vertices[(i * 3) + 1] = circle_vertices_y[i];
+		all_circle_vertices[(i * 3) + 2] = circle_vertices_z[i];
+	}
+
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, poly_draw_mode);
+	glVertexPointer(3, GL_FLOAT, 0, all_circle_vertices);
+	glDrawArrays(GL_LINE_STRIP, 0, number_of_vertices);
+	glPopAttrib();
+
+	delete[] circle_vertices_x;
+	delete[] circle_vertices_y;
+	delete[] circle_vertices_z;
+	delete[] all_circle_vertices;
 }

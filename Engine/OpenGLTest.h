@@ -70,7 +70,7 @@ public:
 	void DrawTriangleStrip() const;
 	void DrawTriangleFan() const;
 	void DrawCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sifes) const;
-	void DrawHollowCircle() const;
+	void DrawHollowCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sides) const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
