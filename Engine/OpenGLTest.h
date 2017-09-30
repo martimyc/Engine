@@ -49,6 +49,16 @@ private:
 		370, 190, 0,
 		200, 100, 0
 	};
+	GLfloat quad_strip[27] = { //order change from quad
+		50.0f, 50.0f, 0.0f,
+		300.0f, 50.0f, 0.0f,
+		50.0f, 300.0f, 0.0f,
+		300.0f, 300.0f, 0.0f,	
+		320.0f, 150.0f, 0.0f,
+		350.0f, 200.0f, 0.0f,
+		400.0f, 50.0f, 0.0f,
+		450.0f, 120.0f, 0.0f
+	};
 
 	GLint circle_sides = 3;
 	
@@ -71,6 +81,7 @@ public:
 	void DrawTriangleFan() const;
 	void DrawCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sifes) const;
 	void DrawHollowCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sides) const;
+	void DrawQuadStrip() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST

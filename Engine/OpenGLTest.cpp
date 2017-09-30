@@ -188,3 +188,13 @@ void OpenGLTest::DrawHollowCircle(const GLfloat x, const GLfloat y, const GLfloa
 	delete[] circle_vertices_z;
 	delete[] all_circle_vertices;
 }
+
+void OpenGLTest::DrawQuadStrip() const
+{
+	glVertexPointer(3, GL_FLOAT, 0, quad_strip);
+
+	if (!wireframe)
+		glDrawArrays(GL_QUAD_STRIP, 0, 8);
+	else
+		glDrawArrays(GL_LINE_LOOP, 0, 8);
+}
