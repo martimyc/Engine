@@ -18,7 +18,7 @@ private:
 		300.0f, 300.0f, 0.0f,
 		50.0f, 300.0f, 0.0f
 	};
-	GLfloat point[2] = { 0, 0 };
+
 	GLfloat line[6] = {
 		550.0f, 50.0f, 0.0f,
 		600.0f, 300.0f, 0.0f
@@ -73,12 +73,12 @@ private:
 		0.0f, 0.0f, 1.0f,
 		0.0f, 1.0f, 1.0f,
 		// Cara 4
-		0.0f, 1.0f, 1.0f, // Triangle 1
-		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, // Triangle 1		
 		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 1.0f, // Triangle 2
-		0.0f, 0.0f, 1.0f,
 		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, // Triangle 2	
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
 		// Cara 5
 		0.0f, 1.0f, 1.0f, // Triangle 1
 		1.0f, 1.0f, 0.0f,
@@ -107,7 +107,7 @@ public:
 
 	void DrawTriangle() const;
 	void DrawQuad() const;
-	void Draw2DPoint() const;
+	void Draw2DPoint(const float x,const float y) const;
 	void DrawLine() const;
 	void DrawPolygon() const;
 	void DrawTriangleStrip() const;

@@ -37,11 +37,11 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 
 UPDATE_STATUS OpenGLTest::Update(float dt)
 {
-	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN)
+	/*if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
 		point[0] = App->input->GetMouseX();
 		point[1] = App->window->GetHeight() - App->input->GetMouseY();
-	}
+	}*/
 
 	return UPDATE_CONTINUE;
 }
@@ -65,8 +65,10 @@ void OpenGLTest::DrawQuad() const
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
 }
 
-void OpenGLTest::Draw2DPoint() const
+void OpenGLTest::Draw2DPoint(const float x, const float y) const
 {
+	GLfloat point[2] = { x, y };
+
 	glEnable(GL_POINT_SMOOTH);
 	glVertexPointer(2, GL_FLOAT, 0, point);
 	glPointSize(10);
