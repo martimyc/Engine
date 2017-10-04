@@ -12,9 +12,7 @@
 class Renderer3D : public Module
 {
 private:
-	void DrawCubeWithVertexArrays();
 	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
-	GLuint img_id;
 	uint cube_id;
 
 	float cube_vert[36 * 3] =
