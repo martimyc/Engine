@@ -18,7 +18,7 @@ private:
 		300.0f, 300.0f, 0.0f,
 		50.0f, 300.0f, 0.0f
 	};
-	GLfloat point[2] = { 0, 0 };
+
 	GLfloat line[6] = {
 		550.0f, 50.0f, 0.0f,
 		600.0f, 300.0f, 0.0f
@@ -49,6 +49,52 @@ private:
 		370, 190, 0,
 		200, 100, 0
 	};
+
+	GLfloat triangle_cube[36 * 3] = {
+		// Cara 1
+		0.0f, 1.0f, 0.0f, // Triangle 1
+		1.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,		
+		0.0f, 1.0f, 0.0f,  // Triangle 2
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,	
+		// Cara 2
+		1.0f, 1.0f, 0.0f, // Triangle 1	
+		1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, // Triangle 2
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f,
+		// Cara 3
+		1.0f, 1.0f, 1.0f, // Triangle 1
+		1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, // Triangle 2
+		0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		// Cara 4
+		0.0f, 1.0f, 1.0f, // Triangle 1		
+		0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, // Triangle 2	
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+		// Cara 5
+		0.0f, 1.0f, 1.0f, // Triangle 1
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, // Triangle 2
+		0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		// Cara 6
+		0.0f, 0.0f, 1.0f, // Triangle 1
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, // Triangle 2
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f
+	};
+	
 	GLfloat quad_strip[27] = { //order change from quad
 		50.0f, 50.0f, 0.0f,
 		300.0f, 50.0f, 0.0f,
@@ -74,7 +120,7 @@ public:
 
 	void DrawTriangle() const;
 	void DrawQuad() const;
-	void Draw2DPoint() const;
+	void Draw2DPoint(const float x,const float y) const;
 	void DrawLine() const;
 	void DrawPolygon() const;
 	void DrawTriangleStrip() const;
@@ -82,6 +128,7 @@ public:
 	void DrawCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sifes) const;
 	void DrawHollowCircle(const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat radius, const GLint number_of_sides) const;
 	void DrawQuadStrip() const;
+	void DrawCubeDirectMode() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST

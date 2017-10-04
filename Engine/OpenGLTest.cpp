@@ -39,11 +39,11 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 
 UPDATE_STATUS OpenGLTest::Update(float dt)
 {
-	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN)
+	/*if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
 		point[0] = App->input->GetMouseX();
 		point[1] = App->window->GetHeight() - App->input->GetMouseY();
-	}
+	}*/
 
 	return UPDATE_CONTINUE;
 }
@@ -67,8 +67,10 @@ void OpenGLTest::DrawQuad() const
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
 }
 
-void OpenGLTest::Draw2DPoint() const
+void OpenGLTest::Draw2DPoint(const float x, const float y) const
 {
+	GLfloat point[2] = { x, y };
+
 	glEnable(GL_POINT_SMOOTH);
 	glVertexPointer(2, GL_FLOAT, 0, point);
 	glPointSize(10);
@@ -197,4 +199,53 @@ void OpenGLTest::DrawQuadStrip() const
 		glDrawArrays(GL_QUAD_STRIP, 0, 8);
 	else
 		glDrawArrays(GL_LINE_LOOP, 0, 8);
+}
+
+void OpenGLTest::DrawCubeDirectMode() const
+{
+	glBegin(GL_TRIANGLES);
+	// face 1
+	glVertex3f(triangle_cube[0], triangle_cube[1], triangle_cube[2]);
+	glVertex3f(triangle_cube[3], triangle_cube[4], triangle_cube[5]);
+	glVertex3f(triangle_cube[6], triangle_cube[7], triangle_cube[8]);
+	glVertex3f(triangle_cube[9], triangle_cube[10], triangle_cube[11]);
+	glVertex3f(triangle_cube[12], triangle_cube[13], triangle_cube[14]);
+	glVertex3f(triangle_cube[15], triangle_cube[16], triangle_cube[17]);
+	// face 2
+	glVertex3f(triangle_cube[18], triangle_cube[19], triangle_cube[20]);
+	glVertex3f(triangle_cube[21], triangle_cube[22], triangle_cube[23]);
+	glVertex3f(triangle_cube[24], triangle_cube[25], triangle_cube[26]);
+	glVertex3f(triangle_cube[27], triangle_cube[28], triangle_cube[29]);
+	glVertex3f(triangle_cube[30], triangle_cube[31], triangle_cube[32]);
+	glVertex3f(triangle_cube[33], triangle_cube[34], triangle_cube[35]);
+	// face 3
+	glVertex3f(triangle_cube[36], triangle_cube[37], triangle_cube[38]);
+	glVertex3f(triangle_cube[39], triangle_cube[40], triangle_cube[41]);
+	glVertex3f(triangle_cube[42], triangle_cube[43], triangle_cube[44]);
+	glVertex3f(triangle_cube[45], triangle_cube[46], triangle_cube[47]);
+	glVertex3f(triangle_cube[48], triangle_cube[49], triangle_cube[50]);
+	glVertex3f(triangle_cube[51], triangle_cube[52], triangle_cube[53]);
+	// face 4
+	glVertex3f(triangle_cube[54], triangle_cube[55], triangle_cube[56]);
+	glVertex3f(triangle_cube[57], triangle_cube[58], triangle_cube[59]);
+	glVertex3f(triangle_cube[60], triangle_cube[61], triangle_cube[62]);
+	glVertex3f(triangle_cube[63], triangle_cube[64], triangle_cube[65]);
+	glVertex3f(triangle_cube[66], triangle_cube[67], triangle_cube[68]);
+	glVertex3f(triangle_cube[69], triangle_cube[70], triangle_cube[71]);
+	// face 5
+	glVertex3f(triangle_cube[72], triangle_cube[73], triangle_cube[74]);
+	glVertex3f(triangle_cube[75], triangle_cube[76], triangle_cube[77]);
+	glVertex3f(triangle_cube[78], triangle_cube[79], triangle_cube[80]);
+	glVertex3f(triangle_cube[81], triangle_cube[82], triangle_cube[83]);
+	glVertex3f(triangle_cube[84], triangle_cube[85], triangle_cube[86]);
+	glVertex3f(triangle_cube[87], triangle_cube[88], triangle_cube[89]);
+	// face 6
+	glVertex3f(triangle_cube[90], triangle_cube[91], triangle_cube[92]);
+	glVertex3f(triangle_cube[93], triangle_cube[94], triangle_cube[95]);
+	glVertex3f(triangle_cube[96], triangle_cube[97], triangle_cube[98]);
+	glVertex3f(triangle_cube[99], triangle_cube[100], triangle_cube[101]);
+	glVertex3f(triangle_cube[102], triangle_cube[103], triangle_cube[104]);
+	glVertex3f(triangle_cube[105], triangle_cube[106], triangle_cube[107]);
+
+	glEnd();
 }
