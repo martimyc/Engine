@@ -23,7 +23,7 @@ void Renderer3D::DrawCubeWithVertexArrays()
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//Front	
+	//Left	
 	glVertex3f(0.f, 0.f, 0.f);		//B
 	glVertex3f(0.f, 0.f, 1.f);		//C
 	glVertex3f(0.f, 1.f, 0.f);		//A
@@ -32,7 +32,7 @@ void Renderer3D::DrawCubeWithVertexArrays()
 	glVertex3f(0.f, 0.f, 1.f);		//C
 	glVertex3f(0.f, 1.f, 1.f);		//D
 
-	//Right
+	//Front
 	glVertex3f(1.f, 1.f, 1.f);		//E
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0.f, 1.f, 1.f);		//D
@@ -46,8 +46,8 @@ void Renderer3D::DrawCubeWithVertexArrays()
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(1.f, 0.f, 1.f);		//F
 	glTexCoord2f(1.0f, 1.0f);
-
-	//Left
+	
+	//Back
 	glVertex3f(1.f, 0.f, 0.f);		//H
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(0.f, 0.f, 0.f);		//B
@@ -61,7 +61,7 @@ void Renderer3D::DrawCubeWithVertexArrays()
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(1.f, 1.f, 0.f);		//G
 	glTexCoord2f(1.0f, 0.0f);
-
+	
 	//Bottom
 	glVertex3f(0.f, 0.f, 0.f);		//B
 	glVertex3f(1.f, 0.f, 0.f);		//H
@@ -70,7 +70,7 @@ void Renderer3D::DrawCubeWithVertexArrays()
 	glVertex3f(1.f, 0.f, 0.f);		//H
 	glVertex3f(1.f, 0.f, 1.f);		//F
 	glVertex3f(0.f, 0.f, 1.f);		//C
-
+									
 	//Top
 	glVertex3f(0.f, 1.f, 0.f);		//A
 	glVertex3f(1.f, 1.f, 1.f);		//E
@@ -79,8 +79,8 @@ void Renderer3D::DrawCubeWithVertexArrays()
 	glVertex3f(0.f, 1.f, 0.f);		//A
 	glVertex3f(0.f, 1.f, 1.f);		//D
 	glVertex3f(1.f, 1.f, 1.f);		//E
-
-	//Behind
+									
+	//Right
 	glVertex3f(1.f, 0.f, 0.f);		//H
 	glVertex3f(1.f, 1.f, 0.f);		//G
 	glVertex3f(1.f, 1.f, 1.f);		//E
@@ -88,7 +88,7 @@ void Renderer3D::DrawCubeWithVertexArrays()
 	glVertex3f(1.f, 0.f, 0.f);		//H
 	glVertex3f(1.f, 1.f, 1.f);		//E
 	glVertex3f(1.f, 0.f, 1.f);		//F
-
+	
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -123,6 +123,8 @@ void Renderer3D::DrawWorldAxis()
 	glEnd();
 
 	glLineWidth(1.0f);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 Renderer3D::Renderer3D(Application* app, bool start_enabled) : Module(app, "Renderer3D", start_enabled)
@@ -223,6 +225,13 @@ bool Renderer3D::Init()
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	OnResize(w, h);
 
+	//Load Geometry to VRAM
+	glGenBuffers(1, (GLuint*) &(cube_id));
+	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 3, cube_vert, GL_STATIC_DRAW);
+
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 
 	//checkers texture
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
@@ -245,6 +254,8 @@ bool Renderer3D::Init()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	return ret;
 }
@@ -292,12 +303,23 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		EndDebugDraw();
 	}*/
 
-	DrawCubeWithVertexArrays();
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	App->open_gl_test->Draw2DPoint(0.0f, 0.0f);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	//DrawWorldAxis();
+	//DrawCubeWithVertexArrays();
+	//glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	//App->open_gl_test->Draw2DPoint(0.0f, 0.0f);
 
+	//glBindTexture(GL_TEXTURE_2D, img_id);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	// ... draw other buffers
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glDrawArrays(GL_TRIANGLES, 0, 36 * 3);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+
+	DrawWorldAxis();
 
 	//------
 

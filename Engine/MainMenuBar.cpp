@@ -73,9 +73,12 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 		{
 			ImGui::Begin("About", &show_about);
 
-			ImGui::Text("%s", App->GetTitle().c_str());
-			ImGui::Text("Organization: %s", App->GetOrganization().c_str());
+			std::string str = App->GetTitle();
+			ImGui::Text("%s", str.c_str());
+			str = App->GetOrganization();
+			ImGui::Text("Organization: %s", str.c_str());
 
+			ImGui::Separator();
 			ImGui::Text("Authors:");
 
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.0f, 0.6f, 0.6f));
