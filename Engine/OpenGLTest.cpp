@@ -94,23 +94,22 @@ void OpenGLTest::DrawCubeDirectMode() const
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Front
-	glVertex3f(1.f, 1.f, 1.f); glTexCoord2f(1.0f, 0.0f);	//E
-	glVertex3f(0.f, 1.f, 1.f); glTexCoord2f(0.0f, 0.0f);	//D	
-	glVertex3f(0.f, 0.f, 1.f); glTexCoord2f(0.0f, 1.0f);	//C
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 1.f, 1.f);	//D	
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 0.f, 1.f);	//C
 	
-	glVertex3f(1.f, 1.f, 1.f); glTexCoord2f(1.0f, 0.0f);	//E
-	glVertex3f(0.f, 0.f, 1.f); glTexCoord2f(0.0f, 1.0f);	//C	
-	glVertex3f(1.f, 0.f, 1.f); glTexCoord2f(1.0f, 1.0f);	//F
-	
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 0.f, 1.f);	//C	
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 0.f, 1.f);	//F	
 
 	//Left	
-	glVertex3f(0.f, 0.f, 0.f);		//B
-	glVertex3f(0.f, 0.f, 1.f);		//C
-	glVertex3f(0.f, 1.f, 0.f);		//A
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 0.f, 0.f);	//B
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.f, 0.f, 1.f);	//C
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 1.f, 0.f);	//A
 
-	glVertex3f(0.f, 1.f, 0.f);		//A
-	glVertex3f(0.f, 0.f, 1.f);		//C
-	glVertex3f(0.f, 1.f, 1.f);		//D
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 1.f, 0.f);	//A
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.f, 0.f, 1.f);	//C
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 1.f, 1.f);	//D
 
 
 	//Back

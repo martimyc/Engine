@@ -1,1 +1,1 @@
-{"App":{"title":"Engine 3D - Marc Latorre && Marti Majo","organization":"UPC CITM"},"Audio":{"volume":50},"3DRenderer":{"VSYNC":true},"Window":{"screen_width":1280,"screen_height":720,"scale":1,"fullscreen":false,"resizable":true,"borderless":false,"fullscreen_desktop":false}}
+{"App":{"title":"Engine 3D - Marc Latorre && Marti Majo","organization":"UPC CITM"},"Audio":{"volume":50},"3DRenderer":{"VSYNC":true},"Window":{"screen_width":1600,"screen_height":900,"scale":1,"fullscreen":false,"resizable":true,"borderless":false,"fullscreen_desktop":false}}
