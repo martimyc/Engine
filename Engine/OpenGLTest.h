@@ -49,6 +49,51 @@ private:
 		370, 190, 0,
 		200, 100, 0
 	};
+
+	GLfloat triangle_cube[36 * 3] = {
+		// Cara 1
+		0.0f, 1.0f, 0.0f, // Triangle 1
+		1.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,		
+		0.0f, 1.0f, 0.0f,  // Triangle 2
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,	
+		// Cara 2
+		1.0f, 1.0f, 0.0f, // Triangle 1	
+		1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, // Triangle 2
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f,
+		// Cara 3
+		1.0f, 1.0f, 1.0f, // Triangle 1
+		1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, // Triangle 2
+		0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		// Cara 4
+		0.0f, 1.0f, 1.0f, // Triangle 1
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, // Triangle 2
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 0.0f,
+		// Cara 5
+		0.0f, 1.0f, 1.0f, // Triangle 1
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f, // Triangle 2
+		0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		// Cara 6
+		0.0f, 0.0f, 1.0f, // Triangle 1
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, // Triangle 2
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f
+	};
 	
 	bool wireframe = false;
 
@@ -67,6 +112,7 @@ public:
 	void DrawPolygon() const;
 	void DrawTriangleStrip() const;
 	void DrawTriangleFan() const;
+	void DrawCubeDirectMode() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
