@@ -143,12 +143,6 @@ bool Renderer3D::Init()
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	OnResize(w, h);
 
-	//Load Geometry to VRAM
-	glGenBuffers(1, (GLuint*) &(cube_id));
-	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 3, cube_vert, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	return ret;
 }
 
