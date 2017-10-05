@@ -77,24 +77,6 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 	return ret;
 }
 
-UPDATE_STATUS OpenGLTest::Update(float dt)
-{
-	UPDATE_STATUS ret = UPDATE_CONTINUE;
-
-	/*glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-
-	glDrawElements(GL_TRIANGLES, sizeof(uint) * 36 / 3, GL_UNSIGNED_INT, NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDisableClientState(GL_VERTEX_ARRAY);*/
-
-	return ret;
-}
-
 void OpenGLTest::Draw3DPoint(const GLfloat x, const GLfloat y, const GLfloat z) const
 {
 	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -187,4 +169,18 @@ void OpenGLTest::DrawCubeDirectMode() const
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void OpenGLTest::DrawCubeIndicesVertex() const
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	glDrawElements(GL_TRIANGLES, sizeof(uint) * 36 / 3, GL_UNSIGNED_INT, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDisableClientState(GL_VERTEX_ARRAY);
 }

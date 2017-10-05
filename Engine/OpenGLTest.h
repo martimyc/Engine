@@ -51,11 +51,11 @@ public:
 	bool Init();
 
 	UPDATE_STATUS Configuration(float dt);
-	UPDATE_STATUS Update(float dt);
 
 	void Draw3DPoint(const GLfloat x,const GLfloat y, const GLfloat z) const;
 	void DrawDebugPoint() const;
 	void DrawCubeDirectMode() const;
+	void DrawCubeIndicesVertex() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST
