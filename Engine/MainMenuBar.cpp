@@ -73,10 +73,8 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 		{
 			ImGui::Begin("About", &show_about);
 
-			std::string str = App->GetTitle();
-			ImGui::Text("%s", str.c_str());
-			str = App->GetOrganization();
-			ImGui::Text("Organization: %s", str.c_str());
+			ImGui::Text("%s", App->GetTitle());
+			ImGui::Text("Organization: %s", App->GetOrganization());
 
 			ImGui::Separator();
 			ImGui::Text("Authors:");

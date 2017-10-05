@@ -15,6 +15,18 @@ OpenGLTest::~OpenGLTest()
 
 bool OpenGLTest::Init()
 {
+	//Load Geometry to VRAM
+	glGenBuffers(1, (GLuint*) &(cube_id));
+	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 3, cube_vert, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, (GLuint*) &(cube_indices_id));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 36, cube_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
 	//checkers texture
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
@@ -156,4 +168,18 @@ void OpenGLTest::DrawCubeDirectMode() const
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void OpenGLTest::DrawCubeIndicesVertex() const
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	glDrawElements(GL_TRIANGLES, sizeof(uint) * 36 / 3, GL_UNSIGNED_INT, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDisableClientState(GL_VERTEX_ARRAY);
 }

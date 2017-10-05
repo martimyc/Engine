@@ -143,12 +143,6 @@ bool Renderer3D::Init()
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	OnResize(w, h);
 
-	//Load Geometry to VRAM
-	glGenBuffers(1, (GLuint*) &(cube_id));
-	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 3, cube_vert, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	return ret;
 }
 
@@ -192,8 +186,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		EndDebugDraw();
 	}*/
 
-	App->open_gl_test->DrawCubeDirectMode();
-
+	//App->open_gl_test->DrawCubeDirectMode();
+	App->open_gl_test->DrawCubeIndicesVertex();
 	//glBindTexture(GL_TEXTURE_2D, img_id);
 
 	/*glEnableClientState(GL_VERTEX_ARRAY);
@@ -205,7 +199,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 	
-	App->open_gl_test->DrawDebugPoint();
+	//App->open_gl_test->DrawDebugPoint();
 	DrawWorldAxis();
 
 	//------
