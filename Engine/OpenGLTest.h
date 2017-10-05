@@ -4,8 +4,8 @@
 #include <vector>
 #include "Module.h"
 
-#define CHECKERS_HEIGHT 10
-#define CHECKERS_WIDTH 10
+#define CHECKERS_HEIGHT 100
+#define CHECKERS_WIDTH 100
 
 class OpenGLTest: public Module
 {
