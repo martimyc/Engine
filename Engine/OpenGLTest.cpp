@@ -17,30 +17,35 @@ bool OpenGLTest::Init()
 {
 	GLfloat cube_vert[8 * 3] =
 	{
-		0.f, 1.f, 0.f,		//0
-		0.f, 0.f, 0.f,		//1
-		0.f, 0.f, 1.f,		//2
-		0.f, 1.f, 1.f,		//3
-		1.f, 1.f, 1.f,		//4
+		0.f, 0.f, 0.f,		//0
+		1.f, 0.f, 0.f,		//1
+		1.f, 1.f, 0.f,		//2
+		0.f, 1.f, 0.f,		//3
+		0.f, 0.f, 1.f,		//4
 		1.f, 0.f, 1.f,		//5
-		1.f, 1.f, 0.f,		//6
-		1.f, 0.f, 0.f		//7
+		1.f, 1.f, 1.f,		//6
+		0.f, 1.f, 1.f		//7
 	};
 
 	GLushort cube_indices[36] =
 	{
-		1,2,0, 0,2,3,	//Left
-		4,3,2, 4,2,5,	//Front
-		7,1,0, 7,0,6,	//Back
-		1,7,2, 7,5,2,	//Bottom
-		0,4,6, 0,3,4,	//Top
-		7,6,4, 7,6,5	//Right
+		6,7,5, 7,4,5,	//Front
+		6,5,1, 2,6,1,	//Right
+		3,2,1, 0,3,1,	//Back
+		7,3,0, 7,0,4,	//Left
+		4,1,5, 4,0,1,	//Bottom
+		3,6,2, 3,7,6	//Top
+		
 	};
 
 	//Load Geometry to VRAM
 	glGenBuffers(1, (GLuint*) &(cube_id));
 	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vert), cube_vert, GL_STATIC_DRAW);
+	/*glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, NULL);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 2));*/
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, (GLuint*) &(cube_indices_id));
