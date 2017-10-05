@@ -15,15 +15,37 @@ OpenGLTest::~OpenGLTest()
 
 bool OpenGLTest::Init()
 {
+	GLfloat cube_vert[8 * 3] =
+	{
+		0.f, 1.f, 0.f,		//0
+		0.f, 0.f, 0.f,		//1
+		0.f, 0.f, 1.f,		//2
+		0.f, 1.f, 1.f,		//3
+		1.f, 1.f, 1.f,		//4
+		1.f, 0.f, 1.f,		//5
+		1.f, 1.f, 0.f,		//6
+		1.f, 0.f, 0.f		//7
+	};
+
+	GLushort cube_indices[36] =
+	{
+		1,2,0, 0,2,3,	//Left
+		4,3,2, 4,2,5,	//Front
+		7,1,0, 7,0,6,	//Back
+		1,7,2, 7,5,2,	//Bottom
+		0,4,6, 0,3,4,	//Top
+		7,6,4, 7,6,5	//Right
+	};
+
 	//Load Geometry to VRAM
 	glGenBuffers(1, (GLuint*) &(cube_id));
 	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 3, cube_vert, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vert), cube_vert, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, (GLuint*) &(cube_indices_id));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 36, cube_indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
@@ -177,7 +199,7 @@ void OpenGLTest::DrawCubeIndicesVertex() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-	glDrawElements(GL_TRIANGLES, sizeof(uint) * 36 / 3, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
