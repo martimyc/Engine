@@ -193,14 +193,14 @@ void Application::OpenWebsite(const char * url)
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
-const std::string Application::GetTitle() const
+const char* Application::GetTitle() const
 {
-	return title;
+	return title.c_str();
 }
 
-const std::string Application::GetOrganization() const
+const char* Application::GetOrganization() const
 {
-	return organization;
+	return organization.c_str();
 }
 
 void Application::OpenCloseConfigWindow()

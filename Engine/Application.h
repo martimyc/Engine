@@ -58,8 +58,8 @@ public:
 
 	void OpenWebsite(const char* url);
 
-	const std::string GetTitle() const;
-	const std::string GetOrganization() const;
+	const char* GetTitle() const;
+	const char* GetOrganization() const;
 	void OpenCloseConfigWindow();
 
 private:
