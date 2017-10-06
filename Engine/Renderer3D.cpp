@@ -186,8 +186,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		EndDebugDraw();
 	}*/
 
-	App->open_gl_test->DrawCubeDirectMode();
-	//App->open_gl_test->DrawCubeIndicesVertex();
+	//App->open_gl_test->DrawCubeDirectMode();
+	App->open_gl_test->DrawCubeIndicesVertex();
 	//glBindTexture(GL_TEXTURE_2D, img_id);
 
 	/*glEnableClientState(GL_VERTEX_ARRAY);

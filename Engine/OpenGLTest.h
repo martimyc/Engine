@@ -19,9 +19,10 @@ private:
 	GLfloat z = 0.0f;
 
 	GLuint img_id;
-	GLuint cube_id;
+	GLuint cube_vertex_id;
 	GLuint cube_indices_id;
 	GLuint cube_uv_id;
+	GLuint cube_vao_id;
 
 public:
 	OpenGLTest(Application* app, bool start_enabled = true);

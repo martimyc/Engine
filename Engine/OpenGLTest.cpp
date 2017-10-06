@@ -37,23 +37,23 @@ bool OpenGLTest::Init()
 		3,6,2, 3,7,6	//Top	
 	};
 
-	GLfloat cube_uv [12] = //24
+	GLfloat cube_uv [16] =
 	{
-		//face Front
-		//triangle 1
-		1.0f, 1.0f, //6
-		0.0f, 1.0f, //7
+		1.0f, 0.0f, //0
+		0.0f, 0.0f, //1
+		1.0f, 1.0f, //2
+		0.0f, 1.0f, //3
+		0.0f, 0.0f, //4
 		1.0f, 0.0f, //5
-		//triangle 2
-		0.0f, 1.0f, //7
-		0.0f, 0.0f,
-		1.0f, 0.0f //5
+		1.0f, 1.0f, //6
+		0.0f, 1.0f //7
 	};
 
 	//Load Geometry to VRAM
-	glGenBuffers(1, (GLuint*) &(cube_id));
-	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
+	glGenBuffers(1, (GLuint*) &(cube_vertex_id));
+	glBindBuffer(GL_ARRAY_BUFFER, cube_vertex_id);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vert), cube_vert, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	/*glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, NULL);
@@ -63,7 +63,6 @@ bool OpenGLTest::Init()
 	glGenBuffers(1, (GLuint*) &(cube_uv_id));
 	glBindBuffer(GL_ARRAY_BUFFER, cube_uv_id);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uv), cube_uv, GL_STATIC_DRAW);
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, (GLuint*) &(cube_indices_id));
@@ -95,6 +94,10 @@ bool OpenGLTest::Init()
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//glGenVertexArrays(1, &cube_vao_id);
+	//glBindVertexArray(cube_vao_id);
+	//glBindVertexArray(0);
 
 	return true;
 }
@@ -211,16 +214,27 @@ void OpenGLTest::DrawCubeDirectMode() const
 
 void OpenGLTest::DrawCubeIndicesVertex() const
 {
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	glBindTexture(GL_TEXTURE_2D, img_id);
+
 	glBindBuffer(GL_ARRAY_BUFFER, cube_uv_id);
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+	glBindBuffer(GL_ARRAY_BUFFER, cube_vertex_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
+	glIndexPointer(GL_SHORT, 0, NULL);
+	//glBindVertexArray(cube_vao_id);
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
 	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
