@@ -4,8 +4,8 @@
 #include <vector>
 #include "Module.h"
 
-#define CHECKERS_HEIGHT 100
-#define CHECKERS_WIDTH 100
+#define CHECKERS_HEIGHT 256
+#define CHECKERS_WIDTH 256
 
 class OpenGLTest: public Module
 {
@@ -19,8 +19,9 @@ private:
 	GLfloat z = 0.0f;
 
 	GLuint img_id;
-	uint cube_id;
-	uint cube_indices_id;
+	GLuint cube_id;
+	GLuint cube_indices_id;
+	GLuint cube_uv_id;
 
 public:
 	OpenGLTest(Application* app, bool start_enabled = true);
