@@ -151,13 +151,13 @@ void OpenGLTest::DrawCubeDirectMode() const
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Front
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 1.f, 1.f);	//E
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 1.f, 1.f);	//D	
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 0.f, 1.f);	//C
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 1.f, 1.f);	//D	
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 0.f, 1.f);	//C
 	
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 1.f, 1.f);	//E
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 0.f, 1.f);	//C	
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 0.f, 1.f);	//F	
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 0.f, 1.f);	//C	
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 0.f, 1.f);	//F	
 
 	//Left	
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 0.f, 0.f);	//B
@@ -169,46 +169,40 @@ void OpenGLTest::DrawCubeDirectMode() const
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 1.f, 1.f);	//D
 
 	//Back
-	glVertex3f(1.f, 0.f, 0.f);		//H
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0.f, 0.f, 0.f);		//B
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0.f, 1.f, 0.f);		//A
-	glTexCoord2f(0.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.f, 0.f, 0.f);	//H
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.f, 0.f, 0.f);	//B
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 1.f, 0.f);	//A
 
-	glVertex3f(1.f, 0.f, 0.f);		//H
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(0.f, 1.f, 0.f);		//A
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(1.f, 1.f, 0.f);		//G
-	glTexCoord2f(1.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.f, 0.f, 0.f);	//H
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 1.f, 0.f);	//A
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.f, 1.f, 0.f);	//G
 
 	//Bottom
-	glVertex3f(0.f, 0.f, 0.f);		//B
-	glVertex3f(1.f, 0.f, 0.f);		//H
-	glVertex3f(0.f, 0.f, 1.f);		//C
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.f, 0.f, 0.f);	//B
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.f, 0.f, 0.f);	//H
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 0.f, 1.f);	//C
 
-	glVertex3f(1.f, 0.f, 0.f);		//H
-	glVertex3f(1.f, 0.f, 1.f);		//F
-	glVertex3f(0.f, 0.f, 1.f);		//C
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.f, 0.f, 0.f);	//H
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 0.f, 1.f);	//F
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(0.f, 0.f, 1.f);	//C
 
 	//Top
-	glVertex3f(0.f, 1.f, 0.f);		//A
-	glVertex3f(1.f, 1.f, 1.f);		//E
-	glVertex3f(1.f, 1.f, 0.f);		//G
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 1.f, 0.f);	//A
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.f, 1.f, 0.f);	//G
 
-	glVertex3f(0.f, 1.f, 0.f);		//A
-	glVertex3f(0.f, 1.f, 1.f);		//D
-	glVertex3f(1.f, 1.f, 1.f);		//E
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.f, 1.f, 0.f);	//A
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(0.f, 1.f, 1.f);	//D
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
 
 	//Right
-	glVertex3f(1.f, 0.f, 0.f);		//H
-	glVertex3f(1.f, 1.f, 0.f);		//G
-	glVertex3f(1.f, 1.f, 1.f);		//E
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 0.f, 0.f);	//H
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.f, 1.f, 0.f);	//G
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
 
-	glVertex3f(1.f, 0.f, 0.f);		//H
-	glVertex3f(1.f, 1.f, 1.f);		//E
-	glVertex3f(1.f, 0.f, 1.f);		//F
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.f, 0.f, 0.f);	//H
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.f, 1.f, 1.f);	//E
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.f, 0.f, 1.f);	//F
 
 	glEnd();
 
