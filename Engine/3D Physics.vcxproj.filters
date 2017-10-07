@@ -55,6 +55,9 @@
     <Filter Include="Sources\Glew">
       <UniqueIdentifier>{201dd150-2661-4a57-9735-868bf3d7c543}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game Objects">
+      <UniqueIdentifier>{8cb2fb8c-7c1c-48b9-9800-495a9cc4bb1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -348,6 +351,9 @@
     <ClInclude Include="OpenGLTest.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Sources\Game Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -523,6 +529,9 @@
     </ClCompile>
     <ClCompile Include="OpenGLTest.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Sources\Game Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
