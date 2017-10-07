@@ -5,7 +5,6 @@
 #include <string>
 #include "MathGeoLib\src\Time\Clock.h"
 #include "Globals.h"
-#include "Timer.h"
 #include "Module.h"
 
 class Window;

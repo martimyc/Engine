@@ -7,13 +7,7 @@
 #include "Input.h"
 #include "OpenGLTest.h"
 
-OpenGLTest::OpenGLTest(Application * app, bool start_enabled): Module(app, "Level", start_enabled)
-{}
-
-OpenGLTest::~OpenGLTest()
-{}
-
-bool OpenGLTest::Init()
+void OpenGLTest::GenCube()
 {
 	GLfloat cube_vert[8 * 3] =
 	{
@@ -37,7 +31,7 @@ bool OpenGLTest::Init()
 		3,6,2, 3,7,6	//Top	
 	};
 
-	GLfloat cube_uv [16] =
+	GLfloat cube_uv[16] =
 	{
 		1.0f, 0.0f, //0
 		0.0f, 0.0f, //1
@@ -48,28 +42,6 @@ bool OpenGLTest::Init()
 		1.0f, 1.0f, //6
 		0.0f, 1.0f //7
 	};
-
-	//Load Geometry to VRAM
-	glGenBuffers(1, (GLuint*) &(cube_vertex_id));
-	glBindBuffer(GL_ARRAY_BUFFER, cube_vertex_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vert), cube_vert, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	/*glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, NULL);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 2));*/
-
-	glGenBuffers(1, (GLuint*) &(cube_uv_id));
-	glBindBuffer(GL_ARRAY_BUFFER, cube_uv_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uv), cube_uv, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, (GLuint*) &(cube_indices_id));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 
 	//checkers texture
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
@@ -83,6 +55,25 @@ bool OpenGLTest::Init()
 		}
 	}
 
+	//Load Geometry to VRAM
+	glGenBuffers(1, (GLuint*) &(cube_vertex_id));
+	glBindBuffer(GL_ARRAY_BUFFER, cube_vertex_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vert), cube_vert, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Load UVs to VRAM
+	glGenBuffers(1, (GLuint*) &(cube_uv_id));
+	glBindBuffer(GL_ARRAY_BUFFER, cube_uv_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uv), cube_uv, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Load indicies to VRAM
+	glGenBuffers(1, (GLuint*) &(cube_indices_id));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	//Load Texture to VRAM
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &img_id);
 	glBindTexture(GL_TEXTURE_2D, img_id);
@@ -92,13 +83,22 @@ bool OpenGLTest::Init()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//glGenVertexArrays(1, &cube_vao_id);
 	//glBindVertexArray(cube_vao_id);
-	//glBindVertexArray(0);
+	//glBindVertexArray(0); //only from GL 3.0 onwards
+}
 
+OpenGLTest::OpenGLTest(Application * app, bool start_enabled): Module(app, "Level", start_enabled)
+{}
+
+OpenGLTest::~OpenGLTest()
+{}
+
+bool OpenGLTest::Init()
+{
+	GenCube();
 	return true;
 }
 
@@ -119,8 +119,7 @@ UPDATE_STATUS OpenGLTest::Configuration(float dt)
 			ImGui::InputFloat("X", &x);
 			ImGui::InputFloat("Y", &y);
 			ImGui::InputFloat("Z", &z);
-		}
-		
+		}	
 	}
 	return ret;
 }
@@ -227,7 +226,6 @@ void OpenGLTest::DrawCubeIndicesVertex() const
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
 	glIndexPointer(GL_SHORT, 0, NULL);
-	//glBindVertexArray(cube_vao_id);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
 	

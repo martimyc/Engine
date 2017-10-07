@@ -13,7 +13,7 @@ class Renderer3D : public Module
 {
 private:
 	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
-	uint cube_id;
+	GLuint cube_id;
 
 	float cube_vert[36 * 3] =
 	{

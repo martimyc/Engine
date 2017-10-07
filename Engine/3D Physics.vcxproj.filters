@@ -78,9 +78,6 @@
     <ClInclude Include="Light.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="Brofiler\Brofiler.h">
       <Filter>Sources\Brofiller</Filter>
     </ClInclude>
@@ -354,9 +351,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
-      <Filter>Sources\Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
       <Filter>Sources\Tools</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">

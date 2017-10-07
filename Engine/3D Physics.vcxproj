@@ -175,7 +175,6 @@
     <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
-    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -236,7 +235,6 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gpudetect\IntelGfx.cfg" />

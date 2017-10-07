@@ -22,7 +22,8 @@ private:
 	GLuint cube_vertex_id;
 	GLuint cube_indices_id;
 	GLuint cube_uv_id;
-	GLuint cube_vao_id;
+
+	void GenCube();
 
 public:
 	OpenGLTest(Application* app, bool start_enabled = true);

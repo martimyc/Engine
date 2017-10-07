@@ -15,7 +15,6 @@
 #include "OpenGLTest.h"
 #include "Application.h"
 
-
 Application::Application()
 {
 	window = new Window(this);
