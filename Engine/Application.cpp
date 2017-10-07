@@ -13,19 +13,21 @@
 #include "HardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
 #include "OpenGLTest.h"
+#include "Textures.h"
 #include "Application.h"
 
 Application::Application()
 {
-	window = new Window(this);
-	input = new Input(this);
-	audio = new Audio(this, true);
-	renderer_3d = new Renderer3D(this);
-	camera = new Camera3D(this);
-	console = new Console(this);
-	hardware_software_info = new HardwareSoftwareInfo(this);
-	main_menu_bar = new MainMenuBar(this);
-	open_gl_test = new OpenGLTest(this);
+	window = new Window("Window");
+	input = new Input("Input");
+	audio = new Audio("Audio");
+	renderer_3d = new Renderer3D("Renderer3D");
+	camera = new Camera3D("Camera3D");
+	console = new Console("Console");
+	hardware_software_info = new HardwareSoftwareInfo("Hardware & Software");
+	main_menu_bar = new MainMenuBar("Menu Bar");
+	open_gl_test = new OpenGLTest("OpenGL Test");
+	textures = new Textures("Textures");
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -40,6 +42,7 @@ Application::Application()
 	AddModule(hardware_software_info);
 	AddModule(main_menu_bar);
 	AddModule(open_gl_test);
+	AddModule(textures);
 	
 	// Scenes
 

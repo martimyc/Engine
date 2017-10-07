@@ -4,9 +4,8 @@
 #include "Console.h"
 #include "MainMenuBar.h"
 
-MainMenuBar::MainMenuBar(Application * app, bool start_enabled) : Module(app, "Main Menu Bar", start_enabled)
-{
-}
+MainMenuBar::MainMenuBar(const char* name, bool start_enabled) : Module(name, start_enabled)
+{}
 
 MainMenuBar::~MainMenuBar()
 {

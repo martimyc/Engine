@@ -1,15 +1,17 @@
+#include "imgui\imgui_impl_sdl.h"
 #include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Renderer3D.h"
 #include "Window.h"
-#include "Input.h"
 #include "Console.h"
-#include "imgui\imgui_impl_sdl.h"
+#include "Textures.h"
+#include "Input.h"
+
 
 #define MAX_KEYS 300
 
-Input::Input(Application* app, bool start_enabled) : Module(app, "Input", start_enabled)
+Input::Input(const char* name, bool start_enabled) : Module(name, start_enabled)
 {
 	keyboard = new KEY_STATE[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KEY_STATE) * MAX_KEYS);
@@ -25,13 +27,13 @@ Input::~Input()
 // Called before render is available
 bool Input::Init()
 {
-	App->LOG("Init SDL input event system");
+	LOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
-		App->LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
+		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -100,27 +102,40 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 		switch(e.type)
 		{
 			case SDL_MOUSEWHEEL:
-			mouse_z = e.wheel.y;
-
-			break;
+				mouse_z = e.wheel.y;
+				break;
 
 			case SDL_MOUSEMOTION:
-			mouse_x = e.motion.x / App->window->GetScale();
-			mouse_y = e.motion.y / App->window->GetScale();
+				mouse_x = e.motion.x / App->window->GetScale();
+				mouse_y = e.motion.y / App->window->GetScale();
 
-			mouse_x_motion = e.motion.xrel / App->window->GetScale();
-			mouse_y_motion = e.motion.yrel / App->window->GetScale();
-			break;
+				mouse_x_motion = e.motion.xrel / App->window->GetScale();
+				mouse_y_motion = e.motion.yrel / App->window->GetScale();
+				break;
 
 			case SDL_QUIT:
-			quit = true;
-			break;
+				quit = true;
+				break;
 
 			case SDL_WINDOWEVENT:
-			{
 				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
 					App->renderer_3d->OnResize(e.window.data1, e.window.data2);
-			}
+				break;
+
+			case SDL_DROPFILE:
+				std::string filename (e.drop.file);
+				std::string extension;
+				// find the last occurrence of '.'
+				size_t pos = filename.find_last_of(".");
+				// make sure the poisition is valid
+				if (pos != filename.length())
+					extension = filename.substr(pos + 1);
+				else
+					LOG("Coud not find . in the dropef file path");
+
+				if (extension == "dds")
+					App->textures->LoadTexture(e.drop.file);
+				break;
 		}
 	}
 
@@ -133,7 +148,7 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 // Called before quitting
 bool Input::CleanUp()
 {
-	App->LOG("Quitting SDL input event subsystem");
+	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }

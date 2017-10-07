@@ -18,7 +18,7 @@ private:
 
 public:
 
-	MainMenuBar(Application* app, bool start_enabled = true);
+	MainMenuBar(const char* name, bool start_enabled = true);
 	~MainMenuBar();
 
 	UPDATE_STATUS Update(float dt);

@@ -8,7 +8,7 @@
 #include "Console.h"
 #include "HardwareSoftwareInfo.h"
 
-HardwareSoftwareInfo::HardwareSoftwareInfo(Application * app, bool start_enabled): Module(app, "HardwareSoftwareInfo", start_enabled)
+HardwareSoftwareInfo::HardwareSoftwareInfo(const char* name, bool start_enabled): Module(name, start_enabled)
 {}
 
 HardwareSoftwareInfo::~HardwareSoftwareInfo()
@@ -68,7 +68,7 @@ bool HardwareSoftwareInfo::Start()
 		if (!getGraphicsDeviceInfo(&vendor_id, &device_id, &gfx_brand, &video_memory_budget, &video_memory_usage, &video_memory_available, &video_memory_reserved))
 		{
 			
-			App->LOG("Can not identify GPU and VRAM");
+			LOG("Can not identify GPU and VRAM");
 		}
 		else
 		{

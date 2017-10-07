@@ -13,7 +13,7 @@ private:
 	std::deque<std::string> log_vec;
 	bool console_active = true;
 public:
-	Console(Application* parent, bool start_enabled = true);
+	Console(const char* name, bool start_enabled = true);
 	~Console();
 
 	UPDATE_STATUS Update(float dt);

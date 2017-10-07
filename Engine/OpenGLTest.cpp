@@ -90,7 +90,7 @@ void OpenGLTest::GenCube()
 	//glBindVertexArray(0); //only from GL 3.0 onwards
 }
 
-OpenGLTest::OpenGLTest(Application * app, bool start_enabled): Module(app, "Level", start_enabled)
+OpenGLTest::OpenGLTest(const char* name, bool start_enabled): Module(name, start_enabled)
 {}
 
 OpenGLTest::~OpenGLTest()

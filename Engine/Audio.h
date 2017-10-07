@@ -10,7 +10,7 @@
 class Audio : public Module
 {
 public:
-	Audio(Application* app, bool start_enabled = true);
+	Audio(const char* name, bool start_enabled = true);
 	~Audio();
 
 	bool Init();

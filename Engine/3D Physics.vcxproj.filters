@@ -58,6 +58,9 @@
     <Filter Include="Sources\Game Objects">
       <UniqueIdentifier>{8cb2fb8c-7c1c-48b9-9800-495a9cc4bb1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\DevIL">
+      <UniqueIdentifier>{3ff82014-cab4-4db0-ba33-6e7c0cc11a48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -354,15 +357,39 @@
     <ClInclude Include="GameObject.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
+    <ClInclude Include="DevIL\include\IL\devil_cpp_wrapper.hpp">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\devil_internal_exports.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\il.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\il_wrap.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\ilu.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\ilu_region.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\ilut.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL\include\IL\ilut_config.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
       <Filter>Sources\Tools</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="glmath.cpp">
@@ -532,6 +559,15 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Sources\Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

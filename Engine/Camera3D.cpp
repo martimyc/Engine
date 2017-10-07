@@ -7,7 +7,7 @@
 #include "Console.h"
 #include "Camera3D.h"
 
-Camera3D::Camera3D(Application* app, bool start_enabled) : Module(app, "Camera", start_enabled)
+Camera3D::Camera3D(const char* name, bool start_enabled) : Module( name, start_enabled)
 {
 	CalculateViewMatrix();
 
@@ -39,7 +39,7 @@ bool Camera3D::Init()
 // -----------------------------------------------------------------
 bool Camera3D::Start()
 {
-	App->LOG("Setting up the camera");
+	LOG("Setting up the camera");
 	bool ret = true;
 
 	return ret;
@@ -48,7 +48,7 @@ bool Camera3D::Start()
 // -----------------------------------------------------------------
 bool Camera3D::CleanUp()
 {
-	App->LOG("Cleaning camera");
+	LOG("Cleaning camera");
 
 	return true;
 }

@@ -13,9 +13,8 @@ private :
 
 public:
 	std::string name;
-	Application* App;
 
-	Module(Application* parent,const char* name, bool start_enabled = true) : App(parent), name(name)
+	Module(const char* name, bool start_enabled = true) : name(name), enabled(start_enabled)
 	{}
 
 	virtual ~Module()

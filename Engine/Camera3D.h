@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _MODULE_CAMERA
+#define _MODULE_CAMERA
+
 #include "Module.h"
 #include "Globals.h"
 #include "glmath.h"
@@ -6,7 +8,7 @@
 class Camera3D : public Module
 {
 public:
-	Camera3D(Application* app, bool start_enabled = true);
+	Camera3D(const char* name, bool start_enabled = true);
 	~Camera3D();
 
 	bool Init();
@@ -31,3 +33,5 @@ private:
 
 	mat4x4 ViewMatrix, ViewMatrixInverse;
 };
+
+#endif //_MODULE_CAMERA

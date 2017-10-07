@@ -73,7 +73,7 @@ private:
 	};
 
 public:
-	Renderer3D(Application* app, bool start_enabled = true);
+	Renderer3D(const char* name, bool start_enabled = true);
 	~Renderer3D();
 
 	bool Init();

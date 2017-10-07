@@ -19,7 +19,7 @@ private:
 
 public:
 
-	Window(Application* app, bool start_enabled = true);
+	Window(const char* name, bool start_enabled = true);
 
 	// Destructor
 	virtual ~Window();

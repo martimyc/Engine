@@ -45,7 +45,7 @@ void Renderer3D::DrawWorldAxis()
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-Renderer3D::Renderer3D(Application* app, bool start_enabled) : Module(app, "Renderer3D", start_enabled)
+Renderer3D::Renderer3D(const char* name, bool start_enabled) : Module(name, start_enabled)
 {}
 
 // Destructor
@@ -55,7 +55,7 @@ Renderer3D::~Renderer3D()
 // Called before render is available
 bool Renderer3D::Init()
 {
-	App->LOG("Creating 3D Renderer context");
+	LOG("Creating 3D Renderer context");
 	bool ret = true;
 	
 	JSON_Value* config = json_parse_file("config.json");
@@ -65,7 +65,7 @@ bool Renderer3D::Init()
 
 	if (!ImGui_ImplSdlGL2_Init(App->window->window))
 	{
-		App->LOG("ImGui could not be Initialized!");
+		LOG("ImGui could not be Initialized!");
 		ret = false;
 	}
 	
@@ -73,7 +73,7 @@ bool Renderer3D::Init()
 	{
 		//Use Vsync
 		if(VSYNC && SDL_GL_SetSwapInterval(1) < 0)
-			App->LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -83,7 +83,7 @@ bool Renderer3D::Init()
 		GLenum error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
+			LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
 		}
 
@@ -95,7 +95,7 @@ bool Renderer3D::Init()
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
+			LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
 		}
 		
@@ -111,7 +111,7 @@ bool Renderer3D::Init()
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			App->LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
+			LOG("Error initializing OpenGL! %s\n", glewGetErrorString(error));
 			ret = false;
 		}
 	
@@ -214,7 +214,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 // Called before quitting
 bool Renderer3D::CleanUp()
 {
-	App->LOG("Destroying 3D Renderer");
+	LOG("Destroying 3D Renderer");
 	return true;
 }
 

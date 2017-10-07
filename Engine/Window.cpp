@@ -8,7 +8,7 @@
 #include "Console.h"
 #include "Window.h"
 
-Window::Window(Application* app, bool start_enabled) : Module(app, "Window", start_enabled)
+Window::Window(const char* name, bool start_enabled) : Module(name, start_enabled)
 {
 	window = NULL;
 	screen_surface = NULL;
@@ -21,7 +21,7 @@ Window::~Window()
 // Called before render is available
 bool Window::Init()
 {
-	App->LOG("Init SDL window & surface");
+	LOG("Init SDL window & surface");
 	bool ret = true;
 
 	//Charge config
@@ -38,7 +38,7 @@ bool Window::Init()
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		App->LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
+		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 	else
@@ -88,7 +88,7 @@ bool Window::Init()
 
 		if(window == NULL)
 		{
-			App->LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
 		}
 		else
@@ -97,7 +97,7 @@ bool Window::Init()
 			context = SDL_GL_CreateContext(window);
 			if (context == NULL)
 			{
-				App->LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+				LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 				ret = false;
 			}
 
@@ -110,11 +110,11 @@ bool Window::Init()
 		//Glew
 		if (GLEW_OK == glewInit())
 		{
-			App->LOG("Using Glew %s", glewGetString(GLEW_VERSION));
+			LOG("Using Glew %s", glewGetString(GLEW_VERSION));
 		}
 		else
 		{
-			App->LOG("Can not initialise glew");
+			LOG("Can not initialise glew");
 			ret = false;
 		}
 	}
@@ -275,7 +275,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 // Called before quitting
 bool Window::CleanUp()
 {
-	App->LOG("Destroying SDL window and quitting all SDL systems");
+	LOG("Destroying SDL window and quitting all SDL systems");
 
 	//Destroy window
 	if(window != NULL)

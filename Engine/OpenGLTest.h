@@ -26,7 +26,7 @@ private:
 	void GenCube();
 
 public:
-	OpenGLTest(Application* app, bool start_enabled = true);
+	OpenGLTest(const char* name, bool start_enabled = true);
 	~OpenGLTest();
 
 	bool Init();

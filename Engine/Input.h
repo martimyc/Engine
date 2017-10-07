@@ -18,7 +18,7 @@ class Input : public Module
 {
 public:
 	
-	Input(Application* app, bool start_enabled = true);
+	Input(const char* name, bool start_enabled = true);
 	~Input();
 
 	bool Init();

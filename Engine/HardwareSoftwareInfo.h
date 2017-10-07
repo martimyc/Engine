@@ -31,7 +31,7 @@ private:
 	std::wstring gfx_brand;
 
 public:
-	HardwareSoftwareInfo(Application* app, bool start_enabled = true);
+	HardwareSoftwareInfo(const char* name, bool start_enabled = true);
 	~HardwareSoftwareInfo();
 
 	bool Start();

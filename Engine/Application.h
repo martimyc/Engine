@@ -17,6 +17,7 @@ class Hardware;
 class MainMenuBar;
 class HardwareSoftwareInfo;
 class OpenGLTest;
+class Textures;
 
 class Application
 {
@@ -31,6 +32,7 @@ public:
 	MainMenuBar* main_menu_bar;
 	HardwareSoftwareInfo* hardware_software_info;
 	OpenGLTest* open_gl_test;
+	Textures* textures;
 
 private:
 	std::string title;
@@ -69,5 +71,8 @@ private:
 	UPDATE_STATUS CreateConfigMenu();
 	UPDATE_STATUS EndConfigMenu();
 };
+
+// Give App pointer access everywhere
+extern Application* App;
 
 #endif //_APPLICATION

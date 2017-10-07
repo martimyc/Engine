@@ -2,7 +2,7 @@
 #include "Brofiler\Brofiler.h"
 #include "Console.h"
 
-Console::Console(Application * parent, bool start_enabled): Module(parent, "Console", start_enabled)
+Console::Console(const char* name, bool start_enabled): Module(name, start_enabled)
 {}
 
 Console::~Console()
