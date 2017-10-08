@@ -11,9 +11,8 @@
 #pragma comment( lib, "SDL2/lib/x86/SDL2main.lib" )
 #pragma comment( lib, "glew/lib/Win32/glew32.lib" )
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
-#pragma comment (lib, "DevIL1.8.0/DevIL Windows SDK/lib/x86/DevIL.lib")
-#pragma comment (lib, "DevIL1.8.0/DevIL Windows SDK/lib/x86/ILU.lib")
-#pragma comment (lib, "DevIL1.8.0/DevIL Windows SDK/lib/x86/ILUT.lib")
+#pragma comment (lib, "DevIL/lib/x86/DevIL.lib")
+#pragma comment (lib, "DevIL/lib/x86/ILU.lib")
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 
 #include "Console.h"

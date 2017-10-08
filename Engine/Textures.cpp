@@ -10,11 +10,10 @@ bool Textures::Init()
 {
 	ilInit();
 	iluInit();
-	ilutRenderer(ILUT_OPENGL);
 	return true;
 }
 
-GLuint Textures::LoadTexture(const char* path)
+GLuint Textures::LoadTexture(const char* path, bool hiest_quality)
 {
 	ILuint imageID;				// Create an image ID as a ULuint
 
@@ -62,9 +61,21 @@ GLuint Textures::LoadTexture(const char* path)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-		// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+		if (hiest_quality)
+		{
+			// Set texture interpolation method to the highest visual quality it can be:
+			// GL_LINEAR_MIPMAP_LINEAR for minification - i.e. trilinear filtering
+			// GL_LINEAR for magnification (choices are either GL_NEAREST or GL_LINEAR - we do not use any MIPMAP settings for magnification!!
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+		else
+		{
+			// Set texture interpolation method to use linear interpolation (no MIPMAPS)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}		
 
 		// Specify the texture specification
 		glTexImage2D(GL_TEXTURE_2D, 				// Type of texture

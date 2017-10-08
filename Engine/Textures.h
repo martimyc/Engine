@@ -3,9 +3,8 @@
 
 #include <list>
 #include "glew\include\GL\glew.h"
-#include "DevIL1.8.0\DevIL Windows SDK\include\IL\il.h"
-#include "DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h"
-#include "DevIL1.8.0\DevIL Windows SDK\include\IL\ilut.h"
+#include "DevIL\include\IL\il.h"
+#include "DevIL\include\IL\ilu.h"
 #include "Module.h"
 
 class Textures: public Module
@@ -17,7 +16,7 @@ public:
 
 	bool Init();
 
-	GLuint LoadTexture(const char* path);
+	GLuint LoadTexture(const char* path, bool hiest_quality = true);
 };
 
 #endif // !_MODULE_TEXTURES
