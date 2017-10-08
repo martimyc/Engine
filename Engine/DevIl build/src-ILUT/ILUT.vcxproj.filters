@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_allegro.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_directx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_directx10.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_directx9.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_directxm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_internal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_opengl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_sdlsurface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_states.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\src\ilut_x11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\include\ilut_allegro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\include\ilut_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\include\ilut_opengl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\include\ilut_states.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\include\IL\devil_internal_exports.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\include\IL\ilut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\msvc\ilut.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\msvc\resources\IL Logo.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-ILUT\msvc\ILUT.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{AFE49458-867A-39FC-BD7A-6101CDCA2AED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{916E62F1-45AA-3898-8FA4-88257A690711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{0698247C-5769-3692-A23B-F8B8B9BE6B06}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

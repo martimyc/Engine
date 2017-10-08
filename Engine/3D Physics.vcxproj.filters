@@ -357,32 +357,32 @@
     <ClInclude Include="GameObject.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="DevIL\include\IL\devil_cpp_wrapper.hpp">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\devil_internal_exports.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\il.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\il_wrap.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\ilu.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\ilu_region.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\ilut.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
-    <ClInclude Include="DevIL\include\IL\ilut_config.h">
-      <Filter>Sources\DevIL</Filter>
-    </ClInclude>
     <ClInclude Include="Textures.h">
       <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\devil_cpp_wrapper.hpp">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\devil_internal_exports.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il_wrap.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu_region.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilut.h">
+      <Filter>Sources\DevIL</Filter>
+    </ClInclude>
+    <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilut_config.h">
+      <Filter>Sources\DevIL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

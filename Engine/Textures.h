@@ -3,9 +3,9 @@
 
 #include <list>
 #include "glew\include\GL\glew.h"
-#include "DevIL\include\IL\il.h"
-#include "DevIL\include\IL\ilu.h"
-#include "DevIL\include\IL\ilut.h"
+#include "DevIL1.8.0\DevIL Windows SDK\include\IL\il.h"
+#include "DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h"
+#include "DevIL1.8.0\DevIL Windows SDK\include\IL\ilut.h"
 #include "Module.h"
 
 class Textures: public Module

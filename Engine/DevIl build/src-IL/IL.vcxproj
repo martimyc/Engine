@@ -1,0 +1,457 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AB2A2FDF-0A7D-3F0F-8301-5E785CD01BC9}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>IL</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\lib\x86\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IL.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DevIL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\lib\x86\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IL.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DevIL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\lib\x86\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">IL.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">DevIL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\lib\x86\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">IL.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">DevIL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IL_DLL;JPEGSTATIC;CMAKE_INTDIR="Debug";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;IL_DLL;JPEGSTATIC;CMAKE_INTDIR=\"Debug\";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/Debug/DevIL.lib</ImportLibrary>
+      <ModuleDefinitionFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/msvc/il.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/Debug/DevIL.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;IL_DLL;JPEGSTATIC;CMAKE_INTDIR="Release";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;IL_DLL;JPEGSTATIC;CMAKE_INTDIR=\"Release\";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/Release/DevIL.lib</ImportLibrary>
+      <ModuleDefinitionFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/msvc/il.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/Release/DevIL.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;IL_DLL;JPEGSTATIC;CMAKE_INTDIR="MinSizeRel";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;IL_DLL;JPEGSTATIC;CMAKE_INTDIR=\"MinSizeRel\";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/MinSizeRel/DevIL.lib</ImportLibrary>
+      <ModuleDefinitionFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/msvc/il.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/MinSizeRel/DevIL.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;IL_DLL;JPEGSTATIC;CMAKE_INTDIR="RelWithDebInfo";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;IL_DLL;JPEGSTATIC;CMAKE_INTDIR=\"RelWithDebInfo\";IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/RelWithDebInfo/DevIL.lib</ImportLibrary>
+      <ModuleDefinitionFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/msvc/il.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/lib/x86/RelWithDebInfo/DevIL.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+D:\ProgramFiles\CMake\bin\cmake.exe -HC:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL "-BC:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build" --check-stamp-file "C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/src-IL/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\TestBigEndian.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPNG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindZLIB.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindTIFF.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJasper.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindlibSquish.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindNVTT.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindOpenEXR.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindLCMS2.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindMNG.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\config.h.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\pkgconfig\IL.pc.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\src-IL\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+D:\ProgramFiles\CMake\bin\cmake.exe -HC:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL "-BC:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build" --check-stamp-file "C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/src-IL/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\TestBigEndian.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPNG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindZLIB.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindTIFF.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJasper.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindlibSquish.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindNVTT.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindOpenEXR.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindLCMS2.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindMNG.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\config.h.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\pkgconfig\IL.pc.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\src-IL\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+D:\ProgramFiles\CMake\bin\cmake.exe -HC:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL "-BC:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build" --check-stamp-file "C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/src-IL/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\TestBigEndian.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPNG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindZLIB.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindTIFF.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJasper.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindlibSquish.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindNVTT.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindOpenEXR.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindLCMS2.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindMNG.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\config.h.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\pkgconfig\IL.pc.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\src-IL\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+D:\ProgramFiles\CMake\bin\cmake.exe -HC:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL "-BC:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build" --check-stamp-file "C:/Users/Marti/Desktop/Github/Engine/Engine/DevIl build/src-IL/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Users/Marti/Desktop/Github/Engine/Engine/DevIL/DevIL/src-IL/CMakeLists.txt;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\TestBigEndian.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPNG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindZLIB.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindTIFF.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJasper.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindJPEG.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\SelectLibraryConfigurations.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindlibSquish.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindNVTT.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\cmake\FindOpenEXR.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindLCMS2.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\ProgramFiles\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\cmake\Modules\FindMNG.cmake;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\config.h.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\pkgconfig\IL.pc.cmake.in;C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\src-IL\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\altivec_common.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\altivec_typeconversion.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_alloc.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_bits.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_blp.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_bmp.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_convbuff.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_convert.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_cut.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_dcx.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_dds-save.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_dds.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_devil.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_dicom.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_doom.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_dpx.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_endian.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_error.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_exr.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_fastconv.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_files.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_fits.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_ftx.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_gif.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_hdr.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_header.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_icns.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_icon.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_iff.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_ilbm.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_internal.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_io.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_iwi.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_jp2.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_jpeg.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_ktx.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_lif.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_main.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_manip.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_mdl.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_mng.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_mp3.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_neuquant.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_nvidia.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pal.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pcd.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pcx.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pic.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pix.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_png.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pnm.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_profiles.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_psd.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_psp.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_pxr.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_quantizer.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_raw.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_rawdata.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_register.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_rle.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_rot.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_sgi.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_size.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_squish.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_stack.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_states.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_sun.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_targa.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_texture.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_tiff.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_tpl.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_utility.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_utx.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_vtf.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_wal.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_wbmp.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_wdp.cpp"  />
+    <ClCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\src\il_xpm.cpp"  />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\msvc\il.def" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\altivec_common.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\altivec_typeconversion.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\config.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_alloc.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_bits.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_bmp.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_dcx.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_dds.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_doompal.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_dpx.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_endian.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_exr.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_files.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_gif.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_hdr.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_icns.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_icon.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_internal.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_jp2.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_jpeg.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_lif.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_manip.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_mdl.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_pal.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_pcx.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_pic.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_pnm.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_psd.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_psp.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_q2pal.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_register.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_rle.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_sgi.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_stack.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_states.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_targa.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_utx.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_vtf.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\include\il_wdp.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\include\IL\devil_internal_exports.h" />
+    <ClInclude Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\include\IL\il.h" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\msvc\resources\IL Logo.ico" />
+    <ResourceCompile Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\src-IL\msvc\IL.rc"  />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\AUTHORS" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\ChangeLog" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\CREDITS" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\Libraries.txt" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\README.md" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\README.cmake" />
+    <None Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIL\DevIL\TODO" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Marti\Desktop\Github\Engine\Engine\DevIl build\ZERO_CHECK.vcxproj">
+      <Project>{F040DF2B-F53B-318F-B7C9-6CB5014035F1}</Project>
+      <Name>ZERO_CHECK</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
