@@ -19,7 +19,9 @@ private:
 	GLfloat rotation[3];
 
 	GLuint vertex_id = 0;
+	GLuint num_indices = 0;
 	GLuint indices_id = 0;
+	GLuint num_vertices = 0;
 	GLuint normals_id = 0;
 	GLuint uv_id = 0;
 	GLuint texture_id = 0;

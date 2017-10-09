@@ -13,6 +13,7 @@
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "DevIL/lib/x86/DevIL.lib")
 #pragma comment (lib, "DevIL/lib/x86/ILU.lib")
+#pragma comment (lib, "assimp/lib/x86/ILU.lib")
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 
 #include "Console.h"
