@@ -11,6 +11,7 @@ bool MeshLoader::Init()
 	// Stream log messages to Debug window
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
-	aiAttachLogStream(&stream);
+	aiAttachLogStream(&stream);
+
 	return true;
 }

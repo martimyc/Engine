@@ -1,11 +1,12 @@
 #ifndef _MODULE_MESH_LOADER
 #define _MODULE_MESH_LOADER
 
-#include "assimp\include\cimport.h"
-#include "assimp\include\cimport.h"
-#include "assimp\include\scene.h"
-#include "assimp\include\postprocess.h"
-#include "assimp\include\cfileio.h"
+
+#include "Assimp\include\cimport.h"
+#include "Assimp\include\cimport.h"
+#include "Assimp\include\scene.h"
+#include "Assimp\include\postprocess.h"
+#include "Assimp\include\cfileio.h"
 #include "Module.h"
 
 class MeshLoader : public Module
