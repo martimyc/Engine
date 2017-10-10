@@ -23,7 +23,7 @@ private:
 
 	GLuint texture_id = 0;
 
-	std::vector<Components*>
+	std::vector<Component*> components;
 public:
 	GameObject();
 
