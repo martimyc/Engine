@@ -1,7 +1,10 @@
 #ifndef _GAME_OBJECT
 #define _GAME_OBJECT
 
+#include <vector>
 #include "glew\include\GL\glew.h"
+
+class Component;
 
 enum DRAW_MODE
 {
@@ -18,9 +21,9 @@ private:
 	GLfloat world_position[3];
 	GLfloat rotation[3];
 
-
 	GLuint texture_id = 0;
 
+	std::vector<Components*>
 public:
 	GameObject();
 

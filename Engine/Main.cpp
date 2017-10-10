@@ -11,8 +11,8 @@
 #pragma comment( lib, "SDL2/lib/x86/SDL2main.lib" )
 #pragma comment( lib, "glew/lib/Win32/glew32.lib" )
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
-#pragma comment (lib, "DevIL/lib/DevIL.lib")
-#pragma comment (lib, "DevIL/lib/ILU.lib")
+#pragma comment (lib, "Devil/libx86/DevIL.lib")
+#pragma comment (lib, "Devil/libx86/ILU.lib")
 #pragma comment (lib, "Assimp/lib/assimp-vc140-mt.lib")
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 

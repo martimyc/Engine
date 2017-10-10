@@ -36,7 +36,7 @@ bool FileLoader::LoadScene(const char * path)
 		// Use scene->mNumMeshes to iterate on scene->mMeshes array
 		for (uint i = 0; i < scene->mNumMeshes; i++)
 		{
-			//ret = LoadMesh(scene->mMeshes[i]);
+			ret = LoadMesh(scene->mMeshes[i]);
 			if (ret == false)
 			{
 				LOG("Mesh(%i) did't load correctly", i);

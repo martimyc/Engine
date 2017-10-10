@@ -3,8 +3,8 @@
 
 #include <list>
 #include "glew\include\GL\glew.h"
-#include "DevIL\include\IL\il.h"
-#include "DevIL\include\IL\ilu.h"
+#include "Devil\include\il.h"
+#include "Devil\include\ilu.h"
 #include "Module.h"
 
 class Textures: public Module
