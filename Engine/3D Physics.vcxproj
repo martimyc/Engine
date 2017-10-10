@@ -117,6 +117,7 @@
     <ClInclude Include="assimp\include\version.h" />
     <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu_region.h" />
@@ -128,7 +129,8 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
-    <ClInclude Include="MeshLoader.h" />
+    <ClInclude Include="FileLoader.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenGLTest.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -266,7 +268,8 @@
     <ClCompile Include="MathGeoLib\src\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
-    <ClCompile Include="MeshLoader.cpp" />
+    <ClCompile Include="FileLoader.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="HardwareSoftwareInfo.cpp" />

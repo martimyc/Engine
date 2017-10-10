@@ -1,23 +1,39 @@
 #include "GameObject.h"
 
 GameObject::GameObject()
-{
-}
-
-GameObject::GameObject(const GLuint vertex_id, const GLuint indices_id, const GLuint normals_id, GLuint uv_id, const GLuint texture_id): vertex_id(vertex_id), indices_id(indices_id), normals_id(normals_id), uv_id(uv_id), texture_id(texture_id)
-{
-}
+{}
 
 GameObject::~GameObject()
+{}
+
+bool GameObject::Draw(DRAW_MODE mode) const
 {
-	if (vertex_id != 0)
-		glDeleteBuffers(1, &vertex_id);
-	if (indices_id != 0)
-		glDeleteBuffers(1, &indices_id);
-	if (normals_id != 0)
-		glDeleteBuffers(1, &normals_id);
-	if (uv_id != 0)
-		glDeleteBuffers(1, &uv_id);
-	if (texture_id != 0)
-		glDeleteTextures(1, &texture_id);
+	/*glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glBindTexture(GL_TEXTURE_2D, img_id);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cube_uv_id);
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cube_vertex_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_indices_id);
+	glIndexPointer(GL_SHORT, 0, NULL);
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
+	return true;
 }
+
+/*
+if (texture_id != 0)
+glDeleteTextures(1, &texture_id);
+*/

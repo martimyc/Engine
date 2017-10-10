@@ -18,21 +18,15 @@ private:
 	GLfloat world_position[3];
 	GLfloat rotation[3];
 
-	GLuint vertex_id = 0;
-	GLuint num_indices = 0;
-	GLuint indices_id = 0;
-	GLuint num_vertices = 0;
-	GLuint normals_id = 0;
-	GLuint uv_id = 0;
+
 	GLuint texture_id = 0;
 
 public:
 	GameObject();
-	GameObject( const GLuint vertex_id, const GLuint indices_id, const GLuint normals_id, GLuint uv_id, const GLuint texture_id);
 
 	~GameObject();
 
-	virtual bool Draw(DRAW_MODE mode) const = 0;
+	virtual bool Draw(DRAW_MODE mode) const;
 };
 
 #endif // !_GAME_OBJECT
