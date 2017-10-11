@@ -238,3 +238,30 @@ void Renderer3D::DrawWorldAxis()
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
+
+void Renderer3D::DrawGrid()
+{
+	glLineWidth(1.0f);
+
+	glBegin(GL_LINES);
+
+	int j = grid_divisions;
+
+	glColor4f(grid_color[0], grid_color[1], grid_color[2], grid_color[3]);
+
+	for (int i = j*(-1); i <= j; i++)
+	{
+		if (i == 0)
+			glColor4f(255, 255, 255, grid_color[3]);
+
+		glVertex3f(i, 0.0f, j);
+		glVertex3f(i, 0.0f, -j);
+		glVertex3f(j, 0.0f, i);
+		glVertex3f(-j, 0.0f, i);
+
+		if (i == 0)
+			glColor4f(grid_color[0], grid_color[1], grid_color[2], grid_color[3]);
+	}
+
+	glEnd();
+}

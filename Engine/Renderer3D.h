@@ -38,6 +38,7 @@ public:
 
 private:
 	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
+	void DrawGrid(); //need a plane not a grid
 
 };
 
