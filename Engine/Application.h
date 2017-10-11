@@ -18,6 +18,8 @@ class MainMenuBar;
 class HardwareSoftwareInfo;
 class OpenGLTest;
 class Textures;
+class FileLoader;
+class SceneManager;
 
 class Application
 {
@@ -33,6 +35,8 @@ public:
 	HardwareSoftwareInfo* hardware_software_info;
 	OpenGLTest* open_gl_test;
 	Textures* textures;
+	FileLoader* file_loader;
+	SceneManager* scene_manager;
 
 private:
 	std::string title;

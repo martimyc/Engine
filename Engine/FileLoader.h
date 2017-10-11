@@ -24,7 +24,7 @@ public:
 
 	//Loads
 	bool LoadScene(const char* path);
-	const Mesh* LoadMesh(const aiMesh& mesh);
+	const Mesh* LoadMesh(const aiMesh* mesh);
 };
 
 #endif _MODULE_FILE_LOADER

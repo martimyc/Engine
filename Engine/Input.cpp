@@ -6,6 +6,8 @@
 #include "Window.h"
 #include "Console.h"
 #include "Textures.h"
+#include "SceneManager.h"
+#include "FileLoader.h"
 #include "Input.h"
 
 
@@ -123,6 +125,8 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				break;
 
 			case SDL_DROPFILE:
+				App->file_loader->LoadScene(e.drop.file);
+
 				std::string filename (e.drop.file);
 				std::string extension;
 				// find the last occurrence of '.'

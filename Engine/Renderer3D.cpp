@@ -10,6 +10,7 @@
 #include "Camera3D.h"
 #include "Console.h"
 #include "OpenGLTest.h"
+#include "SceneManager.h"
 #include "Renderer3D.h"
 
 void Renderer3D::DrawWorldAxis()
@@ -198,7 +199,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glDrawArrays(GL_TRIANGLES, 0, 36 * 3);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);*/
-	
+	App->scene_manager->DrawGO();
+
 	App->open_gl_test->DrawDebugPoint();
 	DrawWorldAxis();
 

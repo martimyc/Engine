@@ -20,7 +20,12 @@ public:
 	Mesh(const Mesh& mesh, bool enabled = true);
 	~Mesh();
 
+	void Draw(GLuint texture) const;
+
 	bool Update();
+
+	void SetNumVertices(const GLuint num);
+	void SetNumIndices(const GLuint num);
 };
 
 #endif // !_MESH

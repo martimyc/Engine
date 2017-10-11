@@ -21,7 +21,43 @@ Mesh::~Mesh()
 		glDeleteBuffers(1, &uv_id);
 }
 
+void Mesh::Draw(GLuint texture) const
+{
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glBindBuffer(GL_ARRAY_BUFFER, uv_id);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+	glIndexPointer(GL_SHORT, 0, 0);
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
 bool Mesh::Update()
 {
 	return true;
+}
+
+void Mesh::SetNumVertices(const GLuint num)
+{
+	num_vertices = num;
+}
+
+void Mesh::SetNumIndices(const GLuint num)
+{
+	num_indices = num;
 }

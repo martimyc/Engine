@@ -5,6 +5,7 @@
 #include "glew\include\GL\glew.h"
 
 class Component;
+class Mesh;
 
 enum DRAW_MODE
 {
@@ -24,12 +25,16 @@ private:
 	GLuint texture_id = 0;
 
 	std::vector<Component*> components;
+
+	const Mesh* mesh;
+
 public:
 	GameObject();
+	GameObject(const Mesh* mesh);
 
 	~GameObject();
 
-	virtual bool Draw(DRAW_MODE mode) const;
+	virtual void Draw(DRAW_MODE mode, GLuint text) const;
 };
 
 #endif // !_GAME_OBJECT

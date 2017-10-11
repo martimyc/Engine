@@ -67,6 +67,9 @@
     <Filter Include="Sources\3rd Party\Assimp">
       <UniqueIdentifier>{ab131ea8-ce40-4597-a7c5-e91750542b93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Scenes">
+      <UniqueIdentifier>{801647f4-fd76-444d-84ac-0ca01bfe074c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -342,9 +345,6 @@
     <ClInclude Include="Camera3D.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Console.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="HardwareSoftwareInfo.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -494,6 +494,12 @@
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Sources\Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Sources\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -685,6 +691,9 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Sources\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

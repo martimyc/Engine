@@ -217,6 +217,7 @@
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Renderer3D.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
@@ -283,6 +284,7 @@
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
