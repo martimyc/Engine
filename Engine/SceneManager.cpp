@@ -1,8 +1,8 @@
-
-#include "GameObject.h"
+#include "Application.h"
+#include "Renderer3D.h"
 #include "SceneManager.h"
 
-SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), go(nullptr)
+SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), checkers_text_id(0)
 {}
 
 SceneManager::~SceneManager()
@@ -40,16 +40,11 @@ bool SceneManager::Init()
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
+	App->renderer_3d->DrawGO(&go);
 	return UPDATE_CONTINUE;
 }
 
-void SceneManager::DrawGO() const
+DRAW_MODE SceneManager::GetDrawMode() const
 {
-	if(go != nullptr)
-		go->Draw(D_WIREFRAME, checkers_text_id);
-}
-
-void SceneManager::SetGO(GameObject * ptr)
-{
-	go = ptr;
+	return draw_mode;
 }

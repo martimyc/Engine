@@ -129,7 +129,7 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
-    <ClInclude Include="FileLoader.h" />
+    <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenGLTest.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -269,7 +269,7 @@
     <ClCompile Include="MathGeoLib\src\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
-    <ClCompile Include="FileLoader.cpp" />
+    <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="Console.cpp" />

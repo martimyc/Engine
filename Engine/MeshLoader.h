@@ -1,6 +1,5 @@
-#ifndef _MODULE_FILE_LOADER
-#define _MODULE_FILE_LOADER
-
+#ifndef _MODULE_MESH_LOADER
+#define _MODULE_MESH_LOADER
 
 #include "Assimp\include\cimport.h"
 #include "Assimp\include\cimport.h"
@@ -11,20 +10,20 @@
 
 class Mesh;
 
-class FileLoader : public Module
+class MeshLoader : public Module
 {
 private:
 
 public:
-	FileLoader(const char* name, bool start_enabled = true);
-	~FileLoader();
+	MeshLoader(const char* name, bool start_enabled = true);
+	~MeshLoader();
 
 	bool Init();
 	bool CleanUp();
 
 	//Loads
 	bool LoadScene(const char* path);
-	const Mesh* LoadMesh(const aiMesh* mesh);
+	bool LoadMesh(const aiMesh* mesh, Mesh& new_mesh);
 };
 
-#endif _MODULE_FILE_LOADER
+#endif //!_MODULE_MESH_LOADER
