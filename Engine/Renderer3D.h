@@ -17,6 +17,13 @@ private:
 	std::vector<const GameObject*> draw_vec;
 	bool debug_draw;
 	//std::vector<GameObject*> debug_draw_vec;
+	bool world_axis = true;
+	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
+	bool show_grid = true;
+	int grid_divisions = 10;
+	float grid_color[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	void DrawGrid();
+	GLuint cube_id;
 
 public:
 	Light lights[MAX_LIGHTS];
@@ -28,6 +35,7 @@ public:
 	~Renderer3D();
 
 	bool Init();
+	UPDATE_STATUS Configuration(float dt);
 	UPDATE_STATUS PreUpdate(float dt);
 	UPDATE_STATUS PostUpdate(float dt);
 	bool CleanUp();

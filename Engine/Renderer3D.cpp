@@ -115,6 +115,22 @@ bool Renderer3D::Init()
 	return ret;
 }
 
+UPDATE_STATUS Renderer3D::Configuration(float dt)
+{
+	BROFILER_CATEGORY("Renderer3D Configuration", Profiler::Color::Beige)
+
+		UPDATE_STATUS ret = UPDATE_CONTINUE;
+
+	if (ImGui::CollapsingHeader("3D Renderer"))
+	{
+		ImGui::Checkbox("Draw World Axis", &world_axis);
+		ImGui::Checkbox("Draw Grid", &show_grid);
+		ImGui::ColorEdit4("Grid Color", grid_color); 
+		ImGui::SliderInt("Grid divisions", &grid_divisions, 5, 40);
+	}
+	return ret;
+}
+
 // PreUpdate: clear buffer
 UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 {
@@ -163,7 +179,11 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	}*/
 
 	App->open_gl_test->DrawDebugPoint();
-	DrawWorldAxis();
+	
+	if (show_grid)
+		DrawGrid();
+	if (world_axis)
+		DrawWorldAxis();
 
 	//------
 
