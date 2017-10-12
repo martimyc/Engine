@@ -1,3 +1,5 @@
+#include "imgui\imgui.h"
+#include "Brofiler\Brofiler.h"
 #include "Application.h"
 #include "Renderer3D.h"
 #include "SceneManager.h"
@@ -36,6 +38,59 @@ bool SceneManager::Init()
 
 
 	return true;
+}
+
+UPDATE_STATUS SceneManager::Configuration(float dt)
+{
+	BROFILER_CATEGORY("Scene Manager Configuration", Profiler::Color::BlanchedAlmond)
+
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
+
+	if (ImGui::CollapsingHeader("Draw Modes"))
+	{
+		if(ImGui::Checkbox("Wireframe", &wireframe))
+		{
+			if (wireframe)
+			{
+				draw_mode = DM_WIREFRAME;
+				tris = false;
+			}
+			else
+			{
+				draw_mode = DM_NORMAL;
+				tris = true;
+			}
+		}
+
+		if (ImGui::Checkbox("Normals", &normals))
+		{
+			if(normals)
+				draw_mode = DM_NORMALS;
+			else
+			{
+				if(wireframe)
+					draw_mode = DM_WIREFRAME;
+				else if(tris)
+					draw_mode = DM_NORMAL;
+			}
+		}
+
+		if (ImGui::Checkbox("Polygon", &tris))
+		{
+			if (tris)
+			{
+				draw_mode = DM_NORMAL;
+				wireframe = false;
+			}
+			else
+			{
+				draw_mode = DM_WIREFRAME;
+				wireframe = true;
+			}
+			
+		}
+	}
+	return ret;
 }
 
 UPDATE_STATUS SceneManager::Update(float dt)

@@ -18,6 +18,10 @@ private:
 	DRAW_MODE draw_mode;
 	//std::vector<GameObject*> game_objects_vec;
 
+	bool wireframe;
+	bool normals;
+	bool tris;
+
 public:
 	GameObject go;
 
@@ -25,6 +29,8 @@ public:
 	~SceneManager();
 
 	bool Init();
+
+	UPDATE_STATUS Configuration(float dt);
 
 	UPDATE_STATUS Update(float dt);
 

@@ -15,12 +15,21 @@ void GameObject::Draw(DRAW_MODE mode) const
 		std::vector<Component*>::const_iterator it = components.begin();
 		unsigned int num_indicies = 0;
 
+		GLint polygonMode [2];
+		glGetIntegerv(GL_POLYGON_MODE, polygonMode);
+
 		for (; it != components.end(); ++it)
 		{
 			(*it)->EnableDraw();
 			if ((*it)->GetType() == CT_MESH)
 				num_indicies = ((Mesh*)(*it))->num_indices;
 		}
+
+		if(mode == DM_WIREFRAME && *polygonMode != GL_LINE)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		if (mode == DM_NORMAL && *polygonMode != GL_FILL)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glDrawElements(GL_TRIANGLES, num_indicies, GL_UNSIGNED_INT, NULL);
 
