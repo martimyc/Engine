@@ -125,7 +125,7 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 	{
 		ImGui::Checkbox("Draw World Axis", &world_axis);
 		ImGui::Checkbox("Draw Grid", &show_grid);
-		ImGui::ColorEdit4("Grid Color", grid_color); 
+		ImGui::ColorEdit3("Grid Color", grid_color); 
 		ImGui::SliderInt("Grid divisions", &grid_divisions, 5, 40);
 	}
 	return ret;
@@ -267,12 +267,12 @@ void Renderer3D::DrawGrid()
 
 	int j = grid_divisions;
 
-	glColor4f(grid_color[0], grid_color[1], grid_color[2], grid_color[3]);
+	glColor4f(grid_color[0], grid_color[1], grid_color[2], 1.0f);
 
 	for (int i = j*(-1); i <= j; i++)
 	{
 		if (i == 0)
-			glColor4f(255, 255, 255, grid_color[3]);
+			glColor4f(255, 255, 255, 1.0f);
 
 		glVertex3f(i, 0.0f, j);
 		glVertex3f(i, 0.0f, -j);
@@ -280,7 +280,7 @@ void Renderer3D::DrawGrid()
 		glVertex3f(-j, 0.0f, i);
 
 		if (i == 0)
-			glColor4f(grid_color[0], grid_color[1], grid_color[2], grid_color[3]);
+			glColor4f(grid_color[0], grid_color[1], grid_color[2], 1.0f);
 	}
 
 	glEnd();
