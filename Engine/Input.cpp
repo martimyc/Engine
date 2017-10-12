@@ -7,7 +7,7 @@
 #include "Console.h"
 #include "Textures.h"
 #include "SceneManager.h"
-#include "FileLoader.h"
+#include "MeshLoader.h"
 #include "Input.h"
 
 
@@ -125,7 +125,7 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				break;
 
 			case SDL_DROPFILE:
-				App->file_loader->LoadScene(e.drop.file);
+				App->mesh_loader->LoadScene(e.drop.file);
 
 				std::string filename (e.drop.file);
 				std::string extension;

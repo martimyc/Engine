@@ -489,9 +489,6 @@
     <ClInclude Include="assimp\include\version.h">
       <Filter>Sources\3rd Party\Assimp</Filter>
     </ClInclude>
-    <ClInclude Include="FileLoader.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
@@ -502,6 +499,9 @@
       <Filter>Sources\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Console.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLoader.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Primitive.h">
@@ -695,14 +695,14 @@
     <ClCompile Include="Textures.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="FileLoader.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Sources\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoader.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Primitive.cpp">
       <Filter>Sources\Primitives</Filter>

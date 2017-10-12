@@ -9,73 +9,25 @@
 
 #define MAX_LIGHTS 8
 
+class GameObject;
+
 class Renderer3D : public Module
 {
 private:
+	std::vector<const GameObject*> draw_vec;
+	bool debug_draw;
+	//std::vector<GameObject*> debug_draw_vec;
 	bool world_axis = true;
-	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
 	bool show_grid = true;
 	int grid_divisions = 10;
 	float grid_color[3] = { 1.0f, 1.0f, 0.0f };
 	void DrawGrid();
 	GLuint cube_id;
 
-	float cube_vert[36 * 3] =
-	{
-		//Left	
-		0.f, 0.f, 0.f,
-		0.f, 0.f, 1.f,
-		0.f, 1.f, 0.f,
-
-		0.f, 1.f, 0.f,
-		0.f, 0.f, 1.f,
-		0.f, 1.f, 1.f,
-
-		//Front
-		1.f, 1.f, 1.f,
-		0.f, 1.f, 1.f,
-		0.f, 0.f, 1.f,
-
-		1.f, 1.f, 1.f,
-		0.f, 0.f, 1.f,
-		1.f, 0.f, 1.f,
-
-		//Back
-		1.f, 0.f, 0.f,
-		0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f,
-
-		1.f, 0.f, 0.f,
-		0.f, 1.f, 0.f,
-		1.f, 1.f, 0.f,
-
-		//Bottom
-		0.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f,
-
-		1.f, 0.f, 0.f,
-		1.f, 0.f, 1.f,
-		0.f, 0.f, 1.f,
-
-		//Top
-		0.f, 1.f, 0.f,
-		1.f, 1.f, 1.f,
-		1.f, 1.f, 0.f,
-
-		0.f, 1.f, 0.f,
-		0.f, 1.f, 1.f,
-		1.f, 1.f, 1.f,
-
-		//Right
-		1.f, 0.f, 0.f,
-		1.f, 1.f, 0.f,
-		1.f, 1.f, 1.f,
-
-		1.f, 0.f, 0.f,
-		1.f, 1.f, 1.f,
-		1.f, 0.f, 1.f,
-	};
+public:
+	Light lights[MAX_LIGHTS];
+	mat3x3 NormalMatrix;
+	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 
 public:
 	Renderer3D(const char* name, bool start_enabled = true);
@@ -89,10 +41,12 @@ public:
 
 	void OnResize(int width, int height);
 
-public:
-	Light lights[MAX_LIGHTS];
-	mat3x3 NormalMatrix;
-	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
+	void DrawGO(const GameObject* game_object);
+
+private:
+	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
+	void DrawGrid(); //need a plane not a grid
+
 };
 
 #endif //_MODULE_RENDERER_3D

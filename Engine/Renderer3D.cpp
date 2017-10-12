@@ -10,6 +10,7 @@
 #include "Camera3D.h"
 #include "Console.h"
 #include "OpenGLTest.h"
+#include "GameObject.h"
 #include "SceneManager.h"
 #include "Renderer3D.h"
 
@@ -201,6 +202,12 @@ UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
+	if (draw_vec.size() != 0)
+	{
+		LOG("Draw vector is not empty at frame start");
+		draw_vec.clear();
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -218,31 +225,18 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//first geometry, then debug and then UI
 
-	// Learning OpenGL
 
-	//App->open_gl_test->DrawCubeDirectMode();
+	DRAW_MODE draw_mode = App->scene_manager->GetDrawMode();
 
-	/*
-	if (debug_draw == true)
+	for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)
+		(*it)->Draw(draw_mode);
+
+	/*if (debug_draw == true)
 	{
 		BeginDebugDraw();
 		App->DebugDraw();
 		EndDebugDraw();
 	}*/
-
-	//App->open_gl_test->DrawCubeDirectMode();
-	App->open_gl_test->DrawCubeIndicesVertex();
-	//glBindTexture(GL_TEXTURE_2D, img_id);
-
-	/*glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, cube_id);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	// ... draw other buffers
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glDrawArrays(GL_TRIANGLES, 0, 36 * 3);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);*/
-	App->scene_manager->DrawGO();
 
 	App->open_gl_test->DrawDebugPoint();
 	
@@ -257,6 +251,9 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	
 	SDL_GL_SwapWindow(App->window->window);
 
+	//Empty draw_vec after drawing all Game Objects
+	draw_vec.clear();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -266,7 +263,6 @@ bool Renderer3D::CleanUp()
 	LOG("Destroying 3D Renderer");
 	return true;
 }
-
 
 void Renderer3D::OnResize(int width, int height)
 {
@@ -283,4 +279,69 @@ void Renderer3D::OnResize(int width, int height)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
+}
+
+void Renderer3D::DrawGO(const GameObject* game_object)
+{
+	draw_vec.push_back(game_object);
+}
+
+void Renderer3D::DrawWorldAxis()
+{
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+	glEnd();
+
+	glLineWidth(1.0f);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+void Renderer3D::DrawGrid()
+{
+	glLineWidth(1.0f);
+
+	glBegin(GL_LINES);
+
+	int j = grid_divisions;
+
+	glColor4f(grid_color[0], grid_color[1], grid_color[2], grid_color[3]);
+
+	for (int i = j*(-1); i <= j; i++)
+	{
+		if (i == 0)
+			glColor4f(255, 255, 255, grid_color[3]);
+
+		glVertex3f(i, 0.0f, j);
+		glVertex3f(i, 0.0f, -j);
+		glVertex3f(j, 0.0f, i);
+		glVertex3f(-j, 0.0f, i);
+
+		if (i == 0)
+			glColor4f(grid_color[0], grid_color[1], grid_color[2], grid_color[3]);
+	}
+
+	glEnd();
 }

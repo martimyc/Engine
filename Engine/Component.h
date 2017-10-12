@@ -3,8 +3,9 @@
 
 enum COMPONENT_TYPE
 {
-	C_NO_TYPE = 0,
-	C_MESH
+	CT_NO_TYPE = 0,
+	CT_MESH,
+	CT_MATERIAL
 };
 
 class Component
@@ -12,6 +13,7 @@ class Component
 private:
 	COMPONENT_TYPE type;
 	bool enabled;
+
 public:
 	Component(COMPONENT_TYPE type, bool enabled = true): type(type), enabled(enabled)
 	{}
@@ -23,7 +25,15 @@ public:
 		enabled = true;
 	}
 
-	virtual bool Update() = 0;
+	bool Enabled() const
+	{
+		return enabled;
+	}
+
+	virtual bool Update()
+	{
+		return true;
+	}
 
 	bool Disable()
 	{
@@ -34,6 +44,12 @@ public:
 	{
 		return type;
 	}
+
+	virtual void EnableDraw() const
+	{}
+
+	virtual void DisableDraw() const
+	{}
 };
 
 #endif // !_COMPONENT

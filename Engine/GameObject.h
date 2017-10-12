@@ -9,11 +9,11 @@ class Mesh;
 
 enum DRAW_MODE
 {
-	D_NO_DRAW = 0,
-	D_NORMAL,
-	D_CHECKERS,
-	D_WIREFRAME,
-	D_NORMALS
+	DM_NO_DRAW = 0,
+	DM_NORMAL,
+	DM_CHECKERS,
+	DM_WIREFRAME,
+	DM_NORMALS
 };
 
 class GameObject
@@ -26,15 +26,14 @@ private:
 
 	std::vector<Component*> components;
 
-	const Mesh* mesh;
-
 public:
 	GameObject();
-	GameObject(const Mesh* mesh);
 
 	~GameObject();
 
-	virtual void Draw(DRAW_MODE mode, GLuint text) const;
+	virtual void Draw(DRAW_MODE mode) const;
+
+	void AddComponent(Component* component);
 };
 
 #endif // !_GAME_OBJECT
