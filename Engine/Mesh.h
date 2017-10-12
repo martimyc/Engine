@@ -9,11 +9,11 @@ class Mesh: public Component
 public:
 	GLuint vertex_id = 0;
 	GLuint num_vertices = 0;
-	GLfloat* vertexs = nullptr;
+	float* vertices = nullptr;
 
 	GLuint num_indices = 0;
 	GLuint indices_id = 0;
-	GLuint* indices = nullptr;
+	uint* indices = nullptr;
 
 	GLuint normals_id = 0;
 
