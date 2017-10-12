@@ -118,6 +118,7 @@
     <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu_region.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Textures.h" />
@@ -225,6 +227,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />
@@ -283,6 +286,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Textures.cpp" />

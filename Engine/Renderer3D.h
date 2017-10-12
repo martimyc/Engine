@@ -16,7 +16,7 @@ private:
 	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
 	bool show_grid = true;
 	int grid_divisions = 10;
-	float grid_color[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	float grid_color[3] = { 1.0f, 1.0f, 0.0f };
 	void DrawGrid();
 	GLuint cube_id;
 
