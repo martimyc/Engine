@@ -21,7 +21,6 @@ private:
 	bool show_grid = true;
 	int grid_divisions = 10;
 	float grid_color[3] = { 1.0f, 1.0f, 0.0f };
-	void DrawGrid();
 	GLuint cube_id;
 
 public:
