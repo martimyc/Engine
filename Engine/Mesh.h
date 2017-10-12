@@ -8,10 +8,15 @@ class Mesh: public Component
 {
 public:
 	GLuint vertex_id = 0;
+	GLuint num_vertices = 0;
+	GLfloat* vertexs = nullptr;
+
 	GLuint num_indices = 0;
 	GLuint indices_id = 0;
-	GLuint num_vertices = 0;
+	GLuint* indices = nullptr;
+
 	GLuint normals_id = 0;
+
 	GLuint uv_id = 0;
 
 	Mesh(bool enabled = true);
@@ -19,8 +24,7 @@ public:
 	Mesh(const Mesh& mesh, bool enabled = true);
 	~Mesh();
 
-	void EnableDraw() const;
-	void DisableDraw() const;
+	void AssignDrawPointers() const;
 };
 
 #endif // !_MESH

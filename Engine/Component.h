@@ -45,10 +45,7 @@ public:
 		return type;
 	}
 
-	virtual void EnableDraw() const
-	{}
-
-	virtual void DisableDraw() const
+	virtual void AssignDrawPointers() const
 	{}
 };
 

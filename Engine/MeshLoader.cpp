@@ -37,27 +37,27 @@ bool MeshLoader::LoadScene(const char * path)
 	if (scene != nullptr && scene->HasMeshes())
 	{
 		// Use scene->mNumMeshes to iterate on scene->mMeshes array
-		//TODO uncoment when we have more than one mesh per scene abailable
-		/*for (uint i = 0; i < scene->mNumMeshes; i++)
+		
+		for (uint i = 0; i < scene->mNumMeshes; i++)
 		{
-			const Mesh* new_m = LoadMesh(scene->mMeshes[i]);
+			Mesh* new_m = new Mesh();
+			ret = LoadMesh(scene->mMeshes[i], *new_m);
 
 			if (ret == false)
-			{
 				LOG("Mesh(%i) did't load correctly", i);
-				break;
-			}
-		}*/
+			else
+				App->scene_manager->go.AddComponent(new_m);
+		}
 
 		Mesh* mesh = new Mesh();
 
 		if (scene->mNumMeshes > 1)
-			LOG("More than a single mesh in scene, will only load first one");
+			LOG("More than a single mesh in scene, will Import all as one Game Object");
 
 		ret = LoadMesh(scene->mMeshes[0], *mesh);
 
 		if (ret == false)
-			LOG("Mesh did not load correctly", );
+			LOG("Mesh did not load correctly");
 		else
 			App->scene_manager->go.AddComponent((Component*)mesh);
 
