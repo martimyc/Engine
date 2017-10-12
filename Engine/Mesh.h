@@ -13,7 +13,7 @@ public:
 
 	GLuint num_indices = 0;
 	GLuint indices_id = 0;
-	uint* indices = nullptr;
+	unsigned int* indices = nullptr;
 
 	GLuint normals_id = 0;
 

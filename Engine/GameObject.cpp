@@ -11,21 +11,20 @@ GameObject::~GameObject()
 void GameObject::Draw(DRAW_MODE mode) const
 {
 	if (components.size() > 0 && mode != DM_NO_DRAW)
-	{
-		std::vector<Component*>::const_iterator it = components.begin();
+	{	
 		unsigned int num_indicies = 0;
-		std::vector<Component*> meshes;
+		std::vector<Mesh*> meshes;
 		Component* material = nullptr;
 
 		GLint polygonMode[2];
 		glGetIntegerv(GL_POLYGON_MODE, polygonMode);
 
-		for (; it != components.end(); ++it)
+		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 		{
 			if ((*it)->Enabled())
 			{
 				if ((*it)->GetType() == CT_MESH)
-					meshes.push_back(*it);
+					meshes.push_back((Mesh*)*it);
 				if ((*it)->GetType() == CT_MATERIAL)
 					material = *it;
 			}		
@@ -46,10 +45,10 @@ void GameObject::Draw(DRAW_MODE mode) const
 			material->AssignDrawPointers();
 		}
 
-		for (std::vector<Component*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
+		for (std::vector<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
 		{
 			//Get num indicies
-			num_indicies = ((Mesh*)(*it))->num_indices;
+			num_indicies = (*it)->num_indices;
 
 			//Assign all draw pointers
 			(*it)->AssignDrawPointers();
