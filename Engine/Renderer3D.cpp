@@ -164,8 +164,6 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//first geometry, then debug and then UI
-
-
 	DRAW_MODE draw_mode = App->scene_manager->GetDrawMode();
 
 	for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)

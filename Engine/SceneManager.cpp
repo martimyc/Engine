@@ -4,7 +4,7 @@
 #include "Renderer3D.h"
 #include "SceneManager.h"
 
-SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), checkers_text_id(0)
+SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), checkers_text_id(0), wireframe(false), normals(false), polygons(true)
 {}
 
 SceneManager::~SceneManager()
@@ -53,12 +53,12 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 			if (wireframe)
 			{
 				draw_mode = DM_WIREFRAME;
-				tris = false;
+				polygons = false;
 			}
 			else
 			{
 				draw_mode = DM_NORMAL;
-				tris = true;
+				polygons = true;
 			}
 		}
 
@@ -70,14 +70,14 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 			{
 				if(wireframe)
 					draw_mode = DM_WIREFRAME;
-				else if(tris)
+				else if(polygons)
 					draw_mode = DM_NORMAL;
 			}
 		}
 
-		if (ImGui::Checkbox("Polygon", &tris))
+		if (ImGui::Checkbox("Polygon", &polygons))
 		{
-			if (tris)
+			if (polygons)
 			{
 				draw_mode = DM_NORMAL;
 				wireframe = false;

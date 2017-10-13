@@ -4,7 +4,7 @@
 Mesh::Mesh(bool enabled): Component(CT_MESH, enabled)
 {}
 
-Mesh::Mesh(const GLuint vertex_id, const GLuint num_indices, const GLuint indices_id, const GLuint num_vertices, const GLuint normals_id, const GLuint uv_id, bool enabled): Component(CT_MESH, enabled), vertex_id(vertex_id), num_indices(num_indices), indices_id(indices_id), num_vertices(num_vertices), normals_id(normals_id), uv_id(uv_id)
+Mesh::Mesh(const GLuint vertex_id, const unsigned int num_vertices, float* vertices, const GLuint indices_id, const unsigned int num_indices, unsigned int* indices, const GLuint normals_id, const GLuint uv_id, bool enabled): Component(CT_MESH, enabled), vertex_id(vertex_id), num_vertices(num_vertices), vertices(vertices), indices_id(indices_id), num_indices(num_indices), indices(indices), normals_id(normals_id), uv_id(uv_id)
 {}
 
 Mesh::Mesh(const Mesh & mesh, bool enabled): Component(CT_MESH, enabled), vertex_id(mesh.vertex_id), num_indices(mesh.num_indices), indices_id(mesh.indices_id), num_vertices(mesh.num_vertices), normals_id(mesh.normals_id), uv_id(mesh.uv_id)

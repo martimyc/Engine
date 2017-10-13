@@ -20,7 +20,7 @@ private:
 
 	bool wireframe;
 	bool normals;
-	bool tris;
+	bool polygons;
 
 public:
 	GameObject go;

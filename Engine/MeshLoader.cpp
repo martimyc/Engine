@@ -41,7 +41,7 @@ bool MeshLoader::LoadScene(const char * path)
 		if (scene->mNumMeshes > 1)
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
 
-		for (uint i = 0; i < scene->mNumMeshes; i++)
+		for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 		{
 			Mesh* new_m = new Mesh();
 			ret = LoadMesh(scene->mMeshes[i], *new_m);
@@ -79,7 +79,7 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 	if (mesh->HasFaces())
 	{
 		new_mesh.num_indices = mesh->mNumFaces * 3;
-		new_mesh.indices = new uint[new_mesh.num_indices]; // assume each face is a triangle
+		new_mesh.indices = new unsigned int[new_mesh.num_indices]; // assume each face is a triangle
 
 		for (uint i = 0; i < mesh->mNumFaces; i++)
 		{
@@ -90,13 +90,13 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 				break;
 			}
 			else
-				memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(uint) * 3);
+				memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(unsigned int) * 3);
 		}
 
 		//Load indicies to VRAM
 		glGenBuffers(1, &new_mesh.indices_id);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh.indices_id);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * new_mesh.num_indices, new_mesh.indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(new_mesh.indices), new_mesh.indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	else
