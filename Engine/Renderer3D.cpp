@@ -177,6 +177,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	}*/
 
 	App->open_gl_test->DrawDebugPoint();
+	App->open_gl_test->DrawPlaneExtraLarge();
 
 	if (show_grid)
 		DrawGrid();

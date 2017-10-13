@@ -70,6 +70,9 @@
     <Filter Include="Sources\Scenes">
       <UniqueIdentifier>{801647f4-fd76-444d-84ac-0ca01bfe074c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\BasicPrimitives">
+      <UniqueIdentifier>{4b2a568b-54a6-49b7-b18c-da174bd18ff6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -504,6 +507,9 @@
     <ClInclude Include="BasicPrimitives.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="CubePrimitive.h">
+      <Filter>Sources\BasicPrimitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -700,6 +706,9 @@
     </ClCompile>
     <ClCompile Include="BasicPrimitives.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CubePrimitivecpp.cpp">
+      <Filter>Sources\BasicPrimitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
