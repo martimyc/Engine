@@ -17,33 +17,14 @@ enum PRIMITIVE_TYPE
 	PRIMITIVE_FRUSTUM
 };
 
-class BasicPrimitives : public Module
+//------------------------------ CUBE ------------------------------
+struct BP_Cube
 {
-private:
-	//All vertex && index ID's from basic primitives
-		//Cube
-	CubePrimitive cube;
-	
-
-		//Plane
-
-public:
-	BasicPrimitives(const char* name, bool start_enabled = true);
-	~BasicPrimitives();
-
-	bool Init();
-
-	bool LoadPrimitives();
-	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices);
-};
-
-struct CubePrimitive
-{
-	GLuint cube_vertex_id = 0;
-	GLuint cube_indices_id = 0;
-	const uint cube_num_vertices = 8 * 3;
-	const uint cube_num_indices = 36;
-	float cube_vertices[24] = {
+	GLuint vertex_id = 0;
+	GLuint indices_id = 0;
+	const uint num_vertices = 8 * 3;
+	const uint num_indices = 36;
+	float vertices[24] = {
 		0.f, 0.f, 0.f,		//0
 		1.f, 0.f, 0.f,		//1
 		1.f, 1.f, 0.f,		//2
@@ -54,7 +35,7 @@ struct CubePrimitive
 		0.f, 1.f, 1.f		//7
 	};
 
-	uint cube_indices[36] =
+	uint indices[36] =
 	{
 		6,7,5, 7,4,5,	//Front
 		6,5,1, 2,6,1,	//Right
@@ -64,7 +45,38 @@ struct CubePrimitive
 		3,6,2, 3,7,6	//Top	
 	};
 
-	CubePrimitive();
+	BP_Cube();
 };
+//------------------------------ CUBE ------------------------------
+
+//forward declaration
+namespace math
+{
+	class float3;
+}
+//-------------------
+
+class BasicPrimitives : public Module
+{
+private:
+	//All vertex && index ID's from basic primitives
+		//Cube
+	BP_Cube* cube = nullptr;
+	
+
+		//Plane
+
+
+	void Vertex2VertexIndices(math::float3* all_vertex, GLfloat* vertex, GLuint* indices);
+public:
+	BasicPrimitives(const char* name, bool start_enabled = true);
+	~BasicPrimitives();
+
+	bool Init();
+
+	bool LoadPrimitives();
+	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices);
+};
+
 
 #endif // BASIC_PRIMITIVES_H
