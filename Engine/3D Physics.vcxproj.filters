@@ -70,9 +70,6 @@
     <Filter Include="Sources\Scenes">
       <UniqueIdentifier>{801647f4-fd76-444d-84ac-0ca01bfe074c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Primitives">
-      <UniqueIdentifier>{0233c8eb-7924-4c32-931e-a5d828a4adf3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -504,11 +501,8 @@
     <ClInclude Include="MeshLoader.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Primitive.h">
-      <Filter>Sources\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Sources\Primitives</Filter>
+    <ClInclude Include="BasicPrimitives.h">
+      <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -704,11 +698,8 @@
     <ClCompile Include="MeshLoader.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Primitive.cpp">
-      <Filter>Sources\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Sources\Primitives</Filter>
+    <ClCompile Include="BasicPrimitives.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

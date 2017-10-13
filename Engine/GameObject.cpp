@@ -1,5 +1,6 @@
 
 #include "Mesh.h"
+#include "Console.h"
 #include "GameObject.h"
 
 GameObject::GameObject()
@@ -32,7 +33,7 @@ void GameObject::Draw(DRAW_MODE mode) const
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glDrawElements(GL_TRIANGLES, num_indicies, GL_UNSIGNED_INT, NULL);
-
+		
 		for (it = components.begin(); it != components.end(); ++it)
 			(*it)->DisableDraw();
 
@@ -44,6 +45,14 @@ void GameObject::Draw(DRAW_MODE mode) const
 void GameObject::AddComponent(Component * component)
 {
 	components.push_back(component);
+}
+
+void GameObject::Reset()
+{
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		delete *it;
+
+	components.clear();
 }
 
 /*

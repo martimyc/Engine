@@ -15,7 +15,7 @@ public:
 	GLuint uv_id = 0;
 
 	Mesh(bool enabled = true);
-	Mesh(const GLuint vertex_id,const GLuint num_indices,const GLuint indices_id,const GLuint num_vertices,const GLuint normals_id,const GLuint uv_id, bool enabled = true);
+	Mesh(const GLuint vertex_id, const GLuint num_indices, const GLuint indices_id, const GLuint num_vertices, const GLuint normals_id, const GLuint uv_id, bool enabled = true);
 	Mesh(const Mesh& mesh, bool enabled = true);
 	~Mesh();
 

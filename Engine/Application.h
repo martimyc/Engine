@@ -19,6 +19,7 @@ class HardwareSoftwareInfo;
 class OpenGLTest;
 class Textures;
 class MeshLoader;
+class BasicPrimitives;
 class SceneManager;
 
 class Application
@@ -36,6 +37,7 @@ public:
 	OpenGLTest* open_gl_test;
 	Textures* textures;
 	MeshLoader* mesh_loader;
+	BasicPrimitives* primitives;
 	SceneManager* scene_manager;
 
 private:
