@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include "Mesh.h"
 
-Mesh::Mesh(bool enabled): Component(CT_MESH, enabled)
+Mesh::Mesh(bool enabled): Component(CT_MESH, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), uv_id (0)
 {}
 
 Mesh::Mesh(const GLuint vertex_id, const unsigned int num_vertices, float* vertices, const GLuint indices_id, const unsigned int num_indices, unsigned int* indices, const GLuint normals_id, const GLuint uv_id, bool enabled): Component(CT_MESH, enabled), vertex_id(vertex_id), num_vertices(num_vertices), vertices(vertices), indices_id(indices_id), num_indices(num_indices), indices(indices), normals_id(normals_id), uv_id(uv_id)

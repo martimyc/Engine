@@ -68,18 +68,24 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 	glGenBuffers(1, &new_mesh.vertex_id);
 	glBindBuffer(GL_ARRAY_BUFFER, new_mesh.vertex_id);
 
-	new_mesh.vertices = new float[new_mesh.num_vertices * 3];
-	memcpy(new_mesh.vertices, mesh->mVertices, sizeof(float) * new_mesh.num_vertices * 3);
+	if (sizeof(float) != sizeof(GLfloat))
+		LOG("float != GLfloat");
+
+	new_mesh.vertices = new GLfloat[new_mesh.num_vertices * 3];
+	memcpy(new_mesh.vertices, mesh->mVertices, sizeof(GLfloat) * new_mesh.num_vertices * 3);
 	LOG("New mesh with %d vertices", new_mesh.num_vertices);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(new_mesh.vertices), new_mesh.vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* new_mesh.num_vertices * 3, new_mesh.vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// Copy faces
 	if (mesh->HasFaces())
 	{
+		if (sizeof(unsigned int) != sizeof(GLuint))
+			LOG("uint != GLuint");
+
 		new_mesh.num_indices = mesh->mNumFaces * 3;
-		new_mesh.indices = new unsigned int[new_mesh.num_indices]; // assume each face is a triangle
+		new_mesh.indices = new GLuint[new_mesh.num_indices]; // assume each face is a triangle
 
 		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
@@ -90,13 +96,13 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 				break;
 			}
 			else
-				memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(unsigned int) * 3);
+				memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
 		}
 
 		//Load indicies to VRAM
 		glGenBuffers(1, &new_mesh.indices_id);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh.indices_id);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(new_mesh.indices), new_mesh.indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * new_mesh.num_indices, new_mesh.indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	else
