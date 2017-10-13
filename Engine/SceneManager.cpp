@@ -116,8 +116,10 @@ void SceneManager::CreateCube()
 	go = GameObject();
 	uint vertex_id = 0;
 	uint num_vertices = 0;
+	float* vertices = nullptr;
 	uint indices_id = 0;
 	uint num_indices = 0;
-	App->primitives->GetPrimitiveId(PRIMITIVE_CUBE, vertex_id, num_vertices, indices_id, num_indices);
-	go.AddComponent(new Mesh(vertex_id, num_indices, indices_id, num_vertices, 0, 0));
+	uint* indices = nullptr;
+	App->primitives->GetPrimitiveId(PRIMITIVE_CUBE, vertex_id, num_vertices,vertices, indices_id, num_indices, indices);
+	go.AddComponent(new Mesh(vertex_id, num_vertices, vertices, indices_id, num_indices, indices, 0, 0));
 }

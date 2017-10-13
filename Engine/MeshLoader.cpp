@@ -81,7 +81,7 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 		new_mesh.num_indices = mesh->mNumFaces * 3;
 		new_mesh.indices = new unsigned int[new_mesh.num_indices]; // assume each face is a triangle
 
-		for (uint i = 0; i < mesh->mNumFaces; i++)
+		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
 			if (mesh->mFaces[i].mNumIndices != 3)
 			{
