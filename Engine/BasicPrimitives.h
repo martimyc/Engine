@@ -22,10 +22,27 @@ class BasicPrimitives : public Module
 private:
 	//All vertex && index ID's from basic primitives
 		//Cube
-	GLuint cube_vertex_id	 = 0;
-	GLuint cube_indices_id	 = 0;
+	CubePrimitive cube;
+	
+
+		//Plane
+
+public:
+	BasicPrimitives(const char* name, bool start_enabled = true);
+	~BasicPrimitives();
+
+	bool Init();
+
+	bool LoadPrimitives();
+	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices);
+};
+
+struct CubePrimitive
+{
+	GLuint cube_vertex_id = 0;
+	GLuint cube_indices_id = 0;
 	const uint cube_num_vertices = 8 * 3;
-	const uint cube_num_indices	 = 36;
+	const uint cube_num_indices = 36;
 	float cube_vertices[24] = {
 		0.f, 0.f, 0.f,		//0
 		1.f, 0.f, 0.f,		//1
@@ -47,16 +64,7 @@ private:
 		3,6,2, 3,7,6	//Top	
 	};
 
-		//Plane
-
-public:
-	BasicPrimitives(const char* name, bool start_enabled = true);
-	~BasicPrimitives();
-
-	bool Init();
-
-	bool LoadPrimitives();
-	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices);
+	CubePrimitive();
 };
 
 #endif // BASIC_PRIMITIVES_H

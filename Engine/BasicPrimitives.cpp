@@ -20,6 +20,33 @@ bool BasicPrimitives::Init()
 
 bool BasicPrimitives::LoadPrimitives()
 {
+	return true;
+}
+
+bool BasicPrimitives::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices)
+{
+	switch (primitive)
+	{
+	case NULL_PRIMITIVE:
+		LOG("Error Getting Primitive ID: NULL_PRIMITIVE");
+		return false;
+	case PRIMITIVE_CUBE:
+		vertex_id = cube_vertex_id;
+		vertices_num = cube_num_vertices;
+		vertices = cube_vertices;
+		indices_id = cube_indices_id;
+		indices_num = cube_num_indices;
+		indices = cube_indices;
+		break;
+	default:
+		LOG("Error Getting Primitive ID");
+		return false;
+	}
+	return true;
+}
+
+CubePrimitive::CubePrimitive()
+{
 	//------------------------------CUBE START------------------------------
 
 	/*
@@ -50,31 +77,6 @@ bool BasicPrimitives::LoadPrimitives()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	if (glGetError() != 0)
-	{
 		LOG("Error Loading Basic Primitives");
-		return false;
-	}
-	return true;
-}
 
-bool BasicPrimitives::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices)
-{
-	switch (primitive)
-	{
-	case NULL_PRIMITIVE:
-		LOG("Error Getting Primitive ID: NULL_PRIMITIVE");
-		return false;
-	case PRIMITIVE_CUBE:
-		vertex_id = cube_vertex_id;
-		vertices_num = cube_num_vertices;
-		vertices = cube_vertices;
-		indices_id = cube_indices_id;
-		indices_num = cube_num_indices;
-		indices = cube_indices;
-		break;
-	default:
-		LOG("Error Getting Primitive ID");
-		return false;
-	}
-	return true;
 }
