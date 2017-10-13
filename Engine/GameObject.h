@@ -22,18 +22,17 @@ private:
 	GLfloat world_position[3];
 	GLfloat rotation[3];
 
-	GLuint texture_id = 0;
-
 	std::vector<Component*> components;
 
 public:
 	GameObject();
-
 	~GameObject();
 
 	virtual void Draw(DRAW_MODE mode) const;
 
 	void AddComponent(Component* component);
+
+	void Reset();
 };
 
 #endif // !_GAME_OBJECT

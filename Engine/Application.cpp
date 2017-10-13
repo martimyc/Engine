@@ -15,6 +15,7 @@
 #include "OpenGLTest.h"
 #include "Textures.h"
 #include "MeshLoader.h"
+#include "BasicPrimitives.h"
 #include "SceneManager.h"
 #include "Application.h"
 
@@ -31,6 +32,7 @@ Application::Application()
 	open_gl_test = new OpenGLTest("OpenGL Test");
 	textures = new Textures("Textures");
 	mesh_loader = new MeshLoader("File Loader");
+	primitives = new BasicPrimitives("Basic Primitives");
 	scene_manager = new SceneManager("Scene Manager");
 
 	// The order of calls is very important!
@@ -48,6 +50,7 @@ Application::Application()
 	AddModule(open_gl_test);
 	AddModule(textures);
 	AddModule(mesh_loader);
+	AddModule(primitives);
 	AddModule(scene_manager);
 	
 	// Scenes

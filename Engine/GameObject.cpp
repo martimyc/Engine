@@ -1,5 +1,6 @@
 
 #include "Mesh.h"
+#include "Console.h"
 #include "GameObject.h"
 
 GameObject::GameObject()
@@ -79,6 +80,14 @@ void GameObject::Draw(DRAW_MODE mode) const
 void GameObject::AddComponent(Component * component)
 {
 	components.push_back(component);
+}
+
+void GameObject::Reset()
+{
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		delete *it;
+
+	components.clear();
 }
 
 /*

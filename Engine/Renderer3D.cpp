@@ -177,7 +177,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	}*/
 
 	App->open_gl_test->DrawDebugPoint();
-	
+
 	if (show_grid)
 		DrawGrid();
 	if (world_axis)
@@ -226,7 +226,7 @@ void Renderer3D::DrawGO(const GameObject* game_object)
 
 void Renderer3D::DrawWorldAxis()
 {
-	glLineWidth(2.0f);
+	glLineWidth(4.0f);
 
 	glBegin(GL_LINES);
 

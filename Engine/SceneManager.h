@@ -35,6 +35,10 @@ public:
 	UPDATE_STATUS Update(float dt);
 
 	DRAW_MODE GetDrawMode() const;
+
+	//Primitives
+	void CreateCube();
+	bool create_cube = false;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

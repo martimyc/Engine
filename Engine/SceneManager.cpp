@@ -2,6 +2,8 @@
 #include "Brofiler\Brofiler.h"
 #include "Application.h"
 #include "Renderer3D.h"
+#include "Mesh.h"
+#include "BasicPrimitives.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), checkers_text_id(0), wireframe(false), normals(false), polygons(true)
@@ -96,10 +98,26 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 UPDATE_STATUS SceneManager::Update(float dt)
 {
 	App->renderer_3d->DrawGO(&go);
+	ImGui::Begin("Create Cube Window");
+	if (ImGui::Checkbox("Create Cube", &create_cube))
+		CreateCube();
+	ImGui::End();
 	return UPDATE_CONTINUE;
 }
 
 DRAW_MODE SceneManager::GetDrawMode() const
 {
 	return draw_mode;
+}
+
+void SceneManager::CreateCube()
+{
+	go.Reset();
+	go = GameObject();
+	uint vertex_id = 0;
+	uint num_vertices = 0;
+	uint indices_id = 0;
+	uint num_indices = 0;
+	App->primitives->GetPrimitiveId(PRIMITIVE_CUBE, vertex_id, num_vertices, indices_id, num_indices);
+	go.AddComponent(new Mesh(vertex_id, num_indices, indices_id, num_vertices, 0, 0));
 }
