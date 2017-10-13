@@ -62,6 +62,8 @@ bool MeshLoader::LoadScene(const char * path)
 bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 {
 	bool ret = true;
+	bool floats_equal_size = true;
+	bool uints_equal_size = true;
 
 	//Load Vertices
 	new_mesh.num_vertices = mesh->mNumVertices;
@@ -69,10 +71,24 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 	glBindBuffer(GL_ARRAY_BUFFER, new_mesh.vertex_id);
 
 	if (sizeof(float) != sizeof(GLfloat))
-		LOG("float != GLfloat");
+	{
+		LOG("Size of float not equal to GLfloat\nTransforming all values to OpenGL standard (GLfloat)\nThis might take a while");
+		floats_equal_size = false;
+	}
 
 	new_mesh.vertices = new GLfloat[new_mesh.num_vertices * 3];
-	memcpy(new_mesh.vertices, mesh->mVertices, sizeof(GLfloat) * new_mesh.num_vertices * 3);
+
+	if (floats_equal_size)
+		memcpy(new_mesh.vertices, mesh->mVertices, sizeof(GLfloat) * new_mesh.num_vertices * 3);
+	else
+		for (uint i = 0; i < new_mesh.num_vertices; i++)
+		{
+			//Slowest thing ever but better than nothing if sizes do not mach
+			new_mesh.vertices[i * 3] = mesh->mVertices[i][0];
+			new_mesh.vertices[i - 3 + 1] = mesh->mVertices[i][1];
+			new_mesh.vertices[i * 3 + 2] = mesh->mVertices[i][2];
+		}
+
 	LOG("New mesh with %d vertices", new_mesh.num_vertices);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* new_mesh.num_vertices * 3, new_mesh.vertices, GL_STATIC_DRAW);
@@ -82,7 +98,10 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 	if (mesh->HasFaces())
 	{
 		if (sizeof(unsigned int) != sizeof(GLuint))
-			LOG("uint != GLuint");
+		{
+			LOG("Size of unsigned int not equal to GLuint\nTransforming all values to OpenGL standard (GLuint)\nThis might take a while");
+			uints_equal_size = false;
+		}
 
 		new_mesh.num_indices = mesh->mNumFaces * 3;
 		new_mesh.indices = new GLuint[new_mesh.num_indices]; // assume each face is a triangle
@@ -96,7 +115,14 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 				break;
 			}
 			else
-				memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
+				if (uints_equal_size)
+					memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
+				else
+					for (uint j = 0; j < 3; j++)
+					{
+						//Slowest thing ever but better than nothing if sizes do not mach
+						new_mesh.indices[i * 3 + j] = mesh->mFaces[i].mIndices[j];
+					}
 		}
 
 		//Load indicies to VRAM
