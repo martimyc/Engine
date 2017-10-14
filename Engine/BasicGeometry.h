@@ -1,6 +1,7 @@
 #ifndef _MODULE_BASIC_GEOMETRY_H
 #define _MODULE_BASIC_GEOMETRY_H
 
+#include "glew\include\GL\glew.h"
 #include "Module.h"
 
 enum PRIMITIVE_TYPE
