@@ -37,6 +37,7 @@ public:
 	~SceneManager();
 
 	bool Init();
+	bool CleanUp();
 
 	UPDATE_STATUS Configuration(float dt);
 

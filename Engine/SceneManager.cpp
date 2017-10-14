@@ -15,6 +15,8 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
+	game_object = new GameObject();
+
 	//checkers texture
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
@@ -40,6 +42,12 @@ bool SceneManager::Init()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
+	return true;
+}
+
+bool SceneManager::CleanUp()
+{
+	delete game_object;
 	return true;
 }
 
@@ -98,7 +106,9 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
-	App->renderer_3d->DrawGO(game_object);
+	if(game_object != nullptr)
+		App->renderer_3d->DrawGO(game_object);
+
 	ImGui::Begin("Create Cube Window");
 	if (ImGui::Checkbox("Create Cube", &create_cube))
 		CreateCube();
