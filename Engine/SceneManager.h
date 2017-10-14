@@ -31,7 +31,7 @@ private:
 	bool polygons;
 
 public:
-	GameObject* go = nullptr;
+	GameObject* game_object = nullptr;
 
 	SceneManager(const char* name, bool start_enabled = true);
 	~SceneManager();

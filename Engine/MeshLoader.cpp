@@ -49,7 +49,7 @@ bool MeshLoader::LoadScene(const char * path)
 			if (ret == false)
 				LOG("Mesh(%i) did't load correctly", i);
 			else
-				App->scene_manager->go.AddComponent(new_m);
+				App->scene_manager->game_object->AddComponent(new_m);
 		}
 		aiReleaseImport(scene);
 	}
