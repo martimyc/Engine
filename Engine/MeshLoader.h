@@ -6,9 +6,11 @@
 #include "Assimp\include\scene.h"
 #include "Assimp\include\postprocess.h"
 #include "Assimp\include\cfileio.h"
+#include "glew\include\GL\glew.h"
 #include "Module.h"
 
 class Mesh;
+
 
 class MeshLoader : public Module
 {
@@ -22,8 +24,13 @@ public:
 	bool CleanUp();
 
 	//Loads
-	bool LoadScene(const char* path);
-	bool LoadMesh(const aiMesh* mesh, Mesh& new_mesh);
+	bool LoadScene(const char* path) const;
+	bool LoadMesh(const aiMesh* mesh, Mesh& new_mesh) const;
+	bool LoadVertices(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
+	bool LoadIndices(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
+	bool LoadTextureCoordinates(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
+	bool LoadNormals(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
+	bool LoadColors(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
 };
 
 #endif //!_MODULE_MESH_LOADER
