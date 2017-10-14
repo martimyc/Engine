@@ -28,15 +28,9 @@ class CubePrimitive;
 class BasicPrimitives : public Module
 {
 private:
-	//All vertex && index ID's from basic primitives
-		//Cube
+
 	CubePrimitive* cube = nullptr;
-	
 
-		//Plane
-
-
-	void Vertex2VertexIndices(math::float3* all_vertex, GLfloat* vertex, GLuint* indices);
 public:
 	BasicPrimitives(const char* name, bool start_enabled = true);
 	~BasicPrimitives();
@@ -44,7 +38,8 @@ public:
 	bool Init();
 
 	bool LoadPrimitives();
-	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices);
+	void Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices);
+	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices);
 };
 
 

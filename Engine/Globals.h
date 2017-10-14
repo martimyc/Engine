@@ -36,4 +36,13 @@ enum UPDATE_STATUS
 	}						\
 }							\
 
+#define DELETE_ARRAY( x )	\
+{							\
+	if (x != nullptr)		\
+	{						\
+		delete []x;			\
+		x = nullptr;		\
+	}						\
+}							\
+
 #endif //_GLOBALS

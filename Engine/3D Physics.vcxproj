@@ -227,7 +227,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
-    <ClCompile Include="CubePrimitivecpp.cpp" />
+    <ClCompile Include="CubePrimitive.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />

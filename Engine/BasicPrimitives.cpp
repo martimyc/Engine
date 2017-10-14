@@ -27,7 +27,7 @@ bool BasicPrimitives::LoadPrimitives()
 	return true;
 }
 
-bool BasicPrimitives::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, float* vertices, uint& indices_id, uint& indices_num, uint* indices)
+bool BasicPrimitives::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices)
 {
 	switch (primitive)
 	{
@@ -49,7 +49,28 @@ bool BasicPrimitives::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, 
 	return true;
 }
 
-void BasicPrimitives::Vertex2VertexIndices(math::float3 * all_vertex, GLfloat * vertex, GLuint * indices)
+void BasicPrimitives::Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices)
 {
+	std::vector<math::float3> indexed_vertices;
+	uint num_vertices = 0;
+	uint num_indices = 0;
 
+	for (int i = 0; i < num_all_vertices; i++)
+	{
+		std::vector<math::float3>::iterator it = std::find(indexed_vertices.begin(), indexed_vertices.end(), all_vertices[i]);	//cant be const for std::distance
+		if (it == indexed_vertices.end())
+		{
+			indexed_vertices.push_back(all_vertices[i]);
+
+			vertices[num_vertices * 3]		= all_vertices[i].x;
+			vertices[num_vertices * 3 + 1]	= all_vertices[i].y;
+			vertices[num_vertices * 3 + 2]	= all_vertices[i].z;
+
+			indices[num_indices++] = num_vertices;
+
+			num_vertices++;
+		}
+		else
+			indices[num_indices++] = std::distance(indexed_vertices.begin(), it);
+	}
 }

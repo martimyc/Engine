@@ -707,7 +707,7 @@
     <ClCompile Include="BasicPrimitives.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="CubePrimitivecpp.cpp">
+    <ClCompile Include="CubePrimitive.cpp">
       <Filter>Sources\BasicPrimitives</Filter>
     </ClCompile>
   </ItemGroup>
