@@ -60,6 +60,8 @@ public:
 		return mouse_y_motion;
 	}
 
+	bool IsImageFormat(const std::string& extension) const;
+
 private:
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];

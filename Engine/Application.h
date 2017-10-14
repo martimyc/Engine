@@ -18,7 +18,7 @@ class MainMenuBar;
 class HardwareSoftwareInfo;
 class OpenGLTest;
 class Textures;
-class MeshLoader;
+class SceneLoader;
 class BasicGeometry;
 class SceneManager;
 
@@ -36,7 +36,7 @@ public:
 	HardwareSoftwareInfo* hardware_software_info;
 	OpenGLTest* open_gl_test;
 	Textures* textures;
-	MeshLoader* mesh_loader;
+	SceneLoader* scene_loader;
 	BasicGeometry* primitives;
 	SceneManager* scene_manager;
 

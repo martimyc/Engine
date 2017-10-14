@@ -9,6 +9,7 @@
 #define CHECKERS_WIDTH 256
 
 class GameObject;
+class Material;
 
 enum DRAW_MODE
 {
@@ -24,7 +25,8 @@ class SceneManager : public Module
 private:
 	GLuint checkers_text_id;
 	DRAW_MODE draw_mode;
-	//std::vector<GameObject*> game_objects_vec;
+	//std::vector<GameObject*> game_objects;
+	std::vector<Material*> materials;
 
 	bool wireframe;
 	bool normals;
@@ -44,6 +46,8 @@ public:
 	UPDATE_STATUS Update(float dt);
 
 	void DrawMode() const;
+
+	void AddMaterial(Material* new_material);
 
 	//Primitives
 	void CreateCube();

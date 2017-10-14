@@ -123,3 +123,8 @@ void SceneManager::DrawMode() const
 	if (draw_mode == DM_NORMAL && *polygonMode != GL_FILL)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
+
+void SceneManager::AddMaterial(Material* new_material)
+{
+	materials.push_back(new_material);
+}

@@ -501,9 +501,6 @@
     <ClInclude Include="Console.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="MeshLoader.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
@@ -521,6 +518,9 @@
     </ClInclude>
     <ClInclude Include="SpherePrimitive.h">
       <Filter>Sources\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoader.h">
+      <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -713,9 +713,6 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Sources\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="MeshLoader.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
@@ -730,6 +727,9 @@
     </ClCompile>
     <ClCompile Include="SpherePrimitive.cpp">
       <Filter>Sources\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoader.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,15 +2,16 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "Mesh.h"
-#include "MeshLoader.h"
+#include "Material.h"
+#include "SceneLoader.h"
 
-MeshLoader::MeshLoader(const char * name, bool start_enabled) : Module(name, start_enabled)
+SceneLoader::SceneLoader(const char * name, bool start_enabled) : Module(name, start_enabled)
 {}
 
-MeshLoader::~MeshLoader()
+SceneLoader::~SceneLoader()
 {}
 
-bool MeshLoader::Init()
+bool SceneLoader::Init()
 {
 	// Stream log messages to Debug window
 	struct aiLogStream stream;
@@ -20,36 +21,54 @@ bool MeshLoader::Init()
 	return true;
 }
 
-bool MeshLoader::CleanUp()
+bool SceneLoader::CleanUp()
 {
 	// detach log stream
 	aiDetachAllLogStreams();
 	return true;
 }
 
-bool MeshLoader::LoadScene(const char * path) const
+bool SceneLoader::LoadScene(const char * path) const
 {
 	bool ret = true;
 
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
-	if (scene != nullptr && scene->HasMeshes())
+	if (scene != nullptr)
 	{
-		// Use scene->mNumMeshes to iterate on scene->mMeshes array
-		
-		if (scene->mNumMeshes > 1)
+		if (scene->HasMaterials())
+		{
+			//Load all materials first so that we can bind them to a mesh later when we load them
+			for (unsigned int i = 0; i < scene->mNumMaterials; i++)
+			{
+				Material* new_material = new Material();
+				ret = LoadMaterial(scene->mMaterials[i], *new_material);
+
+				if (ret == false)
+					LOG("Mesh (%i) did't load correctly", i);
+				else
+					App->scene_manager->AddMaterial(new_material);
+			}
+		}
+
+		if (scene->HasMeshes())
+		{
+			
+			// Load all meshes (for now into the same game object)
+			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+			{
+				Mesh* new_mesh = new Mesh();
+				ret = LoadMesh(scene->mMeshes[i], *new_mesh);
+
+				if (ret == false)
+					LOG("Mesh (%i) did't load correctly", i);
+				else
+					App->scene_manager->game_object->AddComponent(new_mesh);
+			}
+		}
+		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
 
-		for (unsigned int i = 0; i < scene->mNumMeshes; i++)
-		{
-			Mesh* new_m = new Mesh();
-			ret = LoadMesh(scene->mMeshes[i], *new_m);
-
-			if (ret == false)
-				LOG("Mesh(%i) did't load correctly", i);
-			else
-				App->scene_manager->game_object->AddComponent(new_m);
-		}
 		aiReleaseImport(scene);
 	}
 	else
@@ -58,7 +77,7 @@ bool MeshLoader::LoadScene(const char * path) const
 	return ret;
 }
 
-bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
+bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 {
 	bool ret = true;
 	bool equal_size_floats = (sizeof(float) == sizeof(GLfloat)) ? true : false;
@@ -120,7 +139,7 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 	return ret;
 }
 
-bool MeshLoader::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneLoader::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -154,7 +173,7 @@ bool MeshLoader::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, M
 	return ret;
 }
 
-bool MeshLoader::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneLoader::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -201,7 +220,7 @@ bool MeshLoader::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Me
 	return ret;
 }
 
-bool MeshLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -252,7 +271,7 @@ bool MeshLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_v
 	return ret;
 }
 
-bool MeshLoader::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneLoader::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -292,7 +311,7 @@ bool MeshLoader::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Me
 	return ret;
 }
 
-bool MeshLoader::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneLoader::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -324,6 +343,15 @@ bool MeshLoader::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mes
 	}
 
 	new_mesh.SetColors(num_color_channels, color_ids, colors);
+
+	return ret;
+}
+
+bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_material) const
+{
+	bool ret = true;
+
+
 
 	return ret;
 }
