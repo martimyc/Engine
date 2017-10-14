@@ -67,6 +67,12 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 					DELETE_PTR(App->scene_manager->game_object);
 					App->scene_manager->game_object = &App->primitives->Create3DCube();
 				}
+				if (ImGui::MenuItem("Sphere"))
+				{
+					App->scene_manager->game_object->Reset();
+					DELETE_PTR(App->scene_manager->game_object);
+					App->scene_manager->game_object = &App->primitives->CreateSphere();
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

@@ -24,6 +24,7 @@ namespace math
 	class float3;
 }
 class CubePrimitive;
+class SpherePrimitive;
 class GameObject;
 //-------------------
 
@@ -31,7 +32,8 @@ class BasicGeometry : public Module
 {
 private:
 
-	CubePrimitive* cube = nullptr;
+	CubePrimitive*		cube = nullptr;
+	SpherePrimitive*	sphere = nullptr;
 
 public:
 	BasicGeometry(const char* name, bool start_enabled = true);
@@ -44,6 +46,7 @@ public:
 	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices);
 
 	GameObject& Create3DCube();
+	GameObject& CreateSphere();
 };
 
 

@@ -1,24 +1,22 @@
-#include "glew\include\GL\glew.h"
-#include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\Sphere.h"
 #include "Application.h"
 #include "BasicGeometry.h"
-#include "CubePrimitive.h"
+#include "SpherePrimitive.h"
 
-CubePrimitive::CubePrimitive() : Primitive(24, 36)	//num_vertices, num_indices
+SpherePrimitive::SpherePrimitive() : Primitive(SPHERE_NUM_VERTICES, SPHERE_NUM_VERTICES)	//num_vertices, num_indices
 {}
 
-CubePrimitive::~CubePrimitive()
+SpherePrimitive::~SpherePrimitive()
 {}
 
-bool CubePrimitive::LoadCube()
+bool SpherePrimitive::LoadSphere()
 {
-	cube = new AABB(vec(0.0f, 0.0f, 0.0f), vec(1.0f, 1.0f, 1.0f));
-	const uint divisions = 1;
+	sphere = new Sphere(vec(0.0f, 0.0f, 0.0f), 1.0f);
 
-	math::float3 all_vertices[36 * divisions];
-	cube->Triangulate(divisions, divisions, divisions, all_vertices, NULL, NULL, true);
+	math::float3 all_vertices[SPHERE_NUM_VERTICES];
+	sphere->Triangulate(all_vertices, NULL, NULL, SPHERE_NUM_VERTICES, true);
 
-	App->primitives->Vertex2VertexIndices(all_vertices, 36 * divisions, vertices, indices);
+	App->primitives->Vertex2VertexIndices(all_vertices, SPHERE_NUM_VERTICES, vertices, indices);
 
 	//Save vertex
 	glGenBuffers(1, (GLuint*)&vertex_id);

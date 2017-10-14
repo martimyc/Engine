@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Primitive.h"
 #include "CubePrimitive.h"
+#include "SpherePrimitive.h"
 #include "GameObject.h"
 #include "Mesh.h"
 #include "BasicGeometry.h"
@@ -11,11 +12,13 @@
 BasicGeometry::BasicGeometry(const char * name, bool start_enabled) : Module(name, start_enabled)
 {
 	cube = new CubePrimitive();
+	sphere = new SpherePrimitive();
 }
 
 BasicGeometry::~BasicGeometry()
 {
 	DELETE_PTR(cube);
+	DELETE_PTR(sphere);
 }
 
 
@@ -26,7 +29,10 @@ bool BasicGeometry::Init()
 
 bool BasicGeometry::LoadPrimitives()
 {
-	return cube->LoadCube();
+	bool ret = true;
+	ret = cube->LoadCube();
+	ret = sphere->LoadSphere();
+	return ret;
 }
 
 bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices)
@@ -43,6 +49,14 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, ui
 		indices_id = cube->GetIndicesId();
 		indices_num = cube->GetIndicesNum();
 		indices = cube->GetIndices();
+		break;
+	case PRIMITIVE_SPHERE:
+		vertex_id = sphere->GetVertexId();
+		vertices_num = sphere->GetVerticesNum();
+		vertices = sphere->GetVertices();
+		indices_id = sphere->GetIndicesId();
+		indices_num = sphere->GetIndicesNum();
+		indices = sphere->GetIndices();
 		break;
 	default:
 		LOG("Error Getting Primitive ID");
@@ -61,6 +75,20 @@ GameObject& BasicGeometry::Create3DCube()
 	uint num_indices = 0;
 	uint* indices = nullptr;
 	GetPrimitiveId(PRIMITIVE_CUBE, vertex_id, num_vertices, vertices, indices_id, num_indices, indices);
+	go->AddComponent(new Mesh(vertex_id, num_vertices, vertices, indices_id, num_indices, indices, 0, 0));
+	return *go;
+}
+
+GameObject & BasicGeometry::CreateSphere()
+{
+	GameObject* go = new GameObject();
+	uint vertex_id = 0;
+	uint num_vertices = 0;
+	float* vertices = nullptr;
+	uint indices_id = 0;
+	uint num_indices = 0;
+	uint* indices = nullptr;
+	GetPrimitiveId(PRIMITIVE_SPHERE, vertex_id, num_vertices, vertices, indices_id, num_indices, indices);
 	go->AddComponent(new Mesh(vertex_id, num_vertices, vertices, indices_id, num_indices, indices, 0, 0));
 	return *go;
 }
