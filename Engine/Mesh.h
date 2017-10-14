@@ -4,8 +4,6 @@
 #include "glew\include\GL\glew.h"
 #include "Component.h"
 
-#define NUM_UV_CHANNELS 4
-
 class Material;
 
 class Mesh: public Component
@@ -20,9 +18,16 @@ private:
 	GLuint* indices = nullptr;
 
 	GLuint normals_id = 0;
+	GLfloat* normals = nullptr;
 
 	GLuint num_uv_channels = 0;
-	GLuint uv_id[NUM_UV_CHANNELS] = {};
+	GLuint* num_uv_components = nullptr;
+	GLuint* uv_ids = nullptr;
+	GLfloat** uvs = nullptr;
+
+	GLuint num_color_channels = 0;
+	GLuint* color_ids = nullptr;
+	GLfloat** colors = nullptr;
 
 	Material* material = nullptr;
 
@@ -38,10 +43,16 @@ public:
 	//Getters
 	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;
 	void GetIndices(GLuint& id, GLuint& num, GLuint* all_indices) const;
+	void GetUVs(GLuint& num_channels, GLuint* num_components, GLuint* ids, GLuint* num, GLfloat** all_uvs) const;
+	void GetNormals(GLuint& id, GLfloat* all_normals) const;
+	void GetColors(GLuint& num_channels, GLuint* ids, GLfloat** all_colors)const;
 
 	//Setters
-	void SetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices);
-	void SetIndices(GLuint& id, GLuint& num, GLuint* all_indices);
+	void SetVertices(const GLuint& id, const GLuint& num, GLfloat* all_vertices);
+	void SetIndices(const GLuint& id, const GLuint& num, GLuint* all_indices);
+	void SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs);
+	void SetNormals(const GLuint& id, GLfloat* all_normals);
+	void SetColors(const GLuint& num_channels, GLuint* ids, GLfloat** all_colors);
 };
 
 #endif // !_MESH

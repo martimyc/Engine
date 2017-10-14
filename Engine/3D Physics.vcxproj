@@ -221,6 +221,7 @@
     <ClInclude Include="BasicPrimitives.h" />
     <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />

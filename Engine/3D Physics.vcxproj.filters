@@ -507,6 +507,10 @@
     <ClInclude Include="Material.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
+    <ClInclude Include="CubePrimitive.h" />
+    <ClInclude Include="Texture.h">
+      <Filter>Sources\Game Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -707,6 +711,7 @@
     <ClCompile Include="Material.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="CubePrimitive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

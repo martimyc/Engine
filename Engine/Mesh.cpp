@@ -22,9 +22,9 @@ Mesh::~Mesh()
 	if (normals_id != 0)
 		glDeleteBuffers(1, &normals_id);
 
-	for (int i = 0; i < NUM_UV_CHANNELS; i++)
-		if (uv_id[i] != 0)
-			glDeleteBuffers(1, &uv_id[i]);
+	for (int i = 0; i < num_uv_channels; i++)
+		if (uv_ids[i] != 0)
+			glDeleteBuffers(1, &uv_ids[i]);
 }
 
 void Mesh::Draw() const
@@ -83,7 +83,28 @@ void Mesh::GetIndices(GLuint & id, GLuint & num, GLuint * all_indices) const
 	all_indices = indices;
 }
 
-void Mesh::SetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices)
+void Mesh::GetUVs(GLuint& num_channels, GLuint* num_components, GLuint* ids, GLuint* num, GLfloat** all_uvs) const
+{
+	num_channels = num_uv_channels;
+	num_components = num_uv_components;
+	ids = uv_ids;
+	all_uvs = uvs;
+}
+
+void Mesh::GetNormals(GLuint & id, GLfloat * all_normals) const
+{
+	id = normals_id;
+	all_normals = normals;
+}
+
+void Mesh::GetColors(GLuint & num_channels, GLuint * ids, GLfloat ** all_colors) const
+{
+	num_channels = num_color_channels;
+	ids = color_ids;
+	all_colors = colors;
+}
+
+void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
 {
 	vertex_id = id;
 	num_vertices = num;
@@ -94,7 +115,7 @@ void Mesh::SetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices)
 	vertices = all_vertices;
 }
 
-void Mesh::SetIndices(GLuint & id, GLuint & num, GLuint * all_indices)
+void Mesh::SetIndices(const GLuint & id, const GLuint & num, GLuint * all_indices)
 {
 	indices_id = id;
 	num_indices = num;
@@ -103,4 +124,53 @@ void Mesh::SetIndices(GLuint & id, GLuint & num, GLuint * all_indices)
 		delete[] indices;
 
 	indices = all_indices;
+}
+
+void Mesh::SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs)
+{
+	if (num_uv_components != nullptr)
+		delete[] num_uv_components;
+	num_uv_components = num_components;
+
+	if (uv_ids != nullptr)
+		delete[] uv_ids;
+	uv_ids = ids;
+
+	if (uvs != nullptr)
+	{
+		for (int i = 0; i != num_uv_channels; i++)
+			delete[] uvs[i];
+		delete[] uvs;
+	}
+	uvs = all_uvs;
+
+	//must be last to delete well if necesary
+	num_uv_channels = num_channels;
+}
+
+void Mesh::SetNormals(const GLuint & id, GLfloat * all_normals)
+{
+	normals_id = id;
+
+	if (normals != nullptr)
+		delete[] normals;
+	normals = all_normals;
+}
+
+void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_colors)
+{
+	if (color_ids != nullptr)
+		delete[] color_ids;
+	color_ids = ids;
+
+	if (colors != nullptr)
+	{
+		for (int i = 0; i != num_color_channels; i++)
+			delete[] colors[i];
+		delete[] colors;
+	}
+	colors = all_colors;
+
+	//must be last to delete well if necesary
+	num_color_channels = num_channels;
 }

@@ -4,10 +4,12 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 
+class Texture;
+
 class Material
 {
 private:
-	std::vector<GLuint> texture_ids;
+	std::vector<Texture*> textures;
 
 public:
 	Material();
