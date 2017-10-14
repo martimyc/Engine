@@ -1,9 +1,8 @@
-#include "MeshLoader.h"
-#include "glew\include\GL\glew.h"
 #include "Application.h"
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "Mesh.h"
+#include "MeshLoader.h"
 
 MeshLoader::MeshLoader(const char * name, bool start_enabled) : Module(name, start_enabled)
 {}
@@ -115,6 +114,8 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 	}
 	else
 		LOG("Mesh has no vertex colors");
+
+	// Bones and TangentsAndBitangents not loaded yet TODO
 	
 	return ret;
 }
