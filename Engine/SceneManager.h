@@ -4,12 +4,20 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 #include "Module.h"
-#include "GameObject.h"
 
 #define CHECKERS_HEIGHT 256
 #define CHECKERS_WIDTH 256
 
 class GameObject;
+
+enum DRAW_MODE
+{
+	DM_NO_DRAW = 0,
+	DM_NORMAL,
+	DM_CHECKERS,
+	DM_WIREFRAME,
+	DM_NORMALS
+};
 
 class SceneManager : public Module
 {
@@ -23,7 +31,7 @@ private:
 	bool polygons;
 
 public:
-	GameObject go;
+	GameObject* go = nullptr;
 
 	SceneManager(const char* name, bool start_enabled = true);
 	~SceneManager();
@@ -34,7 +42,7 @@ public:
 
 	UPDATE_STATUS Update(float dt);
 
-	DRAW_MODE GetDrawMode() const;
+	void DrawMode() const;
 
 	//Primitives
 	void CreateCube();

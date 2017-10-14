@@ -5,16 +5,6 @@
 #include "glew\include\GL\glew.h"
 
 class Component;
-class Mesh;
-
-enum DRAW_MODE
-{
-	DM_NO_DRAW = 0,
-	DM_NORMAL,
-	DM_CHECKERS,
-	DM_WIREFRAME,
-	DM_NORMALS
-};
 
 class GameObject
 {
@@ -28,7 +18,7 @@ public:
 	GameObject();
 	~GameObject();
 
-	virtual void Draw(DRAW_MODE mode) const;
+	virtual void Draw() const;
 
 	void AddComponent(Component* component);
 

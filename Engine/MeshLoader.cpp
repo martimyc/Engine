@@ -83,7 +83,7 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 	else
 		for (uint i = 0; i < new_mesh.num_vertices; i++)
 		{
-			//Slowest thing ever but better than nothing if sizes do not mach
+			//Slowest thing ever but better than nothing if sizes do not mach (may be a better way)
 			new_mesh.vertices[i * 3] = mesh->mVertices[i][0];
 			new_mesh.vertices[i - 3 + 1] = mesh->mVertices[i][1];
 			new_mesh.vertices[i * 3 + 2] = mesh->mVertices[i][2];
@@ -120,7 +120,7 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 				else
 					for (uint j = 0; j < 3; j++)
 					{
-						//Slowest thing ever but better than nothing if sizes do not mach
+						//Slowest thing ever but better than nothing if sizes do not mach (may be a better way)
 						new_mesh.indices[i * 3 + j] = mesh->mFaces[i].mIndices[j];
 					}
 		}
@@ -134,5 +134,27 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 	else
 		LOG("Mesh has no faces");
 
+	uint uv_chanels = mesh->GetNumUVChannels();
+	if (uv_chanels > 1)
+	{
+		LOG("Mesh has %i UV channels", uv_chanels);
+
+		for (int i = 0; i < uv_chanels; i++)
+		{
+
+		}
+	}
+	else
+		LOG("Mesh has no UV");
+
+
+	if (mesh->HasNormals())
+	{
+
+	}
+	else
+		LOG("Mesh has no Normals");
+
+	
 	return ret;
 }

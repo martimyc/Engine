@@ -105,9 +105,16 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-DRAW_MODE SceneManager::GetDrawMode() const
+void SceneManager::DrawMode() const
 {
-	return draw_mode;
+	GLint polygonMode[2];
+	glGetIntegerv(GL_POLYGON_MODE, polygonMode);
+
+	if (draw_mode == DM_WIREFRAME && *polygonMode != GL_LINE)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if (draw_mode == DM_NORMAL && *polygonMode != GL_FILL)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void SceneManager::CreateCube()

@@ -45,7 +45,7 @@ public:
 		return type;
 	}
 
-	virtual void AssignDrawPointers() const
+	virtual void Draw() const
 	{}
 };
 
