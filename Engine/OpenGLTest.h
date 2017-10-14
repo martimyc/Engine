@@ -37,6 +37,7 @@ public:
 	void DrawDebugPoint() const;
 	void DrawCubeDirectMode() const;
 	void DrawCubeIndicesVertex() const;
+	void DrawPlaneExtraLarge() const;
 };
 
 #endif _MODULE_OPEN_GL_TEST

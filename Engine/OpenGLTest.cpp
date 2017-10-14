@@ -236,3 +236,25 @@ void OpenGLTest::DrawCubeIndicesVertex() const
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+
+void OpenGLTest::DrawPlaneExtraLarge() const
+{
+	glBindTexture(GL_TEXTURE_2D, img_id);
+
+	glBegin(GL_TRIANGLES);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	glVertex3f(256.f, 0.f, 0.f);
+	glVertex3f(256.f, 0.f, -512.f);
+	glVertex3f(-256.f, 0.f, 0.f);
+
+	glVertex3f(-256.f, 0.f, 0.f);
+	glVertex3f(256.f, 0.f, -512.f);
+	glVertex3f(-256.f, 0.f, -512.f);
+
+
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}

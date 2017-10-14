@@ -156,6 +156,9 @@ public:
 	/** @return A reference to this. */
 	float3 &operator /=(float scalar);
 
+	bool operator == (float3 &vector) { return (x == vector.x && y == vector.y && z == vector.z); }
+	bool operator == (const float3 &vector) { return (x == vector.x && y == vector.y && z == vector.z); }
+
 #ifdef MATH_ENABLE_UNCOMMON_OPERATIONS
 	// In math textbooks, pointwise multiplication of vectors is not defined within a linear space.
 	// However, in programming it is often useful for e.g. modulating colors via pointwise multiplication.
