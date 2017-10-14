@@ -52,6 +52,15 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("GameObject"))
+		{
+			if (ImGui::BeginMenu("3D Object"))
+			{
+				if (ImGui::MenuItem("Cube"))
+				{ }
+			}
+		}
+
 		if (ImGui::BeginMenu("Help"))
 		{
 			if (ImGui::MenuItem("Download latest"))

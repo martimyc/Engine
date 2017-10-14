@@ -504,10 +504,13 @@
     <ClInclude Include="MeshLoader.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="BasicPrimitives.h">
+    <ClInclude Include="CubePrimitive.h">
+      <Filter>Sources\BasicPrimitives</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicGeometry.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="CubePrimitive.h">
+    <ClInclude Include="Primitive.h">
       <Filter>Sources\BasicPrimitives</Filter>
     </ClInclude>
   </ItemGroup>
@@ -704,10 +707,13 @@
     <ClCompile Include="MeshLoader.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="BasicPrimitives.cpp">
+    <ClCompile Include="CubePrimitive.cpp">
+      <Filter>Sources\BasicPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicGeometry.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="CubePrimitive.cpp">
+    <ClCompile Include="Primitive.cpp">
       <Filter>Sources\BasicPrimitives</Filter>
     </ClCompile>
   </ItemGroup>

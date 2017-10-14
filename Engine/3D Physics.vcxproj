@@ -217,7 +217,8 @@
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="BasicPrimitives.h" />
+    <ClInclude Include="BasicGeometry.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Textures.h" />
@@ -286,7 +287,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="BasicPrimitives.cpp" />
+    <ClCompile Include="BasicGeometry.cpp" />
+    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Textures.cpp" />

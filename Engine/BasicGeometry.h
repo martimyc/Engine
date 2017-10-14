@@ -1,5 +1,5 @@
-#ifndef BASIC_PRIMITIVES_H
-#define BASIC_PRIMITIVES_H
+#ifndef _MODULE_BASIC_GEOMETRY_H
+#define _MODULE_BASIC_GEOMETRY_H
 
 #include "Module.h"
 
@@ -23,24 +23,27 @@ namespace math
 	class float3;
 }
 class CubePrimitive;
+class GameObject;
 //-------------------
 
-class BasicPrimitives : public Module
+class BasicGeometry : public Module
 {
 private:
 
 	CubePrimitive* cube = nullptr;
 
 public:
-	BasicPrimitives(const char* name, bool start_enabled = true);
-	~BasicPrimitives();
+	BasicGeometry(const char* name, bool start_enabled = true);
+	~BasicGeometry();
 
 	bool Init();
 
 	bool LoadPrimitives();
 	void Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices);
 	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices);
+
+	GameObject& Create3DCube();
 };
 
 
-#endif // BASIC_PRIMITIVES_H
+#endif // _MODULE_BASIC_GEOMETRY_H

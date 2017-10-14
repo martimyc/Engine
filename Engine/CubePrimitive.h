@@ -1,19 +1,19 @@
-#ifndef CUBE_PRIMITIVE_H
-#define CUBE_PRIMITIVE_H
+#ifndef _CUBE_PRIMITIVE_H
+#define _CUBE_PRIMITIVE_H
 
 #include "Globals.h"
+#include "Primitive.h"
 
-struct CubePrimitive
+class CubePrimitive : public Primitive
 {
-	GLuint vertex_id = 0;
-	GLuint indices_id = 0;
-	const uint num_vertices = 8 * 3;
-	const uint num_indices = 36;
-	GLfloat* vertices = new GLfloat[24];
-	GLuint* indices = new GLuint[36];
+private:
+	AABB* cube;
 
+public:
 	CubePrimitive();
 	~CubePrimitive();
+
+	bool LoadCube();
 };
 
 /*
@@ -39,4 +39,4 @@ struct CubePrimitive
 	3,6,2, 3,7,6	//Top
 	};
 */
-#endif // CUBE_PRIMITIVE_H
+#endif // _CUBE_PRIMITIVE_H
