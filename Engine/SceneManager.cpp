@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Renderer3D.h"
 #include "Mesh.h"
-#include "BasicPrimitives.h"
+#include "BasicGeometry.h"
 #include "GameObject.h"
 #include "SceneManager.h"
 
@@ -109,10 +109,6 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	if(game_object != nullptr)
 		App->renderer_3d->DrawGO(game_object);
 
-	ImGui::Begin("Create Cube Window");
-	if (ImGui::Checkbox("Create Cube", &create_cube))
-		CreateCube();
-	ImGui::End();
 	return UPDATE_CONTINUE;
 }
 
@@ -126,20 +122,4 @@ void SceneManager::DrawMode() const
 
 	if (draw_mode == DM_NORMAL && *polygonMode != GL_FILL)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-void SceneManager::CreateCube()
-{
-	game_object->Reset();
-
-	uint vertex_id = 0;
-	uint num_vertices = 0;
-	float* vertices = nullptr;
-	uint indices_id = 0;
-	uint num_indices = 0;
-	uint* indices = nullptr;
-
-	App->primitives->GetPrimitiveId(PRIMITIVE_CUBE, vertex_id, num_vertices, vertices, indices_id, num_indices, indices);
-
-	game_object->AddComponent(new Mesh(vertex_id, num_vertices, vertices, indices_id, num_indices, indices, 0, 0));
 }

@@ -1,6 +1,7 @@
-#ifndef BASIC_PRIMITIVES_H
-#define BASIC_PRIMITIVES_H
+#ifndef _MODULE_BASIC_GEOMETRY_H
+#define _MODULE_BASIC_GEOMETRY_H
 
+#include "glew\include\GL\glew.h"
 #include "Module.h"
 
 enum PRIMITIVE_TYPE
@@ -23,24 +24,30 @@ namespace math
 	class float3;
 }
 class CubePrimitive;
+class SpherePrimitive;
+class GameObject;
 //-------------------
 
-class BasicPrimitives : public Module
+class BasicGeometry : public Module
 {
 private:
 
-	CubePrimitive* cube = nullptr;
+	CubePrimitive*		cube = nullptr;
+	SpherePrimitive*	sphere = nullptr;
 
 public:
-	BasicPrimitives(const char* name, bool start_enabled = true);
-	~BasicPrimitives();
+	BasicGeometry(const char* name, bool start_enabled = true);
+	~BasicGeometry();
 
 	bool Init();
 
 	bool LoadPrimitives();
 	void Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices);
 	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices);
+
+	GameObject& Create3DCube();
+	GameObject& CreateSphere();
 };
 
 
-#endif // BASIC_PRIMITIVES_H
+#endif // _MODULE_BASIC_GEOMETRY_H

@@ -2,6 +2,11 @@
 #include "imgui\imgui.h"
 #include "Application.h"
 #include "Console.h"
+#include "BasicGeometry.h"
+//TODO if we only have 1 obj
+#include "SceneManager.h"
+#include "GameObject.h"
+//----------
 #include "MainMenuBar.h"
 
 MainMenuBar::MainMenuBar(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -49,6 +54,27 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 				//ImGui::EndMenu();
 			//}
 
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("GameObject"))
+		{
+			if (ImGui::BeginMenu("3D Object"))
+			{
+				if (ImGui::MenuItem("Cube"))
+				{
+					App->scene_manager->game_object->Reset();
+					DELETE_PTR(App->scene_manager->game_object);
+					App->scene_manager->game_object = &App->primitives->Create3DCube();
+				}
+				if (ImGui::MenuItem("Sphere"))
+				{
+					App->scene_manager->game_object->Reset();
+					DELETE_PTR(App->scene_manager->game_object);
+					App->scene_manager->game_object = &App->primitives->CreateSphere();
+				}
+				ImGui::EndMenu();
+			}
 			ImGui::EndMenu();
 		}
 
