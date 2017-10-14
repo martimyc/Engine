@@ -12,16 +12,16 @@ class Mesh: public Component
 {
 private:
 	GLuint vertex_id = 0;
-	unsigned int num_vertices = 0;
-	float* vertices = nullptr;
+	GLuint num_vertices = 0;
+	GLfloat* vertices = nullptr;
 
 	GLuint indices_id = 0;
-	unsigned int num_indices = 0;
-	unsigned int* indices = nullptr;
+	GLuint num_indices = 0;
+	GLuint* indices = nullptr;
 
 	GLuint normals_id = 0;
 
-	unsigned int num_uv_channels = 0;
+	GLuint num_uv_channels = 0;
 	GLuint uv_id[NUM_UV_CHANNELS] = {};
 
 	Material* material = nullptr;
@@ -34,6 +34,14 @@ public:
 	~Mesh();
 
 	void Draw() const;
+
+	//Getters
+	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;
+	void GetIndices(GLuint& id, GLuint& num, GLuint* all_indices) const;
+
+	//Setters
+	void SetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices);
+	void SetIndices(GLuint& id, GLuint& num, GLuint* all_indices);
 };
 
 #endif // !_MESH

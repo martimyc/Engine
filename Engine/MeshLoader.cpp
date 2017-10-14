@@ -62,49 +62,62 @@ bool MeshLoader::LoadScene(const char * path)
 bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 {
 	bool ret = true;
-	bool floats_equal_size = true;
-	bool uints_equal_size = true;
 
 	//Load Vertices
-	new_mesh.num_vertices = mesh->mNumVertices;
-	glGenBuffers(1, &new_mesh.vertex_id);
-	glBindBuffer(GL_ARRAY_BUFFER, new_mesh.vertex_id);
-
-	if (sizeof(float) != sizeof(GLfloat))
+	if (mesh->mNumVertices > 0)
 	{
-		LOG("Size of float not equal to GLfloat\nTransforming all values to OpenGL standard (GLfloat)\nThis might take a while");
-		floats_equal_size = false;
-	}
+		GLuint num_vertices = 0;
+		GLuint vertex_id = 0;
+		GLfloat* vertices = nullptr;
 
-	new_mesh.vertices = new GLfloat[new_mesh.num_vertices * 3];
+		num_vertices = mesh->mNumVertices;
+		glGenBuffers(1, &vertex_id);
+		glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
 
-	if (floats_equal_size)
-		memcpy(new_mesh.vertices, mesh->mVertices, sizeof(GLfloat) * new_mesh.num_vertices * 3);
-	else
-		for (uint i = 0; i < new_mesh.num_vertices; i++)
+		vertices = new GLfloat[num_vertices * 3];
+
+		if (sizeof(float) != sizeof(GLfloat))
 		{
-			//Slowest thing ever but better than nothing if sizes do not mach (may be a better way)
-			new_mesh.vertices[i * 3] = mesh->mVertices[i][0];
-			new_mesh.vertices[i - 3 + 1] = mesh->mVertices[i][1];
-			new_mesh.vertices[i * 3 + 2] = mesh->mVertices[i][2];
+			LOG("Size of float not equal to GLfloat\nTransforming all values to OpenGL standard (GLfloat)\nThis might take a while");
+
+			for (uint i = 0; i < num_vertices; i++)
+			{
+				//Slowest thing ever but better than nothing if sizes do not mach (may be a better way)
+				vertices[i * 3] = mesh->mVertices[i][0];
+				vertices[i - 3 + 1] = mesh->mVertices[i][1];
+				vertices[i * 3 + 2] = mesh->mVertices[i][2];
+			}
 		}
+		else
+			memcpy(vertices, mesh->mVertices, sizeof(GLfloat) * num_vertices * 3);
 
-	LOG("New mesh with %d vertices", new_mesh.num_vertices);
+		LOG("New mesh with %d vertices", num_vertices);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* new_mesh.num_vertices * 3, new_mesh.vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* num_vertices * 3, vertices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		new_mesh.SetVertices(vertex_id, num_vertices, vertices);
+	}
+	else
+		LOG("Mesh has no vertices");
 
 	// Copy faces
 	if (mesh->HasFaces())
 	{
+		bool uints_equal_size = true;
+
+		GLuint indices_id = 0;
+		GLuint num_indices = 0;
+		GLuint* indices = nullptr;
+
+		num_indices = mesh->mNumFaces * 3;
+		indices = new GLuint[num_indices]; // assume each face is a triangle
+
 		if (sizeof(unsigned int) != sizeof(GLuint))
 		{
 			LOG("Size of unsigned int not equal to GLuint\nTransforming all values to OpenGL standard (GLuint)\nThis might take a while");
 			uints_equal_size = false;
 		}
-
-		new_mesh.num_indices = mesh->mNumFaces * 3;
-		new_mesh.indices = new GLuint[new_mesh.num_indices]; // assume each face is a triangle
 
 		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
@@ -116,20 +129,22 @@ bool MeshLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh)
 			}
 			else
 				if (uints_equal_size)
-					memcpy(&new_mesh.indices[i * 3], mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
+					memcpy(&indices[i * 3], mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
 				else
 					for (uint j = 0; j < 3; j++)
 					{
 						//Slowest thing ever but better than nothing if sizes do not mach (may be a better way)
-						new_mesh.indices[i * 3 + j] = mesh->mFaces[i].mIndices[j];
+						indices[i * 3 + j] = mesh->mFaces[i].mIndices[j];
 					}
 		}
 
 		//Load indicies to VRAM
-		glGenBuffers(1, &new_mesh.indices_id);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_mesh.indices_id);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * new_mesh.num_indices, new_mesh.indices, GL_STATIC_DRAW);
+		glGenBuffers(1, &indices_id);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * num_indices, indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		new_mesh.SetIndices(indices_id, num_indices, indices);
 	}
 	else
 		LOG("Mesh has no faces");

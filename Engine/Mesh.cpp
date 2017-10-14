@@ -68,3 +68,39 @@ void Mesh::Draw() const
 	//Disable state
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
+
+void Mesh::GetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices) const
+{
+	id = vertex_id;
+	num = num_vertices;
+	all_vertices = vertices;
+}
+
+void Mesh::GetIndices(GLuint & id, GLuint & num, GLuint * all_indices) const
+{
+	id = indices_id;
+	num = num_indices;
+	all_indices = indices;
+}
+
+void Mesh::SetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices)
+{
+	vertex_id = id;
+	num_vertices = num;
+
+	if (vertices != nullptr)
+		delete[] vertices;
+
+	vertices = all_vertices;
+}
+
+void Mesh::SetIndices(GLuint & id, GLuint & num, GLuint * all_indices)
+{
+	indices_id = id;
+	num_indices = num;
+
+	if (indices != nullptr)
+		delete[] indices;
+
+	indices = all_indices;
+}
