@@ -26,7 +26,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -115,10 +115,11 @@
     <ClInclude Include="assimp\include\vector2.h" />
     <ClInclude Include="assimp\include\vector3.h" />
     <ClInclude Include="assimp\include\version.h" />
-    <ClInclude Include="CubePrimitive.h" />
+    <ClInclude Include="BasicGeometry.h" />
     <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="CubePrimitive.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu_region.h" />
@@ -218,9 +219,10 @@
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="BasicPrimitives.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Window.h" />
@@ -228,6 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BasicGeometry.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="CubePrimitive.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -289,9 +292,10 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="BasicPrimitives.cpp" />
+    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SpherePrimitive.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
