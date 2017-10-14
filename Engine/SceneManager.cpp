@@ -4,6 +4,7 @@
 #include "Renderer3D.h"
 #include "Mesh.h"
 #include "BasicGeometry.h"
+#include "GameObject.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), checkers_text_id(0), wireframe(false), normals(false), polygons(true)
@@ -14,6 +15,8 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
+	game_object = new GameObject();
+
 	//checkers texture
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
@@ -39,6 +42,12 @@ bool SceneManager::Init()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
+	return true;
+}
+
+bool SceneManager::CleanUp()
+{
+	delete game_object;
 	return true;
 }
 
@@ -97,7 +106,9 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
-	App->renderer_3d->DrawGO(&go);
+	if(game_object != nullptr)
+		App->renderer_3d->DrawGO(game_object);
+
 	ImGui::Begin("Create Cube Window");
 	if (ImGui::Checkbox("Create Cube", &create_cube))
 	{
@@ -108,7 +119,14 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-DRAW_MODE SceneManager::GetDrawMode() const
+void SceneManager::DrawMode() const
 {
-	return draw_mode;
+	GLint polygonMode[2];
+	glGetIntegerv(GL_POLYGON_MODE, polygonMode);
+
+	if (draw_mode == DM_WIREFRAME && *polygonMode != GL_LINE)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if (draw_mode == DM_NORMAL && *polygonMode != GL_FILL)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

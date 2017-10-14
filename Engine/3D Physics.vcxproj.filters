@@ -70,9 +70,6 @@
     <Filter Include="Sources\Scenes">
       <UniqueIdentifier>{801647f4-fd76-444d-84ac-0ca01bfe074c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\BasicPrimitives">
-      <UniqueIdentifier>{4b2a568b-54a6-49b7-b18c-da174bd18ff6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -510,6 +507,8 @@
     <ClInclude Include="BasicGeometry.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Sources\Game Objects</Filter>
     <ClInclude Include="Primitive.h">
       <Filter>Sources\BasicPrimitives</Filter>
     </ClInclude>
@@ -713,6 +712,8 @@
     <ClCompile Include="BasicGeometry.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Sources\Game Objects</Filter>
     <ClCompile Include="Primitive.cpp">
       <Filter>Sources\BasicPrimitives</Filter>
     </ClCompile>
