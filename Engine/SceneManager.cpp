@@ -112,8 +112,9 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	ImGui::Begin("Create Cube Window");
 	if (ImGui::Checkbox("Create Cube", &create_cube))
 	{
-		go.Reset();
-		go = App->primitives->Create3DCube();
+		game_object->Reset();
+		DELETE_PTR(game_object);
+		game_object = &App->primitives->Create3DCube();
 	}
 	ImGui::End();
 	return UPDATE_CONTINUE;
