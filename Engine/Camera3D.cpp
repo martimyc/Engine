@@ -68,41 +68,59 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 		vec3 center;
 		if (ImGui::Button("Front View"))
 		{
-			App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
-			Look(vec3(0, 0, 1) * (dist_x + dist_y) + vec3(0, center.y, 0), center, true);
+			if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
+			{
+				App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
+				Look(vec3(0, 0, 1) * (dist_x + dist_y) + vec3(0, center.y, 0), center, true);
+			}
 		}
 		ImGui::SameLine();
 
 		if (ImGui::Button("Right View"))
 		{
-			App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
-			Look(vec3(1, 0, 0) * (dist_y + dist_z) + vec3(0, center.y, 0), center, true);
+			if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
+			{
+				App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
+				Look(vec3(1, 0, 0) * (dist_y + dist_z) + vec3(0, center.y, 0), center, true);
+			}
 		}
 
 		ImGui::SameLine();
 		if (ImGui::Button("Top View"))
 		{
-			App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
-			Look(vec3(0, 1, 0) * (dist_x + dist_z) + vec3(center.x - 0.05, 0, center.z - 0.05), center, true);	//minus  0.05 because the problems of the top angle
+			if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
+			{
+				App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
+				Look(vec3(0, 1, 0) * (dist_x + dist_z) + vec3(center.x - 0.05, 0, center.z - 0.05), center, true);	//minus  0.05 because the problems of the top angle
+			}
 		}
 		if (ImGui::Button("Back View"))
 		{
-			App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
-			Look(vec3(0, 0, -1) * (dist_x + dist_y) + vec3(0, center.y, 0), center, true);
+			if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
+			{
+				App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
+				Look(vec3(0, 0, -1) * (dist_x + dist_y) + vec3(0, center.y, 0), center, true);
+			}
 		}
 		ImGui::SameLine();
 
 		if (ImGui::Button("Left View"))
 		{
-			App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
-			Look(vec3(-1, 0, 0) * (dist_y + dist_z) + vec3(0, center.y, 0), center, true);
+			if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
+			{
+				App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
+				Look(vec3(-1, 0, 0) * (dist_y + dist_z) + vec3(0, center.y, 0), center, true);
+			}
 		}
 
 		ImGui::SameLine();
 		if (ImGui::Button("Bottom View"))
 		{
-			App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
-			Look(vec3(0, -1, 0) * (dist_x + dist_z) + vec3(center.x - 0.05, 0, center.z - 0.05), center, true);	//minus  0.05 because the problems of the top angle
+			if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
+			{
+				App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
+				Look(vec3(0, -1, 0) * (dist_x + dist_z) + vec3(center.x - 0.05, 0, center.z - 0.05), center, true);	//minus  0.05 because the problems of the top angle
+			}
 		}
 	}
 	return ret;
@@ -152,7 +170,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 	{
 		GameObject* focused_game_object = App->scene_manager->game_object;
-		if (focused_game_object != nullptr)
+		if (focused_game_object != nullptr && focused_game_object->GetComponentSize() != 0)
 		{
 			float dist_x, dist_y, dist_z;
 			vec3 center;

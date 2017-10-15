@@ -44,6 +44,8 @@ public:
 	void GetWorldPosition(GLfloat& x, GLfloat& y, GLfloat& z);
 
 	void ChangeMaterial(Material* new_material, int mesh_num);
+
+	uint GetComponentSize() const;
 };
 
 #endif // !_GAME_OBJECT

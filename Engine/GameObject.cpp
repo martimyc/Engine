@@ -105,3 +105,8 @@ void GameObject::ChangeMaterial(Material * new_material, int mesh_num)
 	if (!found)
 		LOG("Mesh not found");
 }
+
+uint GameObject::GetComponentSize() const
+{
+	return components.size();
+}
