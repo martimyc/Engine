@@ -11,6 +11,12 @@ TextureManager::TextureManager(const char* name, bool start_enabled): Module(nam
 
 bool TextureManager::Init()
 {
+	// ----- Initialize DevIL libraries -----
+
+	// DevIL sanity check
+	if ((iluGetInteger(IL_VERSION_NUM) < IL_VERSION) || (iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION) || (ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION))
+		LOG("DevIL versions are different... Exiting.");
+
 	//  ----- Initialise DevIL -----
 	ilutRenderer(ILUT_OPENGL);
 	ilInit();
@@ -57,7 +63,19 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 		if (ImGui::Button("Empty"))
 			EmptyTextures();
 
-		ImGui::InputInt("Texture to draw", &texture_to_draw);
+		if (ImGui::Button("Empty"))
+			debug_textures = !debug_textures;
+
+		if (debug_textures)
+		{
+			ImGui::InputInt("Texture to draw", &texture_to_draw);
+			
+			if (texture_to_draw >= textures.size() || texture_to_draw < 0)
+			{
+				LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
+				texture_to_draw = 0;
+			}
+		}
 
 		for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
 		{
@@ -122,9 +140,16 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 
 	ilBindImage(imageID); 			// Bind the image
 
+	std::string file_name;
+	// find the last occurrence of '.'
+	size_t pos = path.find_last_of("\\");
+	// make sure the poisition is valid
+	if (pos != path.length())
+		file_name = path.substr(pos + 1);
+	else
+		LOG("Coud not find \\ in the dropef file path");
 
-
-	success = ilLoadImage(path.c_str()); 	// Load the image file
+	success = ilLoadImage(file_name.c_str()); 	// Load the image file
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
 	{
@@ -210,7 +235,7 @@ void TextureManager::LoadTextureStraightFromPath(const std::string& path)
 	//Assume 2D difuse
 	Texture* new_texture = new Texture(path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
 
-	if (!App->texture_manager->LoadTexture(path, *new_texture))
+	if (!App->texture_manager->LoadTexture(path, *new_texture, false))
 	{
 		delete new_texture;
 		LOG("Error loading texture '%s'\n", path.c_str());
@@ -249,4 +274,9 @@ Texture * TextureManager::GetSecondTexture()
 const int TextureManager::GetTextureToDraw() const
 {
 	return texture_to_draw;
+}
+
+bool TextureManager::DebugTextures() const
+{
+	return debug_textures;
 }

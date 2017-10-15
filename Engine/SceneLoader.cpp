@@ -411,7 +411,7 @@ bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_materia
 				
 				Texture* new_texture = new Texture(full_path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
 
-				if (!App->texture_manager->LoadTexture(full_path, *new_texture))
+				if (!App->texture_manager->LoadTexture(full_path, *new_texture, false))
 				{
 					delete new_texture;
 					LOG("Error loading texture '%s'\n", full_path.c_str());

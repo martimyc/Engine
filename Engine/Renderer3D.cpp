@@ -180,7 +180,10 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	App->open_gl_test->DrawDebugPoint();
 	App->open_gl_test->DrawPlaneExtraLarge();
-	App->texture_manager->DrawTexture(App->texture_manager->GetTextureToDraw());
+
+	//Debug Textures
+	if (App->texture_manager->DebugTextures())
+		App->texture_manager->DrawTexture(App->texture_manager->GetTextureToDraw());
 
 	if (show_grid)
 		DrawGrid();

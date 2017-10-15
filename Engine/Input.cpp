@@ -125,22 +125,22 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				break;
 
 			case SDL_DROPFILE:
-				std::string filename (e.drop.file);
+				std::string full_path (e.drop.file);
 				std::string extension;
 				// find the last occurrence of '.'
-				size_t pos = filename.find_last_of(".");
+				size_t pos = full_path.find_last_of(".");
 				// make sure the poisition is valid
-				if (pos != filename.length())
-					extension = filename.substr(pos + 1);
+				if (pos != full_path.length())
+					extension = full_path.substr(pos + 1);
 				else
 					LOG("Coud not find . in the dropef file path");
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->texture_manager->LoadTextureStraightFromPath(e.drop.file);
+					App->texture_manager->LoadTextureStraightFromPath(full_path);
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
-					App->scene_loader->LoadScene(filename);
+					App->scene_loader->LoadScene(full_path);
 				else
 					LOG("Unknown file type");
 				break;
