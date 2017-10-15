@@ -7,6 +7,8 @@
 #include "Globals.h"
 #include "Module.h"
 
+#define FPS_GRAPH_SIZE 30
+
 class Window;
 class Input;
 class Audio;
@@ -43,13 +45,10 @@ public:
 private:
 	std::string title;
 	std::string organization;
-	Clock	ms_timer;
-	unsigned long last_frame_time = 0;
-	unsigned int total_frames;
 	float	dt;
 	std::vector<Module*> modules;
-	std::vector<float> fps_log;
-	std::vector<float> ms_log;
+	float fps_log[FPS_GRAPH_SIZE];
+	float ms_log[FPS_GRAPH_SIZE];
 	char buf1[128] = "Engine 3D - Marc Latorre && Marti Majo";
 	char buf2[128] = "UPC CITM";
 	bool conf_active = true;

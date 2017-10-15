@@ -93,8 +93,7 @@ bool Application::Init()
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
-	dt = (ms_timer.Time() - last_frame_time) / 1000.0f;
-	last_frame_time = ms_timer.Time();
+	dt = 1.0f / ImGui::GetIO().Framerate;
 
 	ImGui_ImplSdlGL2_NewFrame(window->window);
 }
@@ -129,16 +128,27 @@ UPDATE_STATUS Application::CreateConfigMenu()
 
 			json_serialize_to_file(config, "config.json");
 
+			//FPS graphic
+			for (uint i = 0; i < FPS_GRAPH_SIZE; i++)
+				fps_log[i] = fps_log[i + 1];
+			
+			fps_log[FPS_GRAPH_SIZE - 1] = ImGui::GetIO().Framerate;
 
+			char fps_title[25];
+			sprintf_s(fps_title, 25, "Framerate %.1f", fps_log[29]);
+			ImGui::PlotHistogram("", fps_log, IM_ARRAYSIZE(fps_log), FPS_GRAPH_SIZE, fps_title, 0.0f, 80.0f, ImVec2(0, 100));
 
-			if (fps_log.size() > 0 && ms_log.size() > 0)
-			{
-				char title[25];
-				sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
-				ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-				sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
-				ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
-			}
+			//Framerate graphic
+			for (uint i = 0; i < FPS_GRAPH_SIZE; i++)
+				ms_log[i] = ms_log[i + 1];
+			
+			ms_log[FPS_GRAPH_SIZE - 1] = dt * 1000;
+
+			//Blit milliseconds graphic
+			char ms_title[25];
+			sprintf_s(ms_title, 25, "Milliseconds %.1f", ms_log[29]);
+			ImGui::PlotHistogram("", ms_log, IM_ARRAYSIZE(ms_log), FPS_GRAPH_SIZE, ms_title, 0.0f, 80.0f, ImVec2(0, 100));
+			
 		}
 	}
 	return ret;
