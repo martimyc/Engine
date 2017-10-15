@@ -283,5 +283,7 @@ void Renderer3D::DrawGrid()
 			glColor4f(grid_color[0], grid_color[1], grid_color[2], 1.0f);
 	}
 
+	glColor4f(255, 255, 255, 1.0f);
+
 	glEnd();
 }

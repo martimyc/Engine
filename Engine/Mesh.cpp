@@ -44,8 +44,12 @@ void Mesh::Draw() const
 	glIndexPointer(GL_UNSIGNED_INT, 0, NULL);
 
 	//bind uvs channel 1 for now
-	glBindBuffer(GL_ARRAY_BUFFER, uv_ids[0]);
-	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	if (uv_ids != nullptr)
+	{
+		//glBindTexture(GL_TEXTURE_2D, );???
+		glBindBuffer(GL_ARRAY_BUFFER, uv_ids[0]);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	}
 
 	if (material != nullptr)
 	{

@@ -5,6 +5,8 @@
 #include "Window.h"
 #include "Input.h"
 #include "Console.h"
+#include "GameObject.h"
+#include "SceneManager.h"
 #include "Camera3D.h"
 
 Camera3D::Camera3D(const char* name, bool start_enabled) : Module( name, start_enabled)
@@ -58,30 +60,43 @@ UPDATE_STATUS Camera3D::Update(float dt)
 {
 	BROFILER_CATEGORY("Camera Update", Profiler::Color::AliceBlue)
 
-	// Implement a debug camera with keys and mouse
-	// Now we can make this movememnt frame rate independant!
+		// Implement a debug camera with keys and mouse
+		// Now we can make this movememnt frame rate independant!
 
-	vec3 newPos(0,0,0);
+		vec3 newPos(0, 0, 0);
 	float speed = 5.f * dt;
-	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		speed = 8.f * dt;
 
-	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
-	if(App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
+	//if(App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
+	//if(App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
+	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
+		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
 
-	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
 
+		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
+		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
+	}
 
-	if(App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
-	if(App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
+	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+	{
+		GameObject* focused_game_object = App->scene_manager->game_object;
+		if (focused_game_object != nullptr)
+		{
+			GLfloat x, y, z;
+			focused_game_object->GetWorldPosition(x, y, z);
+			Position = vec3(x, y, z) + Z * distance_to_focused_obj;
+		}
+	}
 
 	Position += newPos;
 	Reference += newPos;
 
 	// Mouse motion ----------------
 
-	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 	{
 		int dx = -App->input->GetMouseXMotion();
 		int dy = -App->input->GetMouseYMotion();

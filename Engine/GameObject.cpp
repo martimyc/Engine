@@ -53,13 +53,23 @@ void GameObject::ApplyTexture(Texture * text)
 
 void GameObject::Reset()
 {
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-		delete *it;
+	if (this != nullptr)
+	{
+		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+			delete *it;
 
-	components.clear();
+		components.clear();
+	}
 }
 
 void GameObject::ReserveComponentSpace(const GLuint & num_components)
 {
 	components.reserve(num_components * sizeof(Component*));
+}
+
+void GameObject::GetWorldPosition(GLfloat & x, GLfloat & y, GLfloat & z)
+{
+	x = world_position[0];
+	y = world_position[1];
+	z = world_position[2];
 }

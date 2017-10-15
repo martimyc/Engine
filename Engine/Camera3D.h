@@ -24,6 +24,7 @@ public:
 private:
 
 	void CalculateViewMatrix();
+	float distance_to_focused_obj = 10.0f;
 
 public:
 	
