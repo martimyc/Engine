@@ -81,6 +81,10 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		{
 			game_object->ApplyTexture(App->texture_manager->GetCheckers());
 		}
+		if (ImGui::Button("Texture 2"))
+		{
+			game_object->ApplyTexture(App->texture_manager->GetSecondTexture());
+		}
 	}
 	return ret;
 }

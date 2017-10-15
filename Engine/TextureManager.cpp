@@ -11,8 +11,13 @@ TextureManager::TextureManager(const char* name, bool start_enabled): Module(nam
 
 bool TextureManager::Init()
 {
+	//  ----- Initialise DevIL -----
+	ilutRenderer(ILUT_OPENGL);
 	ilInit();
 	iluInit();
+	ilutInit();
+	ilutRenderer(ILUT_OPENGL);
+	
 
 	//checkers texture
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
@@ -52,6 +57,8 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 		if (ImGui::Button("Empty"))
 			EmptyTextures();
 
+		ImGui::InputInt("Texture to draw", &texture_to_draw);
+
 		for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
 		{
 			ImGui::Text("path: %s", (*it)->path.c_str());
@@ -60,6 +67,43 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 	}
 
 	return UPDATE_CONTINUE;
+}
+
+void TextureManager::DrawTexture(unsigned int num_texture)
+{
+	if (num_texture < textures.size())
+	{
+		// Select the texture to use
+		glBindTexture(GL_TEXTURE_2D, textures[num_texture]->id);
+
+		float hsize = 6.0f; // Vertical size of the quad
+		float vsize = 4.0f; // Vertical size of the quad
+
+		// Draw our texture
+		glEnable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+
+		// Top right
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(hsize, -vsize, 0.0f);
+
+		// Bottom right
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(hsize, vsize, 0.0f);
+
+		// Bottom left
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-hsize, vsize, 0.0f);
+
+		// Top left
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-hsize, -vsize, 0.0f);
+		
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+	}
+	else
+		LOG("Can't draw texture, last existing texture is %i", textures.size() - 1);
 }
 
 bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, bool hiest_quality)
@@ -78,6 +122,8 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 
 	ilBindImage(imageID); 			// Bind the image
 
+
+
 	success = ilLoadImage(path.c_str()); 	// Load the image file
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
@@ -86,13 +132,11 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
 		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
-		{
 			iluFlipImage();
-		}
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
-		success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
 		// Quit out if we failed the conversion
 		if (!success)
@@ -139,11 +183,15 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 			GL_UNSIGNED_BYTE,		// Image data type
 			ilGetData());			// The actual image data itself
 
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		//Fill our texture class
 		new_texture.dimensions = GL_TEXTURE_2D;
 		new_texture.id = texture_id;
 
 		AddTexture(&new_texture);
+
+		LOG("Texture creation successful.");
 	}
 	else // If we failed to open the image file in the first place...
 	{
@@ -153,8 +201,6 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 	}
 
 	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
-
-	LOG("Texture creation successful.");
 
 	return ret;
 }
@@ -193,4 +239,14 @@ void TextureManager::EmptyTextures()
 Texture * TextureManager::GetCheckers()
 {
 	return textures[0];
+}
+
+Texture * TextureManager::GetSecondTexture()
+{
+	return textures[1];
+}
+
+const int TextureManager::GetTextureToDraw() const
+{
+	return texture_to_draw;
 }

@@ -40,8 +40,8 @@ Application::Application()
 	// They will CleanUp() in reverse order
 	
 	// Main Modules
-	AddModule(console);	//console first for init logs
 	AddModule(window);
+	AddModule(console);
 	AddModule(input);
 	AddModule(audio);
 	AddModule(camera);

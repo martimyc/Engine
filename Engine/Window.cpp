@@ -114,7 +114,8 @@ bool Window::Init()
 		}
 		else
 		{
-			LOG("Can not initialise glew");
+			GLenum err = glewInit();
+			LOG("GLEW initialisation error : %s", glewGetErrorString(err));
 			ret = false;
 		}
 	}

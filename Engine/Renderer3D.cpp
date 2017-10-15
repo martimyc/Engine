@@ -12,6 +12,7 @@
 #include "OpenGLTest.h"
 #include "GameObject.h"
 #include "SceneManager.h"
+#include "TextureManager.h"
 #include "Renderer3D.h"
 
 Renderer3D::Renderer3D(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -179,6 +180,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	App->open_gl_test->DrawDebugPoint();
 	App->open_gl_test->DrawPlaneExtraLarge();
+	App->texture_manager->DrawTexture(App->texture_manager->GetTextureToDraw());
 
 	if (show_grid)
 		DrawGrid();

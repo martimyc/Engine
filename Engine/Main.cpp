@@ -13,6 +13,7 @@
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
+#pragma comment (lib, "Devil/libx86/ILUT.lib")
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 

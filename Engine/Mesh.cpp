@@ -57,11 +57,13 @@ void Mesh::Draw() const
 	//Disable texture 2D client state & unbind text buffer
 	if (material != nullptr)
 	{
-		for (int i = 0; i < material->NumTextures(); i++)
+		/*for (int i = 0; i < material->NumTextures(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+			glDisable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);		
+		}*/
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}// maybe different with multitexturing
 
 	 //After draw bind buffer 0
