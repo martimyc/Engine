@@ -1,4 +1,6 @@
 #include "Globals.h"
+#include "Application.h"
+#include "SceneManager.h"
 #include "Material.h"
 #include "Mesh.h"
 
@@ -104,6 +106,11 @@ void Mesh::GetColors(GLuint & num_channels, GLuint * ids, GLfloat ** all_colors)
 	all_colors = colors;
 }
 
+Material * Mesh::GetMaterial() const
+{
+	return material;
+}
+
 void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
 {
 	vertex_id = id;
@@ -173,4 +180,9 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 
 	//must be last to delete well if necesary
 	num_color_channels = num_channels;
+}
+
+void Mesh::SetMaterial(unsigned int pos)
+{
+	material = App->scene_manager->GetMaterial(pos);
 }

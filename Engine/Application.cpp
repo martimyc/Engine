@@ -14,7 +14,7 @@
 #include "MainMenuBar.h"
 #include "OpenGLTest.h"
 #include "Textures.h"
-#include "MeshLoader.h"
+#include "SceneLoader.h"
 #include "BasicGeometry.h"
 #include "SceneManager.h"
 #include "Application.h"
@@ -31,7 +31,7 @@ Application::Application()
 	main_menu_bar = new MainMenuBar("Menu Bar");
 	open_gl_test = new OpenGLTest("OpenGL Test");
 	textures = new Textures("Textures");
-	mesh_loader = new MeshLoader("File Loader");
+	scene_loader = new SceneLoader("File Loader");
 	primitives = new BasicGeometry("Basic Geometry");
 	scene_manager = new SceneManager("Scene Manager");
 
@@ -49,7 +49,7 @@ Application::Application()
 	AddModule(main_menu_bar);
 	AddModule(open_gl_test);
 	AddModule(textures);
-	AddModule(mesh_loader);
+	AddModule(scene_loader);
 	AddModule(primitives);
 	AddModule(scene_manager);
 	

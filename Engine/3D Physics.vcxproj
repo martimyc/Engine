@@ -132,7 +132,7 @@
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="MeshLoader.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenGLTest.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -278,7 +278,7 @@
     <ClCompile Include="MathGeoLib\src\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
-    <ClCompile Include="MeshLoader.cpp" />
+    <ClCompile Include="SceneLoader.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="Console.cpp" />

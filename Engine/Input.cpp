@@ -7,7 +7,7 @@
 #include "Console.h"
 #include "Textures.h"
 #include "SceneManager.h"
-#include "MeshLoader.h"
+#include "SceneLoader.h"
 #include "Input.h"
 
 
@@ -125,8 +125,6 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				break;
 
 			case SDL_DROPFILE:
-				App->mesh_loader->LoadScene(e.drop.file);
-
 				std::string filename (e.drop.file);
 				std::string extension;
 				// find the last occurrence of '.'
@@ -136,9 +134,14 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 					extension = filename.substr(pos + 1);
 				else
 					LOG("Coud not find . in the dropef file path");
+				
+				//DevIL
+				if (IsImageFormat(extension))
+					App->textures->LoadTextureStraightFromPath(e.drop.file);
 
-				if (extension == "dds")
-					App->textures->LoadTexture(e.drop.file);
+				//Assimp
+				if(extension == "fbx" || extension == "FBX")
+					App->scene_loader->LoadScene(filename);
 				break;
 		}
 	}
@@ -155,4 +158,55 @@ bool Input::CleanUp()
 	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+bool Input::IsImageFormat(const std::string& extension) const
+{
+	if (extension == "bmp" ||												//Windows Bitmap
+		extension == "cut" ||												//Dr.Halo
+		extension == "dcx" ||												//Multi - PCX
+		extension == "dcm" || extension == "dicom" ||						//Dicom
+		extension == "dds" ||												//DirectDraw Surface
+		extension == "exr" ||												//OpenEXR
+		extension == "fits" || extension == "fit" ||							//Flexible Image Transport System
+		extension == "ftx" ||												//Heavy Metal : FAKK 2
+		extension == "hdr" ||												//Radiance High Dynamic
+		extension == "icns" ||												//Macintosh icon
+		extension == "ico" || extension == "cur" ||							//Windows icon / cursor
+		extension == "iff" ||												//Interchange File Format
+		extension == "iwi" ||												//Infinity Ward Image
+		extension == "gif" ||												//Graphics Interchange Format
+		extension == "jpg" || extension == "jpe" || extension == "jpeg" ||	//Jpeg
+		extension == "jp2" ||												//Jpeg 2000
+		extension == "lbm" ||												//Interlaced Bitmap
+		extension == "lif" ||												//Homeworld texture
+		extension == "mdl" ||												//Half - Life Model 
+		extension == "mp3" ||												//MPEG - 1 Audio Layer 3
+		extension == "pal" ||												//Palette
+		extension == "pcd" ||												//Kodak PhotoCD
+		extension == "pcx" ||												//ZSoft PCX
+		extension == "pic" ||												//Softimage PIC
+		extension == "png" ||												//Portable Network Graphics
+		extension == "pbm" || extension == "pgm" ||							//Portable Anymap
+		extension == "pnm" || extension == "pnm" ||
+		extension == "pix" ||												//Alias | Wavefront
+		extension == "psd" ||												//Adobe PhotoShop
+		extension == "psp" ||												//PaintShop Pro
+		extension == "pxr" ||												//Pixar
+		extension == "raw" ||												//Raw data
+		extension == "rot" ||												//Homeworld 2 Texture
+		extension == "sgi" || extension == "bw" ||							//Portable Anymap
+		extension == "rgb" || extension == "rgba" ||
+		extension == "texture" ||											//Creative Assembly Texture
+		extension == "tga" ||												//Truevision Targa
+		extension == "tif" ||												//Tagged Image File Format
+		extension == "tpl" ||												//Gamecube Texture
+		extension == "utx" ||												//Unreal Texture
+		extension == "wal" ||												//Quake 2 Texture
+		extension == "vtf" ||												//Valve Texture Format
+		extension == "wdp" || extension == "hdp" ||							//HD Photo
+		extension == "xpm" 													//X Pixel Map 
+		)
+		return true;
+	return false;
 }
