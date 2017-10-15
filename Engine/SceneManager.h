@@ -7,6 +7,7 @@
 
 class GameObject;
 class Material;
+class vec3;
 
 enum DRAW_MODE
 {
@@ -52,7 +53,7 @@ public:
 
 	Material* GetMaterial(unsigned int pos) const;
 	bool HasMaterials() const;
-	float CalculateDistanceToObj(const GameObject* go) const;
+	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 
 	void EmptyScene();
 };

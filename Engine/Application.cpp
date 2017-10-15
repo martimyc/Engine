@@ -12,7 +12,6 @@
 #include "Console.h"
 #include "HardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
-#include "OpenGLTest.h"
 #include "TextureManager.h"
 #include "SceneLoader.h"
 #include "BasicGeometry.h"
@@ -29,7 +28,6 @@ Application::Application()
 	console = new Console("Console");
 	hardware_software_info = new HardwareSoftwareInfo("Hardware & Software");
 	main_menu_bar = new MainMenuBar("Menu Bar");
-	open_gl_test = new OpenGLTest("OpenGL Test");
 	texture_manager = new TextureManager("Textures");
 	scene_loader = new SceneLoader("File Loader");
 	primitives = new BasicGeometry("Basic Geometry");
@@ -47,7 +45,6 @@ Application::Application()
 	AddModule(camera);
 	AddModule(hardware_software_info);
 	AddModule(main_menu_bar);
-	AddModule(open_gl_test);
 	AddModule(texture_manager);
 	AddModule(scene_loader);
 	AddModule(primitives);

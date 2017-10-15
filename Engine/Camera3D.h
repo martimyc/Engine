@@ -21,12 +21,14 @@ public:
 	void LookAt(const vec3 &Spot);
 	void Move(const vec3 &Movement);
 	float* GetViewMatrix();
+	void CenterToObj();
 
 private:
 
 	void CalculateViewMatrix();
 	float camera_speed = 5.0f;
 	float camera_zoom_speed = 5.0f;
+	float sensitivity = 0.25f;
 
 public:
 	

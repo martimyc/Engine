@@ -167,13 +167,16 @@ bool SceneManager::HasMaterials() const
 	return materials.size() > 0;
 }
 
-float SceneManager::CalculateDistanceToObj(const GameObject* go) const
+void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const
 {
-	AABB bounding_box;
+	AABB bounding_box(vec(0, 0, 0), vec(0, 0, 0));
 	go->GenerateBoundingBox(bounding_box);
-	if (bounding_box.MinY() <= -6e18 || bounding_box.MinY() >= 6e18)	//error from if height == 0
-		return bounding_box.MaxY();
-	return bounding_box.MaxY() - bounding_box.MinY();
+	center.x = bounding_box.CenterPoint().x;
+	center.y = bounding_box.CenterPoint().y;
+	center.z = bounding_box.CenterPoint().z;
+	x_dist = bounding_box.MaxX() - bounding_box.MinX();
+	y_dist = bounding_box.MaxY() - bounding_box.MinY();
+	z_dist = bounding_box.MaxZ() - bounding_box.MinZ();
 }
 
 void SceneManager::EmptyScene()
