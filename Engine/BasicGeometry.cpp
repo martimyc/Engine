@@ -37,6 +37,9 @@ bool BasicGeometry::LoadPrimitives()
 
 bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 {
+	uint num_components = 2;
+	GLuint* uvs_id = new GLuint[1];
+	GLfloat** uvs = new GLfloat*[1];
 	switch (primitive)
 	{
 	case NULL_PRIMITIVE:
@@ -44,7 +47,11 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 		return false;
 	case PRIMITIVE_CUBE:
 		mesh->SetVertices(cube->GetVertexId(), cube->GetVerticesNum(), cube->GetVertices());
-		mesh->SetIndices(cube->GetIndicesId(), cube->GetIndicesNum(), cube->GetIndices());
+		mesh->SetIndices(cube->GetIndicesId(), cube->GetIndicesNum(), cube->GetIndices());		
+		uvs_id[0] =	cube->GetUVsId();
+		uvs[0] = cube->GetUVs();
+		//memcpy(uvs[0], cube->GetUVs(), sizeof(GLfloat)*cube->GetVerticesNum()*num_components);
+		mesh->SetUVs(1, &num_components, uvs_id, uvs);
 		break;
 	case PRIMITIVE_SPHERE:
 		mesh->SetVertices(sphere->GetVertexId(), sphere->GetVerticesNum(), sphere->GetVertices());
