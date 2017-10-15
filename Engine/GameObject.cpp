@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "MathGeoLib\src\Geometry\AABB.h"
 #include "Mesh.h"
 #include "Console.h"
 #include "Material.h"
@@ -67,6 +68,16 @@ void GameObject::ReserveComponentSpace(const GLuint & num_components)
 	components.reserve(num_components * sizeof(Component*));
 }
 
+void GameObject::GenerateBoundingBox(AABB & bounding_box) const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+	{
+		if ((*it)->GetType() == CT_MESH)
+		{
+			((Mesh*)(*it))->Enclose(bounding_box);
+		}
+	}
+}
 void GameObject::GetWorldPosition(GLfloat & x, GLfloat & y, GLfloat & z)
 {
 	x = world_position[0];

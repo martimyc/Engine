@@ -1,5 +1,6 @@
 #include "imgui\imgui.h"
 #include "Brofiler\Brofiler.h"
+#include "MathGeoLib\src\Geometry\AABB.h"
 #include "Application.h"
 #include "Renderer3D.h"
 #include "Mesh.h"
@@ -129,4 +130,13 @@ Material * SceneManager::GetMaterial(unsigned int pos) const
 bool SceneManager::HasMaterials() const
 {
 	return materials.size() > 0;
+}
+
+float SceneManager::CalculateDistanceToObj(const GameObject* go) const
+{
+	AABB bounding_box;
+	go->GenerateBoundingBox(bounding_box);
+	if (bounding_box.MinY() <= -6e18 || bounding_box.MinY() >= 6e18)	//error from if height == 0
+		return bounding_box.MaxY();
+	return bounding_box.MaxY() - bounding_box.MinY();
 }

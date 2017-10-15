@@ -35,7 +35,7 @@ bool BasicGeometry::LoadPrimitives()
 	return ret;
 }
 
-bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices)
+bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 {
 	switch (primitive)
 	{
@@ -43,20 +43,12 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, ui
 		LOG("Error Getting Primitive ID: NULL_PRIMITIVE");
 		return false;
 	case PRIMITIVE_CUBE:
-		vertex_id = cube->GetVertexId();
-		vertices_num = cube->GetVerticesNum();
-		vertices = cube->GetVertices();
-		indices_id = cube->GetIndicesId();
-		indices_num = cube->GetIndicesNum();
-		indices = cube->GetIndices();
+		mesh->SetVertices(cube->GetVertexId(), cube->GetVerticesNum(), cube->GetVertices());
+		mesh->SetIndices(cube->GetIndicesId(), cube->GetIndicesNum(), cube->GetIndices());
 		break;
 	case PRIMITIVE_SPHERE:
-		vertex_id = sphere->GetVertexId();
-		vertices_num = sphere->GetVerticesNum();
-		vertices = sphere->GetVertices();
-		indices_id = sphere->GetIndicesId();
-		indices_num = sphere->GetIndicesNum();
-		indices = sphere->GetIndices();
+		mesh->SetVertices(sphere->GetVertexId(), sphere->GetVerticesNum(), sphere->GetVertices());
+		mesh->SetIndices(sphere->GetIndicesId(), sphere->GetIndicesNum(), sphere->GetIndices());
 		break;
 	default:
 		LOG("Error Getting Primitive ID");
@@ -65,31 +57,22 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, ui
 	return true;
 }
 
+
 GameObject& BasicGeometry::Create3DCube()
 {
 	GameObject* go = new GameObject();
-	uint vertex_id = 0;
-	uint num_vertices = 0;
-	float* vertices = nullptr;
-	uint indices_id = 0;
-	uint num_indices = 0;
-	uint* indices = nullptr;
-	GetPrimitiveId(PRIMITIVE_CUBE, vertex_id, num_vertices, vertices, indices_id, num_indices, indices);
-	go->AddComponent(new Mesh(vertex_id, num_vertices, vertices, indices_id, num_indices, indices, 0, 0));
+	Mesh* mesh = new Mesh();
+	GetPrimitiveId(PRIMITIVE_CUBE, mesh);
+	go->AddComponent(mesh);
 	return *go;
 }
 
 GameObject & BasicGeometry::CreateSphere()
 {
 	GameObject* go = new GameObject();
-	uint vertex_id = 0;
-	uint num_vertices = 0;
-	float* vertices = nullptr;
-	uint indices_id = 0;
-	uint num_indices = 0;
-	uint* indices = nullptr;
-	GetPrimitiveId(PRIMITIVE_SPHERE, vertex_id, num_vertices, vertices, indices_id, num_indices, indices);
-	go->AddComponent(new Mesh(vertex_id, num_vertices, vertices, indices_id, num_indices, indices, 0, 0));
+	Mesh* mesh = new Mesh();
+	GetPrimitiveId(PRIMITIVE_SPHERE, mesh);
+	go->AddComponent(mesh); 
 	return *go;
 }
 

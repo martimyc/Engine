@@ -13,32 +13,32 @@ Primitive::~Primitive()
 	DELETE_ARRAY(indices);
 }
 
-GLuint Primitive::GetVertexId()
+GLuint Primitive::GetVertexId() const
 {
 	return vertex_id;
 }
 
-GLuint Primitive::GetIndicesId()
+GLuint Primitive::GetIndicesId() const
 {
 	return indices_id;
 }
 
-const uint Primitive::GetVerticesNum()
+const uint Primitive::GetVerticesNum() const
 {
 	return num_vertices;
 }
 
-const uint Primitive::GetIndicesNum()
+const uint Primitive::GetIndicesNum() const
 {
 	return num_indices;
 }
 
-GLfloat * Primitive::GetVertices()
+GLfloat * Primitive::GetVertices() const
 {
 	return vertices;
 }
 
-GLuint * Primitive::GetIndices()
+GLuint * Primitive::GetIndices() const
 {
 	return indices;
 }

@@ -17,12 +17,12 @@ public:
 	Primitive(const uint num_vertices, const uint num_indices);
 	~Primitive();
 
-	GLuint GetVertexId();
-	GLuint GetIndicesId();
-	const uint GetVerticesNum();
-	const uint GetIndicesNum();
-	GLfloat* GetVertices();
-	GLuint* GetIndices();
+	GLuint GetVertexId() const;
+	GLuint GetIndicesId() const;
+	const uint GetVerticesNum() const;
+	const uint GetIndicesNum() const;
+	GLfloat* GetVertices() const;
+	GLuint* GetIndices() const;
 };
 
 #endif // _PRIMITIVE_H

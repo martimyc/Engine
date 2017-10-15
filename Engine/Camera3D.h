@@ -27,11 +27,10 @@ private:
 	void CalculateViewMatrix();
 	float camera_speed = 5.0f;
 	float camera_zoom_speed = 5.0f;
-	float distance_to_focused_obj = 10.0f;
 
 public:
 	
-	vec3 X, Y, Z, Position, Reference;
+	vec3 X, Y, Z, position, reference;
 
 private:
 

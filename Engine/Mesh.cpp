@@ -1,3 +1,4 @@
+#include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
 #include "Application.h"
 #include "SceneManager.h"
@@ -195,4 +196,11 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 void Mesh::SetMaterial(unsigned int pos)
 {
 	material = App->scene_manager->GetMaterial(pos);
+}
+
+void Mesh::Enclose(AABB & bounding_box) const
+{
+	vec* vec_vert = new vec[num_vertices];
+	memcpy(vec_vert, vertices, num_vertices * sizeof(GLfloat) * 3);
+	bounding_box.Enclose(vec_vert, num_vertices);
 }
