@@ -49,10 +49,7 @@ public:
 	//void ReserveGameObjectSpace(const GLuint& num_materials); //TODO
 
 	Material* GetMaterial(unsigned int pos) const;
-
-	//Primitives
-	void CreateCube();
-	bool create_cube = false;
+	bool HasMaterials() const;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

@@ -1,3 +1,4 @@
+#include "imgui\imgui.h"
 #include "Mesh.h"
 #include "Console.h"
 #include "Material.h"
@@ -23,6 +24,10 @@ void GameObject::Draw() const
 void GameObject::AddComponent(Component * component)
 {
 	components.push_back(component);
+}
+
+void GameObject::Configuration() const
+{
 }
 
 void GameObject::ApplyTexture(Texture * text)

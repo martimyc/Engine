@@ -23,6 +23,8 @@ public:
 
 	void AddComponent(Component* component);
 
+	void Configuration() const;
+
 	void ApplyTexture(Texture * text);
 
 	void Reset();

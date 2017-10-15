@@ -224,7 +224,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="Textures.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
   </ItemGroup>
@@ -296,7 +296,7 @@
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />
-    <ClCompile Include="Textures.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

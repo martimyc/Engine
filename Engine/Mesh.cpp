@@ -33,6 +33,7 @@ void Mesh::Draw() const
 {
 	//Enable state
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	//Bind vertices
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
@@ -42,9 +43,12 @@ void Mesh::Draw() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
 	glIndexPointer(GL_UNSIGNED_INT, 0, NULL);
 
+	//bind uvs channel 1 for now
+	glBindBuffer(GL_ARRAY_BUFFER, uv_ids[0]);
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
 	if (material != nullptr)
 	{
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		material->AssignDrawPointers();
 	}
 
@@ -57,8 +61,7 @@ void Mesh::Draw() const
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, 0);
-		}		
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
 	}// maybe different with multitexturing
 
 	 //After draw bind buffer 0
@@ -68,6 +71,7 @@ void Mesh::Draw() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	//Disable state
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 

@@ -36,11 +36,6 @@ struct Texture
 		if(id != 0)
 			glDeleteTextures(1, &id);
 	}
-
-	void SetUp()
-	{
-
-	}
 };
 #endif // !_TEXTURE
 

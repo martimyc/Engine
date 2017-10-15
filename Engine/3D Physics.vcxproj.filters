@@ -366,9 +366,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Textures.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il.h">
       <Filter>Sources\3rd Party\DevIL</Filter>
     </ClInclude>
@@ -520,6 +517,9 @@
       <Filter>Sources\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="SceneLoader.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
@@ -704,9 +704,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Textures.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
@@ -729,6 +726,9 @@
       <Filter>Sources\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="SceneLoader.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>

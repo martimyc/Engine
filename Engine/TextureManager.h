@@ -1,7 +1,7 @@
-#ifndef _MODULE_TEXTURES
-#define _MODULE_TEXTURES
+#ifndef _MODULE_TEXTURE_MANAGER
+#define _MODULE_TEXTURE_MANAGER
 
-#include <list>
+#include <vector>
 #include "glew\include\GL\glew.h"
 #include "Devil\include\il.h"
 #include "Devil\include\ilu.h"
@@ -12,15 +12,17 @@
 
 class Texture;
 
-class Textures: public Module
+class TextureManager: public Module
 {
 private:
-	//list better this just now
-	std::vector <Texture*> textures;
+	std::vector<Texture*> textures;
+	Texture* checkers;
 public:
-	Textures(const char* name, bool start_enabled = true);
+	TextureManager(const char* name, bool start_enabled = true);
 
 	bool Init();
+
+	UPDATE_STATUS Configuration(float dt);
 
 	bool LoadTexture(const std::string& path, Texture& new_texture, bool hiest_quality = true);
 
@@ -28,7 +30,9 @@ public:
 
 	void AddTexture(Texture* new_texture);
 
+	void EmptyTextures();
+
 	Texture* GetCheckers();
 };
 
-#endif // !_MODULE_TEXTURES
+#endif // !_MODULE_TEXTURE_MANAGER

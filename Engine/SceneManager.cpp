@@ -6,7 +6,7 @@
 #include "BasicGeometry.h"
 #include "GameObject.h"
 #include "Texture.h"
-#include "Textures.h"
+#include "TextureManager.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), wireframe(false), normals(false), polygons(true)
@@ -79,7 +79,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 		if (ImGui::Button("Checkers"))
 		{
-			game_object->ApplyTexture(App->textures->GetCheckers());
+			game_object->ApplyTexture(App->texture_manager->GetCheckers());
 		}
 	}
 	return ret;
@@ -120,4 +120,9 @@ void SceneManager::ReserveMaterialSpace(const GLuint & num_materials)
 Material * SceneManager::GetMaterial(unsigned int pos) const
 {
 	return materials[pos];
+}
+
+bool SceneManager::HasMaterials() const
+{
+	return materials.size() > 0;
 }

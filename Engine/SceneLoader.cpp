@@ -4,7 +4,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Texture.h"
-#include "Textures.h"
+#include "TextureManager.h"
 #include "SceneLoader.h"
 
 SceneLoader::SceneLoader(const char * name, bool start_enabled) : Module(name, start_enabled)
@@ -65,6 +65,8 @@ bool SceneLoader::LoadScene(const std::string& path) const
 					App->scene_manager->AddMaterial(new_material);
 			}
 		}
+		else
+			LOG("Scene has no materials");
 
 		if (scene->HasMeshes())
 		{
@@ -155,7 +157,8 @@ bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 	else
 		LOG("Mesh has no vertex colors");
 
-	new_mesh.SetMaterial(mesh->mMaterialIndex);
+	if(App->scene_manager->HasMaterials())
+		new_mesh.SetMaterial(mesh->mMaterialIndex);
 
 	// Bones and TangentsAndBitangents not loaded yet TODO
 	
@@ -265,7 +268,7 @@ bool SceneLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_
 			{
 				//Slowest but better than nothing saving lots of zeroes in vram (z and maybe y coordinates), slow load but less vram usage
 				for (int j = 0; j < num_vertices; j++)
-					memcpy(uvs[i], mesh->mTextureCoords[i], sizeof(GLfloat) * num_uv_components[i]);
+					memcpy(&uvs[i][j*num_uv_components[i]], &mesh->mTextureCoords[i][j].x, sizeof(GLfloat) * num_uv_components[i]);
 			}
 		}
 		else
@@ -285,7 +288,7 @@ bool SceneLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_
 
 		glGenBuffers(1, &uv_ids[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, uv_ids[i]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * num_uv_components[i], &uvs[i], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * num_uv_components[i], uvs[i], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
@@ -408,7 +411,7 @@ bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_materia
 				
 				Texture* new_texture = new Texture(full_path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
 
-				if (!App->textures->LoadTexture(full_path, *new_texture))
+				if (!App->texture_manager->LoadTexture(full_path, *new_texture))
 				{
 					delete new_texture;
 					LOG("Error loading texture '%s'\n", full_path.c_str());

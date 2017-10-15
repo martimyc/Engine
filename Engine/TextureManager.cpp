@@ -1,13 +1,15 @@
-
+#include "imgui\imgui.h"
 #include "Application.h"
+#include "SceneManager.h"
+#include "GameObject.h"
 #include "Console.h"
 #include "Texture.h"
-#include "Textures.h"
+#include "TextureManager.h"
 
-Textures::Textures(const char* name, bool start_enabled): Module(name, start_enabled)
+TextureManager::TextureManager(const char* name, bool start_enabled): Module(name, start_enabled)
 {}
 
-bool Textures::Init()
+bool TextureManager::Init()
 {
 	ilInit();
 	iluInit();
@@ -37,12 +39,30 @@ bool Textures::Init()
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	AddTexture(new Texture(std::string("Checkers"), TT_DIFFUSE, GL_TEXTURE_2D, checkers_text_id));
+	checkers = new Texture(std::string("Checkers"), TT_DIFFUSE, GL_TEXTURE_2D, checkers_text_id);
+	AddTexture(checkers);
 
 	return true;
 }
 
-bool Textures::LoadTexture(const std::string& path, Texture& new_texture, bool hiest_quality)
+UPDATE_STATUS TextureManager::Configuration(float dt)
+{
+	if (ImGui::CollapsingHeader("Textures"))
+	{
+		if (ImGui::Button("Empty"))
+			EmptyTextures();
+
+		for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
+		{
+			ImGui::Text("path: %s", (*it)->path.c_str());
+		}
+			
+	}
+
+	return UPDATE_CONTINUE;
+}
+
+bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, bool hiest_quality)
 {
 	bool ret = true;
 
@@ -89,8 +109,8 @@ bool Textures::LoadTexture(const std::string& path, Texture& new_texture, bool h
 		glBindTexture(GL_TEXTURE_2D, texture_id);
 
 		// Set texture clamping method
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	
 		if (hiest_quality)
@@ -130,7 +150,6 @@ bool Textures::LoadTexture(const std::string& path, Texture& new_texture, bool h
 		error = ilGetError();
 		LOG("Image load failed - IL reports error:%i - %s", error, iluErrorString(error));
 		ret = false;
-		exit(-1);
 	}
 
 	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
@@ -140,25 +159,38 @@ bool Textures::LoadTexture(const std::string& path, Texture& new_texture, bool h
 	return ret;
 }
 
-void Textures::LoadTextureStraightFromPath(const std::string& path)
+void TextureManager::LoadTextureStraightFromPath(const std::string& path)
 {
 	//Assume 2D difuse
 	Texture* new_texture = new Texture(path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
 
-	if (!App->textures->LoadTexture(path, *new_texture))
+	if (!App->texture_manager->LoadTexture(path, *new_texture))
 	{
 		delete new_texture;
 		LOG("Error loading texture '%s'\n", path.c_str());
 	}
+	else
+	{
+		//only to test
+		App->scene_manager->game_object->ApplyTexture(new_texture);
+	}
 
 }
 
-void Textures::AddTexture(Texture * new_texture)
+void TextureManager::AddTexture(Texture * new_texture)
 {
 	textures.push_back(new_texture);
 }
 
-Texture * Textures::GetCheckers()
+void TextureManager::EmptyTextures()
+{
+	for (std::vector<Texture*>::iterator it = textures.begin() + 1; it != textures.end(); ++it)
+		delete (*it);
+	textures.clear();
+	textures.push_back(checkers);
+}
+
+Texture * TextureManager::GetCheckers()
 {
 	return textures[0];
 }

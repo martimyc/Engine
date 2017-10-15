@@ -5,7 +5,7 @@
 #include "Renderer3D.h"
 #include "Window.h"
 #include "Console.h"
-#include "Textures.h"
+#include "TextureManager.h"
 #include "SceneManager.h"
 #include "SceneLoader.h"
 #include "Input.h"
@@ -137,11 +137,12 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->textures->LoadTextureStraightFromPath(e.drop.file);
-
+					App->texture_manager->LoadTextureStraightFromPath(e.drop.file);
 				//Assimp
-				if(extension == "fbx" || extension == "FBX")
+				else if (extension == "fbx" || extension == "FBX")
 					App->scene_loader->LoadScene(filename);
+				else
+					LOG("Unknown file type");
 				break;
 		}
 	}

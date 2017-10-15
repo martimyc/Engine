@@ -21,9 +21,10 @@ void Material::AssignDrawPointers()
 			break;
 		}
 
-		textures[i]->SetUp();
+		//textures[i]->SetUp();
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]->id);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, textures[i]->id);	
 	}
 }
 

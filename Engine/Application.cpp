@@ -13,7 +13,7 @@
 #include "HardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
 #include "OpenGLTest.h"
-#include "Textures.h"
+#include "TextureManager.h"
 #include "SceneLoader.h"
 #include "BasicGeometry.h"
 #include "SceneManager.h"
@@ -30,7 +30,7 @@ Application::Application()
 	hardware_software_info = new HardwareSoftwareInfo("Hardware & Software");
 	main_menu_bar = new MainMenuBar("Menu Bar");
 	open_gl_test = new OpenGLTest("OpenGL Test");
-	textures = new Textures("Textures");
+	texture_manager = new TextureManager("Textures");
 	scene_loader = new SceneLoader("File Loader");
 	primitives = new BasicGeometry("Basic Geometry");
 	scene_manager = new SceneManager("Scene Manager");
@@ -48,7 +48,7 @@ Application::Application()
 	AddModule(hardware_software_info);
 	AddModule(main_menu_bar);
 	AddModule(open_gl_test);
-	AddModule(textures);
+	AddModule(texture_manager);
 	AddModule(scene_loader);
 	AddModule(primitives);
 	AddModule(scene_manager);
