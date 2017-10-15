@@ -178,8 +178,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		EndDebugDraw();
 	}*/
 
-	App->open_gl_test->DrawDebugPoint();
-	App->open_gl_test->DrawPlaneExtraLarge();
+	//App->open_gl_test->DrawDebugPoint();
+	//App->open_gl_test->DrawPlaneExtraLarge();
 
 	//Debug Textures
 	if (App->texture_manager->DebugTextures())
