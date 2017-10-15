@@ -5,6 +5,10 @@
 #include "Component.h"
 
 class Material;
+namespace MATH_NAMESPACE_NAME
+{
+	class AABB;
+}
 
 class Mesh: public Component
 {
@@ -56,6 +60,8 @@ public:
 	void SetNormals(const GLuint& id, GLfloat* all_normals);
 	void SetColors(const GLuint& num_channels, GLuint* ids, GLfloat** all_colors);
 	void SetMaterial(unsigned int pos);
+
+	void Enclose(AABB& bounding_box)const;
 };
 
 #endif // !_MESH

@@ -50,6 +50,7 @@ public:
 
 	Material* GetMaterial(unsigned int pos) const;
 	bool HasMaterials() const;
+	float CalculateDistanceToObj(const GameObject* go) const;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

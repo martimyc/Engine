@@ -26,6 +26,7 @@ namespace math
 class CubePrimitive;
 class SpherePrimitive;
 class GameObject;
+class Mesh;
 //-------------------
 
 class BasicGeometry : public Module
@@ -43,7 +44,7 @@ public:
 
 	bool LoadPrimitives();
 	void Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices);
-	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, uint& vertex_id, uint& vertices_num, GLfloat* vertices, uint& indices_id, uint& indices_num, GLuint* indices);
+	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh* mesh) const;
 
 	GameObject& Create3DCube();
 	GameObject& CreateSphere();

@@ -6,6 +6,10 @@
 
 class Component;
 class Texture;
+namespace MATH_NAMESPACE_NAME 
+{
+	class AABB;
+}
 
 class GameObject
 {
@@ -30,6 +34,8 @@ public:
 	void Reset();
 
 	void ReserveComponentSpace(const GLuint& num_components);
+
+	void GenerateBoundingBox(AABB& bounding_box) const;
 
 	void GetWorldPosition(GLfloat& x, GLfloat& y, GLfloat& z);
 };

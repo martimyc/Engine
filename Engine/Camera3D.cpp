@@ -1,12 +1,15 @@
 #include "glew\include\GL\glew.h"
 #include "Brofiler\Brofiler.h"
 #include "imgui\imgui.h"
+#include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Window.h"
 #include "Input.h"
 #include "Console.h"
 #include "GameObject.h"
+#include "Component.h"
+#include "Mesh.h"
 #include "SceneManager.h"
 #include "Camera3D.h"
 
@@ -18,8 +21,8 @@ Camera3D::Camera3D(const char* name, bool start_enabled) : Module( name, start_e
 	Y = vec3(0.0f, 1.0f, 0.0f);
 	Z = vec3(0.0f, 0.0f, 1.0f);
 
-	Position = vec3(0.0f, 0.0f, 5.0f);
-	Reference = vec3(0.0f, 0.0f, 0.0f);
+	position = vec3(0.0f, 0.0f, 5.0f);
+	reference = vec3(0.0f, 0.0f, 0.0f);
 }
 
 Camera3D::~Camera3D()
@@ -96,10 +99,10 @@ UPDATE_STATUS Camera3D::Update(float dt)
 
 	// Mouse whell motion:	-1 equals down, 1 equals up
 	if (App->input->GetMouseZ() == -1)
-		newPos += normalize(Reference) * camera_zoom_speed;
+		newPos += normalize(position) * camera_zoom_speed;
 
 	else if (App->input->GetMouseZ() == 1)
-		newPos -= normalize(Reference) * camera_zoom_speed;
+		newPos -= normalize(position) * camera_zoom_speed;
 	
 
 	// Center Obj
@@ -110,24 +113,25 @@ UPDATE_STATUS Camera3D::Update(float dt)
 		{
 			GLfloat x, y, z;
 			focused_game_object->GetWorldPosition(x, y, z);
-			Position = vec3(x, y, z) + Z * distance_to_focused_obj;
-			Reference = Position;
+			float distance_to_focused_obj = App->scene_manager->CalculateDistanceToObj(focused_game_object);			
+			position = vec3(x, y, z) + Z * distance_to_focused_obj * 5;
+			reference = position;
 		}
 	}
 
-	Position += newPos;
-	Reference += newPos;
+	position += newPos;
+	reference += newPos;
 
 	// Mouse motion ----------------
 
-	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
 	{
 		int dx = -App->input->GetMouseXMotion();
 		int dy = -App->input->GetMouseYMotion();
 
 		float Sensitivity = 0.25f;
 
-		Position -= Reference;
+		position -= reference;
 
 		if(dx != 0)
 		{
@@ -152,7 +156,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 			}
 		}
 
-		Position = Reference + Z * length(Position);
+		position = reference + Z * length(position);
 	}
 
 	// Recalculate matrix -------------
@@ -164,8 +168,8 @@ UPDATE_STATUS Camera3D::Update(float dt)
 // -----------------------------------------------------------------
 void Camera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
 {
-	this->Position = Position;
-	this->Reference = Reference;
+	this->position = Position;
+	this->reference = Reference;
 
 	Z = normalize(Position - Reference);
 	X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
@@ -173,8 +177,8 @@ void Camera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateArou
 
 	if(!RotateAroundReference)
 	{
-		this->Reference = this->Position;
-		this->Position += Z * 0.05f;
+		this->reference = this->position;
+		this->position += Z * 0.05f;
 	}
 
 	CalculateViewMatrix();
@@ -183,9 +187,9 @@ void Camera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateArou
 // -----------------------------------------------------------------
 void Camera3D::LookAt( const vec3 &Spot)
 {
-	Reference = Spot;
+	reference = Spot;
 
-	Z = normalize(Position - Reference);
+	Z = normalize(position - reference);
 	X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
 	Y = cross(Z, X);
 
@@ -196,8 +200,8 @@ void Camera3D::LookAt( const vec3 &Spot)
 // -----------------------------------------------------------------
 void Camera3D::Move(const vec3 &Movement)
 {
-	Position += Movement;
-	Reference += Movement;
+	position += Movement;
+	reference += Movement;
 
 	CalculateViewMatrix();
 }
@@ -211,6 +215,6 @@ float* Camera3D::GetViewMatrix()
 // -----------------------------------------------------------------
 void Camera3D::CalculateViewMatrix()
 {
-	ViewMatrix = mat4x4(X.x, Y.x, Z.x, 0.0f, X.y, Y.y, Z.y, 0.0f, X.z, Y.z, Z.z, 0.0f, -dot(X, Position), -dot(Y, Position), -dot(Z, Position), 1.0f);
+	ViewMatrix = mat4x4(X.x, Y.x, Z.x, 0.0f, X.y, Y.y, Z.y, 0.0f, X.z, Y.z, Z.z, 0.0f, -dot(X, position), -dot(Y, position), -dot(Z, position), 1.0f);
 	ViewMatrixInverse = inverse(ViewMatrix);
 }
