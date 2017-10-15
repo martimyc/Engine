@@ -20,11 +20,13 @@ private:
 	GLuint normals_id = 0;
 	GLfloat* normals = nullptr;
 
+	bool has_uvs = false;
 	GLuint num_uv_channels = 0;
 	GLuint* num_uv_components = nullptr;
 	GLuint* uv_ids = nullptr;
 	GLfloat** uvs = nullptr;
 
+	bool has_vertex_colors = false;
 	GLuint num_color_channels = 0;
 	GLuint* color_ids = nullptr;
 	GLfloat** colors = nullptr;
@@ -34,8 +36,7 @@ private:
 public:
 	//TODO update
 	Mesh(bool enabled = true);
-	Mesh(const GLuint vertex_id, const unsigned int num_vertices, float* vertices, const GLuint indices_id, const unsigned int num_indices, unsigned int* indices, const GLuint normals_id, const GLuint uv_id, bool enabled = true);
-	Mesh(const Mesh& mesh, bool enabled = true);
+	//Mesh(const Mesh& mesh, bool enabled = true);
 	~Mesh();
 
 	void Draw() const;

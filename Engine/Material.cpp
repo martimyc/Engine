@@ -6,28 +6,15 @@ Material::Material()
 {}
 
 Material::~Material() //Deleting a material does not delete its textures
-{}
-
-void Material::AssignDrawPointers()
 {
-	/*GLint max_texture_units = 0;
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_units);
+	for (std::vector<TextureWithUVs*>::iterator it = textures.begin(); it != textures.end(); ++it)
+		delete (*it);
+	textures.clear();
+}
 
-	for (int i = 0; i < textures.size(); i++)
-	{
-		if (i > max_texture_units)
-		{
-			LOG("Can not render more than %i textures with this hardware, remaining textures will not be rendered", max_texture_units);
-			break;
-		}
-
-		//textures[i]->SetUp();
-		glActiveTexture(GL_TEXTURE0 + i);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, textures[i]->id);	
-	}*/
-
-	glBindTexture(GL_TEXTURE_2D, textures[0]->id);
+void Material::AssignTexturePointers(GLuint num_texture)
+{
+	glBindTexture(GL_TEXTURE_2D, textures[num_texture]->texture->id);
 }
 
 const int Material::NumTextures() const
@@ -35,9 +22,9 @@ const int Material::NumTextures() const
 	return textures.size();
 }
 
-void Material::AddTexture(Texture* new_text)
+void Material::AddTexture(Texture* new_text, const GLuint& uv_channel)
 {
-	textures.push_back(new_text);
+	textures.push_back(new TextureWithUVs(new_text, uv_channel));
 	num_difusse_textures++;
 }
 
@@ -46,3 +33,9 @@ void Material::Empty()
 	textures.clear();
 	num_difusse_textures = 0;
 }
+
+const GLuint Material::GetTextureCoordinateChannel(GLuint num_texture)
+{
+	return textures[num_texture]->uv_channel;
+}
+
