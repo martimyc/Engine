@@ -63,7 +63,7 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 		if (ImGui::Button("Empty"))
 			EmptyTextures();
 
-		if (ImGui::Button("Empty"))
+		if (ImGui::Button("Debug Textures"))
 			debug_textures = !debug_textures;
 
 		if (debug_textures)
