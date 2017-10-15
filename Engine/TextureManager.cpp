@@ -140,16 +140,8 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 
 	ilBindImage(imageID); 			// Bind the image
 
-	std::string file_name;
-	// find the last occurrence of '.'
-	size_t pos = path.find_last_of("\\");
-	// make sure the poisition is valid
-	if (pos != path.length())
-		file_name = path.substr(pos + 1);
-	else
-		LOG("Coud not find \\ in the dropef file path");
 
-	success = ilLoadImage(file_name.c_str()); 	// Load the image file
+	success = ilLoadImage(path.c_str()); 	// Load the image file
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
 	{
