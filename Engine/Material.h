@@ -9,7 +9,7 @@ enum TEXTURE_TYPES;
 
 struct TextureWithUVs
 {
-	GLuint uv_channel = 0;
+	int uv_channel = 0;
 	Texture* texture = nullptr;
 
 	TextureWithUVs(Texture* texture, const GLuint& uv_channel): texture(texture), uv_channel(uv_channel)
@@ -49,7 +49,9 @@ public:
 	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
 	void Empty();
 	const GLuint GetTextureCoordinateChannel(GLuint num_texture);
-	//void ChangeTextureAt();
+
+	void Configuration(const GLuint& num_uv_channels);
+	void Configuration();
 };
 
 #endif // !_MATERIAL

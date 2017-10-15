@@ -140,7 +140,10 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 					App->texture_manager->LoadTextureStraightFromPath(full_path);
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
+				{
+					App->scene_manager->EmptyScene();
 					App->scene_loader->LoadScene(full_path);
+				}
 				else
 					LOG("Unknown file type");
 				break;

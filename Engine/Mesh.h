@@ -5,6 +5,8 @@
 #include "Component.h"
 
 class Material;
+class Texture;
+
 namespace MATH_NAMESPACE_NAME
 {
 	class AABB;
@@ -45,6 +47,8 @@ public:
 
 	void Draw() const;
 
+	void Configuration(int num_component);
+
 	//Getters
 	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;
 	void GetIndices(GLuint& id, GLuint& num, GLuint* all_indices) const;
@@ -62,6 +66,9 @@ public:
 	void SetMaterial(unsigned int pos);
 
 	void Enclose(AABB& bounding_box)const;
+
+	void ApplyTexture(Texture* text);
+	void ChangeMaterial(Material* new_material);
 };
 
 #endif // !_MESH

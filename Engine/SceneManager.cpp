@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Renderer3D.h"
 #include "Mesh.h"
+#include "Material.h"
 #include "BasicGeometry.h"
 #include "GameObject.h"
 #include "Texture.h"
@@ -26,6 +27,11 @@ bool SceneManager::Init()
 bool SceneManager::CleanUp()
 {
 	delete game_object;
+
+	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
+		delete (*it);
+	materials.clear();
+
 	return true;
 }
 
@@ -33,11 +39,11 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Scene Manager Configuration", Profiler::Color::BlanchedAlmond)
 
-	UPDATE_STATUS ret = UPDATE_CONTINUE;
+		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
 	if (ImGui::CollapsingHeader("Draw Modes"))
 	{
-		if(ImGui::Checkbox("Wireframe", &wireframe))
+		if (ImGui::Checkbox("Wireframe", &wireframe))
 		{
 			if (wireframe)
 			{
@@ -53,13 +59,13 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 		if (ImGui::Checkbox("Normals", &normals))
 		{
-			if(normals)
+			if (normals)
 				draw_mode = DM_NORMALS;
 			else
 			{
-				if(wireframe)
+				if (wireframe)
 					draw_mode = DM_WIREFRAME;
-				else if(polygons)
+				else if (polygons)
 					draw_mode = DM_NORMAL;
 			}
 		}
@@ -75,18 +81,47 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 			{
 				draw_mode = DM_WIREFRAME;
 				wireframe = true;
-			}	
-		}
-
-		if (ImGui::Button("Checkers"))
-		{
-			game_object->ApplyTexture(App->texture_manager->GetCheckers());
-		}
-		if (ImGui::Button("Texture 2"))
-		{
-			game_object->ApplyTexture(App->texture_manager->GetSecondTexture());
+			}
 		}
 	}
+
+	if (ImGui::CollapsingHeader("Materials"))
+	{
+		std::vector<int> materials_to_delete;
+
+		ImGui::Text("Materials:");
+		for (int i = 0; i < materials.size(); i++)
+		{
+			char mesh_name[255];
+			sprintf(mesh_name, "Material: %i", i);
+
+			if (ImGui::TreeNode(mesh_name))
+			{
+				materials[i]->Configuration();
+
+				ImGui::InputInt("Mesh:", &mesh_change_num);
+				ImGui::SameLine();
+				if (ImGui::Button("Make mesh material"))
+					App->scene_manager->game_object->ChangeMaterial(materials[i], mesh_change_num);
+
+				ImGui::SameLine();
+				if (ImGui::Button("Delete"))
+				{
+					LOG("Deleting textures");
+					materials_to_delete.push_back(i);
+				}
+				ImGui::TreePop();
+			}		
+		}
+
+		for (std::vector<int>::const_iterator it = materials_to_delete.begin(); it != materials_to_delete.end(); ++it)
+		{
+			delete materials[*it];
+			materials.erase(materials.begin() + (*it));
+		}
+	}
+
+	game_object->Configuration();
 	return ret;
 }
 
@@ -139,4 +174,10 @@ float SceneManager::CalculateDistanceToObj(const GameObject* go) const
 	if (bounding_box.MinY() <= -6e18 || bounding_box.MinY() >= 6e18)	//error from if height == 0
 		return bounding_box.MaxY();
 	return bounding_box.MaxY() - bounding_box.MinY();
+}
+
+void SceneManager::EmptyScene()
+{
+	delete game_object;
+	game_object = new GameObject();
 }

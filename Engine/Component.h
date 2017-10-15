@@ -47,6 +47,9 @@ public:
 
 	virtual void Draw() const
 	{}
+
+	virtual void Configuration(int num_component)
+	{}
 };
 
 #endif // !_COMPONENT

@@ -28,6 +28,8 @@ private:
 	bool normals;
 	bool polygons;
 
+	int mesh_change_num = 0;
+
 public:
 	GameObject* game_object = nullptr;
 
@@ -51,6 +53,8 @@ public:
 	Material* GetMaterial(unsigned int pos) const;
 	bool HasMaterials() const;
 	float CalculateDistanceToObj(const GameObject* go) const;
+
+	void EmptyScene();
 };
 
 #endif // !_MODULE_SCENE_MANAGER

@@ -77,11 +77,26 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 			}
 		}
 
-		for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
+		std::vector<int> textures_to_delete;
+
+		for (int i = 0; i < textures.size(); i++)
 		{
-			ImGui::Text("path: %s", (*it)->path.c_str());
+			ImGui::Text("Texture %i - Path: %s", i, textures[i]->path.c_str());
+			if (ImGui::Button("Add to mesh"))
+				App->scene_manager->game_object->ApplyTexture(textures[i]);
+			ImGui::SameLine();
+			if (ImGui::Button("Delete"))
+			{
+				LOG("Deleting textures");
+				textures_to_delete.push_back(i);
+			}
 		}
-			
+
+		for (std::vector<int>::const_iterator it = textures_to_delete.begin(); it != textures_to_delete.end(); ++it)
+		{
+			delete textures[*it];
+			textures.erase(textures.begin() + (*it));
+		}			
 	}
 
 	return UPDATE_CONTINUE;

@@ -1,8 +1,10 @@
+#include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
 #include "Application.h"
 #include "SceneManager.h"
 #include "Material.h"
+#include "Texture.h"
 #include "Mesh.h"
 
 Mesh::Mesh(bool enabled): Component(CT_MESH, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
@@ -15,16 +17,47 @@ Mesh::~Mesh()
 {
 	if (vertex_id != 0)
 		glDeleteBuffers(1, &vertex_id);
+	if (vertices != nullptr)
+		delete[] vertices;
 
 	if (indices_id != 0)
 		glDeleteBuffers(1, &indices_id);
+	if (indices != nullptr)
+		delete[] indices;
 
 	if (normals_id != 0)
 		glDeleteBuffers(1, &normals_id);
+	if (normals != nullptr)
+		delete[] normals;
 
 	for (int i = 0; i < num_uv_channels; i++)
+	{
 		if (uv_ids[i] != 0)
 			glDeleteBuffers(1, &uv_ids[i]);
+		if (uvs[i] != nullptr)
+			delete uvs[i];
+	}
+	if (uv_ids != nullptr)
+		delete[] uv_ids;
+	if (uvs != nullptr)
+		delete[] uvs;
+	if (num_uv_components != nullptr)
+		delete[] num_uv_components;
+
+	if (color_ids != nullptr)
+		delete[] color_ids;
+	
+	for (int i = 0; i < num_color_channels; i++)
+	{
+		if (color_ids[i] != 0)
+			glDeleteBuffers(1, &color_ids[i]);
+		if (colors[i] != nullptr)
+			delete colors[i];
+	}
+	if (color_ids != nullptr)
+		delete[] color_ids;
+	if (colors != nullptr)
+		delete[] colors;
 }
 
 void Mesh::Draw() const
@@ -103,6 +136,30 @@ void Mesh::Draw() const
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void Mesh:: Configuration(int num_component)
+{
+	char mesh_name[255];
+	sprintf(mesh_name, "Mesh: %i", num_component);
+
+	if(ImGui::TreeNode(mesh_name))
+	{
+		ImGui::Text("Vertices: %i", num_vertices);
+		ImGui::Text("Indices: %i", num_indices);
+		ImGui::Text("UV channels: %i", num_uv_channels);
+
+		if(has_vertex_colors)
+			ImGui::Text("Has Vertex Colors");
+		else
+			ImGui::Text("Does not have Vertex Colors");
+
+		if (material != nullptr)
+			material->Configuration(num_uv_channels);
+		else
+			ImGui::Text("No material aplied to this mesh");
+		ImGui::TreePop();
+	}
 }
 
 void Mesh::GetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices) const
@@ -236,4 +293,20 @@ void Mesh::Enclose(AABB & bounding_box) const
 	vec* vec_vert = new vec[num_vertices];
 	memcpy(vec_vert, vertices, num_vertices * sizeof(GLfloat) * 3);
 	bounding_box.Enclose(vec_vert, num_vertices);
+}
+
+void Mesh::ApplyTexture(Texture* text)
+{
+	if (material != nullptr)
+		material->AddTexture(text);
+	else
+	{
+		material = new Material();
+		material->AddTexture(text);
+	}
+}
+
+void Mesh::ChangeMaterial(Material * new_material)
+{
+	material = new_material;
 }

@@ -5,7 +5,9 @@
 #include "glew\include\GL\glew.h"
 
 class Component;
+class Material;
 class Texture;
+
 namespace MATH_NAMESPACE_NAME 
 {
 	class AABB;
@@ -18,6 +20,8 @@ private:
 	GLfloat rotation[3];
 
 	std::vector<Component*> components;
+
+	bool inspector_open = true;
 
 public:
 	GameObject();
@@ -38,6 +42,8 @@ public:
 	void GenerateBoundingBox(AABB& bounding_box) const;
 
 	void GetWorldPosition(GLfloat& x, GLfloat& y, GLfloat& z);
+
+	void ChangeMaterial(Material* new_material, int mesh_num);
 };
 
 #endif // !_GAME_OBJECT

@@ -418,7 +418,10 @@ bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_materia
 					ret = false;
 				}
 				else
+				{
 					new_material.AddTexture(new_texture);
+					App->texture_manager->AddTexture(new_texture);
+				}
 			}
 		}
 	}
