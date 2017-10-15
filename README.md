@@ -10,31 +10,32 @@ Created by [Marc Latorre](https://github.com/marclafr) and [Marti Majó](https:/
 
 Drag and drop FBX models, the camera will be centered on it and the other models will be removed.
 Drag and drop PNG to texturize those models. We have multitexturing.
+You have some samples to test the Engine.
 The textures are added into the materials and the materials added into the geometry.
 During the process, a console will tell you if anything fails ;)
 
 ### Camera control
 
-- Right click turns on “WASD” fps-like movement.
-- Mouse wheel zooms in and out.
-- Alt+Left click orbits the object.
-- Pressing “f” focus the camera around the geometry.
+- Right click turns on “WASD” fps-like movement
+- Mouse wheel zooms in and out
+- Alt+Left click orbits the object
+- Pressing “f” focus the camera around the geometry
 
 ### Inspector
 
-- Shows the current mesh values and its materials.
+- Shows the current mesh values and its materials
 
 ### Configuration Window Options
 
 #### Application
 
-- Engine name and Organization.
-- Framerate and miliseconds historygram.
+- Engine name and Organization
+- Framerate and miliseconds historygram
 
 #### Window
 
 - Window size.
-- Window size multiplier.
+- Window size multiplier
 - Options about
 
     1. Fullscreen
@@ -51,17 +52,17 @@ During the process, a console will tell you if anything fails ;)
 - WASD movement speed
 - Zoom speed
 - Rotation sensivility
-- 6 Buttons to focus the camera in the different angles of the object.
+- 6 Buttons to focus the camera in the different angles of the object
 
 #### Hardware
 
-- Information about CPU, GPU and versions about 3rd parties.
+- Information about CPU, GPU and versions about 3rd parties
 
 #### Textures
 
-- A button in order to empty the textures loaded.
-- A Add to mesh button to apply the Checkers in the texture.
-- A delete button to delete the texture.
+- A button in order to empty the textures loaded
+- A Add to mesh button to apply the Checkers in the texture
+- A delete button to delete the texture
 
 #### Draw Modes
 
@@ -71,10 +72,10 @@ During the process, a console will tell you if anything fails ;)
 
 #### Materials
 
-
+Show materials
 
 #### Renderer 3D
 
 - Draw World Axis
 - Draw Grid
-- Options about Grid.
+- Options about Grid
