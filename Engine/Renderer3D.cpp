@@ -121,7 +121,7 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 
 		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("3D Renderer"))
+	if (ImGui::CollapsingHeader("Renderer 3D"))
 	{
 		ImGui::Checkbox("Draw World Axis", &world_axis);
 		ImGui::Checkbox("Draw Grid", &show_grid);

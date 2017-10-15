@@ -17,7 +17,7 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
-	//game_object = new GameObject();
+	game_object = new GameObject();
 
 	return true;
 }
