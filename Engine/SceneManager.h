@@ -7,6 +7,7 @@
 
 class GameObject;
 class Material;
+class Texture;
 class vec3;
 
 enum DRAW_MODE
@@ -48,8 +49,12 @@ public:
 
 	void AddMaterial(Material* new_material);
 
+	void ApplyToMaterial(Texture* new_text, int material);
+
 	void ReserveMaterialSpace(const GLuint& num_materials);
 	//void ReserveGameObjectSpace(const GLuint& num_materials); //TODO
+
+	bool DrawNormals() const;
 
 	Material* GetMaterial(unsigned int pos) const;
 	bool HasMaterials() const;

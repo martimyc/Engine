@@ -31,6 +31,9 @@ struct Texture
 	Texture(const std::string& path, const TEXTURE_TYPES type, const GLenum dimensions, const GLuint& id): path(path), type(type), dimensions(dimensions), id(id)
 	{}
 
+	Texture(const Texture& copy): path(copy.path), type(copy.type), dimensions(copy.dimensions), id(copy.id)
+	{}
+
 	~Texture()
 	{
 		if(id != 0)

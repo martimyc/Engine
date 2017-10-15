@@ -81,14 +81,26 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 
 		for (int i = 0; i < textures.size(); i++)
 		{
-			ImGui::Text("Texture %i - Path: %s", i, textures[i]->path.c_str());
-			if (ImGui::Button("Add to mesh"))
-				App->scene_manager->game_object->ApplyTexture(textures[i]);
-			ImGui::SameLine();
-			if (ImGui::Button("Delete"))
+			char text_name[255];
+			sprintf(text_name, "Texture: %i", i);
+
+			if (ImGui::TreeNode(text_name))
 			{
-				LOG("Deleting textures");
-				textures_to_delete.push_back(i);
+				ImGui::Text("Path: %s", textures[i]->path.c_str());
+
+				if (ImGui::Button("Add to material"))
+					App->scene_manager->ApplyToMaterial(textures[i], current_material);
+
+				ImGui::SameLine();
+				if (ImGui::Button("Delete"))
+				{
+					LOG("Deleting textures");
+					textures_to_delete.push_back(i);
+				}
+
+				ImGui::Text("Current material:");
+				ImGui::InputInt("", &current_material);
+				ImGui::TreePop();
 			}
 		}
 

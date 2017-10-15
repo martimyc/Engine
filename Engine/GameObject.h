@@ -27,7 +27,7 @@ public:
 	GameObject();
 	~GameObject();
 
-	virtual void Draw() const;
+	virtual void Draw(bool normals = false) const;
 
 	void AddComponent(Component* component);
 

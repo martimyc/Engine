@@ -45,7 +45,7 @@ public:
 	//Mesh(const Mesh& mesh, bool enabled = true);
 	~Mesh();
 
-	void Draw() const;
+	void Draw(bool normals = false) const;
 
 	void Configuration(int num_component);
 

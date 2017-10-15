@@ -87,6 +87,10 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 	if (ImGui::CollapsingHeader("Materials"))
 	{
+
+		if (ImGui::Button("Create material"))
+			AddMaterial(new Material());
+
 		std::vector<int> materials_to_delete;
 
 		ImGui::Text("Materials:");
@@ -152,9 +156,19 @@ void SceneManager::AddMaterial(Material* new_material)
 	materials.push_back(new_material);
 }
 
+void SceneManager::ApplyToMaterial(Texture * new_text, int material)
+{
+	materials[material]->AddTexture(new_text);
+}
+
 void SceneManager::ReserveMaterialSpace(const GLuint & num_materials)
 {
 	materials.reserve(num_materials * sizeof(Material*));
+}
+
+bool SceneManager::DrawNormals() const
+{
+	return normals;
 }
 
 Material * SceneManager::GetMaterial(unsigned int pos) const

@@ -6,6 +6,12 @@
 Material::Material()
 {}
 
+Material::Material(const Material & copy): num_difusse_textures(copy.num_difusse_textures)
+{
+	for (std::vector<TextureWithUVs*>::const_iterator it = copy.textures.begin(); it != copy.textures.end(); ++it)
+		textures.push_back(*it);
+}
+
 Material::~Material() //Deleting a material does not delete its textures
 {
 	textures.clear();

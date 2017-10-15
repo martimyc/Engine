@@ -16,13 +16,13 @@ GameObject::~GameObject()
 	components.clear();
 }
 
-void GameObject::Draw() const
+void GameObject::Draw(bool normals) const
 {
 	if (components.size() > 0)
 	{
 		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			if ((*it)->Enabled())
-				(*it)->Draw();
+				(*it)->Draw(normals);
 	}		
 }
 
@@ -94,11 +94,13 @@ void GameObject::ChangeMaterial(Material * new_material, int mesh_num)
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 	{
 		if ((*it)->GetType() == CT_MESH)
-			current_mesh++;
-		if (current_mesh == mesh_num)
 		{
-			((Mesh*)(*it))->ChangeMaterial(new_material);
-			found = true;
+			if (current_mesh == mesh_num)
+			{
+				((Mesh*)(*it))->ChangeMaterial(new_material);
+				found = true;
+			}
+			current_mesh++;
 		}
 	}
 

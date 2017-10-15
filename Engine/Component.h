@@ -45,7 +45,7 @@ public:
 		return type;
 	}
 
-	virtual void Draw() const
+	virtual void Draw(bool normals) const
 	{}
 
 	virtual void Configuration(int num_component)

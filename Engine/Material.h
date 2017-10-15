@@ -40,6 +40,7 @@ private:
 
 public:
 	Material();
+	Material(const Material& copy);
 	~Material();
 
 	void AssignTexturePointers(GLuint num_texture);

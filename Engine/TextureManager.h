@@ -20,6 +20,7 @@ private:
 	Texture* checkers;
 	int texture_to_draw = 0;
 	bool debug_textures = false;
+	int current_material = 0;
 public:
 	TextureManager(const char* name, bool start_enabled = true);
 

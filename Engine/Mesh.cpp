@@ -58,9 +58,12 @@ Mesh::~Mesh()
 		delete[] color_ids;
 	if (colors != nullptr)
 		delete[] colors;
+
+	if (material != nullptr)
+		delete material;
 }
 
-void Mesh::Draw() const
+void Mesh::Draw(bool normals) const
 {
 	//Enable state & Bind vertices
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -77,6 +80,13 @@ void Mesh::Draw() const
 		glEnableClientState(GL_COLOR_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, indices_id);
 		glColorPointer(4, GL_FLOAT, 0, NULL);
+	}
+
+	if (normals)
+	{
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, normals_id);
+		glNormalPointer(GL_FLOAT, 0, NULL);
 	}
 
 	//bind uvs channel 1 for now
@@ -136,6 +146,8 @@ void Mesh::Draw() const
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
+	if (normals)
+		glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void Mesh:: Configuration(int num_component)
@@ -154,8 +166,14 @@ void Mesh:: Configuration(int num_component)
 		else
 			ImGui::Text("Does not have Vertex Colors");
 
+		if (ImGui::Button("Delete material"))
+		{
+			DELETE_PTR(material);
+		}
+
 		if (material != nullptr)
 			material->Configuration(num_uv_channels);
+
 		else
 			ImGui::Text("No material aplied to this mesh");
 		ImGui::TreePop();
@@ -285,7 +303,7 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 
 void Mesh::SetMaterial(unsigned int pos)
 {
-	material = App->scene_manager->GetMaterial(pos);
+	material = new Material(*App->scene_manager->GetMaterial(pos));
 }
 
 void Mesh::Enclose(AABB & bounding_box) const
@@ -308,5 +326,7 @@ void Mesh::ApplyTexture(Texture* text)
 
 void Mesh::ChangeMaterial(Material * new_material)
 {
-	material = new_material;
+	if (material != nullptr)
+		delete material;
+	material = new Material(*new_material);
 }

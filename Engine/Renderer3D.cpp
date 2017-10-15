@@ -168,7 +168,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->scene_manager->DrawMode();
 
 	for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)
-		(*it)->Draw();
+		(*it)->Draw(App->scene_manager->DrawNormals());
 
 	/*if (debug_draw == true)
 	{
