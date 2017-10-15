@@ -13,6 +13,7 @@ public:
 
 	bool Init();
 	bool Start();
+	UPDATE_STATUS Configuration(float dt);
 	UPDATE_STATUS Update(float dt);
 	bool CleanUp();
 
@@ -24,6 +25,9 @@ public:
 private:
 
 	void CalculateViewMatrix();
+	float camera_speed = 5.0f;
+	float camera_zoom_speed = 5.0f;
+	float distance_to_focused_obj = 10.0f;
 
 public:
 	

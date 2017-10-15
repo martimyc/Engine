@@ -122,7 +122,7 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 
 		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("3D Renderer"))
+	if (ImGui::CollapsingHeader("Renderer 3D"))
 	{
 		ImGui::Checkbox("Draw World Axis", &world_axis);
 		ImGui::Checkbox("Draw Grid", &show_grid);
@@ -284,6 +284,8 @@ void Renderer3D::DrawGrid()
 		if (i == 0)
 			glColor4f(grid_color[0], grid_color[1], grid_color[2], 1.0f);
 	}
+
+	glColor4f(255, 255, 255, 1.0f);
 
 	glEnd();
 }

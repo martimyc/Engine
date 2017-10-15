@@ -16,7 +16,7 @@ bool CubePrimitive::LoadCube()
 	const uint divisions = 1;
 
 	math::float3 all_vertices[36 * divisions];
-	cube->Triangulate(divisions, divisions, divisions, all_vertices, NULL, NULL, true);
+	cube->Triangulate(divisions, divisions, divisions, all_vertices, NULL, NULL, false);
 
 	App->primitives->Vertex2VertexIndices(all_vertices, 36 * divisions, vertices, indices);
 

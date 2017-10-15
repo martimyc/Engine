@@ -14,7 +14,7 @@ bool SpherePrimitive::LoadSphere()
 	sphere = new Sphere(vec(0.0f, 0.0f, 0.0f), 1.0f);
 
 	math::float3 all_vertices[SPHERE_NUM_VERTICES];
-	sphere->Triangulate(all_vertices, NULL, NULL, SPHERE_NUM_VERTICES, true);
+	sphere->Triangulate(all_vertices, NULL, NULL, SPHERE_NUM_VERTICES, false);
 
 	App->primitives->Vertex2VertexIndices(all_vertices, SPHERE_NUM_VERTICES, vertices, indices);
 

@@ -10,7 +10,7 @@ class Texture;
 class GameObject
 {
 private:
-	GLfloat world_position[3];
+	GLfloat world_position[3] = { 0.0f, 0.0f, 0.0f };
 	GLfloat rotation[3];
 
 	std::vector<Component*> components;
@@ -30,6 +30,8 @@ public:
 	void Reset();
 
 	void ReserveComponentSpace(const GLuint& num_components);
+
+	void GetWorldPosition(GLfloat& x, GLfloat& y, GLfloat& z);
 };
 
 #endif // !_GAME_OBJECT
