@@ -49,10 +49,6 @@ void Mesh::Draw() const
 	//bind uvs channel 1 for now
 	if(has_uvs && material != nullptr)
 	{
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		//glBindBuffer(GL_ARRAY_BUFFER, uv_ids[0]);
-		//glTexCoordPointer(num_uv_components[0], GL_FLOAT, 0, NULL);
-
 		GLint max_texture_units = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_units);
 
@@ -64,19 +60,20 @@ void Mesh::Draw() const
 				break;
 			}
 
+			//Texture units
 			glActiveTexture(GL_TEXTURE0 + i);
+			//Textures
 			glEnable(GL_TEXTURE_2D);
-
-			glBindBuffer(GL_ARRAY_BUFFER, material->GetTextureCoordinateChannel(i));
-			glTexCoordPointer(num_uv_components[0], GL_FLOAT, 0, NULL);
-
 			material->AssignTexturePointers(i);
-		}
-	}
 
-	if (material != nullptr)
-	{
-		
+			//UVs
+			GLuint uv_channel = material->GetTextureCoordinateChannel(i);
+
+			glClientActiveTexture(GL_TEXTURE0 + i);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, uv_ids[uv_channel]);
+			glTexCoordPointer(num_uv_components[uv_channel], GL_FLOAT, 0, NULL);
+		}
 	}
 
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, NULL);
@@ -87,10 +84,13 @@ void Mesh::Draw() const
 		for (int i = 0; i < material->NumTextures(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
 			glDisable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, 0);		
+
+			glClientActiveTexture(GL_TEXTURE0 + i);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
-		//glBindTexture(GL_TEXTURE_2D, 0);
 	}// maybe different with multitexturing
 
 	 //After draw bind buffer 0
@@ -100,7 +100,7 @@ void Mesh::Draw() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	//Disable state
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
