@@ -27,7 +27,7 @@ public:
 	//Loads
 	//Scene loads
 	bool LoadScene(const std::string& path) const;
-	bool LoadMesh(const aiMesh* mesh, Mesh& new_mesh) const;
+	bool LoadMesh(const aiMesh* mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const;
 	bool LoadVertices(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
 	bool LoadIndices(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
 	bool LoadTextureCoordinates(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;

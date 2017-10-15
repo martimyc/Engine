@@ -171,6 +171,11 @@ bool SceneManager::DrawNormals() const
 	return normals;
 }
 
+unsigned int SceneManager::NumMaterials() const
+{
+	return materials.size();
+}
+
 Material * SceneManager::GetMaterial(unsigned int pos) const
 {
 	return materials[pos];

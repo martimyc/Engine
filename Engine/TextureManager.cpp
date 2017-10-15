@@ -100,6 +100,7 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 
 				ImGui::Text("Current material:");
 				ImGui::InputInt("", &current_material);
+
 				ImGui::TreePop();
 			}
 		}

@@ -55,6 +55,7 @@ public:
 	//void ReserveGameObjectSpace(const GLuint& num_materials); //TODO
 
 	bool DrawNormals() const;
+	unsigned int NumMaterials() const;
 
 	Material* GetMaterial(unsigned int pos) const;
 	bool HasMaterials() const;

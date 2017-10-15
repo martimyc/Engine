@@ -47,6 +47,8 @@ bool SceneLoader::LoadScene(const std::string& path) const
 
 	if (scene != nullptr)
 	{
+		unsigned int previous_loaded_materials = App->scene_manager->NumMaterials();
+
 		if (scene->HasMaterials())
 		{
 			//Load all materials first so that we can bind them to a mesh later when we load them
@@ -79,7 +81,7 @@ bool SceneLoader::LoadScene(const std::string& path) const
 				LOG("Loading Mesh %i", i);
 
 				Mesh* new_mesh = new Mesh();
-				ret = LoadMesh(scene->mMeshes[i], *new_mesh);
+				ret = LoadMesh(scene->mMeshes[i], *new_mesh, previous_loaded_materials);
 
 				if (ret == false)
 					LOG("Mesh (%i) did't load correctly", i);
@@ -98,7 +100,7 @@ bool SceneLoader::LoadScene(const std::string& path) const
 	return ret;
 }
 
-bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
+bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const
 {
 	bool ret = true;
 
@@ -158,7 +160,7 @@ bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 		LOG("Mesh has no vertex colors");
 
 	if(App->scene_manager->HasMaterials())
-		new_mesh.SetMaterial(mesh->mMaterialIndex);
+		new_mesh.SetMaterial(previous_loaded_materials + mesh->mMaterialIndex);
 
 	// Bones and TangentsAndBitangents not loaded yet TODO
 	
