@@ -360,9 +360,6 @@
     <ClInclude Include="Window.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLTest.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
@@ -690,9 +687,6 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGLTest.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">

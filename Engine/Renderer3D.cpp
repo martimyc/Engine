@@ -9,7 +9,6 @@
 #include "Window.h"
 #include "Camera3D.h"
 #include "Console.h"
-#include "OpenGLTest.h"
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "TextureManager.h"

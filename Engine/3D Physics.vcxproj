@@ -134,7 +134,6 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="OpenGLTest.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_sdl.h" />
@@ -283,7 +282,6 @@
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="HardwareSoftwareInfo.cpp" />
-    <ClCompile Include="OpenGLTest.cpp" />
     <ClCompile Include="Parson\parson.c" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="Light.cpp" />
