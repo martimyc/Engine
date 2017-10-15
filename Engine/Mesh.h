@@ -46,6 +46,7 @@ public:
 	void GetUVs(GLuint& num_channels, GLuint* num_components, GLuint* ids, GLuint* num, GLfloat** all_uvs) const;
 	void GetNormals(GLuint& id, GLfloat* all_normals) const;
 	void GetColors(GLuint& num_channels, GLuint* ids, GLfloat** all_colors)const;
+	Material* GetMaterial() const;
 
 	//Setters
 	void SetVertices(const GLuint& id, const GLuint& num, GLfloat* all_vertices);
@@ -53,6 +54,7 @@ public:
 	void SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs);
 	void SetNormals(const GLuint& id, GLfloat* all_normals);
 	void SetColors(const GLuint& num_channels, GLuint* ids, GLfloat** all_colors);
+	void SetMaterial(unsigned int pos);
 };
 
 #endif // !_MESH

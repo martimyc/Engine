@@ -5,6 +5,7 @@
 #include "glew\include\GL\glew.h"
 
 class Component;
+class Texture;
 
 class GameObject
 {
@@ -22,7 +23,11 @@ public:
 
 	void AddComponent(Component* component);
 
+	void ApplyTexture(Texture * text);
+
 	void Reset();
+
+	void ReserveComponentSpace(const GLuint& num_components);
 };
 
 #endif // !_GAME_OBJECT

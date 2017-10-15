@@ -3,6 +3,8 @@
 #include "SceneManager.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Texture.h"
+#include "Textures.h"
 #include "SceneLoader.h"
 
 SceneLoader::SceneLoader(const char * name, bool start_enabled) : Module(name, start_enabled)
@@ -28,24 +30,37 @@ bool SceneLoader::CleanUp()
 	return true;
 }
 
-bool SceneLoader::LoadScene(const char * path) const
+bool SceneLoader::LoadScene(const std::string& path) const
 {
 	bool ret = true;
 
-	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
+	std::string dir;
+	// find the last occurrence of '.'
+	size_t pos = path.find_last_of("\\");
+	// make sure the poisition is valid
+	if (pos != path.length())
+		dir = path.substr(NULL, pos + 1);
+	else
+		LOG("No dir in path");
+
+	const aiScene* scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (scene != nullptr)
 	{
 		if (scene->HasMaterials())
 		{
 			//Load all materials first so that we can bind them to a mesh later when we load them
+			App->scene_manager->ReserveMaterialSpace(scene->mNumMaterials);
+
 			for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 			{
+				LOG("Loading Material %i", i);
+
 				Material* new_material = new Material();
-				ret = LoadMaterial(scene->mMaterials[i], *new_material);
+				ret = LoadMaterial(scene->mMaterials[i], *new_material, dir);
 
 				if (ret == false)
-					LOG("Mesh (%i) did't load correctly", i);
+					LOG("Material (%i) did't load correctly", i);
 				else
 					App->scene_manager->AddMaterial(new_material);
 			}
@@ -55,8 +70,12 @@ bool SceneLoader::LoadScene(const char * path) const
 		{
 			
 			// Load all meshes (for now into the same game object)
+			App->scene_manager->game_object->ReserveComponentSpace(scene->mNumMeshes);
+
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
+				LOG("Loading Mesh %i", i);
+
 				Mesh* new_mesh = new Mesh();
 				ret = LoadMesh(scene->mMeshes[i], *new_mesh);
 
@@ -80,6 +99,8 @@ bool SceneLoader::LoadScene(const char * path) const
 bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 {
 	bool ret = true;
+
+	//This two are just in case, i see GL veriavle formats as type defs but they have fixed formats so i understeand they are typedefs here cus my architecture has the same sizes as GL but this might not always be true
 	bool equal_size_floats = (sizeof(float) == sizeof(GLfloat)) ? true : false;
 	bool equal_size_uints = (sizeof(unsigned int) == sizeof(GLuint)) ? true : false;
 
@@ -133,6 +154,8 @@ bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh) const
 	}
 	else
 		LOG("Mesh has no vertex colors");
+
+	new_mesh.SetMaterial(mesh->mMaterialIndex);
 
 	// Bones and TangentsAndBitangents not loaded yet TODO
 	
@@ -347,11 +370,59 @@ bool SceneLoader::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Me
 	return ret;
 }
 
-bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_material) const
+bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_material, const std::string& dir) const
 {
+	//We will assume all textures are 2D for now
+
 	bool ret = true;
 
+	if (material->GetTextureCount(aiTextureType_NONE))
+	{
+		LOG("Found are invalid textures");
+		ret = false;
+	}
 
+	GLuint num_difusse_textures = material->GetTextureCount(aiTextureType_DIFFUSE);
+	
+	//TODO load the rest of texture types
+	/*GLuint num_specular_textures = material->GetTextureCount(aiTextureType_SPECULAR);
+	GLuint num_ambient_textures = material->GetTextureCount(aiTextureType_AMBIENT);
+	GLuint num_emissive_textures = material->GetTextureCount(aiTextureType_EMISSIVE);
+	GLuint num_height_textures = material->GetTextureCount(aiTextureType_HEIGHT);
+	GLuint num_normals_textures = material->GetTextureCount(aiTextureType_NORMALS);
+	GLuint num_shininess_textures = material->GetTextureCount(aiTextureType_SHININESS);
+	GLuint num_opacity_textures = material->GetTextureCount(aiTextureType_OPACITY);
+	GLuint num_displacement_textures = material->GetTextureCount(aiTextureType_DISPLACEMENT);
+	GLuint num_lightmap_textures = material->GetTextureCount(aiTextureType_LIGHTMAP);
+	GLuint num_reflection_textures = material->GetTextureCount(aiTextureType_REFLECTION);
+	GLuint num_unknown_textures = material->GetTextureCount(aiTextureType_UNKNOWN);*/
+	
+	if (num_difusse_textures > 0)
+	{
+		for (int i = 0; i < num_difusse_textures; i++)
+		{
+			aiString Path;
+
+			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				std::string full_path = dir + Path.data;
+				
+				Texture* new_texture = new Texture(full_path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
+
+				if (!App->textures->LoadTexture(full_path, *new_texture))
+				{
+					delete new_texture;
+					LOG("Error loading texture '%s'\n", full_path.c_str());
+					ret = false;
+				}
+				else
+					new_material.AddTexture(new_texture);
+			}
+		}
+	}
+	else
+		LOG("No difusse textures in this material");
+
+	//TODO Blend and strenght functions when lightning is done
 
 	return ret;
 }

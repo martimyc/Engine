@@ -5,12 +5,8 @@
 Material::Material()
 {}
 
-Material::~Material()
-{
-	for (std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
-		if(*it != nullptr)
-			delete (*it); 
-}
+Material::~Material() //Deleting a material does not delete its textures
+{}
 
 void Material::AssignDrawPointers()
 {
@@ -34,4 +30,15 @@ void Material::AssignDrawPointers()
 const int Material::NumTextures() const
 {
 	return textures.size();
+}
+
+void Material::AddTexture(Texture* new_text)
+{
+	textures.push_back(new_text);
+}
+
+void Material::Empty()
+{
+	textures.clear();
+	num_difusse_textures = 0;
 }

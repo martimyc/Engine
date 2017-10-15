@@ -137,11 +137,11 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->textures->LoadTexture(e.drop.file);
+					App->textures->LoadTextureStraightFromPath(e.drop.file);
 
 				//Assimp
 				if(extension == "fbx" || extension == "FBX")
-					App->scene_loader->LoadScene(e.drop.file);
+					App->scene_loader->LoadScene(filename);
 				break;
 		}
 	}

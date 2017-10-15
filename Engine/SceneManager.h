@@ -5,9 +5,6 @@
 #include "glew\include\GL\glew.h"
 #include "Module.h"
 
-#define CHECKERS_HEIGHT 256
-#define CHECKERS_WIDTH 256
-
 class GameObject;
 class Material;
 
@@ -23,7 +20,6 @@ enum DRAW_MODE
 class SceneManager : public Module
 {
 private:
-	GLuint checkers_text_id;
 	DRAW_MODE draw_mode;
 	//std::vector<GameObject*> game_objects;
 	std::vector<Material*> materials;
@@ -48,6 +44,11 @@ public:
 	void DrawMode() const;
 
 	void AddMaterial(Material* new_material);
+
+	void ReserveMaterialSpace(const GLuint& num_materials);
+	//void ReserveGameObjectSpace(const GLuint& num_materials); //TODO
+
+	Material* GetMaterial(unsigned int pos) const;
 
 	//Primitives
 	void CreateCube();
