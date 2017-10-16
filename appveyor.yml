@@ -38,6 +38,7 @@ build:
   
 before_package:
 - ps: Copy-Item C:\projects\engine\Engine\$env:CONFIGURATION\Engine.exe C:\projects\engine\Engine\Game\.
+- ps: Copy-Item C:\projects\engine\Engine\README C:\projects\engine\Engine\Game\.
   
 artifacts:
 - path: Engine\Game
