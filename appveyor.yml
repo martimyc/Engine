@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: Engine_1.0.{build}
+version: Engine_1.1.{build}
 
 #---------------------------------#
 #    environment configuration    #
