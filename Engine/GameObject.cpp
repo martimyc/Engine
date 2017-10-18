@@ -108,7 +108,7 @@ void GameObject::ChangeMaterial(Material * new_material, int mesh_num)
 		LOG("Mesh not found");
 }
 
-const int GameObject::GetNumMeshes() const
+const uint GameObject::GetNumMeshes() const
 {
 	uint num_meshes = 0;
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
