@@ -58,6 +58,7 @@ public:
 	unsigned int NumMaterials() const;
 
 	Material* GetMaterial(unsigned int pos) const;
+	const GameObject* GetFocused() const;
 	bool HasMaterials() const;
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 

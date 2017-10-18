@@ -107,15 +107,15 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 				{
 					if (current_mesh < 0)
 						current_mesh = 0;
-					else if (current_mesh > App->scene_manager->game_object->GetNumMeshes())
+					else if (current_mesh > App->scene_manager->focused->GetNumMeshes())
 					{
 						LOG("Mesh %i does not exsist in this game gbject");
-						current_mesh = App->scene_manager->game_object->GetNumMeshes();
+						current_mesh = App->scene_manager->focused->GetNumMeshes();
 					}
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("Make mesh material"))
-					App->scene_manager->game_object->ChangeMaterial(materials[i], current_mesh);
+				if (ImGui::Button("Apply"))
+					App->scene_manager->focused->ChangeMaterial(materials[i], current_mesh);
 
 				ImGui::SameLine();
 				if (ImGui::Button("Delete"))
@@ -134,7 +134,9 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 	}
 
-	focused->Inspector();
+	if (focused != nullptr)
+		focused->Inspector();
+
 	return ret;
 }
 
@@ -188,6 +190,11 @@ Material * SceneManager::GetMaterial(unsigned int pos) const
 	return materials[pos];
 }
 
+const GameObject * SceneManager::GetFocused() const
+{
+	return focused;
+}
+
 bool SceneManager::HasMaterials() const
 {
 	return materials.size() > 0;
@@ -207,8 +214,9 @@ void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, fl
 
 void SceneManager::EmptyScene()
 {
-	delete game_object;
-	game_object = new GameObject();
+	for (std::vector<GameObject*>::iterator it = game_objects.begin(); it != game_objects.end(); ++it)
+		delete (*it);
+	game_objects.clear();
 }
 
 void SceneManager::AddGameobject(GameObject* new_go)

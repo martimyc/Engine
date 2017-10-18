@@ -303,7 +303,7 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 
 void Mesh::SetMaterial(unsigned int pos)
 {
-	material = new Material(*App->scene_manager->GetMaterial(pos));
+	material = App->scene_manager->GetMaterial(pos);
 }
 
 void Mesh::Enclose(AABB & bounding_box) const

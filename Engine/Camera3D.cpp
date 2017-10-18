@@ -59,7 +59,7 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 
 	if (ImGui::CollapsingHeader("Camera 3D"))
 	{
-		GameObject* focused_game_object = App->scene_manager->game_object;
+		const GameObject* focused_game_object = App->scene_manager->GetFocused();
 
 		if (focused_game_object != nullptr)
 		{
@@ -159,7 +159,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 	// Center Obj
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 	{
-		GameObject* focused_game_object = App->scene_manager->game_object;
+		const GameObject* focused_game_object = App->scene_manager->GetFocused();
 		if (focused_game_object != nullptr && focused_game_object->GetNumComponents() != 0)
 		{
 			float dist_x, dist_y, dist_z;
@@ -262,7 +262,7 @@ float* Camera3D::GetViewMatrix()
 
 void Camera3D::CenterToObj()
 {
-	GameObject* focused_game_object = App->scene_manager->game_object;
+	const GameObject* focused_game_object = App->scene_manager->GetFocused();
 	if (focused_game_object != nullptr)
 	{
 		float dist_x, dist_y, dist_z;

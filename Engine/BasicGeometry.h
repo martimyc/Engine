@@ -46,8 +46,8 @@ public:
 	void Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices);
 	bool GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh* mesh) const;
 
-	GameObject& Create3DCube();
-	GameObject& CreateSphere();
+	GameObject* Create3DCube();
+	GameObject* CreateSphere();
 };
 
 

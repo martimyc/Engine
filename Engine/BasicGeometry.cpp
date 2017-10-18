@@ -65,22 +65,22 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 }
 
 
-GameObject& BasicGeometry::Create3DCube()
+GameObject* BasicGeometry::Create3DCube()
 {
 	GameObject* go = new GameObject();
 	Mesh* mesh = new Mesh();
 	GetPrimitiveId(PRIMITIVE_CUBE, mesh);
 	go->AddComponent(mesh);
-	return *go;
+	return go;
 }
 
-GameObject & BasicGeometry::CreateSphere()
+GameObject* BasicGeometry::CreateSphere()
 {
 	GameObject* go = new GameObject();
 	Mesh* mesh = new Mesh();
 	GetPrimitiveId(PRIMITIVE_SPHERE, mesh);
 	go->AddComponent(mesh); 
-	return *go;
+	return go;
 }
 
 void BasicGeometry::Vertex2VertexIndices(math::float3* all_vertices, uint num_all_vertices, GLfloat* vertices, GLuint* indices)

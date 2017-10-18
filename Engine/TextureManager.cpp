@@ -271,12 +271,6 @@ void TextureManager::LoadTextureStraightFromPath(const std::string& path)
 		delete new_texture;
 		LOG("Error loading texture '%s'\n", path.c_str());
 	}
-	else
-	{
-		//only to test
-		App->scene_manager->game_object->ApplyTexture(new_texture);
-	}
-
 }
 
 void TextureManager::AddTexture(Texture * new_texture)
