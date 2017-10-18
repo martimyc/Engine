@@ -46,4 +46,9 @@ enum UPDATE_STATUS
 	}						\
 }							\
 
+//openGL context versios in use
+#define OPENGL_CONTEXT_MINOR_VERSION 1
+#define OPENGL_CONTEXT_MAJOR_VERSION 2
+
+
 #endif //_GLOBALS

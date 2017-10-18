@@ -29,7 +29,7 @@ public:
 	UPDATE_STATUS Configuration(float dt);
 	void DrawTexture( unsigned int num_texture);
 
-	bool LoadTexture(const std::string& path, Texture& new_texture, bool hiest_quality = true);
+	bool LoadTexture(const std::string& path, Texture& new_texture);
 
 	void LoadTextureStraightFromPath(const std::string& path);
 

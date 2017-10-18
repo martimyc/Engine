@@ -152,7 +152,7 @@ void TextureManager::DrawTexture(unsigned int num_texture)
 		LOG("Can't draw texture, last existing texture is %i", textures.size() - 1);
 }
 
-bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, bool hiest_quality)
+bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture)
 {
 	bool ret = true;
 
@@ -167,7 +167,6 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 	ilGenImages(1, &imageID); 		// Generate the image ID
 
 	ilBindImage(imageID); 			// Bind the image
-
 
 	success = ilLoadImage(path.c_str()); 	// Load the image file
 
@@ -202,7 +201,7 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture, 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	
-		if (hiest_quality)
+		if (OPENGL_CONTEXT_MAJOR_VERSION > 2)
 		{
 			// Set texture interpolation method to the highest visual quality it can be:
 			// GL_LINEAR_MIPMAP_LINEAR for minification - i.e. trilinear filtering
@@ -255,7 +254,7 @@ void TextureManager::LoadTextureStraightFromPath(const std::string& path)
 	//Assume 2D difuse
 	Texture* new_texture = new Texture(path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
 
-	if (!App->texture_manager->LoadTexture(path, *new_texture, false))
+	if (!App->texture_manager->LoadTexture(path, *new_texture))
 	{
 		delete new_texture;
 		LOG("Error loading texture '%s'\n", path.c_str());
