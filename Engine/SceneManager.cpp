@@ -19,14 +19,14 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
-	game_object = new GameObject();
-
 	return true;
 }
 
 bool SceneManager::CleanUp()
 {
-	delete game_object;
+	for (std::vector<GameObject*>::iterator it = game_objects.begin(); it != game_objects.end(); ++it)
+		delete (*it);
+	game_objects.clear();
 
 	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		delete (*it);
@@ -134,16 +134,14 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 	}
 
-	game_object->Configuration();
+	focused->Inspector();
 	return ret;
 }
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
-	if (game_object != nullptr)
-	{
-		App->renderer_3d->DrawGO(game_object);
-	}
+	for (std::vector<GameObject*>::iterator it = game_objects.begin(); it != game_objects.end(); ++it)
+		App->renderer_3d->DrawGO(*it);
 
 	return UPDATE_CONTINUE;
 }
@@ -211,4 +209,9 @@ void SceneManager::EmptyScene()
 {
 	delete game_object;
 	game_object = new GameObject();
+}
+
+void SceneManager::AddGameobject(GameObject* new_go)
+{
+	game_objects.push_back(new_go);
 }

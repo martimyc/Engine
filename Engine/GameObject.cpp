@@ -31,7 +31,7 @@ void GameObject::AddComponent(Component * component)
 	components.push_back(component);
 }
 
-void GameObject::Configuration() const
+void GameObject::Inspector() const
 {
 	if (components.size() > 0)
 	{

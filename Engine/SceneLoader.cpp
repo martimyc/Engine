@@ -74,7 +74,9 @@ bool SceneLoader::LoadScene(const std::string& path) const
 		{
 			
 			// Load all meshes (for now into the same game object)
-			App->scene_manager->game_object->ReserveComponentSpace(scene->mNumMeshes);
+			GameObject* new_game_object = new GameObject();
+
+			new_game_object->ReserveComponentSpace(scene->mNumMeshes);
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
@@ -86,8 +88,10 @@ bool SceneLoader::LoadScene(const std::string& path) const
 				if (ret == false)
 					LOG("Mesh (%i) did't load correctly", i);
 				else
-					App->scene_manager->game_object->AddComponent(new_mesh);
+					new_game_object->AddComponent(new_mesh);
 			}
+
+			App->scene_manager->AddGameobject(new_game_object);
 		}
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");

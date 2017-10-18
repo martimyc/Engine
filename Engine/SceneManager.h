@@ -23,7 +23,7 @@ class SceneManager : public Module
 {
 private:
 	DRAW_MODE draw_mode;
-	//std::vector<GameObject*> game_objects;
+	std::vector<GameObject*> game_objects;
 	std::vector<Material*> materials;
 
 	bool wireframe;
@@ -32,9 +32,9 @@ private:
 
 	int current_mesh = 0;
 
-public:
-	GameObject* game_object = nullptr;
+	GameObject* focused = nullptr;
 
+public:
 	SceneManager(const char* name, bool start_enabled = true);
 	~SceneManager();
 
@@ -62,6 +62,7 @@ public:
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 
 	void EmptyScene();
+	void AddGameobject(GameObject* new_go);
 };
 
 #endif // !_MODULE_SCENE_MANAGER

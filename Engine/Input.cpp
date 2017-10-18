@@ -142,7 +142,6 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
 				{
-					App->scene_manager->EmptyScene();
 					App->scene_loader->LoadScene(full_path);
 					App->camera->CenterToObj();
 				}

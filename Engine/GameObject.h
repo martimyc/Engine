@@ -31,7 +31,7 @@ public:
 
 	void AddComponent(Component* component);
 
-	void Configuration() const;
+	void Inspector() const;
 
 	void ApplyTexture(Texture * text);
 
