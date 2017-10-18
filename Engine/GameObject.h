@@ -45,9 +45,9 @@ public:
 
 	void ChangeMaterial(Material* new_material, int mesh_num);
 
-	uint GetNumComponents() const;
+	const uint GetNumComponents() const;
 
-	uint GetNumMeshes() const;
+	const uint GetNumMeshes() const;
 };
 
 #endif // !_GAME_OBJECT
