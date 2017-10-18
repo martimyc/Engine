@@ -30,7 +30,7 @@ private:
 	bool normals;
 	bool polygons;
 
-	int mesh_change_num = 0;
+	int current_mesh = 0;
 
 public:
 	GameObject* game_object = nullptr;

@@ -68,13 +68,16 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 
 		if (debug_textures)
 		{
-			ImGui::InputInt("Texture to draw", &texture_to_draw);
-			
-			if (texture_to_draw >= textures.size() || texture_to_draw < 0)
+			if (ImGui::InputInt("Texture to draw", &texture_to_draw))
 			{
-				LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
-				texture_to_draw = 0;
-			}
+				if (texture_to_draw >= textures.size())
+				{
+					LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
+					texture_to_draw = 0;
+				}
+				else if (texture_to_draw < 0)
+					texture_to_draw = 0;				
+			}			
 		}
 
 		std::vector<int> textures_to_delete;
@@ -89,7 +92,7 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 				ImGui::Text("Path: %s", textures[i]->path.c_str());
 
 				if (ImGui::Button("Add to material"))
-					App->scene_manager->ApplyToMaterial(textures[i], current_material);
+						App->scene_manager->ApplyToMaterial(textures[i], current_material);
 
 				ImGui::SameLine();
 				if (ImGui::Button("Delete"))
@@ -99,7 +102,16 @@ UPDATE_STATUS TextureManager::Configuration(float dt)
 				}
 
 				ImGui::Text("Current material:");
-				ImGui::InputInt("", &current_material);
+				if (ImGui::InputInt("", &current_material))
+				{
+					if (current_material < 0)
+						current_material = 0;
+					else if (current_material > App->scene_manager->NumMaterials())
+					{
+						LOG("Material %i does not exsist", current_material);
+						current_material = App->scene_manager->NumMaterials();
+					}
+				}
 
 				ImGui::TreePop();
 			}

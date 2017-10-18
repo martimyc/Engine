@@ -103,10 +103,19 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 			{
 				materials[i]->Configuration();
 
-				ImGui::InputInt("Mesh:", &mesh_change_num);
+				if (ImGui::InputInt("Mesh:", &current_mesh))
+				{
+					if (current_mesh < 0)
+						current_mesh = 0;
+					else if (current_mesh > App->scene_manager->game_object->GetNumMeshes())
+					{
+						LOG("Mesh %i does not exsist in this game gbject");
+						current_mesh = App->scene_manager->game_object->GetNumMeshes();
+					}
+				}
 				ImGui::SameLine();
 				if (ImGui::Button("Make mesh material"))
-					App->scene_manager->game_object->ChangeMaterial(materials[i], mesh_change_num);
+					App->scene_manager->game_object->ChangeMaterial(materials[i], current_mesh);
 
 				ImGui::SameLine();
 				if (ImGui::Button("Delete"))

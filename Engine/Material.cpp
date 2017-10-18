@@ -63,10 +63,7 @@ void Material::Configuration(const GLuint& num_uv_channels)
 				if (ImGui::InputInt("UV channel:", &textures[i]->uv_channel))
 				{
 					if (textures[i]->uv_channel < 0)
-					{
-						LOG("Can not have negative UV channels");
 						textures[i]->uv_channel = 0;
-					}
 					else if (textures[i]->uv_channel >= num_uv_channels)
 					{
 						LOG("No more UV channels");
