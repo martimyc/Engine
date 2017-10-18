@@ -127,6 +127,8 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 		ImGui::Checkbox("Draw Grid", &show_grid);
 		ImGui::ColorEdit3("Grid Color", grid_color); 
 		ImGui::SliderInt("Grid divisions", &grid_divisions, 5, 40);
+		ImGui::SliderFloat("Grid line width", &grid_line_width, 1.0, 5.0);
+		ImGui::SliderFloat("Grid size", &grid_size, 0.1, 2.5);
 	}
 	return ret;
 }
@@ -265,7 +267,7 @@ void Renderer3D::DrawWorldAxis()
 
 void Renderer3D::DrawGrid()
 {
-	glLineWidth(1.0f);
+	glLineWidth(grid_line_width);
 
 	glBegin(GL_LINES);
 
@@ -278,16 +280,17 @@ void Renderer3D::DrawGrid()
 		if (i == 0)
 			glColor4f(255, 255, 255, 1.0f);
 
-		glVertex3f(i, 0.0f, j);
-		glVertex3f(i, 0.0f, -j);
-		glVertex3f(j, 0.0f, i);
-		glVertex3f(-j, 0.0f, i);
+		glVertex3f(i * grid_size, 0.0f, j * grid_size);
+		glVertex3f(i * grid_size, 0.0f, -j * grid_size);
+		glVertex3f(j * grid_size, 0.0f, i * grid_size);
+		glVertex3f(-j * grid_size, 0.0f, i * grid_size);
 
 		if (i == 0)
 			glColor4f(grid_color[0], grid_color[1], grid_color[2], 1.0f);
 	}
 
-	glColor4f(255, 255, 255, 1.0f);
-
 	glEnd();
+
+	glLineWidth(1.0f);
+	glColor4f(255, 255, 255, 1.0f);
 }

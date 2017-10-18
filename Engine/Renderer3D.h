@@ -20,7 +20,9 @@ private:
 	bool world_axis = true;
 	bool show_grid = true;
 	int grid_divisions = 10;
-	float grid_color[3] = { 1.0f, 1.0f, 0.0f };
+	float grid_line_width = 2.0f;
+	float grid_size = 0.5f;
+	float grid_color[3] = { 0.62745f, 0.62745f, 0.62745f };	//Grey
 	GLuint cube_id;
 
 public:
