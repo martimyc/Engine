@@ -131,6 +131,7 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h" />
     <ClInclude Include="gpudetect\DeviceId.h" />
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
+    <ClInclude Include="imgui_dock.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="Mesh.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="imgui_dock.cpp" />
     <ClCompile Include="MainMenuBar.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MathGeoLib\src\Algorithm\GJK.cpp" />

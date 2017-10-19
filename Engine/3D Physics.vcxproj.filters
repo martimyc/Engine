@@ -73,6 +73,9 @@
     <Filter Include="Sources\Primitives">
       <UniqueIdentifier>{c5a1c188-4295-4d20-84b3-066ec4f9f18b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd Party\ImGui\Docking">
+      <UniqueIdentifier>{6a6005ab-8d72-455b-91d9-95ba9a3a8094}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -522,6 +525,9 @@
     <ClInclude Include="Tree.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="imgui_dock.h">
+      <Filter>Sources\3rd Party\ImGui\Docking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -727,6 +733,9 @@
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_dock.cpp">
+      <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
