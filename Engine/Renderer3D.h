@@ -1,6 +1,7 @@
 #ifndef _MODULE_RENDERER_3D
 #define _MODULE_RENDERER_3D
 
+#include <vector>
 #include "Light.h"
 #include "glmath.h"
 #include "glew\include\GL\glew.h"

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "glew\include\GL\glew.h"
+#include "Tree.h"
 #include "Module.h"
 
 class GameObject;
@@ -23,7 +24,7 @@ class SceneManager : public Module
 {
 private:
 	DRAW_MODE draw_mode;
-	std::vector<GameObject*> game_objects;
+	Tree game_objects;
 	std::vector<Material*> materials;
 
 	bool wireframe;
@@ -63,7 +64,7 @@ public:
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 
 	void EmptyScene();
-	void AddGameobject(GameObject* new_go);
+	GameObject* CreateGameobject();
 };
 
 #endif // !_MODULE_SCENE_MANAGER

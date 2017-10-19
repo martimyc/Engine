@@ -3,59 +3,55 @@
 
 #include <vector>
 
-template <class DATA>
+class GameObject;
+
 class TreeNode
 {
 private:
-	std::vector<TreeNode<DATA>*> childs;
+	std::vector<TreeNode*> childs;
 	unsigned int num_childs = 0;
-	TreeNode<DATA>* const parent;
-	const DATA* const data;
+	TreeNode* const parent;
+	GameObject* const data;
 
 public:
-	TreeNode(const DATA* const data; const TreeNode<DATA>* const parent) : data(data), parent(parent)
-	{}
-	~TreeNode()
-	{}
+	TreeNode(GameObject* const data, TreeNode* const parent);
+	~TreeNode();
 
-	void AddChild(DATA* new_child)
-	{
-		childs.push_back(new TreeNode(new_child));
-	}
+	bool AddChild(GameObject* new_child);	
 
-	Remove(const TreeNode<DATA>* const remove)
-	{
-		for (std::vector<TreeNode<DATA>*>::const_iterator it = childs.begin(); it = childs.end(); ++it)
-			if ((*it) == remove)
-				childs.erase(it);
-	}
+	bool AddChild(TreeNode* new_child);	
+
+	bool Remove(const TreeNode* const remove);	
+
+	void Draw() const;
+
+	TreeNode* const GetPatent() const;	
+
+	GameObject* const GetData() const;	
 };
 
-template <class DATA>
 class Tree
 {
 private:
-	const TreeNode<DATA>* const root = new TreeNode();
+	TreeNode* root = new TreeNode(nullptr, nullptr);
 	unsigned int num_nodes = 0;
-	TreeNode<DATA>* focused = nullptr;
+	TreeNode* focused = root;
 
 public:
-	void AddGameObject() //this funct will create the <DATA> objects
-	{
-		if (focused != nullptr)
-			focused->AddChild(new DATA(focused));
-	}
+	Tree();
+	~Tree();
 
-	Focus(TreeNode<DATA>* new_focus)
-	{
-		focused = new_focus;
-	}
+	GameObject* const CreateGameobject(); //this funct will create the game objects
 
-	Move(TreeNode<DATA>* move)
-	{
-		move->parent->Remove(move);
-		focused->AddChild(move)
-	}
+	void Focus(TreeNode* new_focus);
+
+	void Move(TreeNode* move);
+
+	GameObject* GetFocused() const;
+
+	void Empty();
+
+	void Draw() const;
 };
 
 #endif //!TREE

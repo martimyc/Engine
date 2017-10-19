@@ -737,6 +737,9 @@
     <ClCompile Include="imgui\imgui_dock.cpp">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClCompile>
+    <ClCompile Include="Tree.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

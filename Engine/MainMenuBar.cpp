@@ -62,10 +62,10 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			if (ImGui::BeginMenu("3D Object"))
 			{
 				if (ImGui::MenuItem("Cube"))
-					App->scene_manager->AddGameobject(App->primitives->Create3DCube());
+					App->primitives->Create3DCube();
 
 				if (ImGui::MenuItem("Sphere"))
-					App->scene_manager->AddGameobject(App->primitives->CreateSphere());
+					App->primitives->CreateSphere();
 			
 				ImGui::EndMenu();
 			}

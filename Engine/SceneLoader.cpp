@@ -74,7 +74,7 @@ bool SceneLoader::LoadScene(const std::string& path) const
 		{
 			
 			// Load all meshes (for now into the same game object)
-			GameObject* new_game_object = new GameObject();
+			GameObject* new_game_object = App->scene_manager->CreateGameobject();
 
 			new_game_object->ReserveComponentSpace(scene->mNumMeshes);
 
@@ -90,8 +90,6 @@ bool SceneLoader::LoadScene(const std::string& path) const
 				else
 					new_game_object->AddComponent(new_mesh);
 			}
-
-			App->scene_manager->AddGameobject(new_game_object);
 		}
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");

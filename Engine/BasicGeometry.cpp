@@ -7,6 +7,8 @@
 #include "SpherePrimitive.h"
 #include "GameObject.h"
 #include "Mesh.h"
+#include "SceneManager.h"
+#include "Application.h"
 #include "BasicGeometry.h"
 
 BasicGeometry::BasicGeometry(const char * name, bool start_enabled) : Module(name, start_enabled)
@@ -67,7 +69,7 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 
 GameObject* BasicGeometry::Create3DCube()
 {
-	GameObject* go = new GameObject();
+	GameObject* go = App->scene_manager->CreateGameobject();
 	Mesh* mesh = new Mesh();
 	GetPrimitiveId(PRIMITIVE_CUBE, mesh);
 	go->AddComponent(mesh);
@@ -76,7 +78,7 @@ GameObject* BasicGeometry::Create3DCube()
 
 GameObject* BasicGeometry::CreateSphere()
 {
-	GameObject* go = new GameObject();
+	GameObject* go = App->scene_manager->CreateGameobject();
 	Mesh* mesh = new Mesh();
 	GetPrimitiveId(PRIMITIVE_SPHERE, mesh);
 	go->AddComponent(mesh); 

@@ -24,10 +24,6 @@ bool SceneManager::Init()
 
 bool SceneManager::CleanUp()
 {
-	for (std::vector<GameObject*>::iterator it = game_objects.begin(); it != game_objects.end(); ++it)
-		delete (*it);
-	game_objects.clear();
-
 	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		delete (*it);
 	materials.clear();
@@ -142,8 +138,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
-	for (std::vector<GameObject*>::iterator it = game_objects.begin(); it != game_objects.end(); ++it)
-		App->renderer_3d->DrawGO(*it);
+	game_objects.Draw();
 
 	return UPDATE_CONTINUE;
 }
@@ -214,12 +209,10 @@ void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, fl
 
 void SceneManager::EmptyScene()
 {
-	for (std::vector<GameObject*>::iterator it = game_objects.begin(); it != game_objects.end(); ++it)
-		delete (*it);
-	game_objects.clear();
+	game_objects.Empty();
 }
 
-void SceneManager::AddGameobject(GameObject* new_go)
+GameObject* SceneManager::CreateGameobject()
 {
-	game_objects.push_back(new_go);
+	return game_objects.CreateGameobject();
 }
