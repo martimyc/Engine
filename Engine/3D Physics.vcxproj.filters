@@ -525,7 +525,7 @@
     <ClInclude Include="Tree.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_dock.h">
+    <ClInclude Include="imgui\imgui_dock.h">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClInclude>
   </ItemGroup>
@@ -734,7 +734,7 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_dock.cpp">
+    <ClCompile Include="imgui\imgui_dock.cpp">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClCompile>
   </ItemGroup>

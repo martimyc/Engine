@@ -1,8 +1,7 @@
 #include "imgui.h"
 #define IMGUI_DEFINE_PLACEMENT_NEW
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
-#include "engine/fs/os_file.h"
-#include <lua.hpp>
 
 
 namespace ImGui
@@ -406,7 +405,7 @@ namespace ImGui
 			case Slot_Right:
 				return ImRect(ImVec2(parent_rect.Max.x - 30, center.y - 20),
 					ImVec2(parent_rect.Max.x - 10, center.y + 20));
-			default: ASSERT(false);
+			default: IM_ASSERT(false);
 			}
 			IM_ASSERT(false);
 			return ImRect();
@@ -1032,130 +1031,6 @@ namespace ImGui
 			IM_ASSERT(false);
 			return -1;
 		}
-
-
-		void save(Lumix::FS::OsFile& file)
-		{
-			file << "docks = {\n";
-			for (int i = 0; i < m_docks.size(); ++i)
-			{
-				Dock& dock = *m_docks[i];
-				file << "dock" << (Lumix::u64)&dock << " = {\n";
-				file << "index = " << i << ",\n";
-				file << "label = \"" << dock.label << "\",\n";
-				file << "x = " << (int)dock.pos.x << ",\n";
-				file << "y = " << (int)dock.pos.y << ",\n";
-				file << "location = \"" << dock.location << "\",\n";
-				file << "size_x = " << (int)dock.size.x << ",\n";
-				file << "size_y = " << (int)dock.size.y << ",\n";
-				file << "status = " << (int)dock.status << ",\n";
-				file << "active = " << (int)dock.active << ",\n";
-				file << "opened = " << (int)dock.opened << ",\n";
-				file << "prev = " << (int)getDockIndex(dock.prev_tab) << ",\n";
-				file << "next = " << (int)getDockIndex(dock.next_tab) << ",\n";
-				file << "child0 = " << (int)getDockIndex(dock.children[0]) << ",\n";
-				file << "child1 = " << (int)getDockIndex(dock.children[1]) << ",\n";
-				file << "parent = " << (int)getDockIndex(dock.parent) << "\n";
-				if (i < m_docks.size() - 1)
-					file << "},\n";
-				else
-					file << "}\n";
-			}
-			file << "}\n";
-		}
-
-
-		Dock* getDockByIndex(lua_Integer idx) { return idx < 0 ? nullptr : m_docks[(int)idx]; }
-
-
-		void load(lua_State* L)
-		{
-			for (int i = 0; i < m_docks.size(); ++i)
-			{
-				m_docks[i]->~Dock();
-				MemFree(m_docks[i]);
-			}
-			m_docks.clear();
-
-			if (lua_getglobal(L, "docks") == LUA_TTABLE)
-			{
-				lua_pushnil(L);
-				while (lua_next(L, -2) != 0)
-				{
-					Dock* new_dock = (Dock*)MemAlloc(sizeof(Dock));
-					m_docks.push_back(IM_PLACEMENT_NEW(new_dock) Dock());
-					lua_pop(L, 1);
-				}
-			}
-			lua_pop(L, 1);
-
-			if (lua_getglobal(L, "docks") == LUA_TTABLE)
-			{
-				lua_pushnil(L);
-				while (lua_next(L, -2) != 0)
-				{
-					if (lua_istable(L, -1))
-					{
-						int idx = 0;
-						if (lua_getfield(L, -1, "index") == LUA_TNUMBER)
-							idx = (int)lua_tointeger(L, -1);
-						Dock& dock = *m_docks[idx];
-						lua_pop(L, 1);
-
-						if (lua_getfield(L, -1, "label") == LUA_TSTRING)
-						{
-							dock.label = ImStrdup(lua_tostring(L, -1));
-							dock.id = ImHash(dock.label, 0);
-						}
-						lua_pop(L, 1);
-
-						if (lua_getfield(L, -1, "x") == LUA_TNUMBER)
-							dock.pos.x = (float)lua_tonumber(L, -1);
-						if (lua_getfield(L, -2, "y") == LUA_TNUMBER)
-							dock.pos.y = (float)lua_tonumber(L, -1);
-						if (lua_getfield(L, -3, "size_x") == LUA_TNUMBER)
-							dock.size.x = (float)lua_tonumber(L, -1);
-						if (lua_getfield(L, -4, "size_y") == LUA_TNUMBER)
-							dock.size.y = (float)lua_tonumber(L, -1);
-						if (lua_getfield(L, -5, "active") == LUA_TNUMBER)
-							dock.active = lua_tointeger(L, -1) != 0;
-						if (lua_getfield(L, -6, "opened") == LUA_TNUMBER)
-							dock.opened = lua_tointeger(L, -1) != 0;
-						if (lua_getfield(L, -7, "location") == LUA_TSTRING)
-							strcpy(dock.location, lua_tostring(L, -1));
-						if (lua_getfield(L, -8, "status") == LUA_TNUMBER)
-						{
-							dock.status = (Status_)lua_tointeger(L, -1);
-						}
-						lua_pop(L, 8);
-
-						if (lua_getfield(L, -1, "prev") == LUA_TNUMBER)
-						{
-							dock.prev_tab = getDockByIndex(lua_tointeger(L, -1));
-						}
-						if (lua_getfield(L, -2, "next") == LUA_TNUMBER)
-						{
-							dock.next_tab = getDockByIndex(lua_tointeger(L, -1));
-						}
-						if (lua_getfield(L, -3, "child0") == LUA_TNUMBER)
-						{
-							dock.children[0] = getDockByIndex(lua_tointeger(L, -1));
-						}
-						if (lua_getfield(L, -4, "child1") == LUA_TNUMBER)
-						{
-							dock.children[1] = getDockByIndex(lua_tointeger(L, -1));
-						}
-						if (lua_getfield(L, -5, "parent") == LUA_TNUMBER)
-						{
-							dock.parent = getDockByIndex(lua_tointeger(L, -1));
-						}
-						lua_pop(L, 5);
-					}
-					lua_pop(L, 1);
-				}
-			}
-			lua_pop(L, 1);
-		}
 	};
 
 
@@ -1195,18 +1070,5 @@ namespace ImGui
 	{
 		g_dock.end();
 	}
-
-
-	void SaveDock(Lumix::FS::OsFile& file)
-	{
-		g_dock.save(file);
-	}
-
-
-	void LoadDock(lua_State* L)
-	{
-		g_dock.load(L);
-	}
-
 
 } // namespace ImGui
