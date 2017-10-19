@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "GameObject.h"
 
-GameObject::GameObject()
+GameObject::GameObject(const TreeNode* const node): tree_node(node)
 {}
 
 GameObject::~GameObject()
@@ -78,12 +78,6 @@ void GameObject::GenerateBoundingBox(AABB & bounding_box) const
 			((Mesh*)(*it))->Enclose(bounding_box);
 		}
 	}
-}
-void GameObject::GetWorldPosition(GLfloat & x, GLfloat & y, GLfloat & z)
-{
-	x = world_position[0];
-	y = world_position[1];
-	z = world_position[2];
 }
 
 void GameObject::ChangeMaterial(Material * new_material, int mesh_num)

@@ -7,6 +7,7 @@
 class Component;
 class Material;
 class Texture;
+class TreeNode;
 
 namespace MATH_NAMESPACE_NAME 
 {
@@ -16,15 +17,17 @@ namespace MATH_NAMESPACE_NAME
 class GameObject
 {
 private:
-	GLfloat world_position[3] = { 0.0f, 0.0f, 0.0f };
+	GLfloat world_position_matrix[9] = {};
 	GLfloat rotation[3];
 
 	std::vector<Component*> components;
 
 	bool inspector_open = true;
 
+	const TreeNode* const tree_node;
+
 public:
-	GameObject();
+	GameObject(const TreeNode* const node);
 	~GameObject();
 
 	virtual void Draw(bool normals = false) const;
@@ -40,8 +43,6 @@ public:
 	void ReserveComponentSpace(const GLuint& num_components);
 
 	void GenerateBoundingBox(AABB& bounding_box) const;
-
-	void GetWorldPosition(GLfloat& x, GLfloat& y, GLfloat& z);
 
 	void ChangeMaterial(Material* new_material, int mesh_num);
 

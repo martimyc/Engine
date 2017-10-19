@@ -224,6 +224,7 @@
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
   </ItemGroup>
