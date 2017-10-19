@@ -7,11 +7,8 @@
 #include "Texture.h"
 #include "Mesh.h"
 
-Mesh::Mesh(bool enabled): Component(CT_MESH, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+Mesh::Mesh(const char* const name, bool enabled): Component(CT_MESH, name, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
-
-/*Mesh::Mesh(const Mesh & mesh, bool enabled): Component(CT_MESH, enabled), vertex_id(mesh.vertex_id), num_indices(mesh.num_indices), indices_id(mesh.indices_id), num_vertices(mesh.num_vertices), normals_id(mesh.normals_id)
-{}*/
 
 Mesh::~Mesh()
 {
@@ -152,11 +149,19 @@ void Mesh::Draw(bool normals) const
 
 void Mesh:: Configuration(int num_component)
 {
-	char mesh_name[255];
-	sprintf(mesh_name, "Mesh: %i", num_component);
-
-	if(ImGui::TreeNode(mesh_name))
+	if(ImGui::TreeNode(name.c_str()))
 	{
+		if (ImGui::Button("Edit Name"))
+			edit_name = true;
+
+		if (edit_name)
+		{
+			char new_name[255];
+			sprintf(new_name,name.c_str());
+			if (ImGui::InputText("Name", new_name, 255))
+				name = new_name;
+		}
+
 		ImGui::Text("Vertices: %i", num_vertices);
 		ImGui::Text("Indices: %i", num_indices);
 		ImGui::Text("UV channels: %i", num_uv_channels);
@@ -172,7 +177,7 @@ void Mesh:: Configuration(int num_component)
 		}
 
 		if (material != nullptr)
-			material->Configuration(num_uv_channels);
+			material->InGameObjectConfig(num_uv_channels);
 
 		else
 			ImGui::Text("No material aplied to this mesh");
@@ -319,7 +324,7 @@ void Mesh::ApplyTexture(Texture* text)
 		material->AddTexture(text);
 	else
 	{
-		material = new Material();
+		material = App->scene_manager->CreateMaterial();
 		material->AddTexture(text);
 	}
 }

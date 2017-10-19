@@ -40,9 +40,7 @@ private:
 	Material* material = nullptr;
 
 public:
-	//TODO update
-	Mesh(bool enabled = true);
-	//Mesh(const Mesh& mesh, bool enabled = true);
+	Mesh(const char* const name, bool enabled = true);
 	~Mesh();
 
 	void Draw(bool normals = false) const;

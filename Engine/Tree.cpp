@@ -1,3 +1,4 @@
+#include "imgui\imgui.h"
 #include "Globals.h"
 #include "Renderer3D.h"
 #include "Application.h"
@@ -64,6 +65,35 @@ GameObject * const TreeNode::GetData() const
 	return data;
 }
 
+TreeNode * TreeNode::Hirarchy()
+{
+	TreeNode * ret = nullptr;
+
+	const char* name;
+	if (data == nullptr)
+		name = "Root";
+	else
+		name = data->GetName().c_str();
+
+	if (ImGui::TreeNode(name))
+	{
+		for (std::vector<TreeNode*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+			if(ret == nullptr)
+				ret = (*it)->Hirarchy();
+			else
+				(*it)->Hirarchy();
+		ImGui::TreePop();
+	}
+
+	if (ret == nullptr)
+	{
+		if (ImGui::IsItemClicked(0))
+			return this;
+		return nullptr;
+	}
+	return ret;
+}
+
 Tree::Tree()
 {}
 
@@ -72,19 +102,23 @@ Tree::~Tree()
 	delete root;
 }
 
-GameObject * const Tree::CreateGameobject()
+GameObject * const Tree::CreateGameobject(const char* const name)
 {
-	if (focused != nullptr)
+	GameObject* new_obj;
+	num_nodes++;
+
+	if(name == nullptr)
 	{
-		GameObject* new_obj = new GameObject(focused);
-		focused->AddChild(new_obj);
-		return new_obj;
+		char new_name[255];
+		sprintf(new_name, "Game Object %i", num_nodes);
+		new_obj = new GameObject(focused, new_name);
 	}
 	else
-	{
-		LOG("Can not create game object, no focused object to be its parent");
-		return nullptr;
-	}
+		new_obj = new GameObject(focused, name);
+
+	root->AddChild(new_obj);
+	return new_obj;
+
 }
 
 void Tree::Focus(TreeNode * new_focus)
@@ -114,4 +148,17 @@ void Tree::Empty()
 void Tree::Draw() const
 {
 	root->Draw();
+}
+
+void Tree::Hirarchy()
+{
+	if (ImGui::Begin("Hirarchy", &hirarchy_active))
+	{
+		TreeNode* new_focus = root->Hirarchy();
+		if (new_focus != nullptr && new_focus != focused)
+			focused = new_focus;
+		ImGui::End();
+	}
+	if(focused != root)
+		focused->GetData()->Inspector();
 }

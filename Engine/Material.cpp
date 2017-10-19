@@ -3,14 +3,8 @@
 #include "Material.h"
 #include "Texture.h"
 
-Material::Material()
+Material::Material(const char* name): name(name)
 {}
-
-Material::Material(const Material & copy): num_difusse_textures(copy.num_difusse_textures)
-{
-	for (std::vector<TextureWithUVs*>::const_iterator it = copy.textures.begin(); it != copy.textures.end(); ++it)
-		textures.push_back(*it);
-}
 
 Material::~Material() //Deleting a material does not delete its textures
 {
@@ -44,7 +38,7 @@ const GLuint Material::GetTextureCoordinateChannel(GLuint num_texture)
 	return textures[num_texture]->uv_channel;
 }
 
-void Material::Configuration(const GLuint& num_uv_channels)
+void Material::InGameObjectConfig(const GLuint& num_uv_channels)
 {
 	if (ImGui::TreeNode("Material"))
 	{
@@ -90,7 +84,7 @@ void Material::Configuration(const GLuint& num_uv_channels)
 	}
 }
 
-void Material::Configuration()
+void Material::LoneConfig()
 {
 	ImGui::Text("Difuse textures: %i", num_difusse_textures);
 

@@ -67,9 +67,6 @@
     <Filter Include="Sources\3rd Party\Assimp">
       <UniqueIdentifier>{ab131ea8-ce40-4597-a7c5-e91750542b93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Scenes">
-      <UniqueIdentifier>{801647f4-fd76-444d-84ac-0ca01bfe074c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Primitives">
       <UniqueIdentifier>{c5a1c188-4295-4d20-84b3-066ec4f9f18b}</UniqueIdentifier>
     </Filter>
@@ -492,9 +489,6 @@
     <ClInclude Include="Component.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Sources\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -527,6 +521,9 @@
     </ClInclude>
     <ClInclude Include="imgui\imgui_dock.h">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -710,9 +707,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Sources\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
@@ -739,6 +733,9 @@
     </ClCompile>
     <ClCompile Include="Tree.cpp">
       <Filter>Sources\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

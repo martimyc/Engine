@@ -32,8 +32,7 @@ private:
 	bool polygons;
 
 	int current_mesh = 0;
-
-	GameObject* focused = nullptr;
+	unsigned int next_material = 0;
 
 public:
 	SceneManager(const char* name, bool start_enabled = true);
@@ -48,8 +47,6 @@ public:
 
 	void DrawMode() const;
 
-	void AddMaterial(Material* new_material);
-
 	void ApplyToMaterial(Texture* new_text, int material);
 
 	void ReserveMaterialSpace(const GLuint& num_materials);
@@ -59,12 +56,14 @@ public:
 	unsigned int NumMaterials() const;
 
 	Material* GetMaterial(unsigned int pos) const;
-	const GameObject* GetFocused() const;
 	bool HasMaterials() const;
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
+	const GameObject* GetFocused() const;
 
 	void EmptyScene();
-	GameObject* CreateGameobject();
+	GameObject* CreateGameobject(const char* const name = nullptr);
+	Material* CreateMaterial(const char* const name = nullptr);
+	void DeleteMaterial(const Material* to_delete);
 };
 
 #endif // !_MODULE_SCENE_MANAGER

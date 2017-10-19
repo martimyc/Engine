@@ -34,6 +34,8 @@ bool SceneLoader::LoadScene(const std::string& path) const
 {
 	bool ret = true;
 
+
+
 	std::string dir;
 	// find the last occurrence of '.'
 	size_t pos = path.find_last_of("\\");
@@ -47,10 +49,13 @@ bool SceneLoader::LoadScene(const std::string& path) const
 
 	if (scene != nullptr)
 	{
+		bool* material_loads;
 		unsigned int previous_loaded_materials = App->scene_manager->NumMaterials();
 
 		if (scene->HasMaterials())
 		{
+			material_loads = new bool[scene->mNumMaterials];
+
 			//Load all materials first so that we can bind them to a mesh later when we load them
 			App->scene_manager->ReserveMaterialSpace(scene->mNumMaterials);
 
@@ -58,13 +63,17 @@ bool SceneLoader::LoadScene(const std::string& path) const
 			{
 				LOG("Loading Material %i", i);
 
-				Material* new_material = new Material();
+				Material* new_material = App->scene_manager->CreateMaterial();
 				ret = LoadMaterial(scene->mMaterials[i], *new_material, dir);
 
 				if (ret == false)
+				{
 					LOG("Material (%i) did't load correctly", i);
+					App->scene_manager->DeleteMaterial(new_material);
+					material_loads[i] = false;
+				}
 				else
-					App->scene_manager->AddMaterial(new_material);
+					material_loads[i] = true;
 			}
 		}
 		else
@@ -82,13 +91,19 @@ bool SceneLoader::LoadScene(const std::string& path) const
 			{
 				LOG("Loading Mesh %i", i);
 
-				Mesh* new_mesh = new Mesh();
+				Mesh* new_mesh = new_game_object->CreateMesh();
 				ret = LoadMesh(scene->mMeshes[i], *new_mesh, previous_loaded_materials);
 
 				if (ret == false)
+				{
 					LOG("Mesh (%i) did't load correctly", i);
+					new_game_object->DeleteMesh(new_mesh);
+				}
+
+				if (scene->HasMaterials() && material_loads[scene->mMeshes[i]->mMaterialIndex] == true)
+					new_mesh->SetMaterial(previous_loaded_materials + scene->mMeshes[i]->mMaterialIndex);
 				else
-					new_game_object->AddComponent(new_mesh);
+					LOG("Material for this mesh did not load correctly");
 			}
 		}
 		else
@@ -160,9 +175,6 @@ bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned i
 	}
 	else
 		LOG("Mesh has no vertex colors");
-
-	if(App->scene_manager->HasMaterials())
-		new_mesh.SetMaterial(previous_loaded_materials + mesh->mMaterialIndex);
 
 	// Bones and TangentsAndBitangents not loaded yet TODO
 	
@@ -413,9 +425,8 @@ bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_materia
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 				std::string full_path = dir + Path.data;
 				
-				Texture* new_texture = new Texture(full_path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
-
-				if (!App->texture_manager->LoadTexture(full_path, *new_texture))
+				Texture* new_texture = App->texture_manager->LoadTextureStraightFromPath(full_path);
+				if (new_texture == nullptr)
 				{
 					delete new_texture;
 					LOG("Error loading texture '%s'\n", full_path.c_str());

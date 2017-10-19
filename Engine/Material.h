@@ -22,6 +22,7 @@ struct TextureWithUVs
 class Material
 {
 private:
+	std::string name;
 	std::vector<TextureWithUVs*> textures;
 	GLuint num_difusse_textures = 0;
 
@@ -38,9 +39,10 @@ private:
 	GLuint num_reflection_textures = 0;
 	GLuint num_unknown_textures = 0;*/
 
+	bool edit_name = false;
+
 public:
-	Material();
-	Material(const Material& copy);
+	Material(const char* name);
 	~Material();
 
 	void AssignTexturePointers(GLuint num_texture);
@@ -51,8 +53,8 @@ public:
 	void Empty();
 	const GLuint GetTextureCoordinateChannel(GLuint num_texture);
 
-	void Configuration(const GLuint& num_uv_channels);
-	void Configuration();
+	void InGameObjectConfig(const GLuint& num_uv_channels);
+	void LoneConfig();
 };
 
 #endif // !_MATERIAL

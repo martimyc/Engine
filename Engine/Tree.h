@@ -27,7 +27,9 @@ public:
 
 	TreeNode* const GetPatent() const;	
 
-	GameObject* const GetData() const;	
+	GameObject* const GetData() const;
+
+	TreeNode* Hirarchy();
 };
 
 class Tree
@@ -36,12 +38,13 @@ private:
 	TreeNode* root = new TreeNode(nullptr, nullptr);
 	unsigned int num_nodes = 0;
 	TreeNode* focused = root;
+	bool hirarchy_active = true;
 
 public:
 	Tree();
 	~Tree();
 
-	GameObject* const CreateGameobject(); //this funct will create the game objects
+	GameObject* const CreateGameobject(const char* const name = nullptr); //this funct will create the game objects
 
 	void Focus(TreeNode* new_focus);
 
@@ -52,6 +55,10 @@ public:
 	void Empty();
 
 	void Draw() const;
+
+	void Hirarchy();
+
+	void FocusRoot();
 };
 
 #endif //!TREE

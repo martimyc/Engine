@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const TreeNode* const node): tree_node(node)
+GameObject::GameObject(const TreeNode* const node, const char* name): tree_node(node), name(name)
 {}
 
 GameObject::~GameObject()
@@ -109,6 +109,40 @@ const uint GameObject::GetNumMeshes() const
 		if ((*it)->GetType() == CT_MESH)
 			num_meshes++;
 	return num_meshes;
+}
+
+const std::string & GameObject::GetName() const
+{
+	return name;
+}
+
+Mesh * GameObject::CreateMesh(const char *const name)
+{
+	Mesh* new_mesh;
+
+	if (name == nullptr)
+	{
+		char new_name[255];
+		sprintf(new_name, "Mesh %i", GetNumMeshes() + 1);
+		new_mesh = new Mesh(new_name);
+	}
+	else
+		new_mesh = new Mesh(name);
+
+	components.push_back(new_mesh);
+
+	return new_mesh;
+}
+
+void GameObject::DeleteMesh(const Mesh* to_delete)
+{
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		if (*it == to_delete)
+		{
+			delete *it;
+			components.erase(it);
+			break;
+		}
 }
 
 const uint GameObject::GetNumComponents() const

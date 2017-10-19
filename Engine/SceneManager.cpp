@@ -83,9 +83,8 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 	if (ImGui::CollapsingHeader("Materials"))
 	{
-
 		if (ImGui::Button("Create material"))
-			AddMaterial(new Material());
+			CreateMaterial();
 
 		std::vector<int> materials_to_delete;
 
@@ -97,21 +96,21 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 			if (ImGui::TreeNode(mesh_name))
 			{
-				materials[i]->Configuration();
+				materials[i]->LoneConfig();
 
 				if (ImGui::InputInt("Mesh:", &current_mesh))
 				{
 					if (current_mesh < 0)
 						current_mesh = 0;
-					else if (current_mesh > App->scene_manager->focused->GetNumMeshes())
+					else if (current_mesh > game_objects.GetFocused()->GetNumMeshes())
 					{
 						LOG("Mesh %i does not exsist in this game gbject");
-						current_mesh = App->scene_manager->focused->GetNumMeshes();
+						current_mesh = game_objects.GetFocused()->GetNumMeshes();
 					}
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Apply"))
-					App->scene_manager->focused->ChangeMaterial(materials[i], current_mesh);
+					game_objects.GetFocused()->ChangeMaterial(materials[i], current_mesh);
 
 				ImGui::SameLine();
 				if (ImGui::Button("Delete"))
@@ -130,8 +129,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 	}
 
-	if (focused != nullptr)
-		focused->Inspector();
+	game_objects.Hirarchy();
 
 	return ret;
 }
@@ -153,11 +151,6 @@ void SceneManager::DrawMode() const
 
 	if (draw_mode == DM_NORMAL && *polygonMode != GL_FILL)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-void SceneManager::AddMaterial(Material* new_material)
-{
-	materials.push_back(new_material);
 }
 
 void SceneManager::ApplyToMaterial(Texture * new_text, int material)
@@ -185,11 +178,6 @@ Material * SceneManager::GetMaterial(unsigned int pos) const
 	return materials[pos];
 }
 
-const GameObject * SceneManager::GetFocused() const
-{
-	return focused;
-}
-
 bool SceneManager::HasMaterials() const
 {
 	return materials.size() > 0;
@@ -207,12 +195,48 @@ void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, fl
 	z_dist = bounding_box.MaxZ() - bounding_box.MinZ();
 }
 
+const GameObject * SceneManager::GetFocused() const
+{
+	return game_objects.GetFocused();
+}
+
 void SceneManager::EmptyScene()
 {
 	game_objects.Empty();
 }
 
-GameObject* SceneManager::CreateGameobject()
+
+GameObject* SceneManager::CreateGameobject(const char* const name)
 {
-	return game_objects.CreateGameobject();
+	return game_objects.CreateGameobject(name);
 }
+
+Material * SceneManager::CreateMaterial(const char * const name)
+{
+	Material* new_material;
+
+	if (name == nullptr)
+	{
+		char new_name[255];
+		sprintf(new_name,"Material %i", next_material);
+		new_material = new Material(new_name);
+	}
+	else
+		new_material = new Material(name);
+
+	next_material++;	
+	materials.push_back(new_material);
+	return new_material;
+}
+
+void SceneManager::DeleteMaterial(const Material * to_delete)
+{
+	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
+		if ((*it) == to_delete)
+		{
+			delete (*it);
+			materials.erase(it);
+			break;
+		}
+}
+

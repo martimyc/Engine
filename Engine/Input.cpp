@@ -5,6 +5,7 @@
 #include "Renderer3D.h"
 #include "Window.h"
 #include "Console.h"
+#include "Texture.h"
 #include "TextureManager.h"
 #include "SceneManager.h"
 #include "SceneLoader.h"

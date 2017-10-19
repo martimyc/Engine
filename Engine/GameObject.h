@@ -2,12 +2,14 @@
 #define _GAME_OBJECT
 
 #include <vector>
+#include <string>
 #include "glew\include\GL\glew.h"
 
 class Component;
 class Material;
 class Texture;
 class TreeNode;
+class Mesh;
 
 namespace MATH_NAMESPACE_NAME 
 {
@@ -17,17 +19,16 @@ namespace MATH_NAMESPACE_NAME
 class GameObject
 {
 private:
+	std::string name;
 	GLfloat world_position_matrix[9] = {};
 	GLfloat rotation[3];
-
 	std::vector<Component*> components;
-
 	bool inspector_open = true;
-
 	const TreeNode* const tree_node;
+	bool edit_name = false;
 
 public:
-	GameObject(const TreeNode* const node);
+	GameObject(const TreeNode* const node, const char* name);
 	~GameObject();
 
 	virtual void Draw(bool normals = false) const;
@@ -47,8 +48,12 @@ public:
 	void ChangeMaterial(Material* new_material, int mesh_num);
 
 	const uint GetNumComponents() const;
-
 	const uint GetNumMeshes() const;
+	const std::string& GetName() const;
+
+	//Creates for all components
+	Mesh* CreateMesh(const char* const name = nullptr);
+	void DeleteMesh(const Mesh* to_delete);
 };
 
 #endif // !_GAME_OBJECT
