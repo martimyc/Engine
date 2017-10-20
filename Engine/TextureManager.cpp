@@ -167,6 +167,8 @@ bool TextureManager::Init()
 
 UPDATE_STATUS TextureManager::Configuration(float dt)
 {
+	ImGui::ShowTestWindow();
+
 	if (ImGui::CollapsingHeader("Textures"))
 	{
 		if (ImGui::Button("Empty"))

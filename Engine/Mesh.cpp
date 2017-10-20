@@ -158,7 +158,7 @@ void Mesh:: Configuration(int num_component)
 		{
 			char new_name[255];
 			sprintf(new_name,name.c_str());
-			if (ImGui::InputText("Name", new_name, 255))
+			if (ImGui::InputText("Name", new_name, 255)) //new_name
 				name = new_name;
 		}
 

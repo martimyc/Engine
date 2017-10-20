@@ -2,21 +2,19 @@
 #define TREE
 
 #include <vector>
-#include <string>
 
 class GameObject;
 
 class TreeNode
 {
 private:
-	std::string name;
 	std::vector<TreeNode*> childs;
 	unsigned int num_childs = 0;
 	TreeNode* const parent;
 	GameObject* const data;
 
 public:
-	TreeNode(GameObject* const data, TreeNode* const parent, const char* name = nullptr);
+	TreeNode(GameObject* const data, TreeNode* const parent);
 	~TreeNode();
 
 	TreeNode* AddChild(GameObject* new_child);
