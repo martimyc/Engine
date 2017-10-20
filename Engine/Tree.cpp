@@ -7,7 +7,9 @@
 
 TreeNode::TreeNode(GameObject * const data, TreeNode * const parent, const char* name) : data(data), parent(parent)
 {
-	if (data != nullptr && name == nullptr)
+	if (name != nullptr)
+		this->name = name;
+	else if (data != nullptr)
 		this->name = data->GetName();
 	else
 		this->name = "No name";
@@ -74,36 +76,37 @@ GameObject * const TreeNode::GetData() const
 	return data;
 }
 
-void TreeNode::Hirarchy(int & num_nodes, int& selection_mask)
+bool TreeNode::Hirarchy(TreeNode*& selected_node)
 {
-	if(parent == nullptr)
+	bool ret = false;
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_node == this) ? ImGuiTreeNodeFlags_Selected : 0);
+
+	bool node_open = ImGui::TreeNodeEx(this, node_flags, name.c_str()); //TODO try with TreeNode*
+
+	if (ImGui::IsItemClicked() && ret == false)
 	{
-		if (ImGui::TreeNode("Root"))
-		{
-			int selected = -1;
-			int node_clicked = -1;                // Temporary storage of what node we have clicked to process selection at the end of the loop. May be a pointer to your own node type, etc.
-			
-			// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
-			//ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selection_mask & (1 << i)) ? ImGuiTreeNodeFlags_Selected : 0);
-			// Node
-			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)num_nodes, NULL, data->GetName().c_str());
-			if (ImGui::IsItemClicked())
-				node_clicked = num_nodes;
-			if (node_open)
-				for (std::vector<TreeNode*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
-					(*it)->Hirarchy(num_nodes, selection_mask);
-						
-			if (node_clicked != -1)
-			{
-				// Update selection state. Process outside of tree loop to avoid visual inconsistencies during the clicking-frame.
-				if (ImGui::GetIO().KeyCtrl)
-					selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
-				else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, this commented bit preserve selection when clicking on item that is part of the selection
-					selection_mask = (1 << node_clicked);           // Click to single-select
-			}
-			ImGui::TreePop();
-		}
+		selected_node = this;
+		ret = true;
 	}
+
+	if(node_open)
+	{
+		for (std::vector<TreeNode*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+			if ((*it)->Hirarchy(selected_node))
+				ret = true;
+
+		ImGui::TreePop();
+	}
+
+	if (selected_node == this && data != nullptr)
+		data->Inspector();
+
+	return ret;
+}
+
+std::vector<TreeNode*>& TreeNode::GetChildsVec()
+{
+	return childs;
 }
 
 //save this for materials and textures (things that wont expand tree further)
@@ -116,7 +119,7 @@ if (ImGui::IsItemClicked())
 node_clicked = i;
 }*/
 
-Tree::Tree()
+Tree::Tree(): root(new TreeNode(nullptr, nullptr, "Root")), num_nodes(0), num_game_objects(0), num_groups(0), focused(root), hirarchy_active(true)
 {}
 
 Tree::~Tree()
@@ -194,18 +197,14 @@ void Tree::Draw() const
 
 void Tree::Hirarchy()
 {
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((focused == root) ? ImGuiTreeNodeFlags_Selected : 0);
+
 	if (ImGui::Begin("Hirarchy", &hirarchy_active))
 	{
-		int num_nodes = 0;
-		int selection_mask = (1 << 2); // Dumb representation of what may be user-side selection state. You may carry selection state inside or outside your objects in whatever format you see fit.
-		root->Hirarchy(num_nodes, selection_mask);
-		/*if (new_focus != nullptr && new_focus != focused)
-			focused = new_focus;*/ //TODO focused array
+		root->Hirarchy(focused);
+
 		ImGui::End();
 	}
-
-	if(focused != root)
-		focused->GetData()->Inspector();
 }
 
 void Tree::FocusRoot()

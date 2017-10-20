@@ -54,7 +54,7 @@ public:
 	virtual void Draw(bool normals) const
 	{}
 
-	virtual void Configuration(int num_component)
+	virtual void Inspector(int num_component)
 	{}
 };
 

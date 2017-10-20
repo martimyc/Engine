@@ -45,7 +45,7 @@ public:
 
 	void Draw(bool normals = false) const;
 
-	void Configuration(int num_component);
+	void Inspector(int num_component);
 
 	//Getters
 	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;

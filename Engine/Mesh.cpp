@@ -147,7 +147,7 @@ void Mesh::Draw(bool normals) const
 		glDisableClientState(GL_NORMAL_ARRAY);
 }
 
-void Mesh:: Configuration(int num_component)
+void Mesh::Inspector(int num_component)
 {
 	if(ImGui::TreeNode(name.c_str()))
 	{

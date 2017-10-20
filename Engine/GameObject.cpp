@@ -37,8 +37,10 @@ void GameObject::Inspector() const
 	{
 		ImGui::Begin("Inspector");
 
+		//TODO rot and pos plus component management config at least
+
 		for (int i = 0; i < components.size(); i++)
-			components[i]->Configuration(i);
+			components[i]->Inspector(i);
 
 		ImGui::End();
 	}

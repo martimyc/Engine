@@ -31,18 +31,20 @@ public:
 
 	GameObject* const GetData() const;
 
-	void Hirarchy(int & num_nodes, int& selection_mask);
+	bool Hirarchy(TreeNode*& selected_node);
+
+	std::vector<TreeNode*>& GetChildsVec();
 };
 
 class Tree
 {
 private:
-	TreeNode* root = new TreeNode(nullptr, nullptr);
-	unsigned int num_nodes = 0;
-	unsigned int num_game_objects = 0;
-	unsigned int num_groups = 0;
-	TreeNode* focused = root;
-	bool hirarchy_active = true;
+	TreeNode* root;
+	unsigned int num_nodes;
+	unsigned int num_game_objects;
+	unsigned int num_groups;
+	TreeNode* focused;
+	bool hirarchy_active;
 
 public:
 	Tree();
