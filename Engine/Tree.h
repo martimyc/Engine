@@ -31,7 +31,7 @@ public:
 
 	GameObject* const GetData() const;
 
-	TreeNode* Hirarchy();
+	void Hirarchy(int & num_nodes, int& selection_mask);
 };
 
 class Tree
@@ -39,6 +39,8 @@ class Tree
 private:
 	TreeNode* root = new TreeNode(nullptr, nullptr);
 	unsigned int num_nodes = 0;
+	unsigned int num_game_objects = 0;
+	unsigned int num_groups = 0;
 	TreeNode* focused = root;
 	bool hirarchy_active = true;
 
@@ -47,6 +49,7 @@ public:
 	~Tree();
 
 	GameObject* const CreateGameobject(const char* const name = nullptr); //this funct will create the game objects
+	TreeNode* const CreateGroup(const char* const name = nullptr);
 
 	void Focus(TreeNode* new_focus);
 
