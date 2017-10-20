@@ -17,7 +17,7 @@ public:
 	TreeNode(GameObject* const data, TreeNode* const parent);
 	~TreeNode();
 
-	bool AddChild(GameObject* new_child);	
+	TreeNode* AddChild(GameObject* new_child);
 
 	bool AddChild(TreeNode* new_child);	
 
@@ -59,6 +59,8 @@ public:
 	void Hirarchy();
 
 	void FocusRoot();
+
+	TreeNode* GetRoot() const;
 };
 
 #endif //!TREE

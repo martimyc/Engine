@@ -110,7 +110,10 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Apply"))
-					game_objects.GetFocused()->ChangeMaterial(materials[i], current_mesh);
+					if (game_objects.GetFocused() != nullptr)
+						game_objects.GetFocused()->ChangeMaterial(materials[i], current_mesh);
+					else
+						LOG("Can not add material, no focused game object");
 
 				ImGui::SameLine();
 				if (ImGui::Button("Delete"))

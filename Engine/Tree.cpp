@@ -16,14 +16,18 @@ TreeNode::~TreeNode()
 	delete data;
 }
 
-bool TreeNode::AddChild(GameObject * new_child)
+TreeNode* TreeNode::AddChild(GameObject * new_child)
 {
+	TreeNode* new_node = nullptr;
+	
 	if (new_child != nullptr)
 	{
-		childs.push_back(new TreeNode(new_child, this));
-		return true;
+		new_node = new TreeNode(new_child, this);
+		childs.push_back(new_node);
 	}
-	return false;
+	else
+		LOG("Trying to add a null game object");
+	return new_node;
 }
 
 bool TreeNode::AddChild(TreeNode * new_child)
@@ -116,7 +120,7 @@ GameObject * const Tree::CreateGameobject(const char* const name)
 	else
 		new_obj = new GameObject(focused, name);
 
-	root->AddChild(new_obj);
+	focused = root->AddChild(new_obj);
 	return new_obj;
 
 }
@@ -161,4 +165,14 @@ void Tree::Hirarchy()
 	}
 	if(focused != root)
 		focused->GetData()->Inspector();
+}
+
+void Tree::FocusRoot()
+{
+	focused = root;
+}
+
+TreeNode * Tree::GetRoot() const
+{
+	return root;
 }
