@@ -3,6 +3,7 @@
 #include "Parson\parson.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
+#include "imgui\imgui_dock.h"
 #include "Brofiler\Brofiler.h"
 #include "Window.h"
 #include "Input.h"
@@ -74,6 +75,10 @@ bool Application::Init()
 
 	std::vector<Module*>::const_iterator it = modules.begin();
 
+	app_dock = new ImGui::DockContext();
+
+
+
 	// Call Init() in all modules
 	for(; it != modules.end() && ret == true; ++it)
 		ret = (*it)->Init();
@@ -98,14 +103,13 @@ void Application::PrepareUpdate()
 // ---------------------------------------------
 void Application::FinishUpdate()
 {}
-
+ 
 UPDATE_STATUS Application::CreateConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
 	if (ImGui::Begin("Configuration", &conf_active))
 	{
-
 		if (ImGui::CollapsingHeader("Application"))
 		{
 			JSON_Value* config = json_parse_file("config.json");
@@ -202,6 +206,8 @@ bool Application::CleanUp()
 
 	for (std::vector<Module*>::const_reverse_iterator it = modules.rbegin(); it != modules.rend() && ret == true; ++it)
 		ret = (*it)->CleanUp();
+
+	DELETE_PTR(app_dock);
 
 	return ret;
 }

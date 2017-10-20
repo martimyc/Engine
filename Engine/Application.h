@@ -23,6 +23,11 @@ class SceneLoader;
 class BasicGeometry;
 class SceneManager;
 
+namespace ImGui
+{
+	struct DockContext;
+}
+
 class Application
 {
 public:
@@ -50,6 +55,7 @@ private:
 	char buf1[128] = "Engine 3D - Marc Latorre && Marti Majo";
 	char buf2[128] = "UPC CITM";
 	bool conf_active = true;
+	ImGui::DockContext* app_dock = nullptr;
 
 public:
 
