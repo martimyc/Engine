@@ -83,6 +83,7 @@ namespace ImGui
 		void EndDock();
 		void SetDockActive();
 
+	private:
 		Dock& getDock(const char* label, bool opened, const ImVec2& default_size);
 		void putInBackground();
 		void splits();
