@@ -104,28 +104,23 @@ UPDATE_STATUS Application::CreateConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	//app_dock->BeginWorkspace("Configuration");
-	//app_dock->BeginDock("Application", &application_dock, 0);
-	//app_dock->EndDock();
-	//app_dock->EndWorkspace();
-	
+	/*
 	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_Always);
 	ImGui::SetNextWindowPos(ImVec2(App->window->GetWidth() * 0.5f, 25), ImGuiCond_Always); 
 	
 	ImGui::Begin("Docking Test##config", 0, ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove | ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus);
 	ImGui::Text("Dock Test");
 
-	ImGui::BeginChild("Docking Test", ImVec2(200, 200));
+	//ImGui::BeginChild("Docking Test", ImVec2(200, 200));
 
-	//app_dock->BeginWorkspace("Docking test");
 	bool application_dock = true;
-	//app_dock->BeginDock("Docking Context test", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove | ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus);
-
+	app_dock->BeginDockContext("Docking Context test", ImVec2(App->window->GetWidth() * 0.5f, 25), ImVec2(400, 300), &application_dock);
+	app_dock->EndDockContext();
 
 	if (app_dock->BeginDock("1 window", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
 		ImGui::Text("Im window number 1");
 	app_dock->EndDock();
-
+/*
 	if(app_dock->BeginDock("2 window", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
 		ImGui::Text("Im window number 2");
 	app_dock->EndDock();
@@ -133,11 +128,9 @@ UPDATE_STATUS Application::CreateConfigMenu()
 	if(app_dock->BeginDock("3 window", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
 		ImGui::Text("Im window number 3");
 	app_dock->EndDock();
-
-	ImGui::EndChild();
-	//app_dock->EndWorkspace();
-	ImGui::End();
-
+	*/
+	//ImGui::EndChild();
+	//ImGui::End();
 	if (ImGui::Begin("Configuration", &conf_active))
 	{
 		if (ImGui::CollapsingHeader("Application"))
