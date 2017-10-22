@@ -173,10 +173,17 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->scene_manager->DrawMode();
 
 	//meshes
-	while (draw_queue.size() != 0)
+	Material* material_in_use;
+	while (draw_queue.size() > 0)
 	{
-		draw_queue.top()->Draw();
-		draw_queue.pop();
+		material_in_use = draw_queue.top()->GetMaterial();
+		material_in_use->EnableDraw();
+		while (draw_queue.size() > 0 && draw_queue.top()->GetMaterial() == material_in_use)
+		{
+			draw_queue.top()->Draw();
+			draw_queue.pop();
+		}
+		material_in_use->DisableDraw();
 	}
 
 	//for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)

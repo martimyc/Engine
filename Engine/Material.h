@@ -5,6 +5,7 @@
 #include "glew\include\GL\glew.h"
 
 class Texture;
+class Mesh;
 enum TEXTURE_TYPES;
 
 struct TextureWithUVs
@@ -26,6 +27,7 @@ private:
 	std::vector<TextureWithUVs*> textures;
 	GLuint num_difusse_textures = 0;
 
+
 	//TODO load all other texture types
 	/*GLuint num_specular_textures = 0;
 	GLuint num_ambient_textures = 0;
@@ -46,14 +48,15 @@ public:
 	Material(const char* name, unsigned int priority);
 	~Material();
 
-	void AssignTexturePointers(GLuint num_texture);
-
 	const int NumTextures() const;
 	unsigned int GetPriority() const;
 
 	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
 	void Empty();
 	const GLuint GetTextureCoordinateChannel(GLuint num_texture);
+
+	void EnableDraw() const;
+	void DisableDraw() const;
 
 	void InGameObjectConfig(const GLuint& num_uv_channels);
 	void LoneConfig();
