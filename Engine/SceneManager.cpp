@@ -144,143 +144,155 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 {
-	if (ImGui::CollapsingHeader("Materials"))
-	{
-		if (ImGui::Button("Create material"))
-			CreateMaterial();
-
-		std::vector<int> materials_to_delete;
-
-		ImGui::Text("Materials:");
-		for (int i = 0; i < materials.size(); i++)
+	if(materials.size() > 0)
+		if (ImGui::CollapsingHeader("Materials"))
 		{
-			char mesh_name[255];
-			sprintf(mesh_name, "Material: %i", i);
+			if (ImGui::Button("Create material"))
+				CreateMaterial();
 
-			if (ImGui::TreeNode(mesh_name))
+			std::vector<int> materials_to_delete;
+			bool node_open = false;
+
+			ImGui::Text("Materials:");
+			for (int i = 0; i < materials.size(); i++)
 			{
-				materials[i]->LoneConfig();
+				ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_material == i) ? ImGuiTreeNodeFlags_Selected : 0);
 
-				if (ImGui::InputInt("Mesh:", &current_mesh))
+				node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, materials[i]->GetName().c_str());
+
+				if (ImGui::IsItemClicked())
+					selected_material = i;
+
+				if(node_open)
 				{
-					if (current_mesh < 0)
-						current_mesh = 0;
-					else if (current_mesh > game_objects.GetFocused()->GetNumMeshes())
-					{
-						LOG("Mesh %i does not exsist in this game gbject");
-						current_mesh = game_objects.GetFocused()->GetNumMeshes();
-					}
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Apply"))
+					materials[i]->LoneConfig();
+
 					if (game_objects.GetFocused() != nullptr)
-						game_objects.GetFocused()->ChangeMaterial(materials[i], current_mesh);
-					else
-						LOG("Can not add material, no focused game object");
+					{
+						char apply[255];
+						sprintf(apply, "Apply to %s mesh num:", game_objects.GetFocused()->GetName().c_str());
 
-				ImGui::SameLine();
-				if (ImGui::Button("Delete"))
-				{
-					LOG("Deleting textures");
-					materials_to_delete.push_back(i);
+						if (ImGui::Button(apply))
+							if (game_objects.GetFocused() != nullptr)
+								game_objects.GetFocused()->ChangeMaterial(materials[i], current_mesh);
+							else
+								LOG("Can not add material, no focused game object");
+
+						ImGui::SameLine();
+
+						if (ImGui::InputInt("", &current_mesh))
+						{
+							if (current_mesh < 0)
+								current_mesh = 0;
+							else if (current_mesh > game_objects.GetFocused()->GetNumMeshes())
+							{
+								LOG("Mesh %i does not exsist in this game gbject");
+								current_mesh = game_objects.GetFocused()->GetNumMeshes();
+							}
+						}
+					}
+
+					if (ImGui::Button("Delete"))
+					{
+						LOG("Deleting textures");
+						materials_to_delete.push_back(i);
+					}
+					ImGui::TreePop();
 				}
-				ImGui::TreePop();
+			}
+
+			for (std::vector<int>::const_iterator it = materials_to_delete.begin(); it != materials_to_delete.end(); ++it)
+			{
+				delete materials[*it];
+				materials.erase(materials.begin() + (*it));
 			}
 		}
-
-		for (std::vector<int>::const_iterator it = materials_to_delete.begin(); it != materials_to_delete.end(); ++it)
-		{
-			delete materials[*it];
-			materials.erase(materials.begin() + (*it));
-		}
-	}
 
 	return UPDATE_CONTINUE;
 }
 
 UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 {
-	if (ImGui::CollapsingHeader("Textures"))
-	{
-		if (ImGui::Button("Empty"))
-			EmptyTextures();
-
-		if (ImGui::Button("Debug Textures"))
-			debug_textures = !debug_textures;
-
-		if (debug_textures)
+	if (textures.size() > 0)
+		if (ImGui::CollapsingHeader("Textures"))
 		{
-			if (ImGui::InputInt("Texture to draw", &texture_to_draw))
-			{
-				if (texture_to_draw >= textures.size())
+			if (ImGui::Button("Empty"))
+				EmptyTextures();
+		
+				if (ImGui::Button("Debug Textures"))
+					debug_textures = !debug_textures;
+
+				if (debug_textures)
 				{
-					LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
-					texture_to_draw = 0;
+					if (ImGui::InputInt("Texture to draw", &texture_to_draw))
+					{
+						if (texture_to_draw >= textures.size())
+						{
+							LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
+							texture_to_draw = 0;
+						}
+						else if (texture_to_draw < 0)
+							texture_to_draw = 0;
+					}
 				}
-				else if (texture_to_draw < 0)
-					texture_to_draw = 0;
-			}
-		}
 
-		std::vector<int> textures_to_delete;
-		bool node_open = false;
+				std::vector<int> textures_to_delete;
+				bool node_open = false;
 
-		for (int i = 0; i < textures.size(); i++)
-		{
-			ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_texture == i) ? ImGuiTreeNodeFlags_Selected : 0);
+				for (int i = 0; i < textures.size(); i++)
+				{
+					ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_texture == i) ? ImGuiTreeNodeFlags_Selected : 0);
 
-			node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, textures[i]->name.c_str());
+					node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, textures[i]->name.c_str());
 
-			if (ImGui::IsItemClicked())
-				selected_texture = i;
+					if (ImGui::IsItemClicked())
+						selected_texture = i;
 
-			if(node_open)
-			{
-				ImGui::Text("Path: %s", textures[i]->path.c_str());
+					if (node_open)
+					{
+						ImVec2 size(50, 50);
+						ImVec2 uv0(0, 1);
+						ImVec2 uv1(1, 0);
 
-				ImVec2 size(50,50);
-				ImVec2 uv0(0, 1);
-				ImVec2 uv1(1, 0);
+						ImGui::Image((void*)textures[i]->id, size, uv0, uv1);
+						ImGui::SameLine();
+						ImGui::Text("Path: %s\nWidth: %i\nHeight: %i", textures[i]->path.c_str(), textures[i]->width, textures[i]->height);
 
-				ImGui::Image((void*) textures[i]->id, size, uv0, uv1);
+						if (ImGui::Button("Delete"))
+						{
+							LOG("Deleting textures");
+							textures_to_delete.push_back(i);
+						}
+
+						ImGui::TreePop();
+					}
+				}
+
+				char add[255];
+				sprintf(add, "Add %s to material", textures[selected_texture]->name.c_str());
+
+				if (ImGui::Button(add))
+					App->scene_manager->ApplyToMaterial(textures[selected_texture], current_material);
 				ImGui::SameLine();
-				ImGui::Text("Width: %i\nHeight: %i", textures[i]->width, textures[i]->height);
 
-				if (ImGui::Button("Delete"))
+				if (ImGui::InputInt("", &current_material))
 				{
-					LOG("Deleting textures");
-					textures_to_delete.push_back(i);
+					if (current_material < 0)
+						current_material = 0;
+					else if (current_material > App->scene_manager->NumMaterials())
+					{
+						LOG("Material %i does not exsist", current_material);
+						current_material = App->scene_manager->NumMaterials();
+					}
 				}
-				
-				ImGui::TreePop();
+
+
+				for (std::vector<int>::const_iterator it = textures_to_delete.begin(); it != textures_to_delete.end(); ++it)
+				{
+					delete textures[*it];
+					textures.erase(textures.begin() + (*it));
+				}
 			}
-		}
-
-		char add[255];
-		sprintf(add, "Add %s to material", textures[selected_texture]->name.c_str());
-
-		if (ImGui::Button(add))
-			App->scene_manager->ApplyToMaterial(textures[selected_texture], current_material);
-		ImGui::SameLine();
-
-		if (ImGui::InputInt("", &current_material))
-		{
-			if (current_material < 0)
-				current_material = 0;
-			else if (current_material > App->scene_manager->NumMaterials())
-			{
-				LOG("Material %i does not exsist", current_material);
-				current_material = App->scene_manager->NumMaterials();
-			}
-		}
-
-
-		for (std::vector<int>::const_iterator it = textures_to_delete.begin(); it != textures_to_delete.end(); ++it)
-		{
-			delete textures[*it];
-			textures.erase(textures.begin() + (*it));
-		}
-	}
 	return UPDATE_CONTINUE;
 }
 
@@ -424,14 +436,13 @@ void SceneManager::EmptyTextures()
 	textures.clear();
 }
 
-Texture * SceneManager::GetCheckers() const
-{
-	return textures[0];
-}
-
 Texture * SceneManager::GetTexture(unsigned int i) const
 {
-	return textures[i];
+	if (textures.size() > 0)
+		return textures[i];
+	else
+		LOG("Asking for texture when there aren't any");
+	return nullptr;
 }
 
 const int SceneManager::GetTextureToDraw() const

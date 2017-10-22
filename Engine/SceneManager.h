@@ -32,8 +32,11 @@ class SceneManager : public Module
 private:
 	DRAW_MODE draw_mode;
 	Tree game_objects;
+
+	//materials
 	std::vector<Material*> materials;
 	bool assets_enable = true;
+	unsigned int selected_material = 0;
 
 	bool wireframe;
 	bool normals;
@@ -92,7 +95,6 @@ public:
 	Texture* LoadTextureStraightFromPath(const std::string& path);
 	void AddTexture(Texture* new_texture);
 	void EmptyTextures();
-	Texture* GetCheckers() const;
 	Texture* GetTexture(unsigned int i) const;
 	const int GetTextureToDraw() const;
 	bool DebugTextures() const;
