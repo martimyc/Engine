@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "TextureManager.h"
+#include "Texture.h"
 #include "Renderer3D.h"
 
 Renderer3D::Renderer3D(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -105,6 +106,7 @@ bool Renderer3D::Init()
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_TEXTURE_2D);
+
 	}
 
 	// Projection matrix for
@@ -186,6 +188,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	if (App->texture_manager->DebugTextures())
 		App->texture_manager->DrawTexture(App->texture_manager->GetTextureToDraw());
 
+	Anisotrophy();
+
 	if (show_grid)
 		DrawGrid();
 	if (world_axis)
@@ -230,6 +234,32 @@ void Renderer3D::OnResize(int width, int height)
 void Renderer3D::DrawGO(const GameObject* game_object)
 {
 	draw_vec.push_back(game_object);
+}
+
+void Renderer3D::Anisotrophy()
+{
+	glEnableClientState(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, App->texture_manager->GetCheckers()->id);
+
+	glBegin(GL_QUADS);
+
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+	glTexCoord2f(0.0f,0.0f);
+	glVertex3f(-100.0f, 0.0f, -100.0f);
+	glTexCoord2f(0.0f, 50.0f);
+	glVertex3f(-100.0f, 0.0f, 100.0f);
+	glTexCoord2f(50.0f, 50.0f);
+	glVertex3f(100.0f, 0.0f, 100.0f);
+	glTexCoord2f(50.0f, 0.0f);
+	glVertex3f(100.0f, 0.0f, -100.0f);
+
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableClientState(GL_TEXTURE_2D);
 }
 
 void Renderer3D::DrawWorldAxis()

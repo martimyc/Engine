@@ -62,8 +62,7 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-
-		if (OPENGL_CONTEXT_MAJOR_VERSION > 2)
+		/*if (OPENGL_CONTEXT_MAJOR_VERSION > 2)
 		{
 			// Set texture interpolation method to the highest visual quality it can be:
 			// GL_LINEAR_MIPMAP_LINEAR for minification - i.e. trilinear filtering
@@ -76,7 +75,19 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture)
 			// Set texture interpolation method to use linear interpolation (no MIPMAPS)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		}
+		}*/
+
+		//THIS SHOULD ABSOLUTELLY NOT WORK AT ALL!!!!!! IT IS NOT SUPORTED UNTIL GL VERSION 3.1
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		//Anysotropy
+		GLfloat maxAniso = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
 
 		// Specify the texture specification
 		glTexImage2D(GL_TEXTURE_2D, 				// Type of texture
@@ -88,6 +99,9 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture)
 			ilGetInteger(IL_IMAGE_FORMAT),	// Format of image pixel data
 			GL_UNSIGNED_BYTE,		// Image data type
 			ilGetData());			// The actual image data itself
+
+		//THIS SHOULD ABSOLUTELLY NOT WORK AT ALL!!!!!! IT IS NOT SUPORTED UNTIL GL VERSION 3.1
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -155,8 +169,21 @@ bool TextureManager::Init()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//Anysotropy
+	GLfloat maxAniso = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	checkers = new Texture(std::string("Checkers"), TT_DIFFUSE, GL_TEXTURE_2D, checkers_text_id);
