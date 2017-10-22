@@ -40,14 +40,16 @@ private:
 	GLuint num_unknown_textures = 0;*/
 
 	bool edit_name = false;
+	unsigned int priority;
 
 public:
-	Material(const char* name);
+	Material(const char* name, unsigned int priority);
 	~Material();
 
 	void AssignTexturePointers(GLuint num_texture);
 
 	const int NumTextures() const;
+	unsigned int GetPriority() const;
 
 	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
 	void Empty();

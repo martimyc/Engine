@@ -43,7 +43,7 @@ public:
 	Mesh(const char* const name, bool enabled = true);
 	~Mesh();
 
-	void Draw(bool normals = false) const;
+	void Draw() const;
 
 	void Inspector(int num_component);
 
@@ -67,6 +67,10 @@ public:
 
 	void ApplyTexture(Texture* text);
 	void ChangeMaterial(Material* new_material);
+
+	//For priority queue in renderer, draw all meshes with the same material and avoid changeing
+	bool operator > (const Mesh& mesh) const;
+	bool operator < (const Mesh & mesh) const;	
 };
 
 #endif // !_MESH

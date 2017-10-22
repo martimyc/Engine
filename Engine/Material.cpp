@@ -3,7 +3,7 @@
 #include "Material.h"
 #include "Texture.h"
 
-Material::Material(const char* name): name(name)
+Material::Material(const char* name, unsigned int priority): name(name), priority(priority)
 {}
 
 Material::~Material() //Deleting a material does not delete its textures
@@ -19,6 +19,11 @@ void Material::AssignTexturePointers(GLuint num_texture)
 const int Material::NumTextures() const
 {
 	return textures.size();
+}
+
+unsigned int Material::GetPriority() const
+{
+	return priority;
 }
 
 void Material::AddTexture(Texture* new_text, const GLuint& uv_channel)

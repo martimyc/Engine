@@ -61,9 +61,9 @@ bool TreeNode::Remove(const TreeNode * const remove)
 void TreeNode::Draw() const
 {
 	for (std::vector<TreeNode*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
-		App->renderer_3d->DrawGO((*it)->GetData());
-	if(data != nullptr)
-		App->renderer_3d->DrawGO(data);
+		(*it)->Draw();
+	if (data != nullptr)
+		data->Draw();
 }
 
 TreeNode * const TreeNode::GetPatent() const
