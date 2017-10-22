@@ -4,6 +4,8 @@
 #include "Console.h"
 #include "Material.h"
 #include "Texture.h"
+#include "Renderer3D.h"
+#include "Application.h"
 #include "GameObject.h"
 
 GameObject::GameObject(const TreeNode* const node, const char* name): tree_node(node), name(name)
@@ -16,13 +18,31 @@ GameObject::~GameObject()
 	components.clear();
 }
 
-void GameObject::Draw(bool normals) const
+bool GameObject::Update()
+{
+	bool ret = true;
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+	{
+		ret = (*it)->Update();
+		if (ret == false)
+		{
+			LOG("Error updating component -%s- in game object -%s-", (*it)->GetName().c_str(), name.c_str());
+			break;
+		}
+	}
+
+	return ret;
+}
+
+void GameObject::Draw() const
 {
 	if (components.size() > 0)
 	{
 		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			if ((*it)->Enabled())
-				(*it)->Draw(normals);
+				if((*it)->GetType() == CT_MESH)
+					App->renderer_3d->DrawMesh((Mesh*)(*it));
 	}		
 }
 

@@ -60,7 +60,7 @@ Mesh::~Mesh()
 		delete material;
 }
 
-void Mesh::Draw(bool normals) const
+void Mesh::Draw() const
 {
 	//Enable state & Bind vertices
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -78,34 +78,15 @@ void Mesh::Draw(bool normals) const
 		glBindBuffer(GL_ARRAY_BUFFER, indices_id);
 		glColorPointer(4, GL_FLOAT, 0, NULL);
 	}
-
-	if (normals)
-	{
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, normals_id);
-		glNormalPointer(GL_FLOAT, 0, NULL);
-	}
+	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, normals_id);
+	glNormalPointer(GL_FLOAT, 0, NULL);
 
 	//bind uvs channel 1 for now
 	if(has_uvs && material != nullptr)
-	{
-		GLint max_texture_units = 0;
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_units);
-
 		for (int i = 0; i < material->NumTextures(); i++)
 		{
-			if (i > max_texture_units)
-			{
-				LOG("Can not render more than %i textures with this hardware, remaining textures will not be rendered", max_texture_units);
-				break;
-			}
-
-			//Texture units
-			glActiveTexture(GL_TEXTURE0 + i);
-			//Textures
-			glEnable(GL_TEXTURE_2D);
-			material->AssignTexturePointers(i);
-
 			//UVs
 			GLuint uv_channel = material->GetTextureCoordinateChannel(i);
 
@@ -114,24 +95,16 @@ void Mesh::Draw(bool normals) const
 			glBindBuffer(GL_ARRAY_BUFFER, uv_ids[uv_channel]);
 			glTexCoordPointer(num_uv_components[uv_channel], GL_FLOAT, 0, NULL);
 		}
-	}
 
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, NULL);
 
 	//Disable texture 2D client state & unbind text buffer
 	if (material != nullptr)
-	{
 		for (int i = 0; i < material->NumTextures(); i++)
 		{
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glDisable(GL_TEXTURE_2D);
-
 			glClientActiveTexture(GL_TEXTURE0 + i);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
-	}// maybe different with multitexturing
 
 	 //After draw bind buffer 0
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -140,11 +113,10 @@ void Mesh::Draw(bool normals) const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	//Disable state
-	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	if (normals)
-		glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	if (has_vertex_colors)
+		glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void Mesh::Inspector(int num_component)
@@ -334,4 +306,18 @@ void Mesh::ChangeMaterial(Material * new_material)
 	if (material != nullptr)
 		delete material;
 	material = new Material(*new_material);
+}
+
+bool Mesh::operator >(const Mesh & mesh) const
+{
+	unsigned int priority_one = (material == nullptr ? 0 : material->GetPriority());
+	unsigned int priority_two = (mesh.material == nullptr ? 0 : mesh.material->GetPriority());
+	return priority_one > priority_two;
+}
+
+bool Mesh::operator <(const Mesh & mesh) const
+{
+	unsigned int priority_one = (material == nullptr ? 0 : material->GetPriority());
+	unsigned int priority_two = (mesh.material == nullptr ? 0 : mesh.material->GetPriority());
+	return priority_one < priority_two;
 }

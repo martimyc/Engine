@@ -1,6 +1,8 @@
 #ifndef _MODULE_RENDERER_3D
 #define _MODULE_RENDERER_3D
 
+#include <functional>
+#include <queue>
 #include <vector>
 #include "Light.h"
 #include "glmath.h"
@@ -10,14 +12,19 @@
 
 #define MAX_LIGHTS 8
 
-class GameObject;
+class Mesh;
+
+struct CompareMeshPointers
+{
+	bool operator()(const Mesh* m1, const Mesh* m2);	
+};
 
 class Renderer3D : public Module
 {
 private:
-	std::vector<const GameObject*> draw_vec;
+	std::priority_queue<Mesh*, std::vector<Mesh* >, CompareMeshPointers> draw_queue;
 	bool debug_draw;
-	//std::vector<GameObject*> debug_draw_vec;
+	//TODO DebugDraw
 	bool world_axis = true;
 	bool show_grid = true;
 	int grid_divisions = 10;
@@ -43,7 +50,7 @@ public:
 
 	void OnResize(int width, int height);
 
-	void DrawGO(const GameObject* game_object);
+	void DrawMesh(Mesh* mesh);
 
 	void Anisotrophy();
 

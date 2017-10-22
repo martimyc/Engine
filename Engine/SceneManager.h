@@ -33,6 +33,7 @@ private:
 
 	int current_mesh = 0;
 	unsigned int next_material = 0;
+	unsigned int material_priority = 0;
 
 public:
 	SceneManager(const char* name, bool start_enabled = true);

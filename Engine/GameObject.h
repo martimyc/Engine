@@ -31,7 +31,9 @@ public:
 	GameObject(const TreeNode* const node, const char* name);
 	~GameObject();
 
-	virtual void Draw(bool normals = false) const;
+	bool Update();
+
+	void Draw() const;
 
 	void AddComponent(Component* component);
 

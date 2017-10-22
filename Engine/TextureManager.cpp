@@ -62,21 +62,6 @@ bool TextureManager::LoadTexture(const std::string& path, Texture& new_texture)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		/*if (OPENGL_CONTEXT_MAJOR_VERSION > 2)
-		{
-			// Set texture interpolation method to the highest visual quality it can be:
-			// GL_LINEAR_MIPMAP_LINEAR for minification - i.e. trilinear filtering
-			// GL_LINEAR for magnification (choices are either GL_NEAREST or GL_LINEAR - we do not use any MIPMAP settings for magnification!!
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else
-		{
-			// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		}*/
-
 		//THIS SHOULD ABSOLUTELLY NOT WORK AT ALL!!!!!! IT IS NOT SUPORTED UNTIL GL VERSION 3.1
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

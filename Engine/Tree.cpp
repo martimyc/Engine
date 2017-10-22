@@ -61,9 +61,9 @@ bool TreeNode::Remove(const TreeNode * const remove)
 void TreeNode::Draw() const
 {
 	for (std::vector<TreeNode*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
-		App->renderer_3d->DrawGO((*it)->GetData());
-	if(data != nullptr)
-		App->renderer_3d->DrawGO(data);
+		(*it)->Draw();
+	if (data != nullptr)
+		data->Draw();
 }
 
 TreeNode * const TreeNode::GetPatent() const
@@ -79,7 +79,14 @@ GameObject * const TreeNode::GetData() const
 bool TreeNode::Hirarchy(TreeNode*& selected_node)
 {
 	bool ret = false;
+	bool has_childs = childs.size() != 0;
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_node == this) ? ImGuiTreeNodeFlags_Selected : 0);
+	
+	if (!has_childs)
+	{
+		node_flags |= ImGuiTreeNodeFlags_Leaf;
+		node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	}
 
 	bool node_open = ImGui::TreeNodeEx(this, node_flags, name.c_str()); //TODO try with TreeNode*
 
@@ -95,7 +102,8 @@ bool TreeNode::Hirarchy(TreeNode*& selected_node)
 			if ((*it)->Hirarchy(selected_node))
 				ret = true;
 
-		ImGui::TreePop();
+		if(has_childs)
+			ImGui::TreePop();
 	}
 
 	if (selected_node == this && data != nullptr)

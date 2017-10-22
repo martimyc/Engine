@@ -222,10 +222,10 @@ Material * SceneManager::CreateMaterial(const char * const name)
 	{
 		char new_name[255];
 		sprintf(new_name,"Material %i", next_material);
-		new_material = new Material(new_name);
+		new_material = new Material(new_name, ++material_priority);
 	}
 	else
-		new_material = new Material(name);
+		new_material = new Material(name, ++material_priority);
 
 	next_material++;	
 	materials.push_back(new_material);

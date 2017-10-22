@@ -9,7 +9,8 @@
 #include "Window.h"
 #include "Camera3D.h"
 #include "Console.h"
-#include "GameObject.h"
+#include "Mesh.h"
+#include "Material.h"
 #include "SceneManager.h"
 #include "TextureManager.h"
 #include "Texture.h"
@@ -146,11 +147,8 @@ UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
-	if (draw_vec.size() != 0)
-	{
+	if (draw_queue.size() != 0)
 		LOG("Draw vector is not empty at frame start");
-		draw_vec.clear();
-	}
 
 	return UPDATE_CONTINUE;
 }
@@ -168,11 +166,30 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//first geometry, then debug and then UI
+
+	Anisotrophy();
+
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
 
-	for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)
-		(*it)->Draw(App->scene_manager->DrawNormals());
+	//meshes
+	Material* material_in_use;
+	while (draw_queue.size() > 0)
+	{
+		material_in_use = draw_queue.top()->GetMaterial();
+		if(material_in_use != nullptr)
+			material_in_use->EnableDraw();
+		while (draw_queue.size() > 0 && draw_queue.top()->GetMaterial() == material_in_use)
+		{
+			draw_queue.top()->Draw();
+			draw_queue.pop();
+		}
+		if (material_in_use != nullptr)
+			material_in_use->DisableDraw();
+	}
+
+	//for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)
+		//(*it)->Draw();
 
 	/*if (debug_draw == true)
 	{
@@ -188,13 +205,10 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	if (App->texture_manager->DebugTextures())
 		App->texture_manager->DrawTexture(App->texture_manager->GetTextureToDraw());
 
-	Anisotrophy();
-
 	if (show_grid)
 		DrawGrid();
 	if (world_axis)
 		DrawWorldAxis();
-
 	//------
 
 	ImGui::Render();
@@ -202,7 +216,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	SDL_GL_SwapWindow(App->window->window);
 
 	//Empty draw_vec after drawing all Game Objects
-	draw_vec.clear();
+	if (draw_queue.size() != 0)
+		LOG("Draw queue not empty at end of frame");
 
 	return UPDATE_CONTINUE;
 }
@@ -231,9 +246,9 @@ void Renderer3D::OnResize(int width, int height)
 	glLoadMatrixf(App->camera->GetViewMatrix());
 }
 
-void Renderer3D::DrawGO(const GameObject* game_object)
+void Renderer3D::DrawMesh(Mesh* mesh)
 {
-	draw_vec.push_back(game_object);
+	draw_queue.push(mesh);
 }
 
 void Renderer3D::Anisotrophy()
@@ -243,8 +258,6 @@ void Renderer3D::Anisotrophy()
 	glBindTexture(GL_TEXTURE_2D, App->texture_manager->GetCheckers()->id);
 
 	glBegin(GL_QUADS);
-
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
 	glTexCoord2f(0.0f,0.0f);
 	glVertex3f(-100.0f, 0.0f, -100.0f);
@@ -323,4 +336,11 @@ void Renderer3D::DrawGrid()
 
 	glLineWidth(1.0f);
 	glColor4f(255, 255, 255, 1.0f);
+}
+
+bool CompareMeshPointers::operator()(const Mesh * m1, const Mesh * m2)
+{
+	unsigned int priority_one = ((m1->GetMaterial() == nullptr) ? 0 : m1->GetMaterial()->GetPriority());
+	unsigned int priority_two = ((m2->GetMaterial() == nullptr) ? 0 : m2->GetMaterial()->GetPriority());
+	return priority_one > priority_two;
 }

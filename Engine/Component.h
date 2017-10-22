@@ -51,11 +51,17 @@ public:
 		return type;
 	}
 
-	virtual void Draw(bool normals) const
+	const std::string& GetName() const
+	{
+		return name;
+	}
+
+	virtual void Draw() const
 	{}
 
 	virtual void Inspector(int num_component)
 	{}
+
 };
 
 #endif // !_COMPONENT
