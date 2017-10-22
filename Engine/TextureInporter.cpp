@@ -50,6 +50,8 @@ bool TextureInporter::LoadTexture(const std::string& path, Texture& new_texture)
 		iluGetImageInfo(&ImageInfo);
 		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 			iluFlipImage();
+		new_texture.width = ImageInfo.Width;
+		new_texture.height = ImageInfo.Height;
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA

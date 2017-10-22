@@ -62,6 +62,8 @@ bool SceneManager::Init()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	Texture* checkers = new Texture(std::string("Checkers"), TT_DIFFUSE, GL_TEXTURE_2D, checkers_text_id);
+	checkers->width = CHECKERS_WIDTH;
+	checkers->height = CHECKERS_HEIGHT;
 	AddTexture(checkers);
 
 	return true;
@@ -126,6 +128,22 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 	}
 
+	ImGui::ShowTestWindow();
+
+	if(ImGui::Begin("Assets", &assets_enable))
+	{
+		MaterialsConfiguration(dt);
+		TexturesConfiguration(dt);
+		ImGui::End();
+	}
+
+	game_objects.Hirarchy();
+
+	return ret;
+}
+
+UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
+{
 	if (ImGui::CollapsingHeader("Materials"))
 	{
 		if (ImGui::Button("Create material"))
@@ -167,7 +185,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 					materials_to_delete.push_back(i);
 				}
 				ImGui::TreePop();
-			}		
+			}
 		}
 
 		for (std::vector<int>::const_iterator it = materials_to_delete.begin(); it != materials_to_delete.end(); ++it)
@@ -177,8 +195,11 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 	}
 
-	ImGui::ShowTestWindow();
+	return UPDATE_CONTINUE;
+}
 
+UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
+{
 	if (ImGui::CollapsingHeader("Textures"))
 	{
 		if (ImGui::Button("Empty"))
@@ -202,41 +223,57 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 
 		std::vector<int> textures_to_delete;
+		bool node_open = false;
 
 		for (int i = 0; i < textures.size(); i++)
 		{
-			char text_name[255];
-			sprintf(text_name, "Texture: %i", i);
+			ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_texture == i) ? ImGuiTreeNodeFlags_Selected : 0);
 
-			if (ImGui::TreeNode(text_name))
+			node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, textures[i]->name.c_str());
+
+			if (ImGui::IsItemClicked())
+				selected_texture = i;
+
+			if(node_open)
 			{
 				ImGui::Text("Path: %s", textures[i]->path.c_str());
 
-				if (ImGui::Button("Add to material"))
-					App->scene_manager->ApplyToMaterial(textures[i], current_material);
+				ImVec2 size(50,50);
+				ImVec2 uv0(0, 1);
+				ImVec2 uv1(1, 0);
 
+				ImGui::Image((void*) textures[i]->id, size, uv0, uv1);
 				ImGui::SameLine();
+				ImGui::Text("Width: %i\nHeight: %i", textures[i]->width, textures[i]->height);
+
 				if (ImGui::Button("Delete"))
 				{
 					LOG("Deleting textures");
 					textures_to_delete.push_back(i);
 				}
-
-				ImGui::Text("Current material:");
-				if (ImGui::InputInt("", &current_material))
-				{
-					if (current_material < 0)
-						current_material = 0;
-					else if (current_material > App->scene_manager->NumMaterials())
-					{
-						LOG("Material %i does not exsist", current_material);
-						current_material = App->scene_manager->NumMaterials();
-					}
-				}
-
+				
 				ImGui::TreePop();
 			}
 		}
+
+		char add[255];
+		sprintf(add, "Add %s to material", textures[selected_texture]->name.c_str());
+
+		if (ImGui::Button(add))
+			App->scene_manager->ApplyToMaterial(textures[selected_texture], current_material);
+		ImGui::SameLine();
+
+		if (ImGui::InputInt("", &current_material))
+		{
+			if (current_material < 0)
+				current_material = 0;
+			else if (current_material > App->scene_manager->NumMaterials())
+			{
+				LOG("Material %i does not exsist", current_material);
+				current_material = App->scene_manager->NumMaterials();
+			}
+		}
+
 
 		for (std::vector<int>::const_iterator it = textures_to_delete.begin(); it != textures_to_delete.end(); ++it)
 		{
@@ -244,10 +281,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 			textures.erase(textures.begin() + (*it));
 		}
 	}
-
-	game_objects.Hirarchy();
-
-	return ret;
+	return UPDATE_CONTINUE;
 }
 
 UPDATE_STATUS SceneManager::Update(float dt)
@@ -370,10 +404,7 @@ Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)
 			return nullptr;
 		}
 		else
-		{
-			AddTexture(new_texture);
 			return new_texture;
-		}
 	}
 	else
 		LOG("Texture already exsists");

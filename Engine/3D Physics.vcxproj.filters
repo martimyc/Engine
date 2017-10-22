@@ -73,6 +73,12 @@
     <Filter Include="Sources\3rd Party\ImGui\Docking">
       <UniqueIdentifier>{6a6005ab-8d72-455b-91d9-95ba9a3a8094}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Scene">
+      <UniqueIdentifier>{12492003-08c1-4dae-abfc-44e5caa5b7c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Inporters">
+      <UniqueIdentifier>{9784a0d9-f6e0-4c09-80b4-5319a5484d8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -517,13 +523,13 @@
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Scene</Filter>
     </ClInclude>
     <ClInclude Include="TextureInporter.h">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Inporters</Filter>
     </ClInclude>
     <ClInclude Include="SceneInporter.h">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Inporters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -729,13 +735,13 @@
       <Filter>Sources\Containers</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Scene</Filter>
     </ClCompile>
     <ClCompile Include="TextureInporter.cpp">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Inporters</Filter>
     </ClCompile>
     <ClCompile Include="SceneInporter.cpp">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Inporters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

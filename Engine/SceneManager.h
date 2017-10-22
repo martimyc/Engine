@@ -33,6 +33,7 @@ private:
 	DRAW_MODE draw_mode;
 	Tree game_objects;
 	std::vector<Material*> materials;
+	bool assets_enable = true;
 
 	bool wireframe;
 	bool normals;
@@ -47,6 +48,7 @@ private:
 	int texture_to_draw = 0;
 	bool debug_textures = false;
 	int current_material = 0;
+	unsigned int selected_texture = 0;
 
 public:
 	TextureInporter* texture_inporter = nullptr;
@@ -60,6 +62,9 @@ public:
 	bool CleanUp();
 
 	UPDATE_STATUS Configuration(float dt);
+	UPDATE_STATUS MaterialsConfiguration(float dt);
+	UPDATE_STATUS TexturesConfiguration(float dt);
+
 
 	UPDATE_STATUS Update(float dt);
 
