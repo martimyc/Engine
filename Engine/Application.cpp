@@ -13,8 +13,8 @@
 #include "Console.h"
 #include "HardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
-#include "TextureManager.h"
-#include "SceneLoader.h"
+#include "TextureInporter.h"
+#include "SceneInporter.h"
 #include "BasicGeometry.h"
 #include "SceneManager.h"
 #include "Application.h"
@@ -29,8 +29,6 @@ Application::Application()
 	console = new Console("Console");
 	hardware_software_info = new HardwareSoftwareInfo("Hardware & Software");
 	main_menu_bar = new MainMenuBar("Menu Bar");
-	texture_manager = new TextureManager("Textures");
-	scene_loader = new SceneLoader("File Loader");
 	primitives = new BasicGeometry("Basic Geometry");
 	scene_manager = new SceneManager("Scene Manager");
 
@@ -46,8 +44,6 @@ Application::Application()
 	AddModule(camera);
 	AddModule(hardware_software_info);
 	AddModule(main_menu_bar);
-	AddModule(texture_manager);
-	AddModule(scene_loader);
 	AddModule(primitives);
 	AddModule(scene_manager);
 	

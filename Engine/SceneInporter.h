@@ -13,16 +13,13 @@
 class Mesh;
 class Material;
 
-class SceneLoader : public Module
+class SceneInporter
 {
 private:
 
 public:
-	SceneLoader(const char* name, bool start_enabled = true);
-	~SceneLoader();
-
-	bool Init();
-	bool CleanUp();
+	SceneInporter();
+	~SceneInporter();
 
 	//Loads
 	//Scene loads

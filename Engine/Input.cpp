@@ -6,9 +6,9 @@
 #include "Window.h"
 #include "Console.h"
 #include "Texture.h"
-#include "TextureManager.h"
+#include "TextureInporter.h"
 #include "SceneManager.h"
-#include "SceneLoader.h"
+#include "SceneInporter.h"
 #include "Camera3D.h"
 #include "Input.h"
 
@@ -139,11 +139,11 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->texture_manager->LoadTextureStraightFromPath(full_path);
+					App->scene_manager->LoadTextureStraightFromPath(full_path);
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
 				{
-					App->scene_loader->LoadScene(full_path);
+					App->scene_manager->LoadScene(full_path);
 					App->camera->CenterToObj();
 				}
 				else

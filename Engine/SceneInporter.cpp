@@ -4,37 +4,26 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Texture.h"
-#include "TextureManager.h"
-#include "SceneLoader.h"
+#include "TextureInporter.h"
+#include "SceneInporter.h"
 
-SceneLoader::SceneLoader(const char * name, bool start_enabled) : Module(name, start_enabled)
-{}
-
-SceneLoader::~SceneLoader()
-{}
-
-bool SceneLoader::Init()
+SceneInporter::SceneInporter()
 {
 	// Stream log messages to Debug window
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	aiAttachLogStream(&stream);
-
-	return true;
 }
 
-bool SceneLoader::CleanUp()
+SceneInporter::~SceneInporter()
 {
 	// detach log stream
 	aiDetachAllLogStreams();
-	return true;
 }
 
-bool SceneLoader::LoadScene(const std::string& path) const
+bool SceneInporter::LoadScene(const std::string& path) const
 {
 	bool ret = true;
-
-
 
 	std::string dir;
 	// find the last occurrence of '.'
@@ -117,7 +106,7 @@ bool SceneLoader::LoadScene(const std::string& path) const
 	return ret;
 }
 
-bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const
+bool SceneInporter::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const
 {
 	bool ret = true;
 
@@ -181,7 +170,7 @@ bool SceneLoader::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned i
 	return ret;
 }
 
-bool SceneLoader::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneInporter::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -215,7 +204,7 @@ bool SceneLoader::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, 
 	return ret;
 }
 
-bool SceneLoader::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneInporter::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -262,7 +251,7 @@ bool SceneLoader::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, M
 	return ret;
 }
 
-bool SceneLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneInporter::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -313,7 +302,7 @@ bool SceneLoader::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_
 	return ret;
 }
 
-bool SceneLoader::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneInporter::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -353,7 +342,7 @@ bool SceneLoader::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, M
 	return ret;
 }
 
-bool SceneLoader::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool SceneInporter::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -389,7 +378,7 @@ bool SceneLoader::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Me
 	return ret;
 }
 
-bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_material, const std::string& dir) const
+bool SceneInporter::LoadMaterial(const aiMaterial* material, Material& new_material, const std::string& dir) const
 {
 	//We will assume all textures are 2D for now
 
@@ -425,7 +414,7 @@ bool SceneLoader::LoadMaterial(const aiMaterial* material, Material& new_materia
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 				std::string full_path = dir + Path.data;
 				
-				Texture* new_texture = App->texture_manager->LoadTextureStraightFromPath(full_path);
+				Texture* new_texture = App->scene_manager->LoadTextureStraightFromPath(full_path);
 				if (new_texture == nullptr)
 				{
 					delete new_texture;

@@ -12,7 +12,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "SceneManager.h"
-#include "TextureManager.h"
+#include "TextureInporter.h"
 #include "Texture.h"
 #include "Renderer3D.h"
 
@@ -202,8 +202,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	//App->open_gl_test->DrawPlaneExtraLarge();
 
 	//Debug Textures
-	if (App->texture_manager->DebugTextures())
-		App->texture_manager->DrawTexture(App->texture_manager->GetTextureToDraw());
+	if (App->scene_manager->DebugTextures())
+		App->scene_manager->DrawTexture(App->scene_manager->GetTextureToDraw());
 
 	if (show_grid)
 		DrawGrid();
@@ -255,7 +255,7 @@ void Renderer3D::Anisotrophy()
 {
 	glEnableClientState(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, App->texture_manager->GetCheckers()->id);
+	glBindTexture(GL_TEXTURE_2D, App->scene_manager->GetCheckers()->id);
 
 	glBegin(GL_QUADS);
 

@@ -510,12 +510,6 @@
     <ClInclude Include="SpherePrimitive.h">
       <Filter>Sources\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="SceneLoader.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Tree.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
@@ -523,6 +517,12 @@
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureInporter.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneInporter.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
   </ItemGroup>
@@ -722,12 +722,6 @@
     <ClCompile Include="SpherePrimitive.cpp">
       <Filter>Sources\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="SceneLoader.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_dock.cpp">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClCompile>
@@ -735,6 +729,12 @@
       <Filter>Sources\Containers</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureInporter.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneInporter.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>

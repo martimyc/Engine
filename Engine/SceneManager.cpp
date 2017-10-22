@@ -8,7 +8,8 @@
 #include "BasicGeometry.h"
 #include "GameObject.h"
 #include "Texture.h"
-#include "TextureManager.h"
+#include "TextureInporter.h"
+#include "SceneInporter.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), wireframe(false), normals(false), polygons(true)
@@ -19,6 +20,50 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
+	texture_inporter = new TextureInporter();
+	scene_inporter = new SceneInporter();
+
+	//checkers texture
+	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
+	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
+		for (int j = 0; j < CHECKERS_WIDTH; j++) {
+			int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
+			checkImage[i][j][0] = (GLubyte)c;
+			checkImage[i][j][1] = (GLubyte)c;
+			checkImage[i][j][2] = (GLubyte)c;
+			checkImage[i][j][3] = (GLubyte)255;
+		}
+	}
+
+	//Load Texture to VRAM
+	GLuint checkers_text_id;
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &checkers_text_id);
+	glBindTexture(GL_TEXTURE_2D, checkers_text_id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//Anysotropy
+	GLfloat maxAniso = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
+		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	Texture* checkers = new Texture(std::string("Checkers"), TT_DIFFUSE, GL_TEXTURE_2D, checkers_text_id);
+	AddTexture(checkers);
+
 	return true;
 }
 
@@ -132,6 +177,74 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		}
 	}
 
+	ImGui::ShowTestWindow();
+
+	if (ImGui::CollapsingHeader("Textures"))
+	{
+		if (ImGui::Button("Empty"))
+			EmptyTextures();
+
+		if (ImGui::Button("Debug Textures"))
+			debug_textures = !debug_textures;
+
+		if (debug_textures)
+		{
+			if (ImGui::InputInt("Texture to draw", &texture_to_draw))
+			{
+				if (texture_to_draw >= textures.size())
+				{
+					LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
+					texture_to_draw = 0;
+				}
+				else if (texture_to_draw < 0)
+					texture_to_draw = 0;
+			}
+		}
+
+		std::vector<int> textures_to_delete;
+
+		for (int i = 0; i < textures.size(); i++)
+		{
+			char text_name[255];
+			sprintf(text_name, "Texture: %i", i);
+
+			if (ImGui::TreeNode(text_name))
+			{
+				ImGui::Text("Path: %s", textures[i]->path.c_str());
+
+				if (ImGui::Button("Add to material"))
+					App->scene_manager->ApplyToMaterial(textures[i], current_material);
+
+				ImGui::SameLine();
+				if (ImGui::Button("Delete"))
+				{
+					LOG("Deleting textures");
+					textures_to_delete.push_back(i);
+				}
+
+				ImGui::Text("Current material:");
+				if (ImGui::InputInt("", &current_material))
+				{
+					if (current_material < 0)
+						current_material = 0;
+					else if (current_material > App->scene_manager->NumMaterials())
+					{
+						LOG("Material %i does not exsist", current_material);
+						current_material = App->scene_manager->NumMaterials();
+					}
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		for (std::vector<int>::const_iterator it = textures_to_delete.begin(); it != textures_to_delete.end(); ++it)
+		{
+			delete textures[*it];
+			textures.erase(textures.begin() + (*it));
+		}
+	}
+
 	game_objects.Hirarchy();
 
 	return ret;
@@ -241,5 +354,128 @@ void SceneManager::DeleteMaterial(const Material * to_delete)
 			materials.erase(it);
 			break;
 		}
+}
+
+Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)
+{
+	if (!Exsists(path))
+	{
+		//Assume 2D difuse
+		Texture* new_texture = CreateTexture(path, TT_DIFFUSE, GL_TEXTURE_2D, 0);
+
+		if (!texture_inporter->LoadTexture(path, *new_texture))
+		{
+			delete new_texture;
+			LOG("Error loading texture '%s'\n", path.c_str());
+			return nullptr;
+		}
+		else
+		{
+			AddTexture(new_texture);
+			return new_texture;
+		}
+	}
+	else
+		LOG("Texture already exsists");
+
+	return nullptr;
+}
+
+void SceneManager::AddTexture(Texture * new_texture)
+{
+	textures.push_back(new_texture);
+}
+
+void SceneManager::EmptyTextures()
+{
+	for (std::vector<Texture*>::iterator it = textures.begin() + 1; it != textures.end(); ++it)
+		delete (*it);
+	textures.clear();
+}
+
+Texture * SceneManager::GetCheckers() const
+{
+	return textures[0];
+}
+
+Texture * SceneManager::GetTexture(unsigned int i) const
+{
+	return textures[i];
+}
+
+const int SceneManager::GetTextureToDraw() const
+{
+	return texture_to_draw;
+}
+
+bool SceneManager::DebugTextures() const
+{
+	return debug_textures;
+}
+
+bool SceneManager::Exsists(const std::string & path) const
+{
+	std::string new_name;
+	size_t start = path.find_last_of("//");
+	size_t end = path.find_last_of(".");
+	// make sure the poisition is valid
+	if (start == path.length() || end == path.length())
+		LOG("Coud not create texture name");
+	else
+		new_name = path.substr(start + 1, end);
+
+	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
+		if ((*it)->path == new_name)
+			return true;
+	return false;
+}
+
+void SceneManager::DrawTexture(unsigned int num_texture) const
+{
+	if (num_texture < textures.size())
+	{
+		// Select the texture to use
+		glBindTexture(GL_TEXTURE_2D, textures[num_texture]->id);
+
+		float hsize = 6.0f; // Vertical size of the quad
+		float vsize = 4.0f; // Vertical size of the quad
+
+							// Draw our texture
+		glEnable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+
+		// Top right
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(hsize, -vsize, 0.0f);
+
+		// Bottom right
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(hsize, vsize, 0.0f);
+
+		// Bottom left
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-hsize, vsize, 0.0f);
+
+		// Top left
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-hsize, -vsize, 0.0f);
+
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+	}
+	else
+		LOG("Can't draw texture, last existing texture is %i", textures.size() - 1);
+}
+
+Texture * SceneManager::CreateTexture(const std::string & path, const TEXTURE_TYPES type, const GLenum dimensions, const GLuint & id)
+{
+	Texture* new_texture = new Texture(path, type, dimensions, id);
+	textures.push_back(new_texture);
+	return new_texture;
+}
+
+bool SceneManager::LoadScene(const std::string & path) const
+{
+	return scene_inporter->LoadScene(path);
 }
 

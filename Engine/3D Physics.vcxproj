@@ -133,7 +133,7 @@
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
     <ClInclude Include="imgui\imgui_dock.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="SceneLoader.h" />
+    <ClInclude Include="SceneInporter.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -224,7 +224,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TextureInporter.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
@@ -280,7 +280,7 @@
     <ClCompile Include="MathGeoLib\src\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
-    <ClCompile Include="SceneLoader.cpp" />
+    <ClCompile Include="SceneInporter.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="mmgr.cpp" />
     <ClCompile Include="Console.cpp" />
@@ -297,7 +297,7 @@
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TextureInporter.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

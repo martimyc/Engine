@@ -18,8 +18,6 @@ class Console;
 class Hardware;
 class MainMenuBar;
 class HardwareSoftwareInfo;
-class TextureManager;
-class SceneLoader;
 class BasicGeometry;
 class SceneManager;
 
@@ -40,8 +38,6 @@ public:
 	Hardware* hardware;
 	MainMenuBar* main_menu_bar;
 	HardwareSoftwareInfo* hardware_software_info;
-	TextureManager* texture_manager;
-	SceneLoader* scene_loader;
 	BasicGeometry* primitives;
 	SceneManager* scene_manager;
 
