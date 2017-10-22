@@ -108,6 +108,40 @@ UPDATE_STATUS Application::CreateConfigMenu()
 {
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
+	//app_dock->BeginWorkspace("Configuration");
+	//app_dock->BeginDock("Application", &application_dock, 0);
+	//app_dock->EndDock();
+	//app_dock->EndWorkspace();
+	
+	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(App->window->GetWidth() * 0.5f, 25), ImGuiCond_Always); 
+	
+	ImGui::Begin("Docking Test##config", 0, ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove | ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus);
+	ImGui::Text("Dock Test");
+
+	ImGui::BeginChild("Docking Test", ImVec2(200, 200));
+
+	//app_dock->BeginWorkspace("Docking test");
+	bool application_dock = true;
+	//app_dock->BeginDock("Docking Context test", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove | ImGuiWindowFlags_::ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+
+	if (app_dock->BeginDock("1 window", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
+		ImGui::Text("Im window number 1");
+	app_dock->EndDock();
+
+	if(app_dock->BeginDock("2 window", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
+		ImGui::Text("Im window number 2");
+	app_dock->EndDock();
+
+	if(app_dock->BeginDock("3 window", &application_dock, ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_NoScrollWithMouse))
+		ImGui::Text("Im window number 3");
+	app_dock->EndDock();
+
+	ImGui::EndChild();
+	//app_dock->EndWorkspace();
+	ImGui::End();
+
 	if (ImGui::Begin("Configuration", &conf_active))
 	{
 		if (ImGui::CollapsingHeader("Application"))
@@ -132,7 +166,7 @@ UPDATE_STATUS Application::CreateConfigMenu()
 			//FPS graphic
 			for (uint i = 0; i < FPS_GRAPH_SIZE; i++)
 				fps_log[i] = fps_log[i + 1];
-			
+
 			fps_log[FPS_GRAPH_SIZE - 1] = ImGui::GetIO().Framerate;
 
 			char fps_title[25];
@@ -142,16 +176,18 @@ UPDATE_STATUS Application::CreateConfigMenu()
 			//Framerate graphic
 			for (uint i = 0; i < FPS_GRAPH_SIZE; i++)
 				ms_log[i] = ms_log[i + 1];
-			
+
 			ms_log[FPS_GRAPH_SIZE - 1] = dt * 1000;
 
 			//Blit milliseconds graphic
 			char ms_title[25];
 			sprintf_s(ms_title, 25, "Milliseconds %.1f", ms_log[29]);
 			ImGui::PlotHistogram("", ms_log, IM_ARRAYSIZE(ms_log), FPS_GRAPH_SIZE, ms_title, 0.0f, 80.0f, ImVec2(0, 100));
-			
+
 		}
 	}
+
+
 	return ret;
 }
 
