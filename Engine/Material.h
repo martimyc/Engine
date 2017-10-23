@@ -50,6 +50,7 @@ public:
 
 	const int NumTextures() const;
 	unsigned int GetPriority() const;
+	const std::string& GetName() const;
 
 	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
 	void Empty();

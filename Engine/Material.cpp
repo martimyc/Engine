@@ -21,6 +21,11 @@ unsigned int Material::GetPriority() const
 	return priority;
 }
 
+const std::string & Material::GetName() const
+{
+	return name;
+}
+
 void Material::AddTexture(Texture* new_text, const GLuint& uv_channel)
 {
 	textures.push_back(new TextureWithUVs(new_text, uv_channel));
@@ -78,15 +83,20 @@ void Material::InGameObjectConfig(const GLuint& num_uv_channels)
 
 		std::vector<int> textures_to_remove;
 
-		for (int i = 0; i < textures.size(); i++)
+		if (ImGui::TreeNode("Textures"))
 		{
-			char text_name[255];
-			sprintf(text_name, "Texture: %i", i);
-
-			if (ImGui::TreeNode(text_name))
+			for (int i = 0; i < textures.size(); i++)
 			{
-				ImGui::Text(textures[i]->texture->path.c_str());
-				if (ImGui::InputInt("UV channel:", &textures[i]->uv_channel))
+				ImVec2 size(50, 50);
+				ImVec2 uv0(0, 1);
+				ImVec2 uv1(1, 0);
+
+				ImGui::Image((void*)textures[i]->texture->id, size, uv0, uv1);
+				ImGui::SameLine();
+				ImGui::Text("Name: %s\nPath: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(), textures[i]->texture->path.c_str(), textures[i]->texture->width, textures[i]->texture->height);
+
+				ImGui::Text("UV channel :");
+				if (ImGui::InputInt("", &textures[i]->uv_channel))
 				{
 					if (textures[i]->uv_channel < 0)
 						textures[i]->uv_channel = 0;
@@ -99,19 +109,18 @@ void Material::InGameObjectConfig(const GLuint& num_uv_channels)
 
 				if (ImGui::Button("Delete"))
 				{
-					LOG("Removing texture from this material");
+					LOG("Deleting textures");
 					textures_to_remove.push_back(i);
 				}
-
-				ImGui::TreePop();
 			}
+			ImGui::TreePop();
 		}
+
 		for (std::vector<int>::const_iterator it = textures_to_remove.begin(); it != textures_to_remove.end(); ++it)
 		{
 			textures.erase(textures.begin() + (*it));
 			num_difusse_textures--;
 		}
-
 		ImGui::TreePop();
 	}
 }
@@ -122,13 +131,24 @@ void Material::LoneConfig()
 
 	std::vector<int> textures_to_remove;
 
-	for (int i = 0; i < textures.size(); i++)
+	if (ImGui::TreeNode("Textures"))
 	{
-		char text_name[255];
-		sprintf(text_name, "Texture: %i", i);
-
-		if (ImGui::TreeNode(text_name))
+		for (int i = 0; i < textures.size(); i++)
 		{
+			ImVec2 size(50, 50);
+			ImVec2 uv0(0, 1);
+			ImVec2 uv1(1, 0);
+
+			ImGui::Image((void*)textures[i]->texture->id, size, uv0, uv1);
+			ImGui::SameLine();
+			ImGui::Text("Name: %s\nPath: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(), textures[i]->texture->path.c_str(),  textures[i]->texture->width, textures[i]->texture->height);
+
+			if (ImGui::Button("Delete"))
+			{
+				LOG("Deleting textures");
+				textures_to_remove.push_back(i);
+			}
+
 			ImGui::Text(textures[i]->texture->path.c_str());
 
 			if (ImGui::Button("Delete"))
@@ -136,10 +156,10 @@ void Material::LoneConfig()
 				LOG("Removing texture from this material");
 				textures_to_remove.push_back(i);
 			}
-
-			ImGui::TreePop();
 		}
+		ImGui::TreePop();
 	}
+
 	for (std::vector<int>::const_iterator it = textures_to_remove.begin(); it != textures_to_remove.end(); ++it)
 	{
 		textures.erase(textures.begin() + (*it));

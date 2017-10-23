@@ -262,7 +262,8 @@ void Renderer3D::Anisotrophy()
 {
 	glEnableClientState(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, App->scene_manager->GetCheckers()->id);
+	if(App->scene_manager->GetTexture(0) != nullptr)
+		glBindTexture(GL_TEXTURE_2D, App->scene_manager->GetTexture(0)->id);
 
 	glBegin(GL_QUADS);
 
