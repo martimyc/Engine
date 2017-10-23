@@ -3,6 +3,11 @@
 #include "Application.h"
 #include "Console.h"
 #include "BasicGeometry.h"
+#include "Audio.h"
+#include "Camera3D.h"
+#include "HardwareSoftwareInfo.h"
+#include "Renderer3D.h"
+#include "Window.h"
 //TODO if we only have 1 obj
 #include "SceneManager.h"
 #include "GameObject.h"
@@ -35,8 +40,32 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 
 		if (ImGui::BeginMenu("Window"))
 		{
-			if (ImGui::MenuItem("Configuration"))
-				App->OpenCloseConfigWindow();
+			if (ImGui::BeginMenu("Configuration"))
+			{
+				if (ImGui::MenuItem("Application"))
+					App->OpenCloseConfigAppWindow();
+
+				if (ImGui::MenuItem("Audio"))
+					App->audio->OpenCloseConfigAudioWindow();
+
+				if (ImGui::MenuItem("Camera"))
+					App->camera->OpenCloseConfigCameraWindow();
+
+				if (ImGui::MenuItem("Hardware/Software info"))
+					App->hardware_software_info->OpenCloseConfigHardwareSoftwareWindow();
+
+				if (ImGui::MenuItem("3D Renderer"))
+					App->renderer_3d->OpenCloseConfigRendererWindow();
+
+				if (ImGui::MenuItem("Window"))
+					App->window->OpenCloseConfigWindowWindow();
+
+				if (ImGui::MenuItem("Scene"))
+					App->scene_manager->OpenCloseConfigSceneWindow();
+
+				ImGui::EndMenu();
+			}
+			
 			if (ImGui::MenuItem("Console"))
 				App->console->OpenCloseConsoleWindow();
 

@@ -1,5 +1,6 @@
 #include "imgui\imgui.h"
 #include "Brofiler\Brofiler.h"
+#include "Application.h"
 #include "Console.h"
 
 Console::Console(const char* name, bool start_enabled): Module(name, start_enabled)
@@ -14,10 +15,10 @@ UPDATE_STATUS Console::Update(float dt)
 
 		if (console_active)
 		{
-			ImGui::Begin("Console", &console_active);
+			App->BeginDockWindow("Console", &console_active);
 			for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
 				ImGui::Text(it->c_str());
-			ImGui::End();
+			App->EndDockWindow();
 		}
 
 	return UPDATE_CONTINUE;

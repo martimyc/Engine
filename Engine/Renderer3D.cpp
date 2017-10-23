@@ -124,7 +124,7 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 
 		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("Renderer 3D"))
+	if (App->BeginDockWindow("Renderer 3D", &config_renderer))
 	{
 		ImGui::Checkbox("Draw World Axis", &world_axis);
 		ImGui::Checkbox("Draw Grid", &show_grid);
@@ -133,6 +133,8 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 		ImGui::SliderFloat("Grid line width", &grid_line_width, 1.0, 5.0);
 		ImGui::SliderFloat("Grid size", &grid_size, 0.1, 2.5);
 	}
+	App->EndDockWindow();
+
 	return ret;
 }
 
@@ -227,6 +229,11 @@ bool Renderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
 	return true;
+}
+
+void Renderer3D::OpenCloseConfigRendererWindow()
+{
+	config_renderer = !config_renderer;
 }
 
 void Renderer3D::OnResize(int width, int height)

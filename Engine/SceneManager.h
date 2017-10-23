@@ -38,6 +38,7 @@ private:
 	bool assets_enable = true;
 	unsigned int selected_material = 0;
 
+	bool config_scene = true;
 	bool wireframe;
 	bool normals;
 	bool polygons;
@@ -70,6 +71,8 @@ public:
 
 
 	UPDATE_STATUS Update(float dt);
+
+	void OpenCloseConfigSceneWindow();
 
 	void DrawMode() const;
 

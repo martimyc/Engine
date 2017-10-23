@@ -60,7 +60,7 @@ UPDATE_STATUS Audio::Configuration(float dt)
 		
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("Audio"))
+	if (App->BeginDockWindow("Audio", &config_audio))
 	{
 		JSON_Value* config = json_parse_file("config.json");
 		JSON_Object* obj = json_value_get_object(config);
@@ -74,6 +74,8 @@ UPDATE_STATUS Audio::Configuration(float dt)
 			json_serialize_to_file(config, "config.json");
 		}
 	}
+	App->EndDockWindow();
+
 	return ret;
 }
 
@@ -181,4 +183,9 @@ bool Audio::PlayFx(unsigned int id, int repeat)
 	}
 
 	return ret;
+}
+
+void Audio::OpenCloseConfigAudioWindow()
+{
+	config_audio = !config_audio;
 }

@@ -97,6 +97,8 @@ struct ImVec2
     float x, y;
     ImVec2() { x = y = 0.0f; }
     ImVec2(float _x, float _y) { x = _x; y = _y; }
+	bool operator ==(const ImVec2 vec) { return (x == vec.x && y == vec.y); }
+	bool operator !=(const ImVec2 vec) { return (x != vec.x || y != vec.y); }
 
 #ifdef IM_VEC2_CLASS_EXTRA          // Define constructor and implicit cast operators in imconfig.h to convert back<>forth from your math types and ImVec2.
     IM_VEC2_CLASS_EXTRA

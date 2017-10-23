@@ -26,6 +26,7 @@ namespace ImGui
 {
 	struct DockContext;
 }
+typedef int ImGuiWindowFlags;
 
 class Application
 {
@@ -52,8 +53,9 @@ private:
 	float ms_log[FPS_GRAPH_SIZE];
 	char buf1[128] = "Engine 3D - Marc Latorre && Marti Majo";
 	char buf2[128] = "UPC CITM";
-	bool conf_active = true;
-	ImGui::DockContext* app_dock = nullptr;
+
+	ImGui::DockContext* dock_context = nullptr;
+	bool config_app = true;
 
 public:
 
@@ -68,14 +70,16 @@ public:
 
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
-	void OpenCloseConfigWindow();
+	void OpenCloseConfigAppWindow();
+	bool BeginDockWindow(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0);
+	void EndDockWindow();
 
 private:
 
 	void AddModule(Module* mod);
 	void PrepareUpdate();
 	void FinishUpdate();
-	UPDATE_STATUS CreateConfigMenu();
+	UPDATE_STATUS CreateConfigApp();
 	UPDATE_STATUS EndConfigMenu();
 };
 

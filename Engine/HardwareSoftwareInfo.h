@@ -30,6 +30,8 @@ private:
 	float vram_reserved;
 	std::wstring gfx_brand;
 
+	bool config_hardware_software = true;
+
 public:
 	HardwareSoftwareInfo(const char* name, bool start_enabled = true);
 	~HardwareSoftwareInfo();
@@ -37,6 +39,7 @@ public:
 	bool Start();
 
 	UPDATE_STATUS Configuration(float dt);
+	void OpenCloseConfigHardwareSoftwareWindow();
 
 };
 
