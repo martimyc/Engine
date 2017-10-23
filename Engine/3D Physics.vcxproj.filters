@@ -531,6 +531,9 @@
     <ClInclude Include="SceneInporter.h">
       <Filter>Sources\Inporters</Filter>
     </ClInclude>
+    <ClInclude Include="FileSystem.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -742,6 +745,9 @@
     </ClCompile>
     <ClCompile Include="SceneInporter.cpp">
       <Filter>Sources\Inporters</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

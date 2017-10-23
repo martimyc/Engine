@@ -20,6 +20,7 @@ class MainMenuBar;
 class HardwareSoftwareInfo;
 class BasicGeometry;
 class SceneManager;
+class FileSystem;
 
 namespace ImGui
 {
@@ -40,6 +41,7 @@ public:
 	HardwareSoftwareInfo* hardware_software_info;
 	BasicGeometry* primitives;
 	SceneManager* scene_manager;
+	FileSystem* file_system;
 
 private:
 	std::string title;

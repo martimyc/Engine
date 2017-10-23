@@ -124,6 +124,7 @@
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\ilu_region.h" />
     <ClInclude Include="DevIL1.8.0\DevIL Windows SDK\include\IL\il_wrap.h" />
+    <ClInclude Include="FileSystem.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="glew-2.1.0\include\GL\eglew.h" />
     <ClInclude Include="glew-2.1.0\include\GL\glew.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="BasicGeometry.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="CubePrimitive.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />

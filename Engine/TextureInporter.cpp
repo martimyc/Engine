@@ -2,7 +2,8 @@
 #include "Application.h"
 #include "SceneManager.h"
 #include "GameObject.h"
-#include "Console.h"
+#include "Globals.h"
+#include "FileSystem.h"
 #include "Texture.h"
 #include "TextureInporter.h"
 
@@ -24,6 +25,49 @@ TextureInporter::TextureInporter()
 
 TextureInporter::~TextureInporter()
 {}
+
+bool TextureInporter::Import(const std::string& path)
+{
+	bool ret = true;
+
+	char* buffer = nullptr;
+	unsigned int length = App->file_system->LoadFile(path.c_str(), &buffer);
+
+	if (buffer == nullptr || length == 0)
+		return false;
+
+	ILuint imageID;				// Create an image ID as a ULuint
+
+	ILboolean success;			// Create a flag to keep track of success/failure
+
+	ILenum error;				// Create a flag to keep track of the IL error state
+
+	ilGenImages(1, &imageID); 		// Generate the image ID
+
+	ilBindImage(imageID); 			// Bind the image
+
+	success = ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, length); 	// Load the image file
+
+	if (success)
+	{
+		ilEnable(IL_FILE_OVERWRITE);
+
+		ILuint size;
+		ILubyte *data;
+
+		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);// To pick a specific DXT compression use
+		size = ilSaveL(IL_DDS, NULL, 0); // Get the size of the data buffer
+
+		if (size > 0) {
+			data = new ILubyte[size]; // allocate data buffer
+			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
+				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, "texture", "dds");
+			DELETE_ARRAY(data);
+		}
+	}
+	
+	return ret;
+}
 
 bool TextureInporter::LoadTexture(const std::string& path, Texture& new_texture)
 {

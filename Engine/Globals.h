@@ -50,5 +50,11 @@ enum UPDATE_STATUS
 #define OPENGL_CONTEXT_MINOR_VERSION 1
 #define OPENGL_CONTEXT_MAJOR_VERSION 2
 
+//dirs
+#define LIBRARY_TEXTURES_FOLDER "\\Library\\Textures"
+#define LIBRARY_MESHES_FOLDER "\\Library\\Meshes"
+#define LIBRARY_MATERIALS_FOLDER "\\Library\\Materials"
+#define LIBRARY_FOLDER "\\Library"
+#define ASSETS_FOLDER "\\Assets"
 
 #endif //_GLOBALS
