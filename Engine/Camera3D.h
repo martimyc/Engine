@@ -23,7 +23,10 @@ public:
 	float* GetViewMatrix();
 	void CenterToObj();
 
+	void OpenCloseConfigCameraWindow();
+
 private:
+	bool config_camera = true;
 
 	void CalculateViewMatrix();
 	float camera_speed = 5.0f;

@@ -57,7 +57,7 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("Camera 3D"))
+	if (App->BeginDockWindow("Camera 3D", &config_camera))
 	{
 		const GameObject* focused_game_object = App->scene_manager->GetFocused();
 
@@ -113,6 +113,8 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 			}
 		}
 	}
+	App->EndDockWindow();
+
 	return ret;
 }
 
@@ -270,6 +272,11 @@ void Camera3D::CenterToObj()
 		App->scene_manager->CalculateDistanceToObj(focused_game_object, center, dist_x, dist_y, dist_z);
 		Look(normalize(position) * (dist_x + dist_z + dist_y), center, true);
 	}
+}
+
+void Camera3D::OpenCloseConfigCameraWindow()
+{
+	config_camera = !config_camera;
 }
 
 // -----------------------------------------------------------------

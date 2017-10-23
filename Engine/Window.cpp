@@ -129,7 +129,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("Window"))
+	if (App->BeginDockWindow("Window", &config_window))
 	{
 		JSON_Value* config = json_parse_file("config.json");
 		JSON_Object* obj = json_value_get_object(config);
@@ -270,6 +270,8 @@ UPDATE_STATUS Window::Configuration(float dt)
 
 		json_serialize_to_file(config, "config.json");
 	}
+	App->EndDockWindow();
+
 	return ret;
 }
 
@@ -288,6 +290,11 @@ bool Window::CleanUp()
 	//Quit SDL subsystems
 	SDL_Quit();
 	return true;
+}
+
+void Window::OpenCloseConfigWindowWindow()
+{
+	config_window = !config_window;
 }
 
 const int Window::GetHeight() const

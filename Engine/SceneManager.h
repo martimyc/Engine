@@ -35,6 +35,7 @@ private:
 	std::vector<Material*> materials;
 	bool assets_enable = true;
 
+	bool config_scene = true;
 	bool wireframe;
 	bool normals;
 	bool polygons;
@@ -67,6 +68,8 @@ public:
 
 
 	UPDATE_STATUS Update(float dt);
+
+	void OpenCloseConfigSceneWindow();
 
 	void DrawMode() const;
 

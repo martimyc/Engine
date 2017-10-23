@@ -28,6 +28,21 @@ namespace ImGui
 	}
 
 
+	void DockContext::TabbarInContext(Dock* dock_to_tab)
+	{
+		Dock* dest_dock = nullptr;
+		for (int i = 0; i < m_docks.size(); ++i)
+		{
+			Dock& dock = *m_docks[i];
+			if (dock.isContainer()) continue;
+			if (dock.status != Status_Docked) continue;
+			{
+				dest_dock = &dock;
+			}
+		}
+		doDock(*dock_to_tab, dest_dock, Slot_Tab);
+	}
+
 	void DockContext::RootDock(const ImVec2& pos, const ImVec2& size)
 	{
 		g_dock.rootDock(pos, size);
@@ -49,6 +64,16 @@ namespace ImGui
 	void DockContext::EndDock()
 	{
 		g_dock.end();
+	}
+
+	void DockContext::SetWorkspacePosSize(ImVec2 _pos, ImVec2 _size)
+	{
+		if (g_dock.workspace_pos != _pos || g_dock.workspace_size != _size)
+		{
+			g_dock.ShutdownDock();	//TODO: We must Save/Load
+			g_dock.workspace_pos = _pos;
+			g_dock.workspace_size = _size;
+		}
 	}
 
 	DockContext::Dock::Dock() : id(0)
@@ -203,12 +228,14 @@ namespace ImGui
 		new_dock->id = id;
 		new_dock->setActive();
 		new_dock->status = Status_Float;
-		new_dock->pos = ImVec2(0, 0);
-		new_dock->size.x = default_size.x < 0 ? GetIO().DisplaySize.x : default_size.x;
-		new_dock->size.y = default_size.y < 0 ? GetIO().DisplaySize.y : default_size.y;
+		new_dock->pos = g_dock.workspace_pos;
+		new_dock->size.x = g_dock.workspace_size.x;
+		new_dock->size.y = g_dock.workspace_size.y;
 		new_dock->opened = opened;
 		new_dock->first = true;
 		new_dock->location[0] = 0;
+		TabbarInContext(new_dock);
+		
 		return *new_dock;
 	}
 
@@ -302,8 +329,8 @@ namespace ImGui
 		}
 		else
 		{
-			SetNextWindowPos(ImVec2(0, 0));
-			SetNextWindowSize(GetIO().DisplaySize);
+			SetNextWindowPos(g_dock.workspace_pos);
+			SetNextWindowSize(g_dock.workspace_size);
 		}
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 		Begin("###DockPanel", nullptr, flags);
@@ -449,7 +476,7 @@ namespace ImGui
 				return;
 			}
 		}
-		if (dockSlots(dock, nullptr, ImRect(ImVec2(0, 0), GetIO().DisplaySize), true))
+		if (dockSlots(dock, nullptr, ImRect(g_dock.workspace_pos, g_dock.workspace_size), true))	//Position where the rects appear
 		{
 			canvas->PopClipRect();
 			End();
@@ -721,7 +748,7 @@ namespace ImGui
 		if (!dest)
 		{
 			dock.status = Status_Docked;
-			dock.setPosSize(ImVec2(0, 0), GetIO().DisplaySize);
+			dock.setPosSize(g_dock.workspace_pos, g_dock.workspace_size);
 		}
 		else if (dock_slot == Slot_Tab)
 		{

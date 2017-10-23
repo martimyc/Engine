@@ -26,7 +26,10 @@ public:
 	// Play a previously loaded WAV
 	bool PlayFx(unsigned int fx, int repeat = 0);
 
+	void OpenCloseConfigAudioWindow();
+
 private:
+	bool config_audio = true;
 
 	Mix_Music*			music;
 	std::vector<Mix_Chunk*>	fx;

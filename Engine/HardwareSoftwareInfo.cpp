@@ -90,7 +90,7 @@ UPDATE_STATUS HardwareSoftwareInfo::Configuration(float dt)
 
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("HardWare"))
+	if (App->BeginDockWindow("HardWare", &config_hardware_software))
 	{
 		ImGui::TextColored(ImVec4(0, 255, 0, 255), "CPU");
 		ImGui::Text("CPUs: ");
@@ -174,7 +174,14 @@ UPDATE_STATUS HardwareSoftwareInfo::Configuration(float dt)
 				ImGui::Text("Could not detect GPU & VRAM properlly");
 		ImGui::Separator();
 	}
+	App->EndDockWindow();
+
 	return ret;
+}
+
+void HardwareSoftwareInfo::OpenCloseConfigHardwareSoftwareWindow()
+{
+	config_hardware_software = !config_hardware_software;
 }
 
 		//new

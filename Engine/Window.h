@@ -17,6 +17,8 @@ private:
 	bool borderless = false;
 	bool fullscreen_desktop = false;
 
+	bool config_window = true;
+
 public:
 
 	Window(const char* name, bool start_enabled = true);
@@ -27,6 +29,8 @@ public:
 	bool Init();
 	UPDATE_STATUS Configuration(float dt);
 	bool CleanUp();
+
+	void OpenCloseConfigWindowWindow();
 
 	const int GetHeight() const;
 	const int GetWidth() const;

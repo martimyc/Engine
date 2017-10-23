@@ -33,6 +33,8 @@ private:
 	float grid_color[3] = { 0.62745f, 0.62745f, 0.62745f };	//Grey
 	GLuint cube_id;
 
+	bool config_renderer = true;
+
 public:
 	Light lights[MAX_LIGHTS];
 	mat3x3 NormalMatrix;
@@ -47,6 +49,8 @@ public:
 	UPDATE_STATUS PreUpdate(float dt);
 	UPDATE_STATUS PostUpdate(float dt);
 	bool CleanUp();
+
+	void OpenCloseConfigRendererWindow();
 
 	void OnResize(int width, int height);
 

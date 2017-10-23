@@ -84,7 +84,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 		UPDATE_STATUS ret = UPDATE_CONTINUE;
 
-	if (ImGui::CollapsingHeader("Draw Modes"))
+	if (App->BeginDockWindow("Draw Modes", &config_scene))
 	{
 		if (ImGui::Checkbox("Wireframe", &wireframe))
 		{
@@ -127,6 +127,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 			}
 		}
 	}
+	App->EndDockWindow();
 
 	ImGui::ShowTestWindow();
 
@@ -289,6 +290,11 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	game_objects.Draw();
 
 	return UPDATE_CONTINUE;
+}
+
+void SceneManager::OpenCloseConfigSceneWindow()
+{
+	config_scene = !config_scene;
 }
 
 void SceneManager::DrawMode() const

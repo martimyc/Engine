@@ -76,14 +76,21 @@ namespace ImGui
 		int m_last_frame = 0;
 		EndAction_ m_end_action;
 		bool m_is_begin_open = false;
-
-		void ShutdownDock();
-		void RootDock(const ImVec2& pos, const ImVec2& size);
+		
 		bool BeginDock(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0, const ImVec2& default_size = ImVec2(-1, -1));
 		void EndDock();
-		void SetDockActive();
+
+		void SetWorkspacePosSize(ImVec2 _pos, ImVec2 _size);
 
 	private:
+		ImVec2 workspace_pos;
+		ImVec2 workspace_size;
+		void TabbarInContext(Dock* dock_to_tab);
+
+		void RootDock(const ImVec2& pos, const ImVec2& size);
+		void SetDockActive(); 
+		void ShutdownDock();
+
 		Dock& getDock(const char* label, bool opened, const ImVec2& default_size);
 		void putInBackground();
 		void splits();
