@@ -19,6 +19,32 @@ struct CompareMeshPointers
 	bool operator()(const Mesh* m1, const Mesh* m2);	
 };
 
+//Renders the scene into a texture so we can put it into a ImGui Window.
+class FrameBuffer
+{
+public:
+	FrameBuffer();
+	~FrameBuffer();
+
+	void CreateFrameBuffer(const int width, const int height);
+	void BindFrameBuffer();
+	void UnBindFrameBuffer();
+
+	GLuint GetTextureID();
+	const uint GetWidth();
+	const uint GetHeight();
+	void SetWidth(const uint _width);
+	void SetHeight(const uint _height);
+
+private:
+	GLuint frame_buffer_id = 0;
+	GLuint rendered_texture_id = 0;
+	GLuint depth_render_id;
+	uint width = 0;
+	uint height = 0;
+
+};
+
 class Renderer3D : public Module
 {
 private:
@@ -34,6 +60,7 @@ private:
 	GLuint cube_id;
 
 	bool config_renderer = true;
+	FrameBuffer* render_to_texture = nullptr;
 
 public:
 	Light lights[MAX_LIGHTS];

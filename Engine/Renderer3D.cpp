@@ -115,6 +115,9 @@ bool Renderer3D::Init()
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	OnResize(w, h);
 
+	render_to_texture = new FrameBuffer();
+	render_to_texture->CreateFrameBuffer(App->window->GetWidth(), App->window->GetHeight());
+
 	return ret;
 }
 
@@ -159,6 +162,10 @@ UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
+
+
+	render_to_texture->BindFrameBuffer();
+
 
 	ImVec4 clear_color = ImColor(25, 25, 25);
 	ImGuiIO io = ImGui::GetIO();
@@ -213,6 +220,14 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		DrawWorldAxis();
 	//------
 
+	render_to_texture->UnBindFrameBuffer();
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	App->BeginDockWindow("Scene", nullptr, flags);
+
+	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth(), render_to_texture->GetHeight()), ImVec2(0, 1), ImVec2(1, 0));
+
+	App->EndDockWindow();
+
 	ImGui::Render();
 	
 	SDL_GL_SwapWindow(App->window->window);
@@ -239,6 +254,12 @@ void Renderer3D::OpenCloseConfigRendererWindow()
 void Renderer3D::OnResize(int width, int height)
 {
 	glViewport(0, 0, width, height);
+
+	if (render_to_texture)
+	{
+		render_to_texture->SetWidth(width);
+		render_to_texture->SetHeight(height);
+	}
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -351,4 +372,108 @@ bool CompareMeshPointers::operator()(const Mesh * m1, const Mesh * m2)
 	unsigned int priority_one = ((m1->GetMaterial() == nullptr) ? 0 : m1->GetMaterial()->GetPriority());
 	unsigned int priority_two = ((m2->GetMaterial() == nullptr) ? 0 : m2->GetMaterial()->GetPriority());
 	return priority_one > priority_two;
+}
+
+FrameBuffer::FrameBuffer():frame_buffer_id (0), rendered_texture_id (0), depth_render_id(0), width(0), height(0)
+{
+}
+
+FrameBuffer::~FrameBuffer()
+{
+}
+
+void FrameBuffer::CreateFrameBuffer(const int _width, const int _height)
+{
+	width = _width;
+	height = _height;
+
+	// create a texture object
+	glGenTextures(1, &rendered_texture_id);
+	glBindTexture(GL_TEXTURE_2D, rendered_texture_id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); // automatic mipmap
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// create a renderbuffer object to store depth info
+	glGenRenderbuffers(1, &depth_render_id);
+	glBindRenderbuffer(GL_RENDERBUFFER, depth_render_id);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
+		width, height);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	// create a framebuffer object
+	glGenFramebuffers(1, &frame_buffer_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer_id);
+
+	// attach the texture to FBO color attachment point
+	glFramebufferTexture2D(GL_FRAMEBUFFER,      // 1. fbo target: GL_FRAMEBUFFER 
+		GL_COLOR_ATTACHMENT0,					// 2. attachment point
+		GL_TEXTURE_2D,							// 3. tex target: GL_TEXTURE_2D
+		rendered_texture_id,					// 4. tex ID
+		0);										// 5. mipmap level: 0(base)
+
+	// attach the renderbuffer to depth attachment point
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER,		// 1. fbo target: GL_FRAMEBUFFER
+		GL_DEPTH_ATTACHMENT,						// 2. attachment point
+		GL_RENDERBUFFER,							// 3. rbo target: GL_RENDERBUFFER
+		depth_render_id);							// 4. rbo ID
+
+
+	// switch back to window-system-provided framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::BindFrameBuffer()
+{
+	glViewport(0, 0, width, height);
+	// set rendering destination to FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer_id);
+
+	// clear buffers
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void FrameBuffer::UnBindFrameBuffer()
+{
+	// unbind FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// trigger mipmaps generation explicitly
+	// NOTE: If GL_GENERATE_MIPMAP is set to GL_TRUE, then glCopyTexSubImage2D()
+	// triggers mipmap generation automatically. However, the texture attached
+	// onto a FBO should generate mipmaps manually via glGenerateMipmap().
+	glBindTexture(GL_TEXTURE_2D, rendered_texture_id);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+}
+
+GLuint FrameBuffer::GetTextureID()
+{
+	return rendered_texture_id;
+}
+
+const uint FrameBuffer::GetWidth()
+{
+	return width;
+}
+
+const uint FrameBuffer::GetHeight()
+{
+	return height;
+}
+
+void FrameBuffer::SetWidth(const uint _width)
+{
+	width = _width;
+}
+
+void FrameBuffer::SetHeight(const uint _height)
+{
+	height = _height;
 }
