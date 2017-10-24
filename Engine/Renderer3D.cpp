@@ -12,7 +12,6 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "SceneManager.h"
-#include "TextureInporter.h"
 #include "Texture.h"
 #include "Renderer3D.h"
 

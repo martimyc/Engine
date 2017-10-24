@@ -93,7 +93,7 @@ void Material::InGameObjectConfig(const GLuint& num_uv_channels)
 
 				ImGui::Image((void*)textures[i]->texture->id, size, uv0, uv1);
 				ImGui::SameLine();
-				ImGui::Text("Name: %s\nPath: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(), textures[i]->texture->path.c_str(), textures[i]->texture->width, textures[i]->texture->height);
+				ImGui::Text("Name: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(), textures[i]->texture->width, textures[i]->texture->height);
 
 				ImGui::Text("UV channel :");
 				if (ImGui::InputInt("", &textures[i]->uv_channel))
@@ -141,15 +141,13 @@ void Material::LoneConfig()
 
 			ImGui::Image((void*)textures[i]->texture->id, size, uv0, uv1);
 			ImGui::SameLine();
-			ImGui::Text("Name: %s\nPath: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(), textures[i]->texture->path.c_str(),  textures[i]->texture->width, textures[i]->texture->height);
+			ImGui::Text("Name: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(),  textures[i]->texture->width, textures[i]->texture->height);
 
 			if (ImGui::Button("Delete"))
 			{
 				LOG("Deleting textures");
 				textures_to_remove.push_back(i);
 			}
-
-			ImGui::Text(textures[i]->texture->path.c_str());
 
 			if (ImGui::Button("Delete"))
 			{

@@ -23,7 +23,6 @@ enum TEXTURE_TYPES
 
 struct Texture
 {
-	std::string path;
 	std::string name;
 	unsigned int height;
 	unsigned int width;
@@ -31,23 +30,10 @@ struct Texture
 	GLenum dimensions;
 	GLuint id;
 
-	Texture(const std::string& path, const TEXTURE_TYPES type = TT_DIFFUSE, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0): path(path), type(type), dimensions(dimensions), id(id)
-	{
-		size_t start = path.find_last_of("\\");
-		size_t end = path.find_last_of(".");
-		// make sure the poisition is valid
-		if (start == path.length() || end == path.length())
-			LOG("Coud not create texture name"); 
-		else
-		{
-			if (path == "Checkers")
-				name = "Checkers";
-			else
-				name = path.substr(start + 1, end);
-		}
-	}
+	Texture(const std::string& name, const TEXTURE_TYPES type = TT_DIFFUSE, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0): name(name), type(type), dimensions(dimensions), id(id)
+	{}
 
-	Texture(const Texture& copy): path(copy.path), type(copy.type), dimensions(copy.dimensions), id(copy.id)
+	Texture(const Texture& copy): name(copy.name), type(copy.type), dimensions(copy.dimensions), id(copy.id)
 	{}
 
 	~Texture()

@@ -81,7 +81,7 @@ bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relat
 	return ret;
 }
 
-unsigned int FileSystem::LoadFile(const char * path, char ** buffer)
+unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 {
 	unsigned int size = 0;
 	std::ifstream ifs(path, std::ifstream::binary);
@@ -95,14 +95,16 @@ unsigned int FileSystem::LoadFile(const char * path, char ** buffer)
 			ifs.seekg(0, ifs.beg);
 
 			// allocate memory:
-			char * buffer = new char[length];
+			*buffer = new char[length];
 
 			// read data as a block:
-			ifs.read(buffer, length);
+			ifs.read(*buffer, length);
+
+			LOG("Copied file %s to Assets", path.c_str());
 
 			if (ifs)
 			{
-				LOG("Succesfully read %s", path);
+				LOG("Succesfully read %s", path.c_str());
 				size = length;
 			}
 			else
@@ -114,15 +116,22 @@ unsigned int FileSystem::LoadFile(const char * path, char ** buffer)
 	return size;
 }
 
+unsigned int FileSystem::LoadFileBinary(const char * path, char ** buffer)
+{
+	std::string str(path);
+	return LoadFileBinary(str, buffer);
+}
+
 bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const char * name, const char * format)
 {
 	bool ret = true;
 
 	std::string full_path(working_directory);
 	full_path += relative_path;
+	full_path += "\\";
 	full_path += name;
 	full_path += ".";
-	full_path += "dds";
+	full_path += format;
 
 	std::ofstream outfile(full_path.c_str(), std::ofstream::binary);
 
@@ -137,6 +146,35 @@ bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * r
 		LOG("Couldn't save file %s.%s", name, format);
 		ret = false;
 	}
+	return ret;
+}
+
+bool FileSystem::CopyToAssets(std::string& path)
+{
+	bool ret = true;
+	std::string name;
+	std::string extension;
+	std::string dir;
+
+	size_t start = path.find_last_of("\\"); 
+
+	if (start != path.length())
+	{
+		dir = path.substr(0, start);
+		path = path.substr(start + 1);
+		size_t count = path.find_last_of(".");
+		name = path.substr(0, count);  //-1 to avoid dot and +1 to avoid "\\"
+		extension = path.substr(count + 1); // +1 to avoid dot
+	}
+
+	unsigned int length;
+	char* buffer = nullptr;
+
+	length = LoadFileBinary(path, &buffer);
+
+	if (length != 0 && buffer != nullptr)
+		ret = SaveFile(buffer, length, ASSETS_FOLDER, name.c_str(), extension.c_str());
+
 	return ret;
 }
 
@@ -158,4 +196,29 @@ bool FileSystem::Exsists(const char * path) const
 bool FileSystem::Exsists(const std::string & path) const
 {
 	return Exsists(path.c_str());
+}
+
+const std::string & FileSystem::GetWorkingDirectory() const
+{
+	return working_directory;
+}
+
+const std::string FileSystem::GetAssets() const
+{
+	return working_directory + ASSETS_FOLDER;
+}
+
+const std::string FileSystem::GetTextures() const
+{
+	return working_directory + LIBRARY_TEXTURES_FOLDER;
+}
+
+const std::string FileSystem::GetMaterials() const
+{
+	return working_directory + LIBRARY_MATERIALS_FOLDER;
+}
+
+const std::string FileSystem::GetMeshes() const
+{
+	return working_directory + LIBRARY_MESHES_FOLDER;
 }

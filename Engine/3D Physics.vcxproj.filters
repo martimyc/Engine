@@ -76,7 +76,7 @@
     <Filter Include="Sources\Scene">
       <UniqueIdentifier>{12492003-08c1-4dae-abfc-44e5caa5b7c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Inporters">
+    <Filter Include="Sources\Importers">
       <UniqueIdentifier>{9784a0d9-f6e0-4c09-80b4-5319a5484d8a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -525,14 +525,20 @@
     <ClInclude Include="SceneManager.h">
       <Filter>Sources\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="TextureInporter.h">
-      <Filter>Sources\Inporters</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneInporter.h">
-      <Filter>Sources\Inporters</Filter>
-    </ClInclude>
     <ClInclude Include="FileSystem.h">
       <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureImporter.h">
+      <Filter>Sources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshImporter.h">
+      <Filter>Sources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialImporter.h">
+      <Filter>Sources\Importers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -740,14 +746,20 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="TextureInporter.cpp">
-      <Filter>Sources\Inporters</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneInporter.cpp">
-      <Filter>Sources\Inporters</Filter>
-    </ClCompile>
     <ClCompile Include="FileSystem.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureImporter.cpp">
+      <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportManager.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshImporter.cpp">
+      <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialImporter.cpp">
+      <Filter>Sources\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

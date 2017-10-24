@@ -13,11 +13,10 @@
 #include "Console.h"
 #include "HardwareSoftwareInfo.h"
 #include "MainMenuBar.h"
-#include "TextureInporter.h"
-#include "SceneInporter.h"
 #include "BasicGeometry.h"
 #include "SceneManager.h"
 #include "FileSystem.h"
+#include "ImportManager.h"
 #include "Application.h"
 
 Application::Application()
@@ -33,6 +32,7 @@ Application::Application()
 	primitives = new BasicGeometry("Basic Geometry");
 	scene_manager = new SceneManager("Scene Manager");
 	file_system = new FileSystem("File System");
+	import_manager = new ImportManager("Import Manager");
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -49,6 +49,7 @@ Application::Application()
 	AddModule(primitives);
 	AddModule(scene_manager);
 	AddModule(file_system);
+	AddModule(import_manager);
 	
 	// Scenes
 

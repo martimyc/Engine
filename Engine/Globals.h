@@ -57,4 +57,10 @@ enum UPDATE_STATUS
 #define LIBRARY_FOLDER "\\Library"
 #define ASSETS_FOLDER "\\Assets"
 
+//ownFormat
+#define FORMAT_SIZE 3 // 3 chars
+#define FORMAT_MESH {0x6d, 0x73, 0x68} //MSH
+#define FORMAT_MATERIAL {0x6d, 0x61, 0x74} //MAT
+#define MAX_FILE_SIZE 1073741824 / 4 //1 GB / 4 = 250 mb
+
 #endif //_GLOBALS

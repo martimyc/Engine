@@ -1,27 +1,218 @@
+#include "Globals.h"
+#include "TextureImporter.h"
 #include "Application.h"
-#include "GameObject.h"
 #include "SceneManager.h"
-#include "Mesh.h"
-#include "Material.h"
+#include "FileSystem.h"
 #include "Texture.h"
-#include "TextureInporter.h"
-#include "SceneInporter.h"
+#include "TextureImporter.h"
+#include "MeshImporter.h"
+#include "MaterialImporter.h"
+#include "Mesh.h"
+#include "ImportManager.h"
 
-SceneInporter::SceneInporter()
+ImportManager::ImportManager(const char * name, bool start_enabled): Module(name, start_enabled)
+{}
+
+ImportManager::~ImportManager()
+{}
+
+bool ImportManager::Init()
 {
+	texture_importer = new TextureImporter();
+	material_importer = new MaterialImporter();
+	//mesh_importer = new MeshImporter();
+	//scene_inporter = new ImportManager();
+
 	// Stream log messages to Debug window
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	aiAttachLogStream(&stream);
+
+	return true;
 }
 
-SceneInporter::~SceneInporter()
-{
+bool ImportManager::CleanUp()
+{	
 	// detach log stream
 	aiDetachAllLogStreams();
+	return true;
 }
 
-bool SceneInporter::LoadScene(const std::string& path) const
+bool ImportManager::ImportFromPath(const std::string & path, IMPORT_TYPE type, void* imported)
+{
+	bool ret = true;
+
+	std::string name(path); //this will go from full path to file name with extension in copy to assets and then to just name in load 
+
+	if (!App->file_system->CopyToAssets(name))
+	{
+		LOG("Could not copy %s to assets", path.c_str());
+		ret = false;
+	}
+
+	if (ret)
+	{
+		switch (type)
+		{
+		case IT_TEXTURE:
+			if (texture_importer->Import(name))
+			{
+				imported = App->scene_manager->CreateTexture(name);
+				if (!texture_importer->Load(name, *((Texture*)imported)))
+				{
+					LOG("Could not load %s corectlly", name.c_str());
+					ret = false;
+					App->scene_manager->DeleteTexture((Texture*)imported);
+				}
+			}
+			else
+			{
+				LOG("Could not import %s corectlly", name.c_str());
+				ret = false;
+			}			
+			break;
+		case IT_SCENE:
+			ImportScene(path);
+			imported = nullptr;
+			break;
+		default:
+			LOG("Unknown import type");
+			break;
+		}
+	}
+
+	return ret;
+}
+
+bool ImportManager::Load(const std::string & name, LOAD_TYPE type, void * loaded)
+{
+	bool ret = true;
+
+	switch (type)
+	{
+	case LT_TEXTURE:
+		loaded = App->scene_manager->CreateTexture(name);
+		if (!texture_importer->Load(name, *((Texture*)loaded)))
+		{
+			LOG("Could not load %s corectlly", name.c_str());
+			ret = false;
+			App->scene_manager->DeleteTexture((Texture*)loaded);
+		}
+		break;
+	case LT_SCENE:
+		//LoadScene(name); not for the time beeing
+		break;
+	case LT_MESH:
+		/*loaded = new Mesh(name.c_str());
+		if (!mesh_importer->Load(name, *((Mesh*)loaded)))
+		{
+			LOG("Could not load %s corectlly", name.c_str());
+			ret = false;
+			delete loaded;
+		}*/
+		break;
+	case LT_MATERIAL:
+		loaded = App->scene_manager->CreateTexture(name);
+		if (!material_importer->Load(name, *((Material*)loaded)))
+		{
+			LOG("Could not load %s corectlly", name.c_str());
+			ret = false;
+			delete loaded;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return ret;
+}
+
+bool ImportManager::ImportScene(const std::string & path) const
+{
+	bool ret = true;
+
+	std::string dir;
+	// find the last occurrence of '.'
+	size_t pos = path.find_last_of("\\");
+	// make sure the poisition is valid
+	if (pos != path.length())
+		dir = path.substr(NULL, pos + 1);
+	else
+		LOG("No dir in path");
+
+	const aiScene* scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
+
+	if (scene != nullptr)
+	{
+		unsigned int previous_loaded_materials = App->scene_manager->NumMaterials();
+
+		if (scene->HasMaterials())
+		{
+			//Import all materials first so that we can bind them to a mesh later when we load them
+
+			for (unsigned int i = 0; i < scene->mNumMaterials; i++)
+			{
+				LOG("Importing Material %i", i);
+
+				std::string material_name;
+
+				if (material_importer->Import(scene->mMaterials[i], path, i, material_name))
+				{
+					if (LoadMaterial(material_name) == false)
+					{
+						LOG("Material (%i) could not be loaded correctly", i);
+						ret = false;
+					}
+				}
+				else
+				{
+					LOG("Material (%i) could not be imported correctly", i);
+					ret = false;
+				}
+			}
+		}
+		else
+			LOG("Scene has no materials");
+		/*
+		if (scene->HasMeshes())
+		{
+
+			// Load all meshes (for now into the same game object)
+			GameObject* new_game_object = App->scene_manager->CreateGameobject();
+
+			new_game_object->ReserveComponentSpace(scene->mNumMeshes);
+
+			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+			{
+				LOG("Loading Mesh %i", i);
+
+				Mesh* new_mesh = new_game_object->CreateMesh();
+				ret = LoadMesh(scene->mMeshes[i], *new_mesh, previous_loaded_materials);
+
+				if (ret == false)
+				{
+					LOG("Mesh (%i) did't load correctly", i);
+					new_game_object->DeleteMesh(new_mesh);
+				}
+
+				if (scene->HasMaterials() && material_loads[scene->mMeshes[i]->mMaterialIndex] == true)
+					new_mesh->SetMaterial(previous_loaded_materials + scene->mMeshes[i]->mMaterialIndex);
+				else
+					LOG("Material for this mesh did not load correctly");
+			}
+		}
+		else
+			LOG("More than a single mesh in scene, will Import all as one Game Object");
+
+		aiReleaseImport(scene);*/
+	}
+	else
+		LOG("Error loading scene %s", path);
+		
+	return ret;
+}
+/*
+bool ImportManager::LoadScene(const std::string & name) const
 {
 	bool ret = true;
 
@@ -70,7 +261,7 @@ bool SceneInporter::LoadScene(const std::string& path) const
 
 		if (scene->HasMeshes())
 		{
-			
+
 			// Load all meshes (for now into the same game object)
 			GameObject* new_game_object = App->scene_manager->CreateGameobject();
 
@@ -105,8 +296,14 @@ bool SceneInporter::LoadScene(const std::string& path) const
 
 	return ret;
 }
-
-bool SceneInporter::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const
+*/
+void ImportManager::LoadCheckers()
+{
+	Texture* checkers = App->scene_manager->CreateTexture("Checkers");
+	texture_importer->LoadCheckers(*checkers);
+}
+/*
+bool ImportManager::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const
 {
 	bool ret = true;
 
@@ -166,11 +363,11 @@ bool SceneInporter::LoadMesh(const aiMesh * mesh, Mesh& new_mesh, const unsigned
 		LOG("Mesh has no vertex colors");
 
 	// Bones and TangentsAndBitangents not loaded yet TODO
-	
+
 	return ret;
 }
 
-bool SceneInporter::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool ImportManager::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -204,7 +401,7 @@ bool SceneInporter::LoadVertices(const aiMesh* mesh, const GLuint & num_vertices
 	return ret;
 }
 
-bool SceneInporter::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool ImportManager::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -251,7 +448,7 @@ bool SceneInporter::LoadIndices(const aiMesh* mesh, const GLuint & num_vertices,
 	return ret;
 }
 
-bool SceneInporter::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool ImportManager::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -302,7 +499,7 @@ bool SceneInporter::LoadTextureCoordinates(const aiMesh* mesh, const GLuint & nu
 	return ret;
 }
 
-bool SceneInporter::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool ImportManager::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -342,7 +539,7 @@ bool SceneInporter::LoadNormals(const aiMesh* mesh, const GLuint & num_vertices,
 	return ret;
 }
 
-bool SceneInporter::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
+bool ImportManager::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, Mesh & new_mesh, bool equal_size_floats, bool equal_size_uints) const
 {
 	bool ret = true;
 
@@ -377,59 +574,44 @@ bool SceneInporter::LoadColors(const aiMesh* mesh, const GLuint & num_vertices, 
 
 	return ret;
 }
-
-bool SceneInporter::LoadMaterial(const aiMaterial* material, Material& new_material, const std::string& dir) const
+*/
+Texture * ImportManager::LoadTexture(const std::string & name) const
 {
-	//We will assume all textures are 2D for now
-
-	bool ret = true;
-
-	if (material->GetTextureCount(aiTextureType_NONE))
+	if (App->scene_manager->GetTexture(name) == nullptr)
 	{
-		LOG("Found are invalid textures");
-		ret = false;
-	}
-
-	GLuint num_difusse_textures = material->GetTextureCount(aiTextureType_DIFFUSE);
-	
-	//TODO load the rest of texture types
-	/*GLuint num_specular_textures = material->GetTextureCount(aiTextureType_SPECULAR);
-	GLuint num_ambient_textures = material->GetTextureCount(aiTextureType_AMBIENT);
-	GLuint num_emissive_textures = material->GetTextureCount(aiTextureType_EMISSIVE);
-	GLuint num_height_textures = material->GetTextureCount(aiTextureType_HEIGHT);
-	GLuint num_normals_textures = material->GetTextureCount(aiTextureType_NORMALS);
-	GLuint num_shininess_textures = material->GetTextureCount(aiTextureType_SHININESS);
-	GLuint num_opacity_textures = material->GetTextureCount(aiTextureType_OPACITY);
-	GLuint num_displacement_textures = material->GetTextureCount(aiTextureType_DISPLACEMENT);
-	GLuint num_lightmap_textures = material->GetTextureCount(aiTextureType_LIGHTMAP);
-	GLuint num_reflection_textures = material->GetTextureCount(aiTextureType_REFLECTION);
-	GLuint num_unknown_textures = material->GetTextureCount(aiTextureType_UNKNOWN);*/
-	
-	if (num_difusse_textures > 0)
-	{
-		for (int i = 0; i < num_difusse_textures; i++)
+		Texture* new_texture = App->scene_manager->CreateTexture(name);
+		if (texture_importer->Load(name, *new_texture) == false)
 		{
-			aiString Path;
-
-			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-				std::string full_path = dir + Path.data;
-				
-				Texture* new_texture = App->scene_manager->LoadTextureStraightFromPath(full_path);
-				if (new_texture == nullptr)
-				{
-					delete new_texture;
-					LOG("Error loading texture '%s'\n", full_path.c_str());
-					ret = false;
-				}
-				else
-					new_material.AddTexture(new_texture);
-			}
+			App->scene_manager->DeleteTexture(new_texture);
+			LOG("Could not load texture %s", name.c_str());
+			return nullptr;
 		}
+		return new_texture;
 	}
 	else
-		LOG("No difusse textures in this material");
+	{
+		LOG("Texture already loaded");
+		return App->scene_manager->GetTexture(name);
+	}
+}
 
-	//TODO Blend and strenght functions when lightning is done
+Material* ImportManager::LoadMaterial(const std::string& name) const
+{
+	if (App->scene_manager->GetMaterial(name) == nullptr)
+	{
+		Material* new_material = App->scene_manager->CreateMaterial(name.c_str());
 
-	return ret;
+		if (material_importer->Load(name, *new_material) == false)
+		{
+			App->scene_manager->DeleteMaterial(new_material);
+			LOG("Could not load material %s", name.c_str());
+			return nullptr;
+		}
+		return new_material;
+	}
+	else
+	{
+		LOG("Material already loaded");
+		return App->scene_manager->GetMaterial(name);
+	}
 }

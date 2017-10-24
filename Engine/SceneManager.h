@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "glew\include\GL\glew.h"
-#include "Tree.h"
 #include "Module.h"
 
 #define CHECKERS_HEIGHT 256
@@ -13,9 +12,8 @@ class GameObject;
 class Material;
 class Texture;
 class vec3;
-class TextureInporter;
 class Texture;
-class SceneInporter;
+class Tree;
 enum TEXTURE_TYPES;
 
 enum DRAW_MODE
@@ -31,7 +29,7 @@ class SceneManager : public Module
 {
 private:
 	DRAW_MODE draw_mode;
-	Tree game_objects;
+	Tree* game_objects;
 
 	//materials
 	std::vector<Material*> materials;
@@ -53,10 +51,6 @@ private:
 	bool debug_textures = false;
 	int current_material = 0;
 	unsigned int selected_texture = 0;
-
-public:
-	TextureInporter* texture_inporter = nullptr;
-	SceneInporter* scene_inporter = nullptr;
 
 public:
 	SceneManager(const char* name, bool start_enabled = true);
@@ -84,29 +78,34 @@ public:
 	bool DrawNormals() const;
 	unsigned int NumMaterials() const;
 
+	//Materials
 	Material* GetMaterial(unsigned int pos) const;
+	Material* GetMaterial(const std::string& name) const;
+	void DeleteMaterial(Material* material_to_delete);
 	bool HasMaterials() const;
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 	const GameObject* GetFocused() const;
 
 	void EmptyScene();
-	GameObject* CreateGameobject(const char* const name = nullptr);
+	GameObject* CreateGameObject(const char* const name = nullptr);
 	Material* CreateMaterial(const char* const name = nullptr);
 	void DeleteMaterial(const Material* to_delete);
 
-	//textures
-	Texture* LoadTextureStraightFromPath(const std::string& path);
+	//Textures
+	Texture* GetTexture(unsigned int i) const;
+	Texture* GetTexture(const std::string& name) const;
+	void DeleteTexture(Texture* texture_to_delete);
 	void AddTexture(Texture* new_texture);
 	void EmptyTextures();
-	Texture* GetTexture(unsigned int i) const;
 	const int GetTextureToDraw() const;
 	bool DebugTextures() const;
 	bool Exsists(const std::string& path) const;
 	void DrawTexture(unsigned int num_texture) const;
-	Texture* CreateTexture(const std::string& path, const TEXTURE_TYPES type, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0);
+
+	Texture* CreateTexture(const std::string& name, const TEXTURE_TYPES type = (TEXTURE_TYPES)1, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0); //(TEXTURE_TYPES)1 == TT_DIFFUSE wich can not be forward declared
 
 	//Scene
-	bool LoadScene(const std::string& path) const;
+	//bool LoadScene(const std::string& path) const;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

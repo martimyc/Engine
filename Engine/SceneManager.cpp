@@ -8,8 +8,8 @@
 #include "BasicGeometry.h"
 #include "GameObject.h"
 #include "Texture.h"
-#include "TextureInporter.h"
-#include "SceneInporter.h"
+#include "Tree.h"
+#include "ImportManager.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), wireframe(false), normals(false), polygons(true)
@@ -20,51 +20,9 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
-	texture_inporter = new TextureInporter();
-	scene_inporter = new SceneInporter();
+	game_objects = new Tree();
 
-	//checkers texture
-	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
-	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
-		for (int j = 0; j < CHECKERS_WIDTH; j++) {
-			int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
-			checkImage[i][j][0] = (GLubyte)c;
-			checkImage[i][j][1] = (GLubyte)c;
-			checkImage[i][j][2] = (GLubyte)c;
-			checkImage[i][j][3] = (GLubyte)255;
-		}
-	}
-
-	//Load Texture to VRAM
-	GLuint checkers_text_id;
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &checkers_text_id);
-	glBindTexture(GL_TEXTURE_2D, checkers_text_id);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//Anysotropy
-	GLfloat maxAniso = 0.0f;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	Texture* checkers = new Texture(std::string("Checkers"), TT_DIFFUSE, GL_TEXTURE_2D, checkers_text_id);
-	checkers->width = CHECKERS_WIDTH;
-	checkers->height = CHECKERS_HEIGHT;
-	AddTexture(checkers);
+	App->import_manager->LoadCheckers();
 
 	return true;
 }
@@ -138,7 +96,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		ImGui::End();
 	}
 
-	game_objects.Hirarchy();
+	game_objects->Hirarchy();
 
 	return ret;
 }
@@ -168,14 +126,14 @@ UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 				{
 					materials[i]->LoneConfig();
 
-					if (game_objects.GetFocused() != nullptr)
+					if (game_objects->GetFocused() != nullptr)
 					{
 						char apply[255];
-						sprintf(apply, "Apply to %s mesh num:", game_objects.GetFocused()->GetName().c_str());
+						sprintf(apply, "Apply to %s mesh num:", game_objects->GetFocused()->GetName().c_str());
 
 						if (ImGui::Button(apply))
-							if (game_objects.GetFocused() != nullptr)
-								game_objects.GetFocused()->ChangeMaterial(materials[i], current_mesh);
+							if (game_objects->GetFocused() != nullptr)
+								game_objects->GetFocused()->ChangeMaterial(materials[i], current_mesh);
 							else
 								LOG("Can not add material, no focused game object");
 
@@ -185,10 +143,10 @@ UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 						{
 							if (current_mesh < 0)
 								current_mesh = 0;
-							else if (current_mesh > game_objects.GetFocused()->GetNumMeshes())
+							else if (current_mesh > game_objects->GetFocused()->GetNumMeshes())
 							{
 								LOG("Mesh %i does not exsist in this game gbject");
-								current_mesh = game_objects.GetFocused()->GetNumMeshes();
+								current_mesh = game_objects->GetFocused()->GetNumMeshes();
 							}
 						}
 					}
@@ -257,7 +215,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 
 						ImGui::Image((void*)textures[i]->id, size, uv0, uv1);
 						ImGui::SameLine();
-						ImGui::Text("Path: %s\nWidth: %i\nHeight: %i", textures[i]->path.c_str(), textures[i]->width, textures[i]->height);
+						ImGui::Text("Width: %i\nHeight: %i", textures[i]->width, textures[i]->height);
 
 						if (ImGui::Button("Delete"))
 						{
@@ -299,7 +257,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
-	game_objects.Draw();
+	game_objects->Draw();
 
 	return UPDATE_CONTINUE;
 }
@@ -346,6 +304,26 @@ Material * SceneManager::GetMaterial(unsigned int pos) const
 	return materials[pos];
 }
 
+Material * SceneManager::GetMaterial(const std::string & name) const
+{
+	for (std::vector<Material*>::const_iterator it = materials.begin(); it != materials.end(); ++it)
+		if ((*it)->GetName() == name)
+			return (*it);
+
+	return nullptr;
+}
+
+void SceneManager::DeleteMaterial(Material* material_to_delete)
+{
+	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
+		if ((*it) == material_to_delete)
+		{
+			delete (*it);
+			materials.erase(it);
+			break;
+		}
+}
+
 bool SceneManager::HasMaterials() const
 {
 	return materials.size() > 0;
@@ -365,18 +343,18 @@ void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, fl
 
 const GameObject * SceneManager::GetFocused() const
 {
-	return game_objects.GetFocused();
+	return game_objects->GetFocused();
 }
 
 void SceneManager::EmptyScene()
 {
-	game_objects.Empty();
+	game_objects->Empty();
 }
 
 
-GameObject* SceneManager::CreateGameobject(const char* const name)
+GameObject* SceneManager::CreateGameObject(const char* const name)
 {
-	return game_objects.CreateGameobject(name);
+	return game_objects->CreateGameobject(name);
 }
 
 Material * SceneManager::CreateMaterial(const char * const name)
@@ -407,7 +385,7 @@ void SceneManager::DeleteMaterial(const Material * to_delete)
 			break;
 		}
 }
-
+/*
 Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)
 {
 	if (!Exsists(path))
@@ -428,7 +406,7 @@ Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)
 		LOG("Texture already exsists");
 
 	return nullptr;
-}
+}*/
 
 void SceneManager::AddTexture(Texture * new_texture)
 {
@@ -465,15 +443,16 @@ bool SceneManager::Exsists(const std::string & path) const
 {
 	std::string new_name;
 	size_t start = path.find_last_of("//");
-	size_t end = path.find_last_of(".");
+	size_t count = path.find_last_of(".") - start;
+
 	// make sure the poisition is valid
-	if (start == path.length() || end == path.length())
+	if (start == path.length())
 		LOG("Coud not create texture name");
 	else
-		new_name = path.substr(start + 1, end);
+		new_name = path.substr(start + 1, count);
 
 	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
-		if ((*it)->path == new_name)
+		if ((*it)->name == new_name)
 			return true;
 	return false;
 }
@@ -515,15 +494,36 @@ void SceneManager::DrawTexture(unsigned int num_texture) const
 		LOG("Can't draw texture, last existing texture is %i", textures.size() - 1);
 }
 
-Texture * SceneManager::CreateTexture(const std::string & path, const TEXTURE_TYPES type, const GLenum dimensions, const GLuint & id)
+Texture * SceneManager::GetTexture(const std::string & name) const
 {
-	Texture* new_texture = new Texture(path, type, dimensions, id);
+	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
+		if ((*it)->name == name)
+			return (*it);
+
+	return nullptr;
+}
+
+void SceneManager::DeleteTexture(Texture * texture_to_delete)
+{
+	for (std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+		if ((*it) == texture_to_delete)
+		{
+			delete (*it);
+			textures.erase(it);
+			break;
+		}
+}
+
+Texture * SceneManager::CreateTexture(const std::string & name, const TEXTURE_TYPES type, const GLenum dimensions, const GLuint & id)
+{
+	Texture* new_texture = new Texture(name, type, dimensions, id);
 	textures.push_back(new_texture);
 	return new_texture;
 }
 
+/*
 bool SceneManager::LoadScene(const std::string & path) const
 {
 	return scene_inporter->LoadScene(path);
-}
+}*/
 

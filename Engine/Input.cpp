@@ -6,12 +6,10 @@
 #include "Window.h"
 #include "Console.h"
 #include "Texture.h"
-#include "TextureInporter.h"
-#include "SceneManager.h"
-#include "SceneInporter.h"
+#include "TextureImporter.h"
+#include "ImportManager.h"
 #include "Camera3D.h"
 #include "Input.h"
-
 
 #define MAX_KEYS 300
 
@@ -139,12 +137,13 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->scene_manager->texture_inporter->Import(full_path);//LoadTextureStraightFromPath(full_path);
+					App->import_manager->ImportFromPath(full_path, IT_TEXTURE);//LoadTextureStraightFromPath(full_path);
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
 				{
-					App->scene_manager->LoadScene(full_path);
-					App->camera->CenterToObj();
+					App->import_manager->ImportFromPath(full_path, IT_SCENE);
+					//App->scene_manager->LoadScene(full_path);
+					//App->camera->CenterToObj();
 				}
 				else
 					LOG("Unknown file type");

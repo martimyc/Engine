@@ -21,6 +21,7 @@ class HardwareSoftwareInfo;
 class BasicGeometry;
 class SceneManager;
 class FileSystem;
+class ImportManager;
 
 namespace ImGui
 {
@@ -43,6 +44,7 @@ public:
 	BasicGeometry* primitives;
 	SceneManager* scene_manager;
 	FileSystem* file_system;
+	ImportManager* import_manager;
 
 private:
 	std::string title;

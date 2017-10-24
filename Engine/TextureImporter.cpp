@@ -5,9 +5,9 @@
 #include "Globals.h"
 #include "FileSystem.h"
 #include "Texture.h"
-#include "TextureInporter.h"
+#include "TextureImporter.h"
 
-TextureInporter::TextureInporter()
+TextureImporter::TextureImporter()
 {
 	// ----- Initialize DevIL libraries -----
 
@@ -23,27 +23,19 @@ TextureInporter::TextureInporter()
 	ilutRenderer(ILUT_OPENGL);
 }
 
-TextureInporter::~TextureInporter()
+TextureImporter::~TextureImporter()
 {}
 
-bool TextureInporter::Import(const std::string& path)
+bool TextureImporter::Import(std::string& file)
 {
 	bool ret = true;
 
-	std::string name;
-	std::string extension;
-
-	size_t start = path.find_last_of("\\");
-	size_t end = path.find_last_of(".");
-
-	if (start != path.length())
-		if(end != path.length())
-			name = path.substr(start + 1, end);
-		else
-			name = path.substr(start + 1);	
+	std::string path(App->file_system->GetAssets());
+	path += "\\";
+	path += file;
 
 	char* buffer = nullptr;
-	unsigned int length = App->file_system->LoadFile(path.c_str(), &buffer);
+	unsigned int length = App->file_system->LoadFileBinary(path, &buffer);
 
 	if (buffer == nullptr || length == 0)
 		return false;
@@ -74,9 +66,11 @@ bool TextureInporter::Import(const std::string& path)
 			data = new ILubyte[size]; // allocate data buffer
 			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
 			{
-				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, name.c_str(), "dds");
+				size_t count = file.find_last_of(".");
+				file = file.substr(0, count); //-1 to avoid dot
+				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, file.c_str(), "dds");
 				if (ret)
-					LOG("Saved %s succesfully", name);
+					LOG("Saved %s succesfully", file.c_str());
 			}
 			DELETE_ARRAY(data);
 		}
@@ -85,9 +79,14 @@ bool TextureInporter::Import(const std::string& path)
 	return ret;
 }
 
-bool TextureInporter::LoadTexture(const std::string& path, Texture& new_texture)
+bool TextureImporter::Load(const std::string& name, Texture& new_texture)
 {
 	bool ret = true;
+
+	std::string path(App->file_system->GetTextures());
+	path += "\\";
+	path += name;
+	path += ".dds";
 
 	ILuint imageID;				// Create an image ID as a ULuint
 
@@ -101,7 +100,7 @@ bool TextureInporter::LoadTexture(const std::string& path, Texture& new_texture)
 
 	ilBindImage(imageID); 			// Bind the image
 
-	success = ilLoadImage(path.c_str()); 	// Load the image file
+	success = ilLoad(IL_DDS, path.c_str()); 	// Load the image file
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
 	{
@@ -118,6 +117,7 @@ bool TextureInporter::LoadTexture(const std::string& path, Texture& new_texture)
 		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
 		// Quit out if we failed the conversion
+
 		if (!success)
 		{
 			error = ilGetError();
@@ -179,4 +179,48 @@ bool TextureInporter::LoadTexture(const std::string& path, Texture& new_texture)
 	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
 
 	return ret;
+}
+
+void TextureImporter::LoadCheckers(Texture & new_texture)
+{
+	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
+	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
+		for (int j = 0; j < CHECKERS_WIDTH; j++) {
+			int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
+			checkImage[i][j][0] = (GLubyte)c;
+			checkImage[i][j][1] = (GLubyte)c;
+			checkImage[i][j][2] = (GLubyte)c;
+			checkImage[i][j][3] = (GLubyte)255;
+		}
+	}
+
+	//Load Texture to VRAM
+	GLuint checkers_text_id;
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &checkers_text_id);
+	glBindTexture(GL_TEXTURE_2D, checkers_text_id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//Anysotropy
+	GLfloat maxAniso = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
+		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	new_texture.id = checkers_text_id;
+	new_texture.width = CHECKERS_WIDTH;
+	new_texture.height = CHECKERS_HEIGHT;
 }
