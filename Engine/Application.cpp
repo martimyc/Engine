@@ -76,6 +76,8 @@ bool Application::Init()
 
 	dock_context = new ImGui::DockContext();
 
+	dock_context->LoadDocks();
+
 	// Call Init() in all modules
 	for(; it != modules.end() && ret == true; ++it)
 		ret = (*it)->Init();
@@ -198,6 +200,7 @@ bool Application::CleanUp()
 	for (std::vector<Module*>::const_reverse_iterator it = modules.rbegin(); it != modules.rend() && ret == true; ++it)
 		ret = (*it)->CleanUp();
 
+	dock_context->SaveDocks();
 	DELETE_PTR(dock_context);
 
 	return ret;

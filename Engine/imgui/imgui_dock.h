@@ -84,6 +84,9 @@ namespace ImGui
 
 		void SetWorkspacePosSize(ImVec2 _pos, ImVec2 _size);
 
+		void LoadDocks();
+		void SaveDocks();
+
 	private:
 		ImVec2 workspace_pos;
 		ImVec2 workspace_size;
