@@ -22,31 +22,31 @@ bool FileSystem::Init()
 			LOG("Assets folder could not be created");
 
 	std::string library = working_directory;
-	library += "\\Library";
+	library += LIBRARY_FOLDER;
 
 	if (!Exsists(library))
 		if (!CreateFolder("Library", true))
 			LOG("Library folder could not be created");
 
-	std::string meshes = library;
-	meshes += "\\Meshes";
+	std::string meshes = working_directory;
+	meshes += LIBRARY_MESHES_FOLDER;
 
 	if (!Exsists(meshes))
-		if (!CreateFolder("Meshes"))
+		if (!CreateFolder("Meshes", false, LIBRARY_FOLDER))
 			LOG("Meshes folder could not be created");
 
-	std::string materials = library;
-	materials += "\\Materials";
+	std::string materials = working_directory;
+	materials += LIBRARY_MATERIALS_FOLDER;
 
 	if (!Exsists(materials))
-		if (!CreateFolder("Materials"))
+		if (!CreateFolder("Materials", false, LIBRARY_FOLDER))
 			LOG("Materials folder could not be created");
 
-	std::string textures = library;
-	textures += "\\Textures";
+	std::string textures = working_directory;
+	textures += LIBRARY_TEXTURES_FOLDER;
 
-	if (!Exsists(meshes))
-		if (!CreateFolder("Textures"))
+	if (!Exsists(textures))
+		if (!CreateFolder("Textures", false, LIBRARY_FOLDER))
 			LOG("Textures folder could not be created");
 
 	return true;
@@ -57,12 +57,9 @@ bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relat
 	bool ret = true;
 
 	std::string new_directory(working_directory);
-	new_directory += "\\";
 	if (relative_path != nullptr)
-	{
 		new_directory += relative_path;
-		new_directory += "\\";
-	}
+	new_directory += "\\";
 	new_directory += name;
 
 	if (CreateDirectory(new_directory.c_str(), NULL) != 0)
