@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Transformation.h"
 #include "Texture.h"
 #include "TextureInporter.h"
 #include "SceneInporter.h"
@@ -40,7 +41,7 @@ bool SceneInporter::LoadScene(const std::string& path) const
 	{
 		bool* material_loads;
 		unsigned int previous_loaded_materials = App->scene_manager->NumMaterials();
-
+		 
 		if (scene->HasMaterials())
 		{
 			material_loads = new bool[scene->mNumMaterials];
@@ -94,6 +95,8 @@ bool SceneInporter::LoadScene(const std::string& path) const
 				else
 					LOG("Material for this mesh did not load correctly");
 			}
+
+			new_game_object->CreateTransformation();
 		}
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
