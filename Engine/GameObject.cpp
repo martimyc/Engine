@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "Console.h"
 #include "Material.h"
+#include "Transformation.h"
 #include "Texture.h"
 #include "Renderer3D.h"
 #include "Application.h"
@@ -39,10 +40,21 @@ void GameObject::Draw() const
 {
 	if (components.size() > 0)
 	{
+		std::vector<Component*>::const_iterator transform_it;
+		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+			if ((*it)->Enabled())
+				if ((*it)->GetType() == CT_TRANSFORMATION)
+				{
+					transform_it = it;
+					((Transform*)*it)->TranslateRotateScalate();
+				}
+	
 		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			if ((*it)->Enabled())
 				if((*it)->GetType() == CT_MESH)
 					App->renderer_3d->DrawMesh((Mesh*)(*it));
+
+		((Transform*)*transform_it)->ResetTranslateRotateScalate();
 	}		
 }
 
@@ -154,6 +166,19 @@ Mesh * GameObject::CreateMesh(const char *const name)
 	components.push_back(new_mesh);
 
 	return new_mesh;
+}
+
+Transform * GameObject::CreateTransformation(const char* const name)
+{
+	Transform* transformation;
+	if (!name)
+		transformation = new Transform("Transformation");
+	else
+		transformation = new Transform(name);
+
+	components.push_back(transformation);
+
+	return transformation;
 }
 
 void GameObject::DeleteMesh(const Mesh* to_delete)

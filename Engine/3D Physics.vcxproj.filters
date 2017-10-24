@@ -540,6 +540,9 @@
     <ClInclude Include="MaterialImporter.h">
       <Filter>Sources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="Transformation.h">
+      <Filter>Sources\Game Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -760,6 +763,9 @@
     </ClCompile>
     <ClCompile Include="MaterialImporter.cpp">
       <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Transformation.cpp">
+      <Filter>Sources\Game Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -228,6 +228,7 @@
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureImporter.h" />
+    <ClInclude Include="Transformation.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
@@ -304,6 +305,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />
     <ClCompile Include="TextureImporter.cpp" />
+    <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

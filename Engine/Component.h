@@ -7,7 +7,8 @@ enum COMPONENT_TYPE
 {
 	CT_NO_TYPE = 0,
 	CT_MESH,
-	CT_MATERIAL
+	CT_MATERIAL,
+	CT_TRANSFORMATION
 };
 
 class Component

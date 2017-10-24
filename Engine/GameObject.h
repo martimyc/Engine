@@ -10,6 +10,7 @@ class Material;
 class Texture;
 class TreeNode;
 class Mesh;
+class Transform;
 
 namespace MATH_NAMESPACE_NAME 
 {
@@ -55,6 +56,7 @@ public:
 
 	//Creates for all components
 	Mesh* CreateMesh(const char* const name = nullptr);
+	Transform* CreateTransformation(const char* const name = nullptr);
 	void DeleteMesh(const Mesh* to_delete);
 };
 
