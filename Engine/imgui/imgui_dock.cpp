@@ -1,9 +1,10 @@
+#include <string>
+#include "..\Parson\parson.h"
 #include "imgui.h"
 #define IMGUI_DEFINE_PLACEMENT_NEW
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
 #include "imgui_dock.h"
-
 
 namespace ImGui
 {
@@ -74,6 +75,107 @@ namespace ImGui
 			g_dock.workspace_pos = _pos;
 			g_dock.workspace_size = _size;
 		}
+	}
+
+	void DockContext::LoadDocks()
+	{
+		/*
+		JSON_Value* config = json_parse_file("config.json");
+		JSON_Object* obj = json_value_get_object(config);
+		JSON_Object* all_docks = json_object_dotget_object(obj, "All Docks");
+
+		const int num_docks = json_object_get_number(all_docks, "num_docks");
+
+		for (int i = 0; i < num_docks; i++)
+		{
+			std::string temp = "Dock" + std::to_string(i);
+			JSON_Object* dock_obj = json_object_dotget_object(obj, temp.c_str());
+			
+			Dock* dock = new Dock();
+			//TODO: dock->label = json_object_get_string(dock_obj, "label");
+			//dock->id = json_object_get_number(dock_obj, "id");
+			//dock->prev_tab = json_object_get_number(dock_obj, "prev_tab");
+			//dock->id = json_object_get_number(dock_obj, "id");
+
+			g_dock.m_docks.push_back(dock);
+		}
+		*/
+	}
+
+	void DockContext::SaveDocks()
+	{
+		/*
+		JSON_Value* config = json_parse_file("config.json");
+		JSON_Object* obj = json_value_get_object(config);
+
+		//TODO: IDK WHY can't create a root to put all the docks & the number of them.
+		JSON_Object* dock_root_obj = json_object_dotget_object(obj, "AllDocks");
+		JSON_Value* dock_root = json_value_init_object();
+
+		json_object_set_number(json_object(dock_root), "num_docks", g_dock.m_docks.size());
+		json_object_dotset_value(obj, "All Docks", dock_root);
+		//----
+		
+		for (int i = 0; i < g_dock.m_docks.size(); i++)
+		{
+			std::string temp = "Dock" + std::to_string(i);			
+			
+			JSON_Object* dock_obj = json_object_dotget_object(dock_root_obj, temp.c_str());
+			JSON_Value* dock = json_value_init_object(); 
+			
+			json_object_set_string(json_object(dock), "label", g_dock.m_docks[i]->label);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_set_number(json_object(dock), "id", g_dock.m_docks[i]->id);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "prev_tab", getDockIndex(g_dock.m_docks[i]->next_tab));
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "next_tab", getDockIndex(g_dock.m_docks[i]->prev_tab));
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "child_0", getDockIndex(g_dock.m_docks[i]->children[0]));
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "child_1", getDockIndex(g_dock.m_docks[i]->children[1]));
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "parent", getDockIndex(g_dock.m_docks[i]->parent));
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_boolean(json_object(dock), "active", g_dock.m_docks[i]->active);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "pos_x", g_dock.m_docks[i]->pos.x);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "pos_y", g_dock.m_docks[i]->pos.y);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "size_x", g_dock.m_docks[i]->size.x);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "size_y", g_dock.m_docks[i]->size.y);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "status", g_dock.m_docks[i]->status);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			//TODO: Location?
+
+			json_object_dotset_boolean(json_object(dock), "opened", g_dock.m_docks[i]->opened);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_boolean(json_object(dock), "first", g_dock.m_docks[i]->first);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+
+			json_object_dotset_number(json_object(dock), "last_frame", g_dock.m_docks[i]->last_frame);
+			json_object_dotset_value(obj, temp.c_str(), dock);
+		}
+
+		json_serialize_to_file(config, "config.json");
+		*/
 	}
 
 	DockContext::Dock::Dock() : id(0)
@@ -1004,9 +1106,9 @@ namespace ImGui
 	{
 		if (!dock) return -1;
 
-		for (int i = 0; i < m_docks.size(); ++i)
+		for (int i = 0; i < g_dock.m_docks.size(); ++i)
 		{
-			if (dock == m_docks[i]) return i;
+			if (dock == g_dock.m_docks[i]) return i;
 		}
 
 		IM_ASSERT(false);

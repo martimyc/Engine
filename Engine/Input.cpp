@@ -139,7 +139,7 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->scene_manager->LoadTextureStraightFromPath(full_path);
+					App->scene_manager->texture_inporter->Import(full_path);//LoadTextureStraightFromPath(full_path);
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
 				{

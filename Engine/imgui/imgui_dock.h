@@ -70,17 +70,22 @@ namespace ImGui
 		DockContext();
 		~DockContext();
 
+	private:
 		ImVector<Dock*> m_docks;
 		ImVec2 m_drag_offset;
 		Dock* m_current = nullptr;
 		int m_last_frame = 0;
 		EndAction_ m_end_action;
 		bool m_is_begin_open = false;
-		
+
+	public:
 		bool BeginDock(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0, const ImVec2& default_size = ImVec2(-1, -1));
 		void EndDock();
 
 		void SetWorkspacePosSize(ImVec2 _pos, ImVec2 _size);
+
+		void LoadDocks();
+		void SaveDocks();
 
 	private:
 		ImVec2 workspace_pos;

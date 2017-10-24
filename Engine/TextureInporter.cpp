@@ -30,6 +30,18 @@ bool TextureInporter::Import(const std::string& path)
 {
 	bool ret = true;
 
+	std::string name;
+	std::string extension;
+
+	size_t start = path.find_last_of("\\");
+	size_t end = path.find_last_of(".");
+
+	if (start != path.length())
+		if(end != path.length())
+			name = path.substr(start + 1, end);
+		else
+			name = path.substr(start + 1);	
+
 	char* buffer = nullptr;
 	unsigned int length = App->file_system->LoadFile(path.c_str(), &buffer);
 
@@ -61,7 +73,11 @@ bool TextureInporter::Import(const std::string& path)
 		if (size > 0) {
 			data = new ILubyte[size]; // allocate data buffer
 			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
-				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, "texture", "dds");
+			{
+				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, name.c_str(), "dds");
+				if (ret)
+					LOG("Saved %s succesfully", name);
+			}
 			DELETE_ARRAY(data);
 		}
 	}
