@@ -11,6 +11,8 @@ enum COMPONENT_TYPE
 	CT_TRANSFORMATION
 };
 
+class GameObject;
+
 class Component
 {
 private:
@@ -20,9 +22,10 @@ private:
 protected:
 	std::string name;
 	bool edit_name;
+	const GameObject* game_object;
 
 public:
-	Component(COMPONENT_TYPE type, const char* name, bool enabled = true): type(type), enabled(enabled), name(name), edit_name(false)
+	Component(COMPONENT_TYPE type, const char* name, const GameObject* game_object, bool enabled = true): type(type), enabled(enabled), name(name), game_object(game_object), edit_name(false)
 	{}
 	~Component()
 	{}

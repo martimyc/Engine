@@ -1,27 +1,27 @@
 #include "SDL2\include\SDL_opengl.h"
-#include "Assimp\include\matrix4x4.inl"
+#include "MathGeoLib\src\Math\float3x3.h"
 #include "imgui/imgui.h"
 #include "Globals.h"
 #include "Transformation.h"
 
-void Transform::Quat2Euler(const aiQuaternion q, float & roll, float & pitch, float & yaw)
+void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)
 {
-	double sinr = +2.0 * (q.w * q.x + q.y * q.z);
-	double cosr = +1.0 - 2.0 * (q.x * q.x + q.y * q.y);
+	double sinr = +2.0 * (q.x * q.y + q.z * q.w);
+	double cosr = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);
 	roll = atan2(sinr, cosr);
 
-	double sinp = +2.0 * (q.w * q.y - q.z * q.x);
+	double sinp = +2.0 * (q.x * q.z - q.w * q.y);
 	if (fabs(sinp) >= 1)
 		pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
 	else
 		pitch = asin(sinp);
 
-	double siny = +2.0 * (q.w * q.z + q.x * q.y);
-	double cosy = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);
+	double siny = +2.0 * (q.x * q.w + q.y * q.z);
+	double cosy = +1.0 - 2.0 * (q.z * q.z + q.w * q.w);
 	yaw = atan2(siny, cosy);
 }
 
-void Transform::Euler2Quat(const float roll, const float pitch, const float yaw, aiQuaternion& q)
+void Transform::Euler2Quat(const float roll, const float pitch, const float yaw, Quat& q)
 {
 	// Abbreviations for the various angular functions, so we have to calculate the less cos/sin as possible
 	double cy = cos(yaw * 0.5);
@@ -31,41 +31,33 @@ void Transform::Euler2Quat(const float roll, const float pitch, const float yaw,
 	double cp = cos(pitch * 0.5);
 	double sp = sin(pitch * 0.5);
 
-	q.w = cy * cr * cp + sy * sr * sp;
-	q.x = cy * sr * cp - sy * cr * sp;
-	q.y = cy * cr * sp + sy * sr * cp;
-	q.z = sy * cr * cp - cy * sr * sp;
+	q.x = cy * cr * cp + sy * sr * sp;
+	q.y = cy * sr * cp - sy * cr * sp;
+	q.z = cy * cr * sp + sy * sr * cp;
+	q.w = sy * cr * cp - cy * sr * sp;
 }
 
-Transform::Transform(const char * const name, bool enabled) :Component(CT_TRANSFORMATION, name, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(1, 0, 0, 0)
+Transform::Transform(const char * const name, const GameObject* game_object, bool enabled) :Component(CT_TRANSFORMATION, name, game_object, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
 {
-	matrix = new aiMatrix4x4();
+	transform_matrix = transform_matrix.identity;
 }
 
 Transform::~Transform()
 {
-	DELETE_PTR(matrix)
 }
 
-void Transform::TranslateRotateScalate()
+const float * Transform::GetTransformMatrix()
 {
-	const GLfloat* GLmatrix = &matrix->a1;
-	glPushMatrix();
-	glLoadMatrixf(GLmatrix);
-}
-
-void Transform::ResetTranslateRotateScalate()
-{
-	glPopMatrix();
+	return &transform_matrix.At(0, 0);
 }
 
 void Transform::Inspector(int num_component)
 {
 	if (ImGui::TreeNode(name.c_str()))
 	{
-		ImGui::InputFloat("Pos x", &translation.x);
-		ImGui::InputFloat("Pos y", &translation.y);
-		ImGui::InputFloat("Pos z", &translation.z);
+		ImGui::InputFloat("Pos x", &translation.x, 0.0f, 0.0f, 2);
+		ImGui::InputFloat("Pos y", &translation.y, 0.0f, 0.0f, 2);
+		ImGui::InputFloat("Pos z", &translation.z, 0.0f, 0.0f, 2);
 
 		ImGui::Separator();
 
@@ -75,9 +67,9 @@ void Transform::Inspector(int num_component)
 		pitch *= RADTODEG;
 		yaw *= RADTODEG;
 
-		ImGui::InputFloat("Rotation x", &roll);
-		ImGui::InputFloat("Rotation y", &pitch);
-		ImGui::InputFloat("Rotation z", &yaw);
+		ImGui::InputFloat("Rotation x", &roll, 0.0f, 0.0f, 2);
+		ImGui::InputFloat("Rotation y", &pitch, 0.0f, 0.0f, 2);
+		ImGui::InputFloat("Rotation z", &yaw, 0.0f, 0.0f, 2);
 		
 		roll *= DEGTORAD;
 		pitch *= DEGTORAD;
@@ -87,24 +79,25 @@ void Transform::Inspector(int num_component)
 
 		ImGui::Separator();
 
-		aiVector3D scaling_temp = scaling;
-		ImGui::InputFloat("Scale x", &scaling.x);
-		ImGui::InputFloat("Scale y", &scaling.y);
-		ImGui::InputFloat("Scale z", &scaling.z);
+		ImGui::InputFloat("Scale x", &scaling.x, 0.0f, 0.0f, 2);
+		ImGui::InputFloat("Scale y", &scaling.y, 0.0f, 0.0f, 2);
+		ImGui::InputFloat("Scale z", &scaling.z, 0.0f, 0.0f, 2);
 
-		matrix->a4 = translation.x;
-		matrix->b4 = translation.y;
-		matrix->c4 = translation.z;
+		transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));
+		
+		float3x3 rotation_matrix(rotation);
+			/*
+1.0f - 2.0f*rotation.y*rotation.y - 2.0f*rotation.z*rotation.z, 2.0f*rotation.x*rotation.y - 2.0f*rotation.z*rotation.w, 2.0f*rotation.x*rotation.z + 2.0f*rotation.y*rotation.w,
+2.0f*rotation.x*rotation.y + 2.0f*rotation.z*rotation.w, 1.0f - 2.0f*rotation.x*rotation.x - 2.0f*rotation.z*rotation.z, 2.0f*rotation.y*rotation.z - 2.0f*rotation.x*rotation.w,
+2.0f*rotation.x*rotation.z - 2.0f*rotation.y*rotation.w, 2.0f*rotation.y*rotation.z + 2.0f*rotation.x*rotation.w, 1.0f - 2.0f*rotation.x*rotation.x - 2.0f*rotation.y*rotation.y,
+0.0f, 0.0f, 0.0f);
+			*/
+		transform_matrix.Set3x3Part(rotation_matrix);
 
-		//TODO Rotate/scalate
-		/*
-		if (scaling_temp != scaling)
-		{
-			matrix->a1 *= scaling.x;
-			matrix->b2 *= scaling.y;
-			matrix->c3 *= scaling.z;
-		}
-		*/
+		transform_matrix[0][0] *= scaling.x;
+		transform_matrix[1][1] *= scaling.y;
+		transform_matrix[2][2] *= scaling.z;
+
 		ImGui::TreePop();
 	}
 }

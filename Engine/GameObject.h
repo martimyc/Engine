@@ -46,6 +46,8 @@ public:
 
 	void ReserveComponentSpace(const GLuint& num_components);
 
+	const float* const GetTransformationMatrix()const;
+
 	void GenerateBoundingBox(AABB& bounding_box) const;
 
 	void ChangeMaterial(Material* new_material, int mesh_num);

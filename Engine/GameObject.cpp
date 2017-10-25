@@ -40,21 +40,21 @@ void GameObject::Draw() const
 {
 	if (components.size() > 0)
 	{
-		std::vector<Component*>::const_iterator transform_it;
+		/*std::vector<Component*>::const_iterator transform_it;
 		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			if ((*it)->Enabled())
 				if ((*it)->GetType() == CT_TRANSFORMATION)
 				{
 					transform_it = it;
 					((Transform*)*it)->TranslateRotateScalate();
-				}
+				}*/
 	
 		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			if ((*it)->Enabled())
 				if((*it)->GetType() == CT_MESH)
 					App->renderer_3d->DrawMesh((Mesh*)(*it));
 
-		((Transform*)*transform_it)->ResetTranslateRotateScalate();
+		//((Transform*)*transform_it)->ResetTranslateRotateScalate();
 	}		
 }
 
@@ -101,6 +101,16 @@ void GameObject::Reset()
 void GameObject::ReserveComponentSpace(const GLuint & num_components)
 {
 	components.reserve(num_components * sizeof(Component*));
+}
+
+const float * const GameObject::GetTransformationMatrix()const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+	{
+		if ((*it)->GetType() == CT_TRANSFORMATION)
+			return ((Transform*)*it)->GetTransformMatrix();
+	}
+	return nullptr;
 }
 
 void GameObject::GenerateBoundingBox(AABB & bounding_box) const
@@ -158,10 +168,10 @@ Mesh * GameObject::CreateMesh(const char *const name)
 	{
 		char new_name[255];
 		sprintf(new_name, "Mesh %i", GetNumMeshes() + 1);
-		new_mesh = new Mesh(new_name);
+		new_mesh = new Mesh(new_name, this);
 	}
 	else
-		new_mesh = new Mesh(name);
+		new_mesh = new Mesh(name, this);
 
 	components.push_back(new_mesh);
 
@@ -172,9 +182,9 @@ Transform * GameObject::CreateTransformation(const char* const name)
 {
 	Transform* transformation;
 	if (!name)
-		transformation = new Transform("Transformation");
+		transformation = new Transform("Transformation", this);
 	else
-		transformation = new Transform(name);
+		transformation = new Transform(name, this);
 
 	components.push_back(transformation);
 

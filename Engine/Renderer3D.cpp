@@ -182,16 +182,24 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//meshes
 	Material* material_in_use;
+	const float* transform_matrix;
 	while (draw_queue.size() > 0)
 	{
 		material_in_use = draw_queue.top()->GetMaterial();
 		if(material_in_use != nullptr)
 			material_in_use->EnableDraw();
+
+		transform_matrix = draw_queue.top()->GetTransformMat();
+		glPushMatrix();
+		glLoadMatrixf(transform_matrix);
+
 		while (draw_queue.size() > 0 && draw_queue.top()->GetMaterial() == material_in_use)
 		{
 			draw_queue.top()->Draw();
 			draw_queue.pop();
 		}
+		glPopMatrix();
+
 		if (material_in_use != nullptr)
 			material_in_use->DisableDraw();
 	}

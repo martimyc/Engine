@@ -3,11 +3,13 @@
 #include "Globals.h"
 #include "Application.h"
 #include "SceneManager.h"
+#include "GameObject.h"
 #include "Material.h"
 #include "Texture.h"
+#include "Transformation.h"
 #include "Mesh.h"
 
-Mesh::Mesh(const char* const name, bool enabled): Component(CT_MESH, name, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+Mesh::Mesh(const char* const name, const GameObject* game_object, bool enabled): Component(CT_MESH, name, game_object, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
 
 Mesh::~Mesh()
@@ -155,6 +157,11 @@ void Mesh::Inspector(int num_component)
 			ImGui::Text("No material aplied to this mesh");
 		ImGui::TreePop();
 	}
+}
+
+const float * Mesh::GetTransformMat()const
+{
+	return game_object->GetTransformationMatrix();
 }
 
 void Mesh::GetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices) const

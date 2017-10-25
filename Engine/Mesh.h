@@ -4,6 +4,7 @@
 #include "glew\include\GL\glew.h"
 #include "Component.h"
 
+class GameObject;
 class Material;
 class Texture;
 
@@ -40,12 +41,14 @@ private:
 	Material* material = nullptr;
 
 public:
-	Mesh(const char* const name, bool enabled = true);
+	Mesh(const char* const name, const GameObject* game_object, bool enabled = true);
 	~Mesh();
 
 	void Draw() const;
 
 	void Inspector(int num_component);
+
+	const float* GetTransformMat()const ;
 
 	//Getters
 	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;
