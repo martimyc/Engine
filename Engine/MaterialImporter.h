@@ -25,8 +25,8 @@ public:
 	MaterialImporter();
 	~MaterialImporter();
 
-	virtual bool Import(const aiMaterial* material, const std::string& scene_path, uint num_material, std::string& name);
-	virtual bool Load(const std::string& name, Material& new_material);
+	bool Import(const aiMaterial* material, const std::string& scene_path, const std::string& name);
+	bool Load(const std::string& name, Material& new_material);
 };
 
 #endif // !MATERIAL_IMPORTER

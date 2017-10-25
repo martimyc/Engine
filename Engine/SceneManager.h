@@ -11,6 +11,7 @@
 class GameObject;
 class Material;
 class Texture;
+class Mesh;
 class vec3;
 class Texture;
 class Tree;
@@ -30,20 +31,23 @@ class SceneManager : public Module
 private:
 	DRAW_MODE draw_mode;
 	Tree* game_objects;
-
-	//materials
-	std::vector<Material*> materials;
 	bool assets_enable = true;
-	unsigned int selected_material = 0;
-
 	bool config_scene = true;
 	bool wireframe;
 	bool normals;
 	bool polygons;
 
-	int current_mesh = 0;
+	//materials
+	std::vector<Material*> materials;
+	unsigned int selected_material = 0;
 	unsigned int next_material = 0;
 	unsigned int material_priority = 0;
+	int current_mesh = 0; //determines to wich mesh of the selected Game object will the material go MAYBE CHANGE NAME
+
+	//meshes //TODO UI
+	std::vector<Mesh*> meshes;
+	unsigned int selected_mesh = 0;
+	unsigned int next_mesh = 0;
 
 	//Textures
 	std::vector<Texture*> textures;
@@ -72,13 +76,21 @@ public:
 
 	void ApplyToMaterial(Texture* new_text, int material);
 
+	//reserve space in vecs to avoid having to move the whole mem if adding various elements
 	void ReserveMaterialSpace(const GLuint& num_materials);
-	//void ReserveGameObjectSpace(const GLuint& num_materials); //TODO
+	void ReserveMeshSpace(const GLuint& num_meshes);
+	void ReserveTextureSpace(const GLuint& num_textures);
+
+	void EmptyScene();
 
 	bool DrawNormals() const;
 	unsigned int NumMaterials() const;
 
+	//Game Objects
+	GameObject* CreateGameObject(const char* const name = nullptr);
+
 	//Materials
+	Material* CreateMaterial(const char* const name = nullptr);
 	Material* GetMaterial(unsigned int pos) const;
 	Material* GetMaterial(const std::string& name) const;
 	void DeleteMaterial(Material* material_to_delete);
@@ -86,12 +98,14 @@ public:
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 	const GameObject* GetFocused() const;
 
-	void EmptyScene();
-	GameObject* CreateGameObject(const char* const name = nullptr);
-	Material* CreateMaterial(const char* const name = nullptr);
-	void DeleteMaterial(const Material* to_delete);
+	//Meshes
+	Mesh* CreateMesh(const char* const name = nullptr);
+	Mesh* GetMesh(unsigned int pos) const;
+	Mesh* GetMesh(const std::string& name) const;
+	void DeleteMesh(Mesh* mesh_to_delete);
 
 	//Textures
+	Texture* CreateTexture(const std::string& name, const TEXTURE_TYPES type = (TEXTURE_TYPES)1, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0); //(TEXTURE_TYPES)1 == TT_DIFFUSE wich can not be forward declared
 	Texture* GetTexture(unsigned int i) const;
 	Texture* GetTexture(const std::string& name) const;
 	void DeleteTexture(Texture* texture_to_delete);
@@ -101,8 +115,6 @@ public:
 	bool DebugTextures() const;
 	bool Exsists(const std::string& path) const;
 	void DrawTexture(unsigned int num_texture) const;
-
-	Texture* CreateTexture(const std::string& name, const TEXTURE_TYPES type = (TEXTURE_TYPES)1, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0); //(TEXTURE_TYPES)1 == TT_DIFFUSE wich can not be forward declared
 
 	//Scene
 	//bool LoadScene(const std::string& path) const;

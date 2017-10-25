@@ -2,6 +2,12 @@
 #define MESH_IMPORTER
 
 #include <string>
+#include "Assimp\include\cimport.h"
+#include "Assimp\include\cimport.h"
+#include "Assimp\include\scene.h"
+#include "Assimp\include\postprocess.h"
+#include "Assimp\include\cfileio.h"
+#include "glew\include\GL\glew.h"
 
 class Mesh;
 
@@ -13,8 +19,8 @@ public:
 	MeshImporter();
 	~MeshImporter();
 
-	bool Import(const std::string& dir);
-	bool Load(const std::string& path, Mesh& new_texture);
+	bool Import(const aiMesh* mesh, const std::string& scene_path,const std::string& name);
+	bool Load(const std::string& name, Mesh& new_mesh);
 };
 
 #endif // !MESH_IMPORTER

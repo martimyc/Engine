@@ -55,7 +55,6 @@ public:
 	const std::string& GetName() const;
 
 	//Creates for all components
-	Mesh* CreateMesh(const char* const name = nullptr);
 	Transform* CreateTransformation(const char* const name = nullptr);
 	void DeleteMesh(const Mesh* to_delete);
 };

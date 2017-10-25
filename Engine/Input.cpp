@@ -142,8 +142,15 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				else if (extension == "fbx" || extension == "FBX")
 				{
 					App->import_manager->ImportFromPath(full_path, IT_SCENE);
-					//App->scene_manager->LoadScene(full_path);
 					//App->camera->CenterToObj();
+				}
+				else if (extension == ".mm")
+				{
+					size_t pos = full_path.find_last_of("\\");
+					size_t count = full_path.find_last_of(".") - pos;
+					std::string file_name(full_path.substr(pos + 1, count - 1));
+					//TODO should check path to se if in assets
+					//App->import_manager->Load(file_name);
 				}
 				else
 					LOG("Unknown file type");

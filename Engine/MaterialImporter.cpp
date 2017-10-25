@@ -13,14 +13,9 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-bool MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path,uint num_material, std::string& name)
+bool MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name)
 {
 	bool ret = true;
-	size_t start = scene_path.find_last_of("\\");
-	size_t count = scene_path.find_last_of(".") - start;
-
-	std::string scene_name(scene_path.substr(start + 1, count - 1));
-	std::string dir(scene_path.substr(NULL, start + 1));
 
 	if (material->GetTextureCount(aiTextureType_NONE))
 	{
@@ -59,23 +54,26 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) 
 			{
-				std::string full_path = dir + Path.data;
-				start = full_path.find_last_of("\\");
-				count = full_path.find_last_of(".") - start;
+				std::string full_path = scene_path + Path.data;
+				size_t start = full_path.find_last_of("\\");
+				size_t count = full_path.find_last_of(".") - start;
 
-				std::string texture_name (full_path.substr(start + 1, count - 1)); //-1 to avoid dot
-
-				uint text_name_length = texture_name.length();
-				memcpy(iterator, &text_name_length, sizeof(uint));
-				iterator += sizeof(uint);
-				memcpy(iterator, texture_name.c_str(), text_name_length);
-				iterator += text_name_length;
-				memcpy(iterator, "\0", 1);
-				iterator++;				
-				
 				if (!App->import_manager->ImportFromPath(full_path, IT_TEXTURE))
-					LOG("Error importing texture '%s'\n", full_path.c_str());
+				{
+					LOG("Error importing texture '%s', it won't be aded to material '%s'", full_path.c_str(), name.c_str());
+				}
+				else
+				{
+					std::string texture_name(full_path.substr(start + 1, count - 1)); //-1 to avoid dot
 
+					uint text_name_length = texture_name.length();
+					memcpy(iterator, &text_name_length, sizeof(uint));
+					iterator += sizeof(uint);
+					memcpy(iterator, texture_name.c_str(), text_name_length);
+					iterator += text_name_length;
+					memcpy(iterator, "\0", 1);
+					iterator++;
+				}				
 			}
 		}
 	}
@@ -84,13 +82,14 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 
 	uint length = iterator - buffer;
 
+	if (length > MAX_FILE_SIZE)
+		LOG("Maximum file size exeeded while importing %s from %s", name.c_str(), scene_path.c_str());
+
 	//TODO Blend and strenght functions when lightning is done
 
-	char material_name[255];
-	sprintf(material_name, "Material_%s_%i", scene_name.c_str(), num_material);
-	name = material_name;
-
 	ret = App->file_system->SaveFile(buffer, length, LIBRARY_MATERIALS_FOLDER, name.c_str(), "mm");
+
+	delete [] buffer;
 
 	return ret;
 }
