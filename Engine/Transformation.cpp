@@ -72,6 +72,11 @@ void Transform::Inspector(int num_component)
 		pitch *= RADTODEG;
 		yaw *= RADTODEG;
 
+		//It's the same, but visually better for the user
+		if (roll == -180)	roll = 180;
+		if (pitch == -180)	pitch = 180;
+		if (yaw == -180)	yaw = 180;
+
 		if (ImGui::DragFloat("Rotation x", &yaw))	rotate = true;
 		if (ImGui::DragFloat("Rotation y", &pitch))	rotate = true;
 		if (ImGui::DragFloat("Rotation z", &roll))	rotate = true;
