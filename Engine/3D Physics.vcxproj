@@ -230,6 +230,7 @@
     <ClInclude Include="TextureImporter.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="Tree.h" />
+    <ClInclude Include="Object3D.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="p2Point.h" />
   </ItemGroup>
