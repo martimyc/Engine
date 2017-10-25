@@ -367,10 +367,10 @@ Mesh * SceneManager::CreateMesh(const char * const name)
 	{
 		char new_name[255];
 		sprintf(new_name, "Mesh %i", next_mesh);
-		new_mesh = new Mesh(new_name);
+		new_mesh = new Mesh(new_name, nullptr);
 	}
 	else
-		new_mesh = new Mesh(name);
+		new_mesh = new Mesh(name, nullptr);
 
 	next_mesh++;
 	meshes.push_back(new_mesh);

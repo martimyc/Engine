@@ -37,7 +37,7 @@ void Transform::Euler2Quat(const float roll, const float pitch, const float yaw,
 	q.w = sy * cr * cp - cy * sr * sp;
 }
 
-Transform::Transform(const char * const name, const GameObject* game_object, bool enabled) :Component(CT_TRANSFORMATION, name, game_object, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
+Transform::Transform(const char * const name, GameObject* game_object, bool enabled) :Component(CT_TRANSFORMATION, name, game_object, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
 {
 	transform_matrix = transform_matrix.identity;
 }

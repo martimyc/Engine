@@ -3,6 +3,7 @@
 #include "Renderer3D.h"
 #include "Application.h"
 #include "GameObject.h"
+#include "Transformation.h"
 #include "Tree.h"
 
 TreeNode::TreeNode(GameObject * const data, TreeNode * const parent, const char* name) : data(data), parent(parent)
@@ -140,7 +141,7 @@ GameObject * const Tree::CreateGameobject(const char* const name)
 	GameObject* new_obj;
 	num_game_objects++;
 	num_nodes++;
-
+	
 	if(name == nullptr)
 	{
 		char new_name[255];
@@ -149,6 +150,10 @@ GameObject * const Tree::CreateGameobject(const char* const name)
 	}
 	else
 		new_obj = new GameObject(focused, name);
+
+	//Create Transformation
+	Transform* transform = new Transform("Transformation", new_obj);
+	new_obj->AddComponent(transform);
 
 	focused = focused->AddChild(new_obj);
 	return new_obj;

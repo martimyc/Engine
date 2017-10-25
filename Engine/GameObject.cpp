@@ -56,6 +56,7 @@ void GameObject::Draw() const
 
 void GameObject::AddComponent(Component * component)
 {
+	component->game_object = this;
 	components.push_back(component);
 }
 

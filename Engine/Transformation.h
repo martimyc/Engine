@@ -23,7 +23,7 @@ private:
 	void Euler2Quat(const float roll, const float pitch, const float yaw, Quat& q);
 
 public:
-	Transform(const char* const name, const GameObject* game_object, bool enabled = true);
+	Transform(const char* const name, GameObject* game_object, bool enabled = true);
 	~Transform();
 
 	const float* GetTransformMatrix();

@@ -9,7 +9,7 @@
 #include "Transformation.h"
 #include "Mesh.h"
 
-Mesh::Mesh(const char* const name, const GameObject* game_object, bool enabled): Component(CT_MESH, name, game_object, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+Mesh::Mesh(const char* const name, GameObject* game_object, bool enabled): Component(CT_MESH, name, game_object, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
 
 Mesh::~Mesh()
