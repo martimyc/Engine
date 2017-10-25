@@ -1,5 +1,6 @@
 #include "SDL2\include\SDL_opengl.h"
 #include "MathGeoLib\src\Math\float3x3.h"
+#include "MathGeoLib\src\Math\TransformOps.h"
 #include "imgui/imgui.h"
 #include "Globals.h"
 #include "Transformation.h"
@@ -55,9 +56,13 @@ void Transform::Inspector(int num_component)
 {
 	if (ImGui::TreeNode(name.c_str()))
 	{
-		ImGui::InputFloat("Pos x", &translation.x, 0.0f, 0.0f, 2);
-		ImGui::InputFloat("Pos y", &translation.y, 0.0f, 0.0f, 2);
-		ImGui::InputFloat("Pos z", &translation.z, 0.0f, 0.0f, 2);
+		bool translate = false;
+		bool rotate = false;
+		bool scalate = false;
+
+		if (ImGui::DragFloat("Pos x", &translation.x))	translate = true;
+		if (ImGui::DragFloat("Pos y", &translation.y))	translate = true;
+		if (ImGui::DragFloat("Pos z", &translation.z))	translate = true;
 
 		ImGui::Separator();
 
@@ -67,9 +72,9 @@ void Transform::Inspector(int num_component)
 		pitch *= RADTODEG;
 		yaw *= RADTODEG;
 
-		ImGui::InputFloat("Rotation x", &roll, 0.0f, 0.0f, 2);
-		ImGui::InputFloat("Rotation y", &pitch, 0.0f, 0.0f, 2);
-		ImGui::InputFloat("Rotation z", &yaw, 0.0f, 0.0f, 2);
+		if (ImGui::DragFloat("Rotation x", &yaw))	rotate = true;
+		if (ImGui::DragFloat("Rotation y", &pitch))	rotate = true;
+		if (ImGui::DragFloat("Rotation z", &roll))	rotate = true;
 		
 		roll *= DEGTORAD;
 		pitch *= DEGTORAD;
@@ -79,24 +84,18 @@ void Transform::Inspector(int num_component)
 
 		ImGui::Separator();
 
-		ImGui::InputFloat("Scale x", &scaling.x, 0.0f, 0.0f, 2);
-		ImGui::InputFloat("Scale y", &scaling.y, 0.0f, 0.0f, 2);
-		ImGui::InputFloat("Scale z", &scaling.z, 0.0f, 0.0f, 2);
+		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f))	scalate = true;
+		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f))	scalate = true;
+		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f))	scalate = true;
 
-		transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));
-		
-		float3x3 rotation_matrix(rotation);
-			/*
-1.0f - 2.0f*rotation.y*rotation.y - 2.0f*rotation.z*rotation.z, 2.0f*rotation.x*rotation.y - 2.0f*rotation.z*rotation.w, 2.0f*rotation.x*rotation.z + 2.0f*rotation.y*rotation.w,
-2.0f*rotation.x*rotation.y + 2.0f*rotation.z*rotation.w, 1.0f - 2.0f*rotation.x*rotation.x - 2.0f*rotation.z*rotation.z, 2.0f*rotation.y*rotation.z - 2.0f*rotation.x*rotation.w,
-2.0f*rotation.x*rotation.z - 2.0f*rotation.y*rotation.w, 2.0f*rotation.y*rotation.z + 2.0f*rotation.x*rotation.w, 1.0f - 2.0f*rotation.x*rotation.x - 2.0f*rotation.y*rotation.y,
-0.0f, 0.0f, 0.0f);
-			*/
-		transform_matrix.Set3x3Part(rotation_matrix);
 
-		transform_matrix[0][0] *= scaling.x;
-		transform_matrix[1][1] *= scaling.y;
-		transform_matrix[2][2] *= scaling.z;
+		if (translate || rotate || scalate)
+		{
+			transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
+			float3x3 rotation_matrix(rotation);
+			transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
+			transform_matrix = float4x4::Scale(scaling, float3(0, 0, 0)) * transform_matrix;	//Scalate
+		}
 
 		ImGui::TreePop();
 	}
