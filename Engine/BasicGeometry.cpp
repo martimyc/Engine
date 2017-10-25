@@ -70,7 +70,8 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 GameObject* BasicGeometry::Create3DCube()
 {
 	GameObject* go = App->scene_manager->CreateGameObject();
-	Mesh* mesh = go->CreateMesh();
+	Mesh* mesh = App->scene_manager->CreateMesh();
+	go->AddComponent(mesh);
 	GetPrimitiveId(PRIMITIVE_CUBE, mesh);
 	go->AddComponent(mesh);
 	return go;
@@ -79,7 +80,8 @@ GameObject* BasicGeometry::Create3DCube()
 GameObject* BasicGeometry::CreateSphere()
 {
 	GameObject* go = App->scene_manager->CreateGameObject();
-	Mesh* mesh = go->CreateMesh();
+	Mesh* mesh = App->scene_manager->CreateMesh();
+	go->AddComponent(mesh);
 	GetPrimitiveId(PRIMITIVE_SPHERE, mesh);
 	go->AddComponent(mesh); 
 	return go;

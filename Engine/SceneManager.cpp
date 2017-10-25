@@ -151,9 +151,9 @@ UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 						}
 					}
 
-					if (ImGui::Button("Delete"))
+					if (ImGui::Button("Delete material"))
 					{
-						LOG("Deleting textures");
+						LOG("Deleting material");
 						materials_to_delete.push_back(i);
 					}
 					ImGui::TreePop();
@@ -286,7 +286,20 @@ void SceneManager::ApplyToMaterial(Texture * new_text, int material)
 
 void SceneManager::ReserveMaterialSpace(const GLuint & num_materials)
 {
-	materials.reserve(num_materials * sizeof(Material*));
+	int reserve = materials.size() + num_materials;
+	materials.reserve(reserve * sizeof(Material*));
+}
+
+void SceneManager::ReserveMeshSpace(const GLuint & num_meshes)
+{
+	int reserve = materials.size() + num_meshes;
+	meshes.reserve(reserve * sizeof(Material*));
+}
+
+void SceneManager::ReserveTextureSpace(const GLuint & num_textures)
+{
+	int reserve = materials.size() + num_textures;
+	meshes.reserve(reserve * sizeof(Material*));
 }
 
 bool SceneManager::DrawNormals() const
@@ -346,6 +359,51 @@ const GameObject * SceneManager::GetFocused() const
 	return game_objects->GetFocused();
 }
 
+Mesh * SceneManager::CreateMesh(const char * const name)
+{
+	Mesh* new_mesh;
+
+	if (name == nullptr)
+	{
+		char new_name[255];
+		sprintf(new_name, "Mesh %i", next_mesh);
+		new_mesh = new Mesh(new_name);
+	}
+	else
+		new_mesh = new Mesh(name);
+
+	next_mesh++;
+	meshes.push_back(new_mesh);
+	return new_mesh;
+}
+
+Mesh * SceneManager::GetMesh(unsigned int pos) const
+{
+	if (meshes.size() < pos)
+		return meshes[pos];
+	return nullptr;
+}
+
+Mesh * SceneManager::GetMesh(const std::string & name) const
+{
+	for (std::vector<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
+		if ((*it)->GetName() == name)
+			return (*it);
+
+	return nullptr;
+}
+
+void SceneManager::DeleteMesh(Mesh * mesh_to_delete)
+{
+	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		if ((*it) == mesh_to_delete)
+		{
+			delete (*it);
+			meshes.erase(it);
+			break;
+		}
+}
+
 void SceneManager::EmptyScene()
 {
 	game_objects->Empty();
@@ -373,17 +431,6 @@ Material * SceneManager::CreateMaterial(const char * const name)
 	next_material++;	
 	materials.push_back(new_material);
 	return new_material;
-}
-
-void SceneManager::DeleteMaterial(const Material * to_delete)
-{
-	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
-		if ((*it) == to_delete)
-		{
-			delete (*it);
-			materials.erase(it);
-			break;
-		}
 }
 /*
 Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)

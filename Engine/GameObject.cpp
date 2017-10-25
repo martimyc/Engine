@@ -13,11 +13,7 @@ GameObject::GameObject(const TreeNode* const node, const char* name): tree_node(
 {}
 
 GameObject::~GameObject()
-{
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-		delete (*it);
-	components.clear();
-}
+{}
 
 bool GameObject::Update()
 {
@@ -158,24 +154,6 @@ const uint GameObject::GetNumMeshes() const
 const std::string & GameObject::GetName() const
 {
 	return name;
-}
-
-Mesh * GameObject::CreateMesh(const char *const name)
-{
-	Mesh* new_mesh;
-
-	if (name == nullptr)
-	{
-		char new_name[255];
-		sprintf(new_name, "Mesh %i", GetNumMeshes() + 1);
-		new_mesh = new Mesh(new_name, this);
-	}
-	else
-		new_mesh = new Mesh(name, this);
-
-	components.push_back(new_mesh);
-
-	return new_mesh;
 }
 
 Transform * GameObject::CreateTransformation(const char* const name)

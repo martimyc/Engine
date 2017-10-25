@@ -143,13 +143,7 @@ void Material::LoneConfig()
 			ImGui::SameLine();
 			ImGui::Text("Name: %s\nWidth: %i\nHeight: %i", textures[i]->texture->name.c_str(),  textures[i]->texture->width, textures[i]->texture->height);
 
-			if (ImGui::Button("Delete"))
-			{
-				LOG("Deleting textures");
-				textures_to_remove.push_back(i);
-			}
-
-			if (ImGui::Button("Delete"))
+			if (ImGui::Button("Remove"))
 			{
 				LOG("Removing texture from this material");
 				textures_to_remove.push_back(i);

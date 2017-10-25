@@ -16,6 +16,7 @@ class TextureImporter;
 
 class Texture;
 class Material;
+class Mesh;
 
 enum IMPORT_TYPE
 {
@@ -61,12 +62,8 @@ public:
 	//Materials
 	Material* LoadMaterial(const std::string& name) const;
 
-	//bool LoadMesh(const aiMesh* mesh, Mesh& new_mesh, const unsigned int previous_loaded_materials) const;
-	//bool LoadVertices(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
-	//bool LoadIndices(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
-	//bool LoadTextureCoordinates(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
-	//bool LoadNormals(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
-	//bool LoadColors(const aiMesh* mesh, const GLuint& num_vertices, Mesh& new_mesh, bool equal_size_floats, bool equal_size_uints) const;
+	//Meshes
+	Mesh* LoadMesh(const std::string& name) const;
 
 	void LoadCheckers();
 };
