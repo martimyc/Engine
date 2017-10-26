@@ -407,25 +407,8 @@ void SceneManager::EmptyScene()
 
 GameObject* SceneManager::CreateGameObject(const char* const name)
 {
-	GameObject* new_obj;
 	num_game_objects++;
-
-	if (name == nullptr)
-	{
-		char new_name[255];
-		sprintf(new_name, "Game Object %i", num_game_objects);
-		new_obj = new GameObject(focused, new_name);
-	}
-	else
-		new_obj = new GameObject(focused, name);
-
-	//Create Transformation
-	Transform* transform = new Transform("Transform", new_obj);
-	new_obj->AddComponent(transform);
-
-	focused->AddChild(new_obj);
-
-	return new_obj;
+	return focused->CreateChild(name);
 }
 
 void SceneManager::Hirarchy()
@@ -438,6 +421,8 @@ void SceneManager::Hirarchy()
 
 		ImGui::End();
 	}
+
+	focused->Inspector();
 }
 
 void SceneManager::SendAllToDraw()

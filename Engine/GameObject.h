@@ -42,8 +42,8 @@ public:
 
 	bool Hirarchy( GameObject*& selected);
 
-	GameObject* CreateChild();
-	GameObject* CreateChild(Component* component);
+	GameObject* CreateChild(const char* const name = nullptr);
+	GameObject* CreateChild(Component* component, const char* const name = nullptr);
 
 	void AddChild(GameObject* child);
 

@@ -173,22 +173,32 @@ bool GameObject::Hirarchy(GameObject*& selected)
 			ImGui::TreePop();
 	}
 
-	if (selected == this)
-		Inspector();
-
 	return ret;
 }
 
-GameObject * GameObject::CreateChild()
+GameObject * GameObject::CreateChild(const char* const name)
 {
-	char name[255];
-	sprintf(name, "Child %i", childs.size());
-	GameObject* new_child = new GameObject(this, name);
+	GameObject* new_child = nullptr;
+
+	if (name == nullptr)
+	{
+		char ptr[255];
+		sprintf(ptr, "Child %i", childs.size());
+		new_child = new GameObject(this, ptr);
+	}
+	else
+		new_child = new GameObject(this, name);
+
+	//Create Transformation
+	Transform* transform = new Transform("Transform", new_child);
+	new_child->AddComponent(transform);
+
 	AddChild(new_child);
+
 	return new_child;
 }
 
-GameObject * GameObject::CreateChild(Component * component)
+GameObject * GameObject::CreateChild(Component * component, const char* const name)
 {
 	GameObject* new_child = CreateChild();
 	new_child->AddComponent(component);
