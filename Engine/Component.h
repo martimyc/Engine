@@ -6,12 +6,10 @@
 enum COMPONENT_TYPE
 {
 	CT_NO_TYPE = 0,
-	CT_MESH,
-	CT_MATERIAL,
-	CT_TRANSFORMATION
+	CT_MESH_FILTER,
+	CT_APPLIED_MATERIAL,
+	CT_TRANSFORM
 };
-
-class GameObject;
 
 class Component
 {
@@ -21,12 +19,11 @@ private:
 
 protected:
 	std::string name;
-	bool edit_name;
 
-public:
-	GameObject* game_object;
-	
-	Component(COMPONENT_TYPE type, const char* name, GameObject* game_object, bool enabled = true): type(type), enabled(enabled), name(name), game_object(game_object), edit_name(false)
+public:	
+	Component(COMPONENT_TYPE type, const char* name, bool enabled = true): type(type), enabled(enabled), name(name)
+	{}
+	Component(COMPONENT_TYPE type, const std::string& name, bool enabled = true) : type(type), enabled(enabled), name(name)
 	{}
 	~Component()
 	{}
@@ -51,6 +48,7 @@ public:
 		enabled = false;
 	}
 
+	//Get
 	const COMPONENT_TYPE GetType() const
 	{
 		return type;
@@ -61,10 +59,7 @@ public:
 		return name;
 	}
 
-	virtual void Draw() const
-	{}
-
-	virtual void Inspector(int num_component)
+	virtual void Inspector()
 	{}
 
 };

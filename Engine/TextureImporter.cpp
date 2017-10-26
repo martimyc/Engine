@@ -109,8 +109,8 @@ bool TextureImporter::Load(const std::string& name, Texture& new_texture)
 		iluGetImageInfo(&ImageInfo);
 		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 			iluFlipImage();
-		new_texture.width = ImageInfo.Width;
-		new_texture.height = ImageInfo.Height;
+
+		new_texture.SetDimensions(ImageInfo.Width, ImageInfo.Height);
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
@@ -164,8 +164,8 @@ bool TextureImporter::Load(const std::string& name, Texture& new_texture)
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//Fill our texture class
-		new_texture.dimensions = GL_TEXTURE_2D;
-		new_texture.id = texture_id;
+		new_texture.SetGLTextureType(GL_TEXTURE_2D);
+		new_texture.SetID(texture_id);
 
 		LOG("Texture creation successful.");
 	}
@@ -220,7 +220,6 @@ void TextureImporter::LoadCheckers(Texture & new_texture)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	new_texture.id = checkers_text_id;
-	new_texture.width = CHECKERS_WIDTH;
-	new_texture.height = CHECKERS_HEIGHT;
+	new_texture.SetID(checkers_text_id);
+	new_texture.SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
 }

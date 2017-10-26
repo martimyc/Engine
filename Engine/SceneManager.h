@@ -13,9 +13,8 @@ class Material;
 class Texture;
 class Mesh;
 class vec3;
-class Texture;
 class Tree;
-enum TEXTURE_TYPES;
+enum TEXTURE_TYPE;
 
 enum DRAW_MODE
 {
@@ -30,12 +29,17 @@ class SceneManager : public Module
 {
 private:
 	DRAW_MODE draw_mode;
-	Tree* game_objects;
 	bool assets_enable = true;
 	bool config_scene = true;
 	bool wireframe;
 	bool normals;
 	bool polygons;
+
+	//Game Objects
+	GameObject* root;
+	GameObject* focused;
+	unsigned int num_game_objects = 1;
+	bool hirarchy_active = true;
 
 	//materials
 	std::vector<Material*> materials;
@@ -67,7 +71,6 @@ public:
 	UPDATE_STATUS MaterialsConfiguration(float dt);
 	UPDATE_STATUS TexturesConfiguration(float dt);
 
-
 	UPDATE_STATUS Update(float dt);
 
 	void OpenCloseConfigSceneWindow();
@@ -88,6 +91,8 @@ public:
 
 	//Game Objects
 	GameObject* CreateGameObject(const char* const name = nullptr);
+	void Hirarchy();
+	void SendAllToDraw();
 
 	//Materials
 	Material* CreateMaterial(const char* const name = nullptr);
@@ -105,7 +110,7 @@ public:
 	void DeleteMesh(Mesh* mesh_to_delete);
 
 	//Textures
-	Texture* CreateTexture(const std::string& name, const TEXTURE_TYPES type = (TEXTURE_TYPES)1, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0); //(TEXTURE_TYPES)1 == TT_DIFFUSE wich can not be forward declared
+	Texture* CreateTexture(const std::string& name, const TEXTURE_TYPE type = (TEXTURE_TYPE)1, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0); //(TEXTURE_TYPE)1 == TT_DIFFUSE wich can not be forward declared
 	Texture* GetTexture(unsigned int i) const;
 	Texture* GetTexture(const std::string& name) const;
 	void DeleteTexture(Texture* texture_to_delete);

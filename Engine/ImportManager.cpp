@@ -1,15 +1,23 @@
-#include "Globals.h"
-#include "TextureImporter.h"
-#include "Application.h"
-#include "SceneManager.h"
-#include "FileSystem.h"
-#include "Transformation.h"
+//Assets & components
+#include "Transform.h"
 #include "Texture.h"
+#include "Mesh.h"
+#include "MeshFilter.h"
+#include "Material.h"
+#include "AppliedMaterial.h"
+#include "GameObject.h"
+
+//importers
 #include "TextureImporter.h"
 #include "MeshImporter.h"
 #include "MaterialImporter.h"
-#include "Mesh.h"
-#include "GameObject.h"
+
+//Modules
+#include "Globals.h"
+#include "TextureImporter.h"
+#include "SceneManager.h"
+#include "FileSystem.h"
+#include "Application.h"
 #include "ImportManager.h"
 
 ImportManager::ImportManager(const char * name, bool start_enabled): Module(name, start_enabled)
@@ -154,6 +162,13 @@ bool ImportManager::ImportScene(const std::string & path) const
 		unsigned int previous_loaded_materials = App->scene_manager->NumMaterials();
 		bool* material_loads = new bool[scene->mNumMaterials];
 
+		// Load all meshes (for now into the same game object)
+		char go_char[255];
+		sprintf(go_char, "%s_GO", scene_name.c_str());
+		std::string scene_name(go_char);
+
+		GameObject* scene_object = App->scene_manager->CreateGameObject(scene_name.c_str());
+
 		if (scene->HasMaterials())
 		{
 			//Import all materials first so that we can bind them to a mesh later when we load them
@@ -197,14 +212,6 @@ bool ImportManager::ImportScene(const std::string & path) const
 		
 		if (scene->HasMeshes())
 		{
-			// Load all meshes (for now into the same game object)
-			char go_char[255];
-			sprintf(go_char, "%s_GO", scene_name.c_str());
-			std::string go_name(go_char);
-
-			GameObject* new_game_object = App->scene_manager->CreateGameObject(go_name.c_str());
-
-			new_game_object->ReserveComponentSpace(scene->mNumMeshes);
 			App->scene_manager->ReserveMeshSpace(scene->mNumMeshes);
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
@@ -226,11 +233,13 @@ bool ImportManager::ImportScene(const std::string & path) const
 					}
 					else
 					{
+						GameObject* new_go = scene_object->CreateChild(new MeshFilter(new_mesh));
+
 						if (scene->HasMaterials() && material_loads[scene->mMeshes[i]->mMaterialIndex] == true)
-							new_mesh->SetMaterial(previous_loaded_materials + scene->mMeshes[i]->mMaterialIndex);
+							new_go->AddComponent(new AppliedMaterial(App->scene_manager->GetMaterial(previous_loaded_materials + scene->mMeshes[i]->mMaterialIndex)));
 						else
 							LOG("Material for this mesh did not load correctly or index is non exsistent");
-						new_game_object->AddComponent(new_mesh);
+						
 					}
 				}
 				else

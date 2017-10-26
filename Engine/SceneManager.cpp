@@ -1,15 +1,21 @@
 #include "imgui\imgui.h"
 #include "Brofiler\Brofiler.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
-#include "Application.h"
-#include "Renderer3D.h"
+
+//Components & Assets
+#include "Texture.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "AppliedMaterial.h"
+#include "MeshFilter.h"
+#include "Transform.h"
+
+//Modules
+#include "Renderer3D.h"
 #include "BasicGeometry.h"
 #include "GameObject.h"
-#include "Texture.h"
-#include "Tree.h"
 #include "ImportManager.h"
+#include "Application.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), wireframe(false), normals(false), polygons(true)
@@ -20,7 +26,8 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
-	game_objects = new Tree();
+	root = new GameObject(nullptr, "Root");
+	focused = root;
 
 	App->import_manager->LoadCheckers();
 
@@ -96,7 +103,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		ImGui::End();
 	}
 
-	game_objects->Hirarchy();
+	Hirarchy();
 
 	return ret;
 }
@@ -126,29 +133,16 @@ UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 				{
 					materials[i]->LoneConfig();
 
-					if (game_objects->GetFocused() != nullptr)
+					if ( focused != nullptr)
 					{
 						char apply[255];
-						sprintf(apply, "Apply to %s mesh num:", game_objects->GetFocused()->GetName().c_str());
+						sprintf(apply, "Apply to %s mesh num:", focused->GetName().c_str());
 
 						if (ImGui::Button(apply))
-							if (game_objects->GetFocused() != nullptr)
-								game_objects->GetFocused()->ChangeMaterial(materials[i], current_mesh);
+							if (focused != nullptr)
+								focused->ChangeMaterial(materials[i]);
 							else
 								LOG("Can not add material, no focused game object");
-
-						ImGui::SameLine();
-
-						if (ImGui::InputInt("", &current_mesh))
-						{
-							if (current_mesh < 0)
-								current_mesh = 0;
-							else if (current_mesh > game_objects->GetFocused()->GetNumMeshes())
-							{
-								LOG("Mesh %i does not exsist in this game gbject");
-								current_mesh = game_objects->GetFocused()->GetNumMeshes();
-							}
-						}
 					}
 
 					if (ImGui::Button("Delete material"))
@@ -202,7 +196,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 				{
 					ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected_texture == i) ? ImGuiTreeNodeFlags_Selected : 0);
 
-					node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, textures[i]->name.c_str());
+					node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, textures[i]->GetName().c_str());
 
 					if (ImGui::IsItemClicked())
 						selected_texture = i;
@@ -213,9 +207,9 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 						ImVec2 uv0(0, 1);
 						ImVec2 uv1(1, 0);
 
-						ImGui::Image((void*)textures[i]->id, size, uv0, uv1);
+						ImGui::Image((void*)textures[i]->GetID(), size, uv0, uv1);
 						ImGui::SameLine();
-						ImGui::Text("Width: %i\nHeight: %i", textures[i]->width, textures[i]->height);
+						ImGui::Text("Width: %i\nHeight: %i", textures[i]->GetWidth(), textures[i]->GetHeight());
 
 						if (ImGui::Button("Delete"))
 						{
@@ -228,7 +222,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 				}
 
 				char add[255];
-				sprintf(add, "Add %s to material", textures[selected_texture]->name.c_str());
+				sprintf(add, "Add %s to material", textures[selected_texture]->GetName().c_str());
 
 				if (ImGui::Button(add))
 					App->scene_manager->ApplyToMaterial(textures[selected_texture], current_material);
@@ -257,7 +251,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
-	game_objects->Draw();
+	SendAllToDraw();
 
 	return UPDATE_CONTINUE;
 }
@@ -345,7 +339,7 @@ bool SceneManager::HasMaterials() const
 void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const
 {
 	AABB bounding_box(vec(0, 0, 0), vec(0, 0, 0));
-	go->GenerateBoundingBox(bounding_box);
+	//go->GenerateBoundingBox(bounding_box);
 	center.x = bounding_box.CenterPoint().x;
 	center.y = bounding_box.CenterPoint().y;
 	center.z = bounding_box.CenterPoint().z;
@@ -356,7 +350,7 @@ void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, fl
 
 const GameObject * SceneManager::GetFocused() const
 {
-	return game_objects->GetFocused();
+	return focused;
 }
 
 Mesh * SceneManager::CreateMesh(const char * const name)
@@ -367,10 +361,10 @@ Mesh * SceneManager::CreateMesh(const char * const name)
 	{
 		char new_name[255];
 		sprintf(new_name, "Mesh %i", next_mesh);
-		new_mesh = new Mesh(new_name, nullptr);
+		new_mesh = new Mesh(new_name);
 	}
 	else
-		new_mesh = new Mesh(name, nullptr);
+		new_mesh = new Mesh(name);
 
 	next_mesh++;
 	meshes.push_back(new_mesh);
@@ -406,13 +400,49 @@ void SceneManager::DeleteMesh(Mesh * mesh_to_delete)
 
 void SceneManager::EmptyScene()
 {
-	game_objects->Empty();
+	delete root;
+	root = new GameObject(nullptr, "Root");
+	focused = root;
 }
-
 
 GameObject* SceneManager::CreateGameObject(const char* const name)
 {
-	return game_objects->CreateGameobject(name);
+	GameObject* new_obj;
+	num_game_objects++;
+
+	if (name == nullptr)
+	{
+		char new_name[255];
+		sprintf(new_name, "Game Object %i", num_game_objects);
+		new_obj = new GameObject(focused, new_name);
+	}
+	else
+		new_obj = new GameObject(focused, name);
+
+	//Create Transformation
+	Transform* transform = new Transform("Transform", new_obj);
+	new_obj->AddComponent(transform);
+
+	focused->AddChild(new_obj);
+
+	return new_obj;
+}
+
+void SceneManager::Hirarchy()
+{
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((focused == root) ? ImGuiTreeNodeFlags_Selected : 0);
+
+	if (ImGui::Begin("Hirarchy", &hirarchy_active))
+	{
+		root->Hirarchy(focused);
+
+		ImGui::End();
+	}
+}
+
+void SceneManager::SendAllToDraw()
+{
+	root->SentToDraw();
 }
 
 Material * SceneManager::CreateMaterial(const char * const name)
@@ -499,7 +529,7 @@ bool SceneManager::Exsists(const std::string & path) const
 		new_name = path.substr(start + 1, count);
 
 	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
-		if ((*it)->name == new_name)
+		if ((*it)->GetName() == new_name)
 			return true;
 	return false;
 }
@@ -509,7 +539,7 @@ void SceneManager::DrawTexture(unsigned int num_texture) const
 	if (num_texture < textures.size())
 	{
 		// Select the texture to use
-		glBindTexture(GL_TEXTURE_2D, textures[num_texture]->id);
+		glBindTexture(GL_TEXTURE_2D, textures[num_texture]->GetID());
 
 		float hsize = 6.0f; // Vertical size of the quad
 		float vsize = 4.0f; // Vertical size of the quad
@@ -544,7 +574,7 @@ void SceneManager::DrawTexture(unsigned int num_texture) const
 Texture * SceneManager::GetTexture(const std::string & name) const
 {
 	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
-		if ((*it)->name == name)
+		if ((*it)->GetName() == name)
 			return (*it);
 
 	return nullptr;
@@ -561,9 +591,9 @@ void SceneManager::DeleteTexture(Texture * texture_to_delete)
 		}
 }
 
-Texture * SceneManager::CreateTexture(const std::string & name, const TEXTURE_TYPES type, const GLenum dimensions, const GLuint & id)
+Texture * SceneManager::CreateTexture(const std::string & name, const TEXTURE_TYPE type, const GLenum gl_texure_type, const GLuint & id)
 {
-	Texture* new_texture = new Texture(name, type, dimensions, id);
+	Texture* new_texture = new Texture(name, type, gl_texure_type, id);
 	textures.push_back(new_texture);
 	return new_texture;
 }

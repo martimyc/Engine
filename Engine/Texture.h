@@ -3,8 +3,9 @@
 
 #include <string>
 #include "glew\include\GL\glew.h"
+#include "Asset.h"
 
-enum TEXTURE_TYPES
+enum TEXTURE_TYPE
 {
 	TT_NO_TYPE = 0,
 	TT_DIFFUSE,
@@ -21,25 +22,74 @@ enum TEXTURE_TYPES
 	TT_UNKNOWN,
 };
 
-struct Texture
+class Texture: public Asset
 {
-	std::string name;
+private:
 	unsigned int height;
 	unsigned int width;
-	TEXTURE_TYPES type;
-	GLenum dimensions;
+	TEXTURE_TYPE texture_type;
+	GLenum gl_texure_type;
 	GLuint id;
 
-	Texture(const std::string& name, const TEXTURE_TYPES type = TT_DIFFUSE, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0): name(name), type(type), dimensions(dimensions), id(id)
+public:
+	Texture(const char* name, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0): Asset(AT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
 	{}
 
-	Texture(const Texture& copy): name(copy.name), type(copy.type), dimensions(copy.dimensions), id(copy.id)
+	Texture(const std::string& name, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0) : Asset(AT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
 	{}
 
 	~Texture()
 	{
 		if(id != 0)
 			glDeleteTextures(1, &id);
+	}
+
+	//Gets
+	const unsigned int& GetHeight() const
+	{
+		return height;
+	}
+
+	const unsigned int& GetWidth() const
+	{
+		return width;
+	}
+
+	const TEXTURE_TYPE& GetTextureType() const
+	{
+		return texture_type;
+	}
+
+	const GLenum& GetGLTextureType() const
+	{
+		return gl_texure_type;
+	}
+
+	const GLuint& GetID() const
+	{
+		return id;
+	}
+
+	//Sets
+	void SetDimensions(const unsigned int& width, const unsigned int& height)
+	{
+		this->width = width;
+		this->height = height;
+	}
+
+	void SetTextureType(const TEXTURE_TYPE& new_texture_type)
+	{
+		texture_type = new_texture_type;
+	}
+
+	void SetGLTextureType(const GLenum& new_gl_texure_type)
+	{
+		gl_texure_type = new_gl_texure_type;
+	}
+
+	void SetID(const GLuint& new_id)
+	{
+		id = new_id;
 	}
 };
 #endif // !_TEXTURE

@@ -13,7 +13,7 @@ class Material;
 
 struct MaterialTextureInfo
 {
-	uint lenght;
+	unsigned int lenght;
 	char* name;
 };
 

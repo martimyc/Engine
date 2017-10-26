@@ -4,12 +4,12 @@
 #include "Application.h"
 #include "SceneManager.h"
 #include "GameObject.h"
-#include "Material.h"
 #include "Texture.h"
-#include "Transformation.h"
+#include "Transform.h"
+#include "AppliedMaterial.h"
 #include "Mesh.h"
 
-Mesh::Mesh(const char* const name, GameObject* game_object, bool enabled): Component(CT_MESH, name, game_object, enabled), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+Mesh::Mesh(const char* const name): Asset(AT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
 
 Mesh::~Mesh()
@@ -57,12 +57,9 @@ Mesh::~Mesh()
 		delete[] color_ids;
 	if (colors != nullptr)
 		delete[] colors;
-
-	if (material != nullptr)
-		delete material;
 }
 
-void Mesh::Draw() const
+void Mesh::Draw(const AppliedMaterial* draw_material) const
 {
 	//Enable state & Bind vertices
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -86,11 +83,11 @@ void Mesh::Draw() const
 	glNormalPointer(GL_FLOAT, 0, NULL);
 
 	//bind uvs channel 1 for now
-	if(has_uvs && material != nullptr)
-		for (int i = 0; i < material->NumTextures(); i++)
+	if(has_uvs && draw_material != nullptr)
+		for (int i = 0; i < draw_material->GetNumTextures(); i++)
 		{
 			//UVs
-			GLuint uv_channel = material->GetTextureCoordinateChannel(i);
+			GLuint uv_channel = draw_material->GetUVChannel(i);
 
 			glClientActiveTexture(GL_TEXTURE0 + i);
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -101,8 +98,8 @@ void Mesh::Draw() const
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, NULL);
 
 	//Disable texture 2D client state & unbind text buffer
-	if (material != nullptr)
-		for (int i = 0; i < material->NumTextures(); i++)
+	if (draw_material != nullptr)
+		for (int i = 0; i < draw_material->GetNumTextures(); i++)
 		{
 			glClientActiveTexture(GL_TEXTURE0 + i);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -121,47 +118,21 @@ void Mesh::Draw() const
 		glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void Mesh::Inspector(int num_component)
+void Mesh::Inspector()
 {
 	if(ImGui::TreeNode(name.c_str()))
 	{
-		if (ImGui::Button("Edit Name"))
-			edit_name = true;
-
-		if (edit_name)
-		{
-			char new_name[255];
-			sprintf(new_name,name.c_str());
-			if (ImGui::InputText("Name", new_name, 255)) //new_name
-				name = new_name;
-		}
-
 		ImGui::Text("Vertices: %i", num_vertices);
 		ImGui::Text("Indices: %i", num_indices);
 		ImGui::Text("UV channels: %i", num_uv_channels);
 
 		if(has_vertex_colors)
-			ImGui::Text("Has Vertex Colors");
+			ImGui::Text("Has %i Vertex Color channels", num_color_channels);
 		else
 			ImGui::Text("Does not have Vertex Colors");
 
-		if (ImGui::Button("Delete material"))
-		{
-			DELETE_PTR(material);
-		}
-
-		if (material != nullptr)
-			material->InGameObjectConfig(num_uv_channels);
-
-		else
-			ImGui::Text("No material aplied to this mesh");
 		ImGui::TreePop();
 	}
-}
-
-const float * Mesh::GetTransformMat()const
-{
-	return game_object->GetTransformationMatrix();
 }
 
 void Mesh::GetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices) const
@@ -197,11 +168,6 @@ void Mesh::GetColors(GLuint & num_channels, GLuint * ids, GLfloat ** all_colors)
 	num_channels = num_color_channels;
 	ids = color_ids;
 	all_colors = colors;
-}
-
-Material * Mesh::GetMaterial() const
-{
-	return material;
 }
 
 void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
@@ -284,37 +250,15 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 	else
 		LOG("Colors where not set correctly");
 }
-
-void Mesh::SetMaterial(unsigned int pos)
-{
-	material = App->scene_manager->GetMaterial(pos);
-}
-
+/*
 void Mesh::Enclose(AABB & bounding_box) const
 {
 	vec* vec_vert = new vec[num_vertices];
 	memcpy(vec_vert, vertices, num_vertices * sizeof(GLfloat) * 3);
 	bounding_box.Enclose(vec_vert, num_vertices);
 }
-
-void Mesh::ApplyTexture(Texture* text)
-{
-	if (material != nullptr)
-		material->AddTexture(text);
-	else
-	{
-		material = App->scene_manager->CreateMaterial();
-		material->AddTexture(text);
-	}
-}
-
-void Mesh::ChangeMaterial(Material * new_material)
-{
-	if (material != nullptr)
-		delete material;
-	material = new Material(*new_material);
-}
-
+*/
+/*
 bool Mesh::operator >(const Mesh & mesh) const
 {
 	unsigned int priority_one = (material == nullptr ? 0 : material->GetPriority());
@@ -327,4 +271,4 @@ bool Mesh::operator <(const Mesh & mesh) const
 	unsigned int priority_one = (material == nullptr ? 0 : material->GetPriority());
 	unsigned int priority_two = (mesh.material == nullptr ? 0 : mesh.material->GetPriority());
 	return priority_one < priority_two;
-}
+}*/

@@ -3,30 +3,16 @@
 
 #include <vector>
 #include "glew\include\GL\glew.h"
+#include "Asset.h"
 
 class Texture;
-class Mesh;
 enum TEXTURE_TYPES;
 
-struct TextureWithUVs
-{
-	int uv_channel = 0;
-	Texture* texture = nullptr;
-
-	TextureWithUVs(Texture* texture, const GLuint& uv_channel): texture(texture), uv_channel(uv_channel)
-	{}
-
-	~TextureWithUVs()  //textures will be deleated in textures
-	{}
-};
-
-class Material
+class Material : public Asset
 {
 private:
-	std::string name;
-	std::vector<TextureWithUVs*> textures;
+	std::vector<Texture*> textures;
 	GLuint num_difusse_textures = 0;
-
 
 	//TODO load all other texture types
 	/*GLuint num_specular_textures = 0;
@@ -48,9 +34,8 @@ public:
 	Material(const char* name, unsigned int priority);
 	~Material();
 
-	const int NumTextures() const;
+	const int GetNumTextures() const;
 	unsigned int GetPriority() const;
-	const std::string& GetName() const;
 
 	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
 	void Empty();
