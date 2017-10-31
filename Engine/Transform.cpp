@@ -3,7 +3,15 @@
 #include "MathGeoLib\src\Math\TransformOps.h"
 #include "imgui/imgui.h"
 #include "Globals.h"
-#include "Transformation.h"
+#include "Transform.h"
+
+Transform::Transform(const char * name, bool enabled) : Component( CT_TRANSFORM, name, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
+{
+	transform_matrix = transform_matrix.identity;
+}
+
+Transform::~Transform()
+{}
 
 void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)
 {
@@ -38,23 +46,14 @@ void Transform::Euler2Quat(const float roll, const float pitch, const float yaw,
 	q.w = sy * cr * cp - cy * sr * sp;
 }
 
-Transform::Transform(const char * const name, GameObject* game_object, bool enabled) :Component(CT_TRANSFORMATION, name, game_object, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
-{
-	transform_matrix = transform_matrix.identity;
-}
-
-Transform::~Transform()
-{
-}
-
 const float * Transform::GetTransformMatrix()
 {
 	return &transform_matrix.At(0, 0);
 }
 
-void Transform::Inspector(int num_component)
+void Transform::Inspector()
 {
-	if (ImGui::TreeNode(name.c_str()))
+	if (ImGui::TreeNode("Transform"))
 	{
 		bool translate = false;
 		bool rotate = false;

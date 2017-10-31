@@ -1,13 +1,11 @@
-#ifndef _TRANSFORMATION
-#define _TRANSFORMATION
+#ifndef TRANSFORM
+#define TRANSFORM
 
 #include "SDL2\include\SDL.h"
 #include "MathGeoLib\src\Math\float3.h"
 #include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Math\float4x4.h"
 #include "Component.h"
-
-class GameObject;
 
 class Transform : public Component
 {
@@ -23,12 +21,12 @@ private:
 	void Euler2Quat(const float roll, const float pitch, const float yaw, Quat& q);
 
 public:
-	Transform(const char* const name, GameObject* game_object, bool enabled = true);
+	Transform(const char* name = "Transform", bool enabled = true);
 	~Transform();
 
 	const float* GetTransformMatrix();
 
-	void Inspector(int num_component);
+	void Inspector();
 };
 
-#endif // !_TRANSFORMATION
+#endif // !_TRANSFORM

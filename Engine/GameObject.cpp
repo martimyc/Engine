@@ -1,19 +1,31 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
-#include "Mesh.h"
-#include "Console.h"
-#include "Material.h"
-#include "Transformation.h"
+
+//components
+#include "MeshFilter.h"
+#include "AppliedMaterial.h"
+#include "Transform.h"
 #include "Texture.h"
+
+//modules
+#include "Console.h"
 #include "Renderer3D.h"
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const TreeNode* const node, const char* name): tree_node(node), name(name)
+GameObject::GameObject(const GameObject* const parent, const char* name): parent(parent), name(name)
 {}
 
 GameObject::~GameObject()
-{}
+{
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		delete *it;
+	components.clear();
+
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+		delete *it;
+	components.clear();
+}
 
 bool GameObject::Update()
 {
@@ -32,32 +44,55 @@ bool GameObject::Update()
 	return ret;
 }
 
-void GameObject::Draw() const
+void GameObject::SentToDraw() const
 {
-	if (components.size() > 0)
+	if (draw)
 	{
-		/*std::vector<Component*>::const_iterator transform_it;
-		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		App->renderer_3d->DrawGameObject(this);
+		/*if (components.size() > 0)
+		{
+			std::vector<Component*>::const_iterator transform_it;
+			for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 			if ((*it)->Enabled())
-				if ((*it)->GetType() == CT_TRANSFORMATION)
-				{
-					transform_it = it;
-					((Transform*)*it)->TranslateRotateScalate();
-				}*/
-	
-		for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-			if ((*it)->Enabled())
-				if((*it)->GetType() == CT_MESH)
-					App->renderer_3d->DrawMesh((Mesh*)(*it));
+			if ((*it)->GetType() == CT_TRANSFORMATION)
+			{
+			transform_it = it;
+			((Transform*)*it)->TranslateRotateScalate();
+			}
 
-		//((Transform*)*transform_it)->ResetTranslateRotateScalate();
-	}		
+			//((Transform*)*transform_it)->ResetTranslateRotateScalate();
+		}*/
+	}
+
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->SentToDraw();
 }
 
 void GameObject::AddComponent(Component * component)
 {
-	component->game_object = this;
-	components.push_back(component);
+	bool add = true;
+
+	switch (component->GetType())
+	{
+	case CT_MESH_FILTER:
+		if (HasMeshFilter())
+			CreateChild(component);
+		else
+			draw = true;
+		break;
+	case CT_APPLIED_MATERIAL:
+		if (HasAppliedMaterial())
+		{
+			ChangeMaterial((Material*)component);
+			add = false;
+		}
+		break;
+	default:
+		break;
+	}
+	
+	if(add)
+		components.push_back(component);
 }
 
 void GameObject::Inspector() const
@@ -66,21 +101,10 @@ void GameObject::Inspector() const
 	{
 		ImGui::Begin("Inspector");
 
-		//TODO rot and pos plus component management config at least
-
 		for (int i = 0; i < components.size(); i++)
-			components[i]->Inspector(i);
+			components[i]->Inspector();
 
 		ImGui::End();
-	}
-}
-
-void GameObject::ApplyTexture(Texture * text)
-{
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-	{
-		if ((*it)->Enabled() && (*it)->GetType() == CT_MESH)
-			((Mesh*)(*it))->ApplyTexture(text);
 	}
 }
 
@@ -104,52 +128,91 @@ const float * const GameObject::GetTransformationMatrix()const
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 	{
-		if ((*it)->GetType() == CT_TRANSFORMATION)
+		if ((*it)->GetType() == CT_TRANSFORM)
 			return ((Transform*)*it)->GetTransformMatrix();
 	}
 	return nullptr;
 }
 
-void GameObject::GenerateBoundingBox(AABB & bounding_box) const
+void GameObject::ChangeMaterial(Material * new_material)
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-	{
-		if ((*it)->GetType() == CT_MESH)
-		{
-			((Mesh*)(*it))->Enclose(bounding_box);
-		}
-	}
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+			RemoveAppliedMaterial();
+	
+	AddComponent(new AppliedMaterial(new_material));	
 }
 
-void GameObject::ChangeMaterial(Material * new_material, int mesh_num)
+bool GameObject::Hirarchy(GameObject*& selected)
 {
-	int current_mesh = 0;
-	bool found = false;
+	bool ret = false;
+	bool has_childs = childs.size() != 0;
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected == this) ? ImGuiTreeNodeFlags_Selected : 0);
 
-	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+	if (!has_childs)
 	{
-		if ((*it)->GetType() == CT_MESH)
-		{
-			if (current_mesh == mesh_num)
-			{
-				((Mesh*)(*it))->ChangeMaterial(new_material);
-				found = true;
-			}
-			current_mesh++;
-		}
+		node_flags |= ImGuiTreeNodeFlags_Leaf;
+		node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	if (!found)
-		LOG("Mesh not found");
+	bool node_open = ImGui::TreeNodeEx(this, node_flags, name.c_str()); //TODO try with TreeNode*
+
+	if (ImGui::IsItemClicked() && ret == false)
+	{
+		selected = this;
+		ret = true;
+	}
+
+	if (node_open)
+	{
+		for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+			if ((*it)->Hirarchy(selected))
+				ret = true;
+
+		if (has_childs)
+			ImGui::TreePop();
+	}
+
+	return ret;
 }
 
-const uint GameObject::GetNumMeshes() const
+GameObject * GameObject::CreateChild(const char* const name)
 {
-	uint num_meshes = 0;
-	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-		if ((*it)->GetType() == CT_MESH)
-			num_meshes++;
-	return num_meshes;
+	GameObject* new_child = nullptr;
+
+	if (name == nullptr)
+	{
+		char ptr[255];
+		sprintf(ptr, "Child %i", childs.size());
+		new_child = new GameObject(this, ptr);
+	}
+	else
+		new_child = new GameObject(this, name);
+
+	//Create Transformation
+	Transform* transform = new Transform("Transform", new_child);
+	new_child->AddComponent(transform);
+
+	AddChild(new_child);
+
+	return new_child;
+}
+
+GameObject * GameObject::CreateChild(Component * component, const char* const name)
+{
+	GameObject* new_child = CreateChild();
+	new_child->AddComponent(component);
+	return new_child;
+}
+
+void GameObject::AddChild(GameObject* child)
+{
+	childs.push_back(child);
+}
+
+const unsigned int GameObject::GetNumComponents() const
+{
+	return components.size();
 }
 
 const std::string & GameObject::GetName() const
@@ -157,23 +220,42 @@ const std::string & GameObject::GetName() const
 	return name;
 }
 
-Transform * GameObject::CreateTransformation(const char* const name)
+bool GameObject::HasMeshFilter() const
 {
-	Transform* transformation;
-	if (!name)
-		transformation = new Transform("Transformation", this);
-	else
-		transformation = new Transform(name, this);
-
-	components.push_back(transformation);
-
-	return transformation;
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_MESH_FILTER)
+			return true;
+	return false;
 }
 
-void GameObject::DeleteMesh(const Mesh* to_delete)
+bool GameObject::HasAppliedMaterial() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+			return true;
+	return false;
+}
+
+const AppliedMaterial * GameObject::GetAppliedMaterial() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+			return (AppliedMaterial*)*it;
+	return nullptr;
+}
+
+const MeshFilter * GameObject::GetMeshFilter() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_MESH_FILTER)
+			return (MeshFilter*)*it;
+	return nullptr;
+}
+
+void GameObject::RemoveMeshFilter()
 {
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
-		if (*it == to_delete)
+		if ((*it)->GetType() == CT_MESH_FILTER)
 		{
 			delete *it;
 			components.erase(it);
@@ -181,7 +263,27 @@ void GameObject::DeleteMesh(const Mesh* to_delete)
 		}
 }
 
-const uint GameObject::GetNumComponents() const
+void GameObject::RemoveAppliedMaterial()
 {
-	return components.size();
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+		{
+			delete *it;
+			components.erase(it);
+			break;
+		}
 }
+
+Transform * GameObject::CreateTransformation(const char* const name)
+{
+	Transform* transformation;
+	if (!name)
+		transformation = new Transform();
+	else
+		transformation = new Transform(name);
+
+	components.push_back(transformation);
+
+	return transformation;
+}
+

@@ -6,41 +6,31 @@
 #include "glew\include\GL\glew.h"
 
 class Component;
-class Material;
-class Texture;
-class TreeNode;
-class Mesh;
 class Transform;
-
-namespace MATH_NAMESPACE_NAME 
-{
-	class AABB;
-}
+class AppliedMaterial;
+class MeshFilter;
+class Material;
 
 class GameObject
 {
 private:
 	std::string name;
-	GLfloat world_position_matrix[9] = {};
-	GLfloat rotation[3];
 	std::vector<Component*> components;
-	bool inspector_open = true;
-	const TreeNode* const tree_node;
-	bool edit_name = false;
+	std::vector<GameObject*> childs;
+	const GameObject* const parent;
+	bool draw = false;
 
 public:
-	GameObject(const TreeNode* const node, const char* name);
+	GameObject(const GameObject* const parent, const char* name);
 	~GameObject();
 
 	bool Update();
 
-	void Draw() const;
+	void SentToDraw() const;
 
 	void AddComponent(Component* component);
 
 	void Inspector() const;
-
-	void ApplyTexture(Texture * text);
 
 	void Reset();
 
@@ -48,17 +38,31 @@ public:
 
 	const float* const GetTransformationMatrix()const;
 
-	void GenerateBoundingBox(AABB& bounding_box) const;
+	void ChangeMaterial(Material* new_material);
 
-	void ChangeMaterial(Material* new_material, int mesh_num);
+	bool Hirarchy( GameObject*& selected);
 
-	const uint GetNumComponents() const;
-	const uint GetNumMeshes() const;
+	GameObject* CreateChild(const char* const name = nullptr);
+	GameObject* CreateChild(Component* component, const char* const name = nullptr);
+
+	void AddChild(GameObject* child);
+
+	//Gets
+	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
+
+	bool HasMeshFilter() const;
+	bool HasAppliedMaterial() const;
+	const AppliedMaterial* GetAppliedMaterial() const;
+	const MeshFilter* GetMeshFilter() const;
+
+	//Remove unique components
+	void RemoveMeshFilter();
+	void RemoveAppliedMaterial();
 
 	//Creates for all components
 	Transform* CreateTransformation(const char* const name = nullptr);
-	void DeleteMesh(const Mesh* to_delete);
+
 };
 
 #endif // !_GAME_OBJECT

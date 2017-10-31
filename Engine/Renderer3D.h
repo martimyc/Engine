@@ -12,11 +12,11 @@
 
 #define MAX_LIGHTS 8
 
-class Mesh;
+class GameObject;
 
-struct CompareMeshPointers
+struct CompareGOPointers
 {
-	bool operator()(const Mesh* m1, const Mesh* m2);	
+	bool operator()(const GameObject* m1, const GameObject* m2);
 };
 
 //Renders the scene into a texture so we can put it into a ImGui Window.
@@ -42,13 +42,12 @@ private:
 	GLuint depth_render_id;
 	uint width = 0;
 	uint height = 0;
-
 };
 
 class Renderer3D : public Module
 {
 private:
-	std::priority_queue<Mesh*, std::vector<Mesh* >, CompareMeshPointers> draw_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject* >, CompareGOPointers> draw_queue;
 	bool debug_draw;
 	//TODO DebugDraw
 	bool world_axis = true;
@@ -81,7 +80,7 @@ public:
 
 	void OnResize(int width, int height);
 
-	void DrawMesh(Mesh* mesh);
+	void DrawGameObject(const GameObject* game_object);
 
 	void Anisotrophy();
 

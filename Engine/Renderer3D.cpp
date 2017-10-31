@@ -5,14 +5,20 @@
 #include "imgui\imgui_impl_sdl.h"
 #include "Brofiler\Brofiler.h"
 #include "Parson\parson.h"
-#include "Application.h"
+
+//components & assets
+#include "GameObject.h"
+#include "Material.h"
+#include "AppliedMaterial.h"
+#include "MeshFilter.h"
+#include "Texture.h"
+
+//Modules
 #include "Window.h"
 #include "Camera3D.h"
 #include "Console.h"
-#include "Mesh.h"
-#include "Material.h"
 #include "SceneManager.h"
-#include "Texture.h"
+#include "Application.h"
 #include "Renderer3D.h"
 
 Renderer3D::Renderer3D(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -183,18 +189,19 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	Material* material_in_use;
 	while (draw_queue.size() > 0)
 	{
-		material_in_use = draw_queue.top()->GetMaterial();
+
+		material_in_use = draw_queue.top()->GetAppliedMaterial();
 		if(material_in_use != nullptr)
 			material_in_use->EnableDraw();
 
 
-		while (draw_queue.size() > 0 && draw_queue.top()->GetMaterial() == material_in_use)
+		while (draw_queue.size() > 0 && draw_queue.top()->GetAppliedMaterial() == material_in_use)
 		{
 			glPushMatrix();
 			glLoadMatrixf(App->camera->GetViewMatrix());
 			glMultMatrixf(draw_queue.top()->GetTransformMat());
 
-			draw_queue.top()->Draw();
+			draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
 			draw_queue.pop();
 
 			glPopMatrix();
@@ -281,9 +288,9 @@ void Renderer3D::OnResize(int width, int height)
 	glLoadMatrixf(App->camera->GetViewMatrix());
 }
 
-void Renderer3D::DrawMesh(Mesh* mesh)
+void Renderer3D::DrawGameObject(const GameObject* game_object)
 {
-	draw_queue.push(mesh);
+	draw_queue.push(game_object);
 }
 
 void Renderer3D::Anisotrophy()
@@ -291,7 +298,7 @@ void Renderer3D::Anisotrophy()
 	glEnableClientState(GL_TEXTURE_2D);
 
 	if(App->scene_manager->GetTexture(0) != nullptr)
-		glBindTexture(GL_TEXTURE_2D, App->scene_manager->GetTexture(0)->id);
+		glBindTexture(GL_TEXTURE_2D, App->scene_manager->GetTexture(0)->GetID());
 
 	glBegin(GL_QUADS);
 
@@ -374,20 +381,18 @@ void Renderer3D::DrawGrid()
 	glColor4f(255, 255, 255, 1.0f);
 }
 
-bool CompareMeshPointers::operator()(const Mesh * m1, const Mesh * m2)
+bool CompareGOPointers::operator()(const GameObject * go1, const GameObject * go2)
 {
-	unsigned int priority_one = ((m1->GetMaterial() == nullptr) ? 0 : m1->GetMaterial()->GetPriority());
-	unsigned int priority_two = ((m2->GetMaterial() == nullptr) ? 0 : m2->GetMaterial()->GetPriority());
+	unsigned int priority_one = ((go1->GetAppliedMaterial()->GetMaterial() == nullptr) ? 0 : go1->GetAppliedMaterial()->GetMaterial()->GetPriority());
+	unsigned int priority_two = ((go2->GetAppliedMaterial()->GetMaterial() == nullptr) ? 0 : go2->GetAppliedMaterial()->GetMaterial()->GetPriority());
 	return priority_one > priority_two;
 }
 
 FrameBuffer::FrameBuffer():frame_buffer_id (0), rendered_texture_id (0), depth_render_id(0), width(0), height(0)
-{
-}
+{}
 
 FrameBuffer::~FrameBuffer()
-{
-}
+{}
 
 void FrameBuffer::CreateFrameBuffer(const int _width, const int _height)
 {
