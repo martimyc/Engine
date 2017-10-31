@@ -143,10 +143,9 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 // PreUpdate: clear buffer
 UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 {
-	BROFILER_CATEGORY("Renderer PreUpdate", Profiler::Color::Aqua)
+	BROFILER_CATEGORY("Renderer PreUpdate", Profiler::Color::Aqua);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
@@ -182,23 +181,24 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//meshes
 	Material* material_in_use;
-	const float* transform_matrix;
 	while (draw_queue.size() > 0)
 	{
 		material_in_use = draw_queue.top()->GetMaterial();
 		if(material_in_use != nullptr)
 			material_in_use->EnableDraw();
 
-		transform_matrix = draw_queue.top()->GetTransformMat();
-		glPushMatrix();
-		glLoadMatrixf(transform_matrix);
 
 		while (draw_queue.size() > 0 && draw_queue.top()->GetMaterial() == material_in_use)
 		{
+			glPushMatrix();
+			glLoadMatrixf(App->camera->GetViewMatrix());
+			glMultMatrixf(draw_queue.top()->GetTransformMat());
+
 			draw_queue.top()->Draw();
 			draw_queue.pop();
+
+			glPopMatrix();
 		}
-		glPopMatrix();
 
 		if (material_in_use != nullptr)
 			material_in_use->DisableDraw();

@@ -155,6 +155,8 @@ GameObject * const Tree::CreateGameobject(const char* const name)
 	Transform* transform = new Transform("Transformation", new_obj);
 	new_obj->AddComponent(transform);
 
+	focused->AddChild(new_obj);
+
 	return new_obj;
 }
 
