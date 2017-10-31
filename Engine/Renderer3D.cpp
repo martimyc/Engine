@@ -186,7 +186,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->scene_manager->DrawMode();
 
 	//meshes
-	Material* material_in_use;
+	const AppliedMaterial* material_in_use;
 	while (draw_queue.size() > 0)
 	{
 
@@ -199,7 +199,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		{
 			glPushMatrix();
 			glLoadMatrixf(App->camera->GetViewMatrix());
-			glMultMatrixf(draw_queue.top()->GetTransformMat());
+			glMultMatrixf(draw_queue.top()->GetTransformationMatrix());
 
 			draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
 			draw_queue.pop();
