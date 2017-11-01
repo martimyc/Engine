@@ -37,8 +37,6 @@ int main(int argc, char ** argv)
 	
 	while (state != MAIN_EXIT)
 	{
-		BROFILER_FRAME("Unice_Frame");
-
 		switch (state)
 		{
 		case MAIN_CREATION:
