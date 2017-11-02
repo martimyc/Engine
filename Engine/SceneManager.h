@@ -91,9 +91,12 @@ public:
 
 	//Game Objects
 	GameObject* CreateGameObject(const char* const name = nullptr);
+private:
 	void Hirarchy();
 	void SendAllToDraw();
+	void UpdateGameObjects();
 
+public:
 	//Materials
 	Material* CreateMaterial(const char* const name = nullptr);
 	Material* GetMaterial(unsigned int pos) const;

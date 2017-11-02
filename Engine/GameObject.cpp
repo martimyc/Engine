@@ -1,11 +1,13 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 
+#include "Mesh.h"
 //components
 #include "MeshFilter.h"
 #include "AppliedMaterial.h"
 #include "Transform.h"
 #include "Texture.h"
+#include "Component.h"
 
 //modules
 #include "Console.h"
@@ -14,7 +16,13 @@
 #include "GameObject.h"
 
 GameObject::GameObject(const GameObject* const parent, const char* name): parent(parent), name(name)
-{}
+{
+	transform = new Transform("Transform");
+	sphere_bounding_box.SetNegativeInfinity();
+	AABB_bounding_box.SetNegativeInfinity();
+	//AABB_bounding_box = AABB(vec(4, 4, 4), vec(8, 8, 8));
+	OBB_bounding_box.SetNegativeInfinity();
+}
 
 GameObject::~GameObject()
 {
@@ -24,13 +32,19 @@ GameObject::~GameObject()
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		delete *it;
-	components.clear();
+	childs.clear();
+
+	DELETE_PTR(transform);
 }
 
 bool GameObject::Update()
 {
 	bool ret = true;
 
+	//Update Transformation
+	transform->Update();
+
+	//Update components
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
 		ret = (*it)->Update();
@@ -40,6 +54,10 @@ bool GameObject::Update()
 			break;
 		}
 	}
+
+	//Update childs
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->Update();
 
 	return ret;
 }
@@ -79,7 +97,10 @@ void GameObject::AddComponent(Component * component)
 			CreateChild(component);
 		else
 			draw = true;
+
+		CreateBounds(((MeshFilter*)component)->GetMesh());//TODO:
 		break;
+
 	case CT_APPLIED_MATERIAL:
 		if (HasAppliedMaterial())
 		{
@@ -87,25 +108,28 @@ void GameObject::AddComponent(Component * component)
 			add = false;
 		}
 		break;
+
 	default:
 		break;
 	}
-	
-	if(add)
+
+	if (add)
 		components.push_back(component);
 }
 
 void GameObject::Inspector() const
 {
+	ImGui::Begin("Inspector");
+	//Transform
+	transform->Inspector();
+
+	//Other components
 	if (components.size() > 0)
 	{
-		ImGui::Begin("Inspector");
-
 		for (int i = 0; i < components.size(); i++)
 			components[i]->Inspector();
-
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void GameObject::Reset()
@@ -126,12 +150,15 @@ void GameObject::ReserveComponentSpace(const GLuint & num_components)
 
 const float * const GameObject::GetTransformationMatrix()const
 {
-	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+	float4x4 transf_matrix = *transform->GetTransformMatrix();
+	const GameObject* temp_parent = parent;
+	while (temp_parent != nullptr)
 	{
-		if ((*it)->GetType() == CT_TRANSFORM)
-			return ((Transform*)*it)->GetTransformMatrix();
+		transf_matrix = transf_matrix * (*temp_parent->transform->GetTransformMatrix());
+		temp_parent = temp_parent->parent;
 	}
-	return nullptr;
+
+	return &transf_matrix.At(0, 0);
 }
 
 void GameObject::ChangeMaterial(Material * new_material)
@@ -188,10 +215,6 @@ GameObject * GameObject::CreateChild(const char* const name)
 	}
 	else
 		new_child = new GameObject(this, name);
-
-	//Create Transformation
-	Transform* transform = new Transform("Transform", new_child);
-	new_child->AddComponent(transform);
 
 	AddChild(new_child);
 
@@ -252,6 +275,12 @@ const MeshFilter * GameObject::GetMeshFilter() const
 	return nullptr;
 }
 
+void GameObject::DrawBoundingBoxes() const
+{
+	DrawAABBBoundingBox();
+
+}
+
 void GameObject::RemoveMeshFilter()
 {
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
@@ -274,16 +303,71 @@ void GameObject::RemoveAppliedMaterial()
 		}
 }
 
-Transform * GameObject::CreateTransformation(const char* const name)
+void GameObject::CreateBounds(const Mesh* mesh)
 {
-	Transform* transformation;
-	if (!name)
-		transformation = new Transform();
-	else
-		transformation = new Transform(name);
+	uint id, num_vertices;
+	float* all_vertices = nullptr;
+	mesh->GetVertices(id, num_vertices, all_vertices);
+	vec* vertices_vec = new vec(all_vertices);
+	/*for (int i = 0; i < num_vertices; i++)
+	{
+		vertices_vec[i].x = all_vertices[i * 3];
+		vertices_vec[i].y = all_vertices[i * 3 + 1];
+		vertices_vec[i].z = all_vertices[i * 3 + 2];
+	}*/
 
-	components.push_back(transformation);
-
-	return transformation;
+	AABB_bounding_box.Enclose(vertices_vec, num_vertices);
+	delete vertices_vec;
 }
 
+void GameObject::DrawAABBBoundingBox() const
+{
+	math::float3 aabb_verteices[8];
+
+	AABB_bounding_box.GetCornerPoints(aabb_verteices);
+
+	glLineWidth(3.0f);
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(aabb_verteices[0].x, aabb_verteices[0].y, aabb_verteices[0].z);
+	glVertex3f(aabb_verteices[1].x, aabb_verteices[1].y, aabb_verteices[1].z);
+
+	glVertex3f(aabb_verteices[0].x, aabb_verteices[0].y, aabb_verteices[0].z);
+	glVertex3f(aabb_verteices[2].x, aabb_verteices[2].y, aabb_verteices[2].z);
+
+	glVertex3f(aabb_verteices[0].x, aabb_verteices[0].y, aabb_verteices[0].z);
+	glVertex3f(aabb_verteices[4].x, aabb_verteices[4].y, aabb_verteices[4].z);
+
+	glVertex3f(aabb_verteices[1].x, aabb_verteices[1].y, aabb_verteices[1].z);
+	glVertex3f(aabb_verteices[3].x, aabb_verteices[3].y, aabb_verteices[3].z);
+
+	glVertex3f(aabb_verteices[1].x, aabb_verteices[1].y, aabb_verteices[1].z);
+	glVertex3f(aabb_verteices[5].x, aabb_verteices[5].y, aabb_verteices[5].z);
+
+	glVertex3f(aabb_verteices[2].x, aabb_verteices[2].y, aabb_verteices[2].z);
+	glVertex3f(aabb_verteices[3].x, aabb_verteices[3].y, aabb_verteices[3].z);
+
+	glVertex3f(aabb_verteices[2].x, aabb_verteices[2].y, aabb_verteices[2].z);
+	glVertex3f(aabb_verteices[6].x, aabb_verteices[6].y, aabb_verteices[6].z);
+
+	glVertex3f(aabb_verteices[3].x, aabb_verteices[3].y, aabb_verteices[3].z);
+	glVertex3f(aabb_verteices[7].x, aabb_verteices[7].y, aabb_verteices[7].z);
+
+	glVertex3f(aabb_verteices[5].x, aabb_verteices[5].y, aabb_verteices[5].z);
+	glVertex3f(aabb_verteices[4].x, aabb_verteices[4].y, aabb_verteices[4].z);
+
+	glVertex3f(aabb_verteices[5].x, aabb_verteices[5].y, aabb_verteices[5].z);
+	glVertex3f(aabb_verteices[7].x, aabb_verteices[7].y, aabb_verteices[7].z);
+
+	glVertex3f(aabb_verteices[4].x, aabb_verteices[4].y, aabb_verteices[4].z);
+	glVertex3f(aabb_verteices[6].x, aabb_verteices[6].y, aabb_verteices[6].z);
+
+	glVertex3f(aabb_verteices[6].x, aabb_verteices[6].y, aabb_verteices[6].z);
+	glVertex3f(aabb_verteices[7].x, aabb_verteices[7].y, aabb_verteices[7].z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}

@@ -84,7 +84,22 @@ viewProjMatrix(float4x4::nan)
 #endif
 }
 
-void Frustum::SetKind(FrustumProjectiveSpace p, FrustumHandedness h)
+   void Frustum::SetType(FrustumType _type)
+   {
+	   type = _type;
+   }
+
+   void Frustum::SetNearPlaneDistance(float dist)	//Must be lower than far plane distance
+   {
+	   nearPlaneDistance = dist;
+   }
+
+   void Frustum::SetFarPlaneDistance(float dist)	//Must be greater than near plane distance
+   {
+	   farPlaneDistance = dist;	   
+   }
+
+   void Frustum::SetKind(FrustumProjectiveSpace p, FrustumHandedness h)
 {
 	projectiveSpace = p;
 	handedness = h;

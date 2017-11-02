@@ -251,6 +251,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
+	UpdateGameObjects();
 	SendAllToDraw();
 
 	return UPDATE_CONTINUE;
@@ -428,6 +429,11 @@ void SceneManager::Hirarchy()
 void SceneManager::SendAllToDraw()
 {
 	root->SentToDraw();
+}
+
+void SceneManager::UpdateGameObjects()
+{
+	root->Update();
 }
 
 Material * SceneManager::CreateMaterial(const char * const name)

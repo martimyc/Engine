@@ -555,6 +555,9 @@
     <ClInclude Include="AppliedMaterial.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -780,6 +783,9 @@
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshFilter.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
