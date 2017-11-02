@@ -234,7 +234,6 @@
     <ClInclude Include="TextureImporter.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="p2Point.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
