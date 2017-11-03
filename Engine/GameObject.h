@@ -4,12 +4,16 @@
 #include <vector>
 #include <string>
 #include "glew\include\GL\glew.h"
+#include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\OBB.h"
+#include "MathGeoLib\src\Geometry\Sphere.h"
 
 class Component;
 class Transform;
 class AppliedMaterial;
 class MeshFilter;
 class Material;
+class Mesh;
 
 class GameObject
 {
@@ -19,6 +23,11 @@ private:
 	std::vector<GameObject*> childs;
 	const GameObject* const parent;
 	bool draw = false;
+	Transform* transform = nullptr;
+	Sphere sphere_bounding_box;
+	AABB original_AABB_bounding_box;
+	AABB AABB_bounding_box;
+	OBB OBB_bounding_box;
 
 public:
 	GameObject(const GameObject* const parent, const char* name);
@@ -40,7 +49,7 @@ public:
 
 	void ChangeMaterial(Material* new_material);
 
-	bool Hirarchy( GameObject*& selected);
+	bool Hirarchy(GameObject*& selected);
 
 	GameObject* CreateChild(const char* const name = nullptr);
 	GameObject* CreateChild(Component* component, const char* const name = nullptr);
@@ -50,18 +59,26 @@ public:
 	//Gets
 	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
+	void GetWorldPosition(int& x, int& y, int& z) const;
+	void GetWorldRotation(int& x, int& y, int& z, int&w) const;
+	void GetWorldScale(int& x, int& y, int& z) const;
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;
 	const AppliedMaterial* GetAppliedMaterial() const;
 	const MeshFilter* GetMeshFilter() const;
+	void DrawBoundingBoxes() const;
 
 	//Remove unique components
 	void RemoveMeshFilter();
 	void RemoveAppliedMaterial();
 
-	//Creates for all components
-	Transform* CreateTransformation(const char* const name = nullptr);
+private:
+	//Bounding Boxes
+	void CreateBounds(const Mesh* mesh);
+	void UpdateBounds();
+	void DrawAABBBoundingBox() const;
+
 
 };
 

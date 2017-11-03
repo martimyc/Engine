@@ -5,7 +5,7 @@
 #include "Globals.h"
 #include "Transform.h"
 
-Transform::Transform(const char * name, bool enabled) : Component( CT_TRANSFORM, name, enabled), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
+Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
 {
 	transform_matrix = transform_matrix.identity;
 }
@@ -46,22 +46,47 @@ void Transform::Euler2Quat(const float roll, const float pitch, const float yaw,
 	q.w = sy * cr * cp - cy * sr * sp;
 }
 
-const float * Transform::GetTransformMatrix()
+const float4x4& Transform::GetTransformMatrix()
 {
-	return &transform_matrix.At(0, 0);
+	return transform_matrix;
+}
+
+const float3& Transform::GetTransformTranslation()
+{
+	return translation;
+}
+
+const float3& Transform::GetTransformScale()
+{
+	return scaling;
+}
+
+const Quat& Transform::GetTransformRotation()
+{
+	return rotation;
+}
+
+bool Transform::Update()
+{
+	if (transform)
+	{
+		transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
+		float3x3 rotation_matrix(rotation);
+		transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
+		transform_matrix = float4x4::Scale(scaling, float3(0, 0, 0)) * transform_matrix;	//Scalate
+	}
+	return transform;
 }
 
 void Transform::Inspector()
 {
 	if (ImGui::TreeNode("Transform"))
 	{
-		bool translate = false;
-		bool rotate = false;
-		bool scalate = false;
-
-		if (ImGui::DragFloat("Pos x", &translation.x))	translate = true;
-		if (ImGui::DragFloat("Pos y", &translation.y))	translate = true;
-		if (ImGui::DragFloat("Pos z", &translation.z))	translate = true;
+		transform = false;
+		
+		if (ImGui::DragFloat("Pos x", &translation.x))	transform = true;
+		if (ImGui::DragFloat("Pos y", &translation.y))	transform = true;
+		if (ImGui::DragFloat("Pos z", &translation.z))	transform = true;
 
 		ImGui::Separator();
 
@@ -76,9 +101,9 @@ void Transform::Inspector()
 		if (pitch == -180)	pitch = 180;
 		if (yaw == -180)	yaw = 180;
 
-		if (ImGui::DragFloat("Rotation x", &yaw))	rotate = true;
-		if (ImGui::DragFloat("Rotation y", &pitch))	rotate = true;
-		if (ImGui::DragFloat("Rotation z", &roll))	rotate = true;
+		if (ImGui::DragFloat("Rotation x", &yaw))	transform = true;
+		if (ImGui::DragFloat("Rotation y", &pitch))	transform = true;
+		if (ImGui::DragFloat("Rotation z", &roll))	transform = true;
 		
 		roll *= DEGTORAD;
 		pitch *= DEGTORAD;
@@ -88,19 +113,10 @@ void Transform::Inspector()
 
 		ImGui::Separator();
 
-		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f))	scalate = true;
-		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f))	scalate = true;
-		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f))	scalate = true;
-
-
-		if (translate || rotate || scalate)
-		{
-			transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
-			float3x3 rotation_matrix(rotation);
-			transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
-			transform_matrix = float4x4::Scale(scaling, float3(0, 0, 0)) * transform_matrix;	//Scalate
-		}
-
+		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f))	transform = true;
+		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f))	transform = true;
+		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f))	transform = true;
+		
 		ImGui::TreePop();
 	}
 }

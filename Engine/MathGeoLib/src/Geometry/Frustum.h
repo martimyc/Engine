@@ -175,6 +175,10 @@ public:
 		@see type, pos, front, up, nearPlaneDistance, projectiveSpace, handedness, farPlaneDistance, horizontalFov, verticalFov, orthographicWidth, orthographicHeight. */
 	Frustum();
 
+	void SetType(FrustumType type);
+	void SetNearPlaneDistance(float dist);
+	void SetFarPlaneDistance(float dist);
+
 	/// Sets the type of this Frustum.
 	/** @note Calling this function recomputes the cached view and projection matrices of this Frustum.
 		@see SetViewPlaneDistances(), SetFrame(), SetPos(), SetFront(), SetUp(), SetPerspective(), SetOrthographic(), ProjectiveSpace(), Handedness(). */
