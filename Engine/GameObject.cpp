@@ -101,6 +101,7 @@ void GameObject::AddComponent(Component * component)
 			draw = true;
 
 		CreateBounds(((MeshFilter*)component)->GetMesh());
+		UpdateBoundsUpwards();
 
 		break;
 
@@ -246,7 +247,60 @@ const std::string & GameObject::GetName() const
 	return name;
 }
 
-void GameObject::GetWorldPosition(int & x, int & y, int & z) const
+void GameObject::GetLocalPosX(int & x) const
+{
+	x = transform->GetTransformTranslation().x;
+}
+
+void GameObject::GetLocalPosY(int & y) const
+{
+	y = transform->GetTransformTranslation().y;
+}
+
+void GameObject::GetLocalPosZ(int & z) const
+{
+	z = transform->GetTransformTranslation().z;
+}
+
+const math::vec& GameObject::GetLocalPosition() const
+{
+	return transform->GetTransformTranslation();
+}
+
+void GameObject::GetWorldPosX(int & x) const
+{
+	const GameObject* next_parent = parent;
+	x = transform->GetTransformTranslation().x;
+	while (next_parent)
+	{
+		x += next_parent->transform->GetTransformTranslation().x;
+		next_parent = next_parent->parent;
+	}
+}
+
+void GameObject::GetWorldPosY(int & y) const
+{
+	const GameObject* next_parent = parent;
+	y = transform->GetTransformTranslation().y;
+	while (next_parent)
+	{
+		y += next_parent->transform->GetTransformTranslation().y;
+		next_parent = next_parent->parent;
+	}
+}
+
+void GameObject::GetWorldPosZ(int & z) const
+{
+	const GameObject* next_parent = parent;
+	z = transform->GetTransformTranslation().z;
+	while (next_parent)
+	{
+		z += next_parent->transform->GetTransformTranslation().z;
+		next_parent = next_parent->parent;
+	}
+}
+
+const math::vec& GameObject::GetWorldPosition() const
 {
 	const GameObject* next_parent = parent;
 	math::float3 pos = transform->GetTransformTranslation();
@@ -255,10 +309,106 @@ void GameObject::GetWorldPosition(int & x, int & y, int & z) const
 		pos += next_parent->transform->GetTransformTranslation();
 		next_parent = next_parent->parent;
 	}
+	return pos;
+}
 
-	x = pos.x;
-	y = pos.y;
-	z = pos.z;
+const math::vec & GameObject::GetLocalRotationEuler() const
+{
+	return transform->GetTransformRotationAngles();
+}
+
+const math::vec & GameObject::GetWorldRotationEuler() const
+{
+	const GameObject* next_parent = parent;
+	math::vec rotation_euler = transform->GetTransformRotationAngles();
+	while (next_parent)
+	{
+		rotation_euler += next_parent->transform->GetTransformRotationAngles();
+		next_parent = next_parent->parent;
+	}
+	return rotation_euler;
+}
+
+const math::Quat& GameObject::GetLocalRotationQuat() const
+{
+	return transform->GetTransformRotation();
+}
+
+const math::Quat & GameObject::GetWorldRotationQuat() const
+{
+	const GameObject* next_parent = parent;
+	math::vec rotation_euler = transform->GetTransformRotationAngles();
+	while (next_parent)
+	{
+		rotation_euler += next_parent->transform->GetTransformRotationAngles();
+		next_parent = next_parent->parent;
+	}
+	return transform->TransformEuler2Quat(rotation_euler);
+}
+
+void GameObject::GetLocalScaleX(int & x) const
+{
+	x = transform->GetTransformScale().x;
+}
+
+void GameObject::GetLocalScaleY(int & y) const
+{
+	y = transform->GetTransformScale().y;
+}
+
+void GameObject::GetLocalScaleZ(int & z) const
+{
+	z = transform->GetTransformScale().z;
+}
+
+const math::vec&  GameObject::GetLocalScale(int & x, int & y, int & z) const
+{
+	return transform->GetTransformScale();
+}
+
+void GameObject::GetWorldScaleX(int & x) const
+{
+	const GameObject* next_parent = parent;
+	x = transform->GetTransformTranslation().x;
+	while (next_parent)
+	{
+		x *= next_parent->transform->GetTransformScale().x;
+		next_parent = next_parent->parent;
+	}
+}
+
+void GameObject::GetWorldScaleY(int & y) const
+{
+	const GameObject* next_parent = parent;
+	y = transform->GetTransformTranslation().y;
+	while (next_parent)
+	{
+		y *= next_parent->transform->GetTransformScale().y;
+		next_parent = next_parent->parent;
+	}
+}
+
+void GameObject::GetWorldScaleZ(int & z) const
+{
+	const GameObject* next_parent = parent;
+	z = transform->GetTransformTranslation().z;
+	while (next_parent)
+	{
+		z *= next_parent->transform->GetTransformScale().z;
+		next_parent = next_parent->parent;
+	}
+}
+
+const math::vec&  GameObject::GetWorldScale(int & x, int & y, int & z) const
+{
+	const GameObject* next_parent = parent;
+	math::float3 scale = transform->GetTransformTranslation();
+	while (next_parent)
+	{
+		scale.Mul(next_parent->transform->GetTransformScale());
+		next_parent = next_parent->parent;
+	}
+	return scale;
 }
 
 bool GameObject::HasMeshFilter() const
@@ -295,7 +445,7 @@ const MeshFilter * GameObject::GetMeshFilter() const
 
 void GameObject::DrawBoundingBoxes() const
 {
-	DrawAABBBoundingBox();
+	AABB_bounding_box.Draw();
 
 }
 
@@ -353,54 +503,8 @@ void GameObject::UpdateBounds()
 		(*it)->UpdateBounds();
 }
 
-void GameObject::DrawAABBBoundingBox() const
+void GameObject::UpdateBoundsUpwards() const
 {
-	math::float3 aabb_vertices[8];
-
-	AABB_bounding_box.GetCornerPoints(aabb_vertices);
-
-	glLineWidth(3.0f);
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-
-	glBegin(GL_LINES);
-
-	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
-	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
-
-	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
-	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
-
-	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
-	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
-
-	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
-	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
-
-	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
-	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
-
-	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
-	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
-
-	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
-	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
-
-	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
-	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
-
-	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
-	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
-
-	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
-	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
-
-	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
-	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
-
-	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
-	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
-
-	glEnd();
-
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	if (parent)
+		parent->UpdateBoundsUpwards();
 }

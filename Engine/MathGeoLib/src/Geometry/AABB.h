@@ -86,6 +86,8 @@ public:
 	float MaxY() const { return maxPoint.y; } ///< [similarOverload: MaxX]
 	float MaxZ() const { return maxPoint.z; } ///< [similarOverload: MaxX]
 
+	void Draw() const;
+
 	/// Sets this structure to a degenerate AABB that does not have any volume.
 	/** This function is useful for initializing the AABB to "null" before a loop of calls to Enclose(),
 		which incrementally expands the bounds of this AABB to enclose the given objects.

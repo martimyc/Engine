@@ -197,15 +197,15 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 		while (draw_queue.size() > 0 && draw_queue.top()->GetAppliedMaterial() == material_in_use)
 		{
-			draw_queue.top()->DrawBoundingBoxes();
 			glPushMatrix();
 			glLoadMatrixf(App->camera->GetViewMatrix());
 			glMultMatrixf(draw_queue.top()->GetTransformationMatrix());
 
 			draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
-			draw_queue.pop();
 
 			glPopMatrix();
+			draw_queue.top()->DrawBoundingBoxes();
+			draw_queue.pop();
 		}
 
 		if (material_in_use != nullptr)

@@ -15,6 +15,7 @@
 /** @file AABB.cpp
 	@author Jukka Jylänki
 	@brief Implementation for the Axis-Aligned Bounding Box (AABB) geometry object. */
+#include "..\..\..\glew\include\GL\glew.h"
 #include "AABB.h"
 #include "../Math/MathFunc.h"
 #ifdef MATH_ENABLE_STL_SUPPORT
@@ -62,6 +63,58 @@ AABB::AABB(const OBB &obb)
 AABB::AABB(const Sphere &s)
 {
 	SetFrom(s);
+}
+
+void AABB::Draw() const
+{
+	math::float3 aabb_vertices[8];
+
+	GetCornerPoints(aabb_vertices);
+
+	glLineWidth(3.0f);
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
+	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
+
+	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
+	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
+
+	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
+	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
+
+	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
+	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
+
+	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
+	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
+
+	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
+	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
+
+	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
+	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
+
+	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
+	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
+
+	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
+	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
+
+	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
+	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
+
+	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
+	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
+
+	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
+	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void AABB::SetNegativeInfinity()

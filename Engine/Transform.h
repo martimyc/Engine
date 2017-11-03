@@ -26,9 +26,11 @@ public:
 	~Transform();
 
 	const float4x4& GetTransformMatrix();
-	const float3& GetTransformTranslation();
-	const float3& GetTransformScale();
+	const vec& GetTransformTranslation();
+	const vec& GetTransformScale();
 	const Quat& GetTransformRotation();
+	const vec& GetTransformRotationAngles();
+	Quat TransformEuler2Quat(const vec euler);
 
 	bool Update();
 	void Inspector();

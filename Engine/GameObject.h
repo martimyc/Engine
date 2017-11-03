@@ -29,6 +29,11 @@ private:
 	AABB AABB_bounding_box;
 	OBB OBB_bounding_box;
 
+	//Bounding Boxes
+	void CreateBounds(const Mesh* mesh);
+	void UpdateBounds();
+	void UpdateBoundsUpwards() const;
+
 public:
 	GameObject(const GameObject* const parent, const char* name);
 	~GameObject();
@@ -59,9 +64,30 @@ public:
 	//Gets
 	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
-	void GetWorldPosition(int& x, int& y, int& z) const;
-	void GetWorldRotation(int& x, int& y, int& z, int&w) const;
-	void GetWorldScale(int& x, int& y, int& z) const;
+		//Position
+	void GetLocalPosX(int& x) const;
+	void GetLocalPosY(int& y) const;
+	void GetLocalPosZ(int& z) const;
+	const math::vec& GetLocalPosition() const;
+	void GetWorldPosX(int& x) const;
+	void GetWorldPosY(int& y) const;
+	void GetWorldPosZ(int& z) const;
+	const math::vec& GetWorldPosition() const;
+		//Rotation
+	const math::vec& GetLocalRotationEuler() const;
+	const math::vec& GetWorldRotationEuler() const;
+	const math::Quat& GetLocalRotationQuat() const;
+	const math::Quat& GetWorldRotationQuat() const;
+		//Scale
+	void  GetLocalScaleX(int& x) const;
+	void  GetLocalScaleY(int& y) const;
+	void  GetLocalScaleZ(int& z) const;
+	const math::vec&  GetLocalScale(int& x, int& y, int& z) const;
+	void  GetWorldScaleX(int& x) const;
+	void  GetWorldScaleY(int& y) const;
+	void  GetWorldScaleZ(int& z) const;
+	const math::vec&  GetWorldScale(int& x, int& y, int& z) const;
+	//-----
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;
@@ -72,12 +98,6 @@ public:
 	//Remove unique components
 	void RemoveMeshFilter();
 	void RemoveAppliedMaterial();
-
-private:
-	//Bounding Boxes
-	void CreateBounds(const Mesh* mesh);
-	void UpdateBounds();
-	void DrawAABBBoundingBox() const;
 
 
 };

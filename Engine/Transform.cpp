@@ -51,12 +51,12 @@ const float4x4& Transform::GetTransformMatrix()
 	return transform_matrix;
 }
 
-const float3& Transform::GetTransformTranslation()
+const vec& Transform::GetTransformTranslation()
 {
 	return translation;
 }
 
-const float3& Transform::GetTransformScale()
+const vec& Transform::GetTransformScale()
 {
 	return scaling;
 }
@@ -66,6 +66,18 @@ const Quat& Transform::GetTransformRotation()
 	return rotation;
 }
 
+const vec & Transform::GetTransformRotationAngles()
+{
+	return vec(roll, pitch, yaw);
+}
+
+Quat Transform::TransformEuler2Quat(const vec euler)
+{
+	Quat ret;
+	Euler2Quat(euler.x, euler.y, euler.z, ret);
+	return ret;
+}
+
 bool Transform::Update()
 {
 	if (transform)
@@ -73,7 +85,7 @@ bool Transform::Update()
 		transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
 		float3x3 rotation_matrix(rotation);
 		transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
-		transform_matrix = float4x4::Scale(scaling, float3(0, 0, 0)) * transform_matrix;	//Scalate
+		transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;	//Scalate
 	}
 	return transform;
 }
