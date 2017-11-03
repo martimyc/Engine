@@ -9,35 +9,44 @@
 
 enum PARTITION_AXIS
 {
-	NO_PARTITION = 0,
-	X,
-	Y,
-	Z
+	X = 0,
+	Y = 1,
+	Z = 2,
+	NO_PARTITION
 };
 
 class KDTNode
 {
 private:
-	AABB limits;
-	KDTNode* childs[2];
+	AABB* limits;
 	GameObject* game_objects[MAX_NUM_OBJECTS];
 
 	//Partition
 	PARTITION_AXIS partition_axis;
+	KDTNode* childs[2];
 	float median;
 
 public:
-	KDTNode(const AABB& limits);
+	KDTNode(const math::vec min_point, const math::vec max_point);
 	~KDTNode();
 
-	void CalculateTree(std::vector<GameObject*> game_objects_vec);
+	void SubDivide3D();
 
-	void FindBestMedian(float& median, PARTITION_AXIS& partition_axis);
+	void SubDivideChilds(PARTITION_AXIS partition_axis);
 
-	void UpdateOverlaps(const GameObject* const new_game_object);
+	void SubDivide(PARTITION_AXIS partition_axis);
 
-	//Intersects
-	//void Intersect(vector<GameObject*>&, PRIMITIVE)
+	float FindBestMedian(PARTITION_AXIS partition_axis) const;
+
+	bool AddGameObject(const GameObject* new_game_object);
+
+	bool AddToCorrectChild(const GameObject* new_game_object);
+
+	bool RemoveGameObject(const GameObject* new_game_object);
+
+	void ReArrange();
+
+	bool Empty() const;
 };
 
 class KDTree
@@ -51,7 +60,6 @@ public:
 	~KDTree();
 
 	void ReCalculate(std::vector<GameObject*> all_game_objects);
-
 };
 
 #endif // !KDTREE
