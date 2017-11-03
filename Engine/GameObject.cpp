@@ -308,14 +308,13 @@ void GameObject::RemoveAppliedMaterial()
 
 void GameObject::CreateBounds(const Mesh* mesh)
 {
-	uint id, num_vertices;
-	const GLfloat* all_vertices = mesh->GetVertices(id, num_vertices);
-	const uint num_vec_vertices = (num_vertices - 1) / 3;
+	uint num_vertices = mesh->GetNumVertices();
+	const GLfloat* all_vertices = mesh->GetVertices();
 
-	math::vec* vec_vertices = new math::vec[num_vec_vertices];
-	memcpy(vec_vertices, all_vertices, num_vec_vertices * sizeof(GLfloat) * 3);
+	math::vec* vec_vertices = new math::vec[num_vertices];
+	memcpy(vec_vertices, all_vertices, num_vertices * sizeof(GLfloat) * 3);
 
-	AABB_bounding_box.Enclose(vec_vertices, num_vec_vertices);
+	AABB_bounding_box.Enclose(vec_vertices, num_vertices);
 	original_AABB_bounding_box = AABB_bounding_box;
 
 	DELETE_ARRAY(vec_vertices);
@@ -324,11 +323,7 @@ void GameObject::CreateBounds(const Mesh* mesh)
 void GameObject::UpdateBounds()
 {
 	AABB_bounding_box = original_AABB_bounding_box;
-	//TODO: add hierarchy
 	AABB_bounding_box.TransformAsAABB(transform->GetTransformMatrix()->Transposed());
-	//math::vec AABB_bounding_box_corner_points[8];
-	//AABB_bounding_box.GetCornerPoints(AABB_bounding_box_corner_points);
-	//AABB_bounding_box = math::AABB::MinimalEnclosingAABB(AABB_bounding_box_corner_points, 8);
 }
 
 void GameObject::DrawAABBBoundingBox() const

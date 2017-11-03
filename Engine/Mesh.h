@@ -41,12 +41,26 @@ public:
 	void Inspector();
 
 	//Getters
-	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;
-	const GLfloat* GetVertices(GLuint & id, GLuint & num) const;
-	void GetIndices(GLuint& id, GLuint& num, GLuint* all_indices) const;
-	void GetUVs(GLuint& num_channels, GLuint* num_components, GLuint* ids, GLuint* num, GLfloat** all_uvs) const;
-	void GetNormals(GLuint& id, GLfloat* all_normals) const;
-	void GetColors(GLuint& num_channels, GLuint* ids, GLfloat** all_colors)const;
+		//Vertices
+	const GLuint GetVerticesID() const;
+	const GLuint GetNumVertices() const;
+	const GLfloat* GetVertices() const;
+		//Indices
+	const GLuint GetIndicesID() const;
+	const GLuint GetNumIndices() const;
+	const GLuint* GetIndices() const;
+		//UVs
+	const GLuint GetUVsNumChannels() const;
+	const GLuint* GetUVsNumComponents() const;
+	const GLuint* GetUVsIDs() const;
+	const GLfloat*const* GetUVs() const;
+		//Normals
+	const GLuint GetNormalsID() const;
+	const GLfloat* GetNormals() const;
+		//Colors
+	const GLuint GetColorsNumChannels()const;
+	const GLuint* GetColorsIDs()const;
+	const GLfloat*const* GetColors()const;
 
 	//Setters
 	void SetVertices(const GLuint& id, const GLuint& num, GLfloat* all_vertices);

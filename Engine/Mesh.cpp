@@ -135,46 +135,79 @@ void Mesh::Inspector()
 	}
 }
 
-void Mesh::GetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices) const
+const GLuint Mesh::GetVerticesID() const
 {
-	id = vertex_id;
-	num = num_vertices;
-	all_vertices = vertices;
+	return vertex_id;
 }
 
-const GLfloat* Mesh::GetVertices(GLuint & id, GLuint & num) const
+const GLuint Mesh::GetNumVertices() const
 {
-	id = vertex_id;
-	num = num_vertices;
+	return num_vertices;
+}
+
+const GLfloat* Mesh::GetVertices() const
+{
 	return vertices;
 }
 
-void Mesh::GetIndices(GLuint & id, GLuint & num, GLuint * all_indices) const
+const GLuint Mesh::GetIndicesID() const
 {
-	id = indices_id;
-	num = num_indices;
-	all_indices = indices;
+	return indices_id;
 }
 
-void Mesh::GetUVs(GLuint& num_channels, GLuint* num_components, GLuint* ids, GLuint* num, GLfloat** all_uvs) const
+const GLuint Mesh::GetNumIndices() const
 {
-	num_channels = num_uv_channels;
-	num_components = num_uv_components;
-	ids = uv_ids;
-	all_uvs = uvs;
+	return num_indices;
 }
 
-void Mesh::GetNormals(GLuint & id, GLfloat * all_normals) const
+const GLuint * Mesh::GetIndices() const
 {
-	id = normals_id;
-	all_normals = normals;
+	return indices;
 }
 
-void Mesh::GetColors(GLuint & num_channels, GLuint * ids, GLfloat ** all_colors) const
+const GLuint Mesh::GetUVsNumChannels() const
 {
-	num_channels = num_color_channels;
-	ids = color_ids;
-	all_colors = colors;
+	return num_uv_channels;
+}
+
+const GLuint * Mesh::GetUVsNumComponents() const
+{
+	return num_uv_components;
+}
+
+const GLuint * Mesh::GetUVsIDs() const
+{
+	return uv_ids;
+}
+
+const GLfloat * const* Mesh::GetUVs() const
+{
+	return uvs;
+}
+
+const GLuint Mesh::GetNormalsID() const
+{
+	return normals_id;
+}
+
+const GLfloat * Mesh::GetNormals() const
+{
+	return normals;
+}
+
+const GLuint Mesh::GetColorsNumChannels() const
+{
+	return num_color_channels;
+}
+
+const GLuint * Mesh::GetColorsIDs() const
+{
+	return color_ids;
+}
+
+const GLfloat * const * Mesh::GetColors() const
+{
+	return colors;
 }
 
 void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
