@@ -7,9 +7,6 @@ KDTNode::KDTNode(const AABB& limits): partition_axis(NO_PARTITION), limits(limit
 
 	childs[0] = nullptr;
 	childs[1] = nullptr;
-
-	for (int i = 0; i < 6; i++)
-		overlap[i] = 0.0f;
 }
 
 KDTNode::~KDTNode()
@@ -30,7 +27,7 @@ void KDTNode::CalculateTree(std::vector<GameObject*> game_objects_vec)
 		return;
 	}
 
-	FindBestMedian()
+	//FindBestMedian()
 }
 
 KDTree::KDTree()
