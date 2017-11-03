@@ -25,6 +25,7 @@ private:
 	bool draw = false;
 	Transform* transform = nullptr;
 	Sphere sphere_bounding_box;
+	AABB original_AABB_bounding_box;
 	AABB AABB_bounding_box;
 	OBB OBB_bounding_box;
 
@@ -72,6 +73,7 @@ public:
 private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
+	void UpdateBounds();
 	void DrawAABBBoundingBox() const;
 
 

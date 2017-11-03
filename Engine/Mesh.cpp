@@ -142,6 +142,13 @@ void Mesh::GetVertices(GLuint & id, GLuint & num, GLfloat * all_vertices) const
 	all_vertices = vertices;
 }
 
+const GLfloat* Mesh::GetVertices(GLuint & id, GLuint & num) const
+{
+	id = vertex_id;
+	num = num_vertices;
+	return vertices;
+}
+
 void Mesh::GetIndices(GLuint & id, GLuint & num, GLuint * all_indices) const
 {
 	id = indices_id;

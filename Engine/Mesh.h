@@ -42,6 +42,7 @@ public:
 
 	//Getters
 	void GetVertices(GLuint& id, GLuint& num, GLfloat* all_vertices) const;
+	const GLfloat* GetVertices(GLuint & id, GLuint & num) const;
 	void GetIndices(GLuint& id, GLuint& num, GLuint* all_indices) const;
 	void GetUVs(GLuint& num_channels, GLuint* num_components, GLuint* ids, GLuint* num, GLfloat** all_uvs) const;
 	void GetNormals(GLuint& id, GLfloat* all_normals) const;

@@ -1,5 +1,6 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Math\float3x3.h"
 
 #include "Mesh.h"
 //components
@@ -20,7 +21,6 @@ GameObject::GameObject(const GameObject* const parent, const char* name): parent
 	transform = new Transform("Transform");
 	sphere_bounding_box.SetNegativeInfinity();
 	AABB_bounding_box.SetNegativeInfinity();
-	//AABB_bounding_box = AABB(vec(4, 4, 4), vec(8, 8, 8));
 	OBB_bounding_box.SetNegativeInfinity();
 }
 
@@ -42,7 +42,9 @@ bool GameObject::Update()
 	bool ret = true;
 
 	//Update Transformation
-	transform->Update();
+	if (transform->Update())
+		UpdateBounds();
+
 
 	//Update components
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
@@ -98,7 +100,8 @@ void GameObject::AddComponent(Component * component)
 		else
 			draw = true;
 
-		CreateBounds(((MeshFilter*)component)->GetMesh());//TODO:
+		CreateBounds(((MeshFilter*)component)->GetMesh());
+
 		break;
 
 	case CT_APPLIED_MATERIAL:
@@ -306,66 +309,74 @@ void GameObject::RemoveAppliedMaterial()
 void GameObject::CreateBounds(const Mesh* mesh)
 {
 	uint id, num_vertices;
-	float* all_vertices = nullptr;
-	mesh->GetVertices(id, num_vertices, all_vertices);
-	vec* vertices_vec = new vec(all_vertices);
-	/*for (int i = 0; i < num_vertices; i++)
-	{
-		vertices_vec[i].x = all_vertices[i * 3];
-		vertices_vec[i].y = all_vertices[i * 3 + 1];
-		vertices_vec[i].z = all_vertices[i * 3 + 2];
-	}*/
+	const GLfloat* all_vertices = mesh->GetVertices(id, num_vertices);
+	const uint num_vec_vertices = (num_vertices - 1) / 3;
 
-	AABB_bounding_box.Enclose(vertices_vec, num_vertices);
-	delete vertices_vec;
+	math::vec* vec_vertices = new math::vec[num_vec_vertices];
+	memcpy(vec_vertices, all_vertices, num_vec_vertices * sizeof(GLfloat) * 3);
+
+	AABB_bounding_box.Enclose(vec_vertices, num_vec_vertices);
+	original_AABB_bounding_box = AABB_bounding_box;
+
+	DELETE_ARRAY(vec_vertices);
+}
+
+void GameObject::UpdateBounds()
+{
+	AABB_bounding_box = original_AABB_bounding_box;
+	//TODO: add hierarchy
+	AABB_bounding_box.TransformAsAABB(transform->GetTransformMatrix()->Transposed());
+	//math::vec AABB_bounding_box_corner_points[8];
+	//AABB_bounding_box.GetCornerPoints(AABB_bounding_box_corner_points);
+	//AABB_bounding_box = math::AABB::MinimalEnclosingAABB(AABB_bounding_box_corner_points, 8);
 }
 
 void GameObject::DrawAABBBoundingBox() const
 {
-	math::float3 aabb_verteices[8];
+	math::float3 aabb_vertices[8];
 
-	AABB_bounding_box.GetCornerPoints(aabb_verteices);
+	AABB_bounding_box.GetCornerPoints(aabb_vertices);
 
 	glLineWidth(3.0f);
 	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 
 	glBegin(GL_LINES);
 
-	glVertex3f(aabb_verteices[0].x, aabb_verteices[0].y, aabb_verteices[0].z);
-	glVertex3f(aabb_verteices[1].x, aabb_verteices[1].y, aabb_verteices[1].z);
+	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
+	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
 
-	glVertex3f(aabb_verteices[0].x, aabb_verteices[0].y, aabb_verteices[0].z);
-	glVertex3f(aabb_verteices[2].x, aabb_verteices[2].y, aabb_verteices[2].z);
+	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
+	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
 
-	glVertex3f(aabb_verteices[0].x, aabb_verteices[0].y, aabb_verteices[0].z);
-	glVertex3f(aabb_verteices[4].x, aabb_verteices[4].y, aabb_verteices[4].z);
+	glVertex3f(aabb_vertices[0].x, aabb_vertices[0].y, aabb_vertices[0].z);
+	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
 
-	glVertex3f(aabb_verteices[1].x, aabb_verteices[1].y, aabb_verteices[1].z);
-	glVertex3f(aabb_verteices[3].x, aabb_verteices[3].y, aabb_verteices[3].z);
+	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
+	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
 
-	glVertex3f(aabb_verteices[1].x, aabb_verteices[1].y, aabb_verteices[1].z);
-	glVertex3f(aabb_verteices[5].x, aabb_verteices[5].y, aabb_verteices[5].z);
+	glVertex3f(aabb_vertices[1].x, aabb_vertices[1].y, aabb_vertices[1].z);
+	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
 
-	glVertex3f(aabb_verteices[2].x, aabb_verteices[2].y, aabb_verteices[2].z);
-	glVertex3f(aabb_verteices[3].x, aabb_verteices[3].y, aabb_verteices[3].z);
+	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
+	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
 
-	glVertex3f(aabb_verteices[2].x, aabb_verteices[2].y, aabb_verteices[2].z);
-	glVertex3f(aabb_verteices[6].x, aabb_verteices[6].y, aabb_verteices[6].z);
+	glVertex3f(aabb_vertices[2].x, aabb_vertices[2].y, aabb_vertices[2].z);
+	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
 
-	glVertex3f(aabb_verteices[3].x, aabb_verteices[3].y, aabb_verteices[3].z);
-	glVertex3f(aabb_verteices[7].x, aabb_verteices[7].y, aabb_verteices[7].z);
+	glVertex3f(aabb_vertices[3].x, aabb_vertices[3].y, aabb_vertices[3].z);
+	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
 
-	glVertex3f(aabb_verteices[5].x, aabb_verteices[5].y, aabb_verteices[5].z);
-	glVertex3f(aabb_verteices[4].x, aabb_verteices[4].y, aabb_verteices[4].z);
+	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
+	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
 
-	glVertex3f(aabb_verteices[5].x, aabb_verteices[5].y, aabb_verteices[5].z);
-	glVertex3f(aabb_verteices[7].x, aabb_verteices[7].y, aabb_verteices[7].z);
+	glVertex3f(aabb_vertices[5].x, aabb_vertices[5].y, aabb_vertices[5].z);
+	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
 
-	glVertex3f(aabb_verteices[4].x, aabb_verteices[4].y, aabb_verteices[4].z);
-	glVertex3f(aabb_verteices[6].x, aabb_verteices[6].y, aabb_verteices[6].z);
+	glVertex3f(aabb_vertices[4].x, aabb_vertices[4].y, aabb_vertices[4].z);
+	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
 
-	glVertex3f(aabb_verteices[6].x, aabb_verteices[6].y, aabb_verteices[6].z);
-	glVertex3f(aabb_verteices[7].x, aabb_verteices[7].y, aabb_verteices[7].z);
+	glVertex3f(aabb_vertices[6].x, aabb_vertices[6].y, aabb_vertices[6].z);
+	glVertex3f(aabb_vertices[7].x, aabb_vertices[7].y, aabb_vertices[7].z);
 
 	glEnd();
 

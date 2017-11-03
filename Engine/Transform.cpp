@@ -51,6 +51,21 @@ const float4x4* Transform::GetTransformMatrix()
 	return &transform_matrix;
 }
 
+const float3 * Transform::GetTransformTranslation()
+{
+	return &translation;
+}
+
+const float3 * Transform::GetTransformScale()
+{
+	return &scaling;
+}
+
+const Quat * Transform::GetTransformRotation()
+{
+	return &rotation;
+}
+
 bool Transform::Update()
 {
 	if (transform)
@@ -59,15 +74,16 @@ bool Transform::Update()
 		float3x3 rotation_matrix(rotation);
 		transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
 		transform_matrix = float4x4::Scale(scaling, float3(0, 0, 0)) * transform_matrix;	//Scalate
-		transform = false;
 	}
-	return true;
+	return transform;
 }
 
 void Transform::Inspector()
 {
 	if (ImGui::TreeNode("Transform"))
 	{
+		transform = false;
+		
 		if (ImGui::DragFloat("Pos x", &translation.x))	transform = true;
 		if (ImGui::DragFloat("Pos y", &translation.y))	transform = true;
 		if (ImGui::DragFloat("Pos z", &translation.z))	transform = true;
