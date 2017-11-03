@@ -552,8 +552,8 @@
     <ClInclude Include="AppliedMaterial.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Sources\Game Objects\Components</Filter>
+    <ClInclude Include="KDTree.h">
+      <Filter>Sources\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -782,8 +782,8 @@
     <ClCompile Include="MeshFilter.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
+    <ClCompile Include="KDTree.cpp">
+      <Filter>Sources\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

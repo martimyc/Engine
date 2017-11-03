@@ -46,7 +46,7 @@ private:
 	unsigned int selected_material = 0;
 	unsigned int next_material = 0;
 	unsigned int material_priority = 0;
-	int current_mesh = 0; //determines to wich mesh of the selected Game object will the material go MAYBE CHANGE NAME
+	int current_mesh = 0; //determines to wich mesh of the selected Game object will the material go to MAYBE CHANGE NAME
 
 	//meshes //TODO UI
 	std::vector<Mesh*> meshes;
@@ -59,6 +59,9 @@ private:
 	bool debug_textures = false;
 	int current_material = 0;
 	unsigned int selected_texture = 0;
+
+	//GenerateGOVec() //for KDT
+	//RecalculateKDT(std::vector<GameObject*>);
 
 public:
 	SceneManager(const char* name, bool start_enabled = true);
