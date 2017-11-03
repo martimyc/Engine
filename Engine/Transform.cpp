@@ -46,24 +46,24 @@ void Transform::Euler2Quat(const float roll, const float pitch, const float yaw,
 	q.w = sy * cr * cp - cy * sr * sp;
 }
 
-const float4x4* Transform::GetTransformMatrix()
+const float4x4& Transform::GetTransformMatrix()
 {
-	return &transform_matrix;
+	return transform_matrix;
 }
 
-const float3 * Transform::GetTransformTranslation()
+const float3& Transform::GetTransformTranslation()
 {
-	return &translation;
+	return translation;
 }
 
-const float3 * Transform::GetTransformScale()
+const float3& Transform::GetTransformScale()
 {
-	return &scaling;
+	return scaling;
 }
 
-const Quat * Transform::GetTransformRotation()
+const Quat& Transform::GetTransformRotation()
 {
-	return &rotation;
+	return rotation;
 }
 
 bool Transform::Update()

@@ -59,6 +59,9 @@ public:
 	//Gets
 	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
+	void GetWorldPosition(int& x, int& y, int& z) const;
+	void GetWorldRotation(int& x, int& y, int& z, int&w) const;
+	void GetWorldScale(int& x, int& y, int& z) const;
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;

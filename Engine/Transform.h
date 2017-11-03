@@ -25,10 +25,10 @@ public:
 	Transform(const char* name = "Transform");
 	~Transform();
 
-	const float4x4* GetTransformMatrix();
-	const float3* GetTransformTranslation();
-	const float3* GetTransformScale();
-	const Quat* GetTransformRotation();
+	const float4x4& GetTransformMatrix();
+	const float3& GetTransformTranslation();
+	const float3& GetTransformScale();
+	const Quat& GetTransformRotation();
 
 	bool Update();
 	void Inspector();

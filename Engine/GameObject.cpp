@@ -153,11 +153,11 @@ void GameObject::ReserveComponentSpace(const GLuint & num_components)
 
 const float * const GameObject::GetTransformationMatrix()const
 {
-	float4x4 transf_matrix = *transform->GetTransformMatrix();
+	float4x4 transf_matrix = transform->GetTransformMatrix();
 	const GameObject* temp_parent = parent;
 	while (temp_parent != nullptr)
 	{
-		transf_matrix = transf_matrix * (*temp_parent->transform->GetTransformMatrix());
+		transf_matrix = transf_matrix * (temp_parent->transform->GetTransformMatrix());
 		temp_parent = temp_parent->parent;
 	}
 
@@ -246,6 +246,21 @@ const std::string & GameObject::GetName() const
 	return name;
 }
 
+void GameObject::GetWorldPosition(int & x, int & y, int & z) const
+{
+	const GameObject* next_parent = parent;
+	math::float3 pos = transform->GetTransformTranslation();
+	while (next_parent)
+	{
+		pos += next_parent->transform->GetTransformTranslation();
+		next_parent = next_parent->parent;
+	}
+
+	x = pos.x;
+	y = pos.y;
+	z = pos.z;
+}
+
 bool GameObject::HasMeshFilter() const
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
@@ -322,8 +337,20 @@ void GameObject::CreateBounds(const Mesh* mesh)
 
 void GameObject::UpdateBounds()
 {
+	const GameObject* next_parent = parent;
+	math::float4x4 matrix_transformation = transform->GetTransformMatrix();
+	while (next_parent)
+	{
+		matrix_transformation = matrix_transformation * next_parent->transform->GetTransformMatrix();
+		next_parent = next_parent->parent;
+	}
+
 	AABB_bounding_box = original_AABB_bounding_box;
-	AABB_bounding_box.TransformAsAABB(transform->GetTransformMatrix()->Transposed());
+	AABB_bounding_box.TransformAsAABB(matrix_transformation.Transposed());
+
+	//Update Childs
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->UpdateBounds();
 }
 
 void GameObject::DrawAABBBoundingBox() const
