@@ -1,10 +1,22 @@
+#include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
+#include "GameObject.h"
 #include "KDTree.h"
 
-KDTNode::KDTNode(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION), limits(limits)
+KDTNode::KDTNode(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION)
 {
 	limits = new AABB(min_point, max_point);
 	for(int i = 0; i < MAX_NUM_OBJECTS; i++)
+		game_objects[i] = nullptr;
+
+	childs[0] = nullptr;
+	childs[1] = nullptr;
+}
+
+KDTNode::KDTNode(const AABB& limits) : partition_axis(NO_PARTITION)
+{
+	this->limits = new AABB(limits);
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		game_objects[i] = nullptr;
 
 	childs[0] = nullptr;
@@ -30,11 +42,13 @@ void KDTNode::SubDivide3D()
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
+		math::vec vect(vec::zero);
+		vect[0] = 3;
 		if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-			child[0]->AddGameObject(game_objects[i]);
+			childs[0]->AddGameObject(game_objects[i]);
 
 		if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-			child[1]->AddGameObject(game_objects[i]);
+			childs[1]->AddGameObject(game_objects[i]);
 
 		game_objects[i] = nullptr;
 	}
@@ -53,7 +67,7 @@ void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis)
 
 void KDTNode::SubDivide(PARTITION_AXIS partition_axis)
 {
-	if (child[0] == nullptr)
+	if (childs[0] == nullptr)
 	{
 		float median = FindBestMedian(partition_axis);
 		this->partition_axis = partition_axis;
@@ -91,17 +105,17 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis)
 		{
 		case X:
 			min_point.x = median;
-			min_point.y = limits->min_point.y;
-			min_point.z = limits->min_point.z;
+			min_point.y = limits->minPoint.y;
+			min_point.z = limits->minPoint.z;
 			break;
 		case Y:
-			min_point.x = limits->min_point.x;
+			min_point.x = limits->minPoint.x;
 			min_point.y = median;
-			min_point.z = limits->min_point.z;
+			min_point.z = limits->minPoint.z;
 			break;
 		case Z:
-			min_point.x = limits->min_point.x;
-			min_point.y = limits->min_point.y;
+			min_point.x = limits->minPoint.x;
+			min_point.y = limits->minPoint.y;
 			min_point.z = median;
 			break;
 		default:
@@ -151,10 +165,10 @@ bool KDTNode::AddToCorrectChild(const GameObject * new_game_object)
 	bool ret = false;
 
 	if (new_game_object->GetWorldPosition()[partition_axis] <= median)
-		ret = child[0]->AddGameObject(new_game_object);
+		ret = childs[0]->AddGameObject(new_game_object);
 
 	if (new_game_object->GetWorldPosition()[partition_axis] > median)
-		ret = child[1]->AddGameObject(new_game_object);
+		ret = childs[1]->AddGameObject(new_game_object);
 
 	return ret;
 }
@@ -197,12 +211,10 @@ bool KDTNode::Empty() const
 {
 	if (partition_axis == NO_PARTITION)
 	{
-		if (chils[0] == nullptr)
-		{
+		if (childs[0] == nullptr)
 			return true;
 		else
 			return false;
-		}
 	}
 	else
 	{
@@ -213,15 +225,23 @@ bool KDTNode::Empty() const
 	}
 }
 
-KDTree::KDTree()
+/*KDTree::KDTree(std::vector<GameObject*> all_game_objects;)
 {
-	root = new KDTNode(limits);
-}
+	for (std::vector<GameObject*>::iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+	{
+
+	}
+	root = new KDTNode(math::vec(0.0f, 0.0f, 0.0f), math::vec(0.0f, 0.0f, 0.0f));
+}*/
 
 KDTree::~KDTree()
 {}
 
-void KDTree::ReCalculate(std::vector<GameObject*> all_game_objects)
+/*void KDTree::ReCalculate()
 {
+	std::vector<GameObject*> all_game_objects;
+
+
+
 	root->CalculateTree(all_game_objects);
-}
+}*/

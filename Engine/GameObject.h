@@ -98,8 +98,6 @@ public:
 	//Remove unique components
 	void RemoveMeshFilter();
 	void RemoveAppliedMaterial();
-
-
 };
 
 #endif // !_GAME_OBJECT

@@ -2,10 +2,11 @@
 #define KDTREE
 
 #include <vector>
-#include "MathGeoLib\src\MathGeoLib.h"
-#include "GameObject.h"
+#include "MathGeoLib\src\MathGeoLibFwd.h"
 
 #define MAX_NUM_OBJECTS 3
+
+class GameObject;
 
 enum PARTITION_AXIS
 {
@@ -19,7 +20,7 @@ class KDTNode
 {
 private:
 	AABB* limits;
-	GameObject* game_objects[MAX_NUM_OBJECTS];
+	const GameObject* game_objects[MAX_NUM_OBJECTS];
 
 	//Partition
 	PARTITION_AXIS partition_axis;
@@ -28,6 +29,7 @@ private:
 
 public:
 	KDTNode(const math::vec min_point, const math::vec max_point);
+	KDTNode(const AABB& limits);
 	~KDTNode();
 
 	void SubDivide3D();
@@ -56,7 +58,7 @@ private:
 	AABB limits;
 
 public:
-	KDTree();
+	KDTree(std::vector<GameObject*> all_game_objects);
 	~KDTree();
 
 	void ReCalculate(std::vector<GameObject*> all_game_objects);

@@ -1,14 +1,13 @@
 #include "imgui\imgui.h"
-#include "MathGeoLib\src\Geometry\AABB.h"
 #include "MathGeoLib\src\Math\float3x3.h"
 
-#include "Mesh.h"
 //components
+#include "Component.h"
 #include "MeshFilter.h"
 #include "AppliedMaterial.h"
 #include "Transform.h"
 #include "Texture.h"
-#include "Component.h"
+#include "Mesh.h"
 
 //modules
 #include "Console.h"
