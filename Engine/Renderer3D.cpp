@@ -199,7 +199,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		{
 			glPushMatrix();
 			glLoadMatrixf(App->camera->GetViewMatrix());
-			glMultMatrixf(draw_queue.top()->GetTransformationMatrix());
+			glMultMatrixf(draw_queue.top()->GetWorldGLTransform());
 
 			draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
 
