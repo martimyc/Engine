@@ -53,7 +53,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Scene Manager Configuration", Profiler::Color::BlanchedAlmond)
 
-		UPDATE_STATUS ret = UPDATE_CONTINUE;
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
 	if (App->BeginDockWindow("Draw Modes", &config_scene))
 	{
@@ -439,7 +439,7 @@ GameObject* SceneManager::CreateGameObject(const char* const name)
 {
 	GameObject* new_go = focused->CreateChild(name);
 	num_game_objects++;
-	//go_kdtree->AddGameObject(new_go);
+	go_kdtree->AddGameObject(new_go);
 	return new_go;
 }
 
@@ -447,7 +447,7 @@ GameObject * SceneManager::CreateGameObject(GameObject * parent, const char * co
 {
 	GameObject* new_go = parent->CreateChild(name);
 	num_game_objects++;
-	//go_kdtree->AddGameObject(new_go);
+	go_kdtree->AddGameObject(new_go);
 	return new_go;
 }
 

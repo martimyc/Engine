@@ -32,13 +32,13 @@ public:
 	KDTNode(const AABB& limits);
 	~KDTNode();
 
-	void SubDivide3D();
+	void SubDivide3D(const GameObject* new_game_object);
 
-	void SubDivideChilds(PARTITION_AXIS partition_axis);
+	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
-	void SubDivide(PARTITION_AXIS partition_axis);
+	void SubDivide(PARTITION_AXIS partition_axis, float median);
 
-	float FindBestMedian(PARTITION_AXIS partition_axis) const;
+	float FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const;
 
 	bool AddGameObject(const GameObject* new_game_object);
 

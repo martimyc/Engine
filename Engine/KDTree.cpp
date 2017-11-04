@@ -35,12 +35,16 @@ KDTNode::~KDTNode()
 	//Dont think deleting gameobjects through tree is best
 }
 
-void KDTNode::SubDivide3D()
+void KDTNode::SubDivide3D(const GameObject* new_game_object)
 {
-	SubDivide(X);
-	SubDivideChilds(Y);
-	childs[0]->SubDivideChilds(Z);
-	childs[1]->SubDivideChilds(Z);
+	float median_x = FindBestMedian(X, new_game_object);
+	float median_y = FindBestMedian(Y, new_game_object);
+	float median_z = FindBestMedian(Z, new_game_object);
+
+	SubDivide(X, median_x);
+	SubDivideChilds(Y, median_y);
+	childs[0]->SubDivideChilds(Z, median_z);
+	childs[1]->SubDivideChilds(Z, median_z);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
@@ -56,22 +60,22 @@ void KDTNode::SubDivide3D()
 	}
 }
 
-void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis)
+void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] != nullptr)
 	{
-		childs[0]->SubDivide(partition_axis);
-		childs[1]->SubDivide(partition_axis);
+		childs[0]->SubDivide(partition_axis, median);
+		childs[1]->SubDivide(partition_axis, median);
 	}
 	else
 		LOG("No childs to subdivide");
 }
 
-void KDTNode::SubDivide(PARTITION_AXIS partition_axis)
+void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] == nullptr)
 	{
-		float median = FindBestMedian(partition_axis);
+		this->median = median;
 		this->partition_axis = partition_axis;
 
 		math::vec min_point(limits->minPoint);
@@ -131,9 +135,11 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis)
 		LOG("Trying to subdivide node with existing childs");
 }
 
-float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis) const
+float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const
 {
 	std::priority_queue<float> queue;
+
+	queue.push(new_game_object->GetWorldPosition()[partition_axis]);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		if (game_objects[i] != nullptr)
@@ -176,7 +182,7 @@ bool KDTNode::AddGameObject(const GameObject * new_game_object)
 
 		if (ret == false)
 		{
-			SubDivide3D();
+			SubDivide3D(new_game_object);
 			AddToCorrectChild(new_game_object);
 		}
 	}
@@ -393,6 +399,19 @@ void KDTNode::Draw() const
 			break;
 		default:
 			break;
+		}
+
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		{
+			if (game_objects[i] != nullptr)
+			{
+				math::vec position = game_objects[i]->GetWorldPosition();
+				glVertex3f(position.x, position.y, position.z);
+			}
+			else
+				break;
 		}
 
 		glEnd();

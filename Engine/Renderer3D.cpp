@@ -167,9 +167,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
 
-
 	render_to_texture->BindFrameBuffer();
-
 
 	ImVec4 clear_color = ImColor(25, 25, 25);
 	ImGuiIO io = ImGui::GetIO();
@@ -213,24 +211,11 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 			material_in_use->DisableDraw();
 	}
 
-	//for (std::vector<const GameObject*>::const_iterator it = draw_vec.begin(); it != draw_vec.end(); ++it)
-		//(*it)->Draw();
-
-	/*if (debug_draw == true)
-	{
-		BeginDebugDraw();
-		App->DebugDraw();
-		EndDebugDraw();
-	}*/
-
-	//App->open_gl_test->DrawDebugPoint();
-	//App->open_gl_test->DrawPlaneExtraLarge();
-
 	//Debug Textures
 	if (App->scene_manager->DebugTextures())
 		App->scene_manager->DrawTexture(App->scene_manager->GetTextureToDraw());
 
-	//App->scene_manager->DrawKDT();
+	App->scene_manager->DrawKDT();
 
 	if (show_grid)
 		DrawGrid();
