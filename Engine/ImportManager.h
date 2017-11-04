@@ -18,6 +18,8 @@ class Texture;
 class Material;
 class Mesh;
 
+class GameObject;
+
 enum IMPORT_TYPE
 {
 	IT_NO_TYPE = 0,
@@ -55,6 +57,9 @@ public:
 	//Scene
 	bool ImportScene(const std::string& path) const;
 	//bool LoadScene(const std::string& name) const;
+
+	//Objects
+	bool ImportObject(const aiNode& source, const aiScene& scene, GameObject& destination);
 
 	//Textures
 	Texture* LoadTexture(const std::string& name) const;

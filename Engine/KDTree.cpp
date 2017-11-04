@@ -424,18 +424,24 @@ bool KDTree::ReCalculate(GameObject* new_game_object)
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	limits.Enclose(new_game_object->GetWorldPosition());
+	limits.Enclose(&new_game_object->GetWorldPosition(), 1);
 
-	for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
-		limits.Enclose((*it)->GetWorldPosition());
+	if (all_game_objects.size() > 0)
+	{
+		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+			limits.Enclose(&(*it)->GetWorldPosition(), 1);
+	}
 
 	root = new KDTNode(limits);
 
 	ret = root->AddGameObject(new_game_object);
 
-	for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
-		if (root->AddGameObject(*it) == false)
-			ret = false;
+	if (all_game_objects.size() > 0)
+	{
+		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+			if (root->AddGameObject(*it) == false)
+				ret = false;
+	}
 
 	return ret;
 }

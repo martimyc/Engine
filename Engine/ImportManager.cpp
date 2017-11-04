@@ -159,27 +159,26 @@ bool ImportManager::ImportScene(const std::string & path) const
 
 	if (scene != nullptr)
 	{
-		unsigned int previous_loaded_materials = App->scene_manager->NumMaterials();
-		bool* material_loads = new bool[scene->mNumMaterials];
+		bool* material_loads = nullptr;
+		bool* mesh_loads = nullptr;
 
-		// Load all meshes (for now into the same game object)
-		char go_char[255];
-		sprintf(go_char, "%s_GO", scene_name.c_str());
-		std::string scene_name(go_char);
-
-		GameObject* scene_object = App->scene_manager->CreateGameObject(scene_name.c_str());
+		// Load all materials first
 
 		if (scene->HasMaterials())
 		{
 			//Import all materials first so that we can bind them to a mesh later when we load them
 
-			App->scene_manager->ReserveMaterialSpace(scene->mNumMaterials);
+			std::vector<Material*> scene_materials;
+			scene_materials.reserve(scene->mNumMaterials);
+			material_loads = new bool[scene->mNumMaterials];
+
+			//App->scene_manager->ReserveMaterialSpace(scene->mNumMaterials);
 
 			uint num_textures = 0;
 			for (int i = 0; i < scene->mNumMaterials; i++)
 				num_textures += scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE);
 
-			App->scene_manager->ReserveTextureSpace(num_textures);
+			//App->scene_manager->ReserveTextureSpace(num_textures);
 
 			for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 			{
@@ -209,10 +208,15 @@ bool ImportManager::ImportScene(const std::string & path) const
 		}
 		else
 			LOG("Scene has no materials");
-		
+
+		//Load meshes
 		if (scene->HasMeshes())
 		{
-			App->scene_manager->ReserveMeshSpace(scene->mNumMeshes);
+			std::vector<Material*> scene_meshes;
+			scene_meshes.reserve(scene->mNumMeshes);
+			mesh_loads = new bool[scene->mNumMeshes];		
+
+			//App->scene_manager->ReserveMeshSpace(scene->mNumMeshes);
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
@@ -233,13 +237,13 @@ bool ImportManager::ImportScene(const std::string & path) const
 					}
 					else
 					{
-						GameObject* new_go = scene_object->CreateChild(new MeshFilter(new_mesh));
+						/*GameObject* new_go = scene_object->CreateChild(new MeshFilter(new_mesh));
+						App->scene_manager->AddToKDT(new_go);
 
 						if (scene->HasMaterials() && material_loads[scene->mMeshes[i]->mMaterialIndex] == true)
-							new_go->AddComponent(new AppliedMaterial(App->scene_manager->GetMaterial(previous_loaded_materials + scene->mMeshes[i]->mMaterialIndex)));
+							new_go->AddComponent(new AppliedMaterial(App->scene_manager->GetMaterial(previously_loaded_materials + scene->mMeshes[i]->mMaterialIndex)));
 						else
-							LOG("Material for this mesh did not load correctly or index is non exsistent");
-						
+							LOG("Material for this mesh did not load correctly or index is non exsistent");*/
 					}
 				}
 				else
@@ -248,6 +252,24 @@ bool ImportManager::ImportScene(const std::string & path) const
 		}
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
+
+		//Load object hirarchy and add components to them
+
+		std::string scene_name;
+
+		if (scene->mRootNode->mName.length != 0)
+			scene_name = scene->mRootNode->mName.C_Str();
+		else
+		{
+			char go_char[255];
+			sprintf(go_char, "%s_GO", scene_name.c_str());
+			scene_name = go_char;
+		}
+
+		GameObject* scene_object = App->scene_manager->CreateGameObject(scene_name.c_str());
+
+
+
 
 		aiReleaseImport(scene);
 	}
@@ -261,6 +283,15 @@ void ImportManager::LoadCheckers()
 {
 	Texture* checkers = App->scene_manager->CreateTexture("Checkers");
 	texture_importer->LoadCheckers(*checkers);
+}
+
+bool ImportManager::ImportObject(const aiNode & source, const aiScene& scene,  GameObject & destination)
+{
+	bool ret = false;
+
+	
+
+	return ret;
 }
 
 Texture * ImportManager::LoadTexture(const std::string & name) const

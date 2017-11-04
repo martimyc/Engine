@@ -42,9 +42,9 @@ bool SceneManager::Init()
 
 bool SceneManager::CleanUp()
 {
-	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
 		delete (*it);
-	materials.clear();
+	assets.clear();
 
 	return true;
 }
@@ -100,12 +100,37 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 	}
 	App->EndDockWindow();
 
+	if (App->BeginDockWindow("Debug", &debug))
+	{
+		//All debug bools
+		if (ImGui::Button("Debug Textures"))
+			debug_textures = !debug_textures;
+
+		if (debug_textures)
+		{
+			if (ImGui::InputInt("Texture to draw", &texture_to_draw))
+			{
+				if (texture_to_draw >= GetNumTextures())
+				{
+					LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
+					texture_to_draw = 0;
+				}
+				else if (texture_to_draw < 0)
+					texture_to_draw = 0;
+			}
+		}
+	}
+	App->EndDockWindow();
+
 	ImGui::ShowTestWindow();
 
 	if(ImGui::Begin("Assets", &assets_enable))
 	{
-		MaterialsConfiguration(dt);
-		TexturesConfiguration(dt);
+		for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		{
+			//ImGui::ListBox((*it)->GetName().c_str(),);
+			//(*it)
+		}
 		ImGui::End();
 	}
 
@@ -113,7 +138,7 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 	return ret;
 }
-
+/*
 UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 {
 	if(materials.size() > 0)
@@ -175,25 +200,9 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 	if (textures.size() > 0)
 		if (ImGui::CollapsingHeader("Textures"))
 		{
-			if (ImGui::Button("Empty"))
-				EmptyTextures();
-		
-				if (ImGui::Button("Debug Textures"))
-					debug_textures = !debug_textures;
+				
 
-				if (debug_textures)
-				{
-					if (ImGui::InputInt("Texture to draw", &texture_to_draw))
-					{
-						if (texture_to_draw >= textures.size())
-						{
-							LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
-							texture_to_draw = 0;
-						}
-						else if (texture_to_draw < 0)
-							texture_to_draw = 0;
-					}
-				}
+				
 
 				std::vector<int> textures_to_delete;
 				bool node_open = false;
@@ -245,7 +254,6 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 					}
 				}
 
-
 				for (std::vector<int>::const_iterator it = textures_to_delete.begin(); it != textures_to_delete.end(); ++it)
 				{
 					delete textures[*it];
@@ -253,7 +261,7 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 				}
 			}
 	return UPDATE_CONTINUE;
-}
+}*/
 
 UPDATE_STATUS SceneManager::Update(float dt)
 {
@@ -280,67 +288,73 @@ void SceneManager::DrawMode() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void SceneManager::ApplyToMaterial(Texture * new_text, int material)
+void SceneManager::ApplyToMaterial(Texture * new_text, int num_material)
 {
-	materials[material]->AddTexture(new_text);
+	Material* material = GetMaterial(num_material);
+	if (material != nullptr)
+		material->AddTexture(new_text);
+	else
+		LOG("Can not apply texture %s to material number %i, material non exsistent", new_text->GetName().c_str(), num_material);
 }
 
-void SceneManager::ReserveMaterialSpace(const GLuint & num_materials)
+void SceneManager::PushBackAssets(const std::vector<Asset*>& assets_to_add)
 {
-	int reserve = materials.size() + num_materials;
-	materials.reserve(reserve * sizeof(Material*));
+	assets.reserve(assets_to_add.size());
+	for (std::vector<Asset*>::const_iterator it = assets_to_add.begin(); it != assets_to_add.end(); ++it)
+		assets.push_back((*it));
 }
 
-void SceneManager::ReserveMeshSpace(const GLuint & num_meshes)
+unsigned int SceneManager::GetNumMaterials() const
 {
-	int reserve = materials.size() + num_meshes;
-	meshes.reserve(reserve * sizeof(Material*));
-}
+	unsigned int num_materials = 0;
 
-void SceneManager::ReserveTextureSpace(const GLuint & num_textures)
-{
-	int reserve = materials.size() + num_textures;
-	meshes.reserve(reserve * sizeof(Material*));
-}
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetType() == AT_MATERIAL)
+			num_materials++;
 
-bool SceneManager::DrawNormals() const
-{
-	return normals;
-}
-
-unsigned int SceneManager::NumMaterials() const
-{
-	return materials.size();
+	return num_materials;
 }
 
 Material * SceneManager::GetMaterial(unsigned int pos) const
 {
-	return materials[pos];
+	unsigned int num_materials = 0;
+
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+	{
+		if ((*it)->GetType() == AT_MATERIAL)
+		{
+			if (num_materials == pos)
+				return (Material*)*it;
+			num_materials++;
+		}
+	}
+
+	return nullptr;
 }
 
 Material * SceneManager::GetMaterial(const std::string & name) const
 {
-	for (std::vector<Material*>::const_iterator it = materials.begin(); it != materials.end(); ++it)
-		if ((*it)->GetName() == name)
-			return (*it);
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetType() == AT_MATERIAL)
+			if (name == (*it)->GetName())
+				return (Material*)*it;
 
 	return nullptr;
 }
 
 void SceneManager::DeleteMaterial(Material* material_to_delete)
 {
-	for (std::vector<Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
-		if ((*it) == material_to_delete)
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (*it == material_to_delete)
 		{
-			delete (*it);
-			materials.erase(it);
-			break;
+			delete *it;
+			return;
 		}
 }
 
 bool SceneManager::HasMaterials() const
 {
-	return materials.size() > 0;
+	return GetNumMaterials() > 0;
 }
 
 void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const
@@ -374,34 +388,44 @@ Mesh * SceneManager::CreateMesh(const char * const name)
 		new_mesh = new Mesh(name);
 
 	next_mesh++;
-	meshes.push_back(new_mesh);
+	assets.push_back(new_mesh);
 	return new_mesh;
 }
 
 Mesh * SceneManager::GetMesh(unsigned int pos) const
 {
-	if (meshes.size() < pos)
-		return meshes[pos];
+	unsigned int num_meshes = 0;
+
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+	{
+		if ((*it)->GetType() == AT_MESH)
+		{
+			if (num_meshes == pos)
+				return (Mesh*)*it;
+			num_meshes++;
+		}
+	}
+
 	return nullptr;
 }
 
 Mesh * SceneManager::GetMesh(const std::string & name) const
 {
-	for (std::vector<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
-		if ((*it)->GetName() == name)
-			return (*it);
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetType() == AT_MESH)
+			if (name == (*it)->GetName())
+				return (Mesh*)*it;
 
 	return nullptr;
 }
 
 void SceneManager::DeleteMesh(Mesh * mesh_to_delete)
 {
-	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
-		if ((*it) == mesh_to_delete)
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (*it == mesh_to_delete)
 		{
-			delete (*it);
-			meshes.erase(it);
-			break;
+			delete *it;
+			return;
 		}
 }
 
@@ -423,6 +447,11 @@ GameObject* SceneManager::CreateGameObject(const char* const name)
 void SceneManager::DrawKDT() const
 {
 	go_kdtree->Draw();
+}
+
+bool SceneManager::AddToKDT(GameObject* new_go)
+{
+	return go_kdtree->AddGameObject(new_go);
 }
 
 void SceneManager::Hirarchy()
@@ -464,7 +493,7 @@ Material * SceneManager::CreateMaterial(const char * const name)
 		new_material = new Material(name, ++material_priority);
 
 	next_material++;	
-	materials.push_back(new_material);
+	assets.push_back(new_material);
 	return new_material;
 }
 /*
@@ -492,22 +521,26 @@ Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)
 
 void SceneManager::AddTexture(Texture * new_texture)
 {
-	textures.push_back(new_texture);
-}
-
-void SceneManager::EmptyTextures()
-{
-	for (std::vector<Texture*>::iterator it = textures.begin() + 1; it != textures.end(); ++it)
-		delete (*it);
-	textures.clear();
+	assets.push_back(new_texture);
 }
 
 Texture * SceneManager::GetTexture(unsigned int i) const
 {
-	if (textures.size() > 0)
-		return textures[i];
-	else
-		LOG("Asking for texture when there aren't any");
+	unsigned int num_texture = 0;
+	unsigned int num_asset = 0;
+
+	while (num_texture < i && num_asset < assets.size())
+	{
+		if (assets[num_asset]->GetType() == AT_TEXTURE)
+		{
+			if (num_texture == i)
+				return (Texture*)assets[num_asset];
+			num_texture++;
+		}
+		num_asset++;
+	}
+
+	LOG("Texture %i doesn't exsist, there are only %i textures", i, num_texture);
 	return nullptr;
 }
 
@@ -521,7 +554,7 @@ bool SceneManager::DebugTextures() const
 	return debug_textures;
 }
 
-bool SceneManager::Exsists(const std::string & path) const
+bool SceneManager::TextureExsists(const std::string & path) const
 {
 	std::string new_name;
 	size_t start = path.find_last_of("//");
@@ -533,18 +566,20 @@ bool SceneManager::Exsists(const std::string & path) const
 	else
 		new_name = path.substr(start + 1, count);
 
-	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
-		if ((*it)->GetName() == new_name)
-			return true;
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if((*it)->GetType() == AT_TEXTURE)
+			if ((*it)->GetName() == new_name)
+				return true;
 	return false;
 }
 
 void SceneManager::DrawTexture(unsigned int num_texture) const
 {
-	if (num_texture < textures.size())
+	Texture* texture = GetTexture(num_texture);
+	if (texture < nullptr)
 	{
 		// Select the texture to use
-		glBindTexture(GL_TEXTURE_2D, textures[num_texture]->GetID());
+		glBindTexture(GL_TEXTURE_2D, texture->GetID());
 
 		float hsize = 6.0f; // Vertical size of the quad
 		float vsize = 4.0f; // Vertical size of the quad
@@ -573,25 +608,37 @@ void SceneManager::DrawTexture(unsigned int num_texture) const
 		glDisable(GL_TEXTURE_2D);
 	}
 	else
-		LOG("Can't draw texture, last existing texture is %i", textures.size() - 1);
+		LOG("Can't draw texture, texture is non exsistant");
+}
+
+unsigned int SceneManager::GetNumTextures() const
+{
+	unsigned int num_textures = 0;
+
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetType() == AT_TEXTURE)
+			num_textures++;
+
+	return num_textures;
 }
 
 Texture * SceneManager::GetTexture(const std::string & name) const
 {
-	for (std::vector<Texture*>::const_iterator it = textures.begin(); it != textures.end(); ++it)
-		if ((*it)->GetName() == name)
-			return (*it);
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if((*it)->GetType() == AT_TEXTURE)
+			if ((*it)->GetName() == name)
+				return (Texture*)(*it);
 
 	return nullptr;
 }
 
 void SceneManager::DeleteTexture(Texture * texture_to_delete)
 {
-	for (std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
 		if ((*it) == texture_to_delete)
 		{
 			delete (*it);
-			textures.erase(it);
+			assets.erase(it);
 			break;
 		}
 }
@@ -599,13 +646,6 @@ void SceneManager::DeleteTexture(Texture * texture_to_delete)
 Texture * SceneManager::CreateTexture(const std::string & name, const TEXTURE_TYPE type, const GLenum gl_texure_type, const GLuint & id)
 {
 	Texture* new_texture = new Texture(name, type, gl_texure_type, id);
-	textures.push_back(new_texture);
+	assets.push_back(new_texture);
 	return new_texture;
 }
-
-/*
-bool SceneManager::LoadScene(const std::string & path) const
-{
-	return scene_inporter->LoadScene(path);
-}*/
-

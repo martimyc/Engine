@@ -80,11 +80,11 @@ public:
 	void GetLocalPosX(int& x) const;
 	void GetLocalPosY(int& y) const;
 	void GetLocalPosZ(int& z) const;
-	const math::vec& GetLocalPosition() const;
+	math::vec GetLocalPosition() const;
 	void GetWorldPosX(int& x) const;
 	void GetWorldPosY(int& y) const;
 	void GetWorldPosZ(int& z) const;
-	const math::vec& GetWorldPosition() const;
+	math::vec GetWorldPosition() const;
 		//Rotation
 	const math::vec& GetLocalRotationEuler() const;
 	const math::vec& GetWorldRotationEuler() const;

@@ -46,5 +46,5 @@ void AppliedMaterial::DisableDraw() const
 void AppliedMaterial::Inspector()
 {
 	//TODO change to pick uv channel
-	material->LoneConfig();
+	material->Inspector();
 }

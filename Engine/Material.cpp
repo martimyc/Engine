@@ -65,42 +65,48 @@ void Material::DisableDraw() const
 	}
 }
 
-void Material::LoneConfig()
+bool Material::Inspector()
 {
-	if (ImGui::TreeNode(name.c_str()))
+	bool ret = true;
+
+	ImGui::Text("Name: %s", name.c_str());
+	ImGui::Text("Difuse textures: %i", num_difusse_textures);
+
+	std::vector<int> textures_to_remove;
+
+	if (ImGui::TreeNode("Textures"))
 	{
-		ImGui::Text("Difuse textures: %i", num_difusse_textures);
-
-		std::vector<int> textures_to_remove;
-
-		if (ImGui::TreeNode("Textures"))
+		for (int i = 0; i < textures.size(); i++)
 		{
-			for (int i = 0; i < textures.size(); i++)
+			ImVec2 size(50, 50);
+			ImVec2 uv0(0, 1);
+			ImVec2 uv1(1, 0);
+
+			ImGui::Image((void*)textures[i]->GetID(), size, uv0, uv1);
+			ImGui::SameLine();
+			ImGui::Text("Name: %s\nWidth: %i\nHeight: %i", textures[i]->GetName().c_str(), textures[i]->GetWidth(), textures[i]->GetHeight());
+
+			if (ImGui::Button("Remove"))
 			{
-				ImVec2 size(50, 50);
-				ImVec2 uv0(0, 1);
-				ImVec2 uv1(1, 0);
-
-				ImGui::Image((void*)textures[i]->GetID(), size, uv0, uv1);
-				ImGui::SameLine();
-				ImGui::Text("Name: %s\nWidth: %i\nHeight: %i", textures[i]->GetName().c_str(), textures[i]->GetWidth(), textures[i]->GetHeight());
-
-				if (ImGui::Button("Remove"))
-				{
-					LOG("Removing texture from this material");
-					textures_to_remove.push_back(i);
-				}
+				LOG("Removing texture from this material");
+				textures_to_remove.push_back(i);
 			}
-			ImGui::TreePop();
 		}
-
-		for (std::vector<int>::const_iterator it = textures_to_remove.begin(); it != textures_to_remove.end(); ++it)
-		{
-			textures.erase(textures.begin() + (*it));
-			num_difusse_textures--;
-		}
-
 		ImGui::TreePop();
 	}
+
+	for (std::vector<int>::const_iterator it = textures_to_remove.begin(); it != textures_to_remove.end(); ++it)
+	{
+		textures.erase(textures.begin() + (*it));
+		num_difusse_textures--;
+	}
+
+	if (ImGui::Button("Delete"))
+	{
+		LOG("Deleting material");
+		ret = false;
+	}
+
+	return ret;
 }
 

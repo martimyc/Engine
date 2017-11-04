@@ -63,11 +63,10 @@ private:
 	KDTNode* root;
 	AABB limits;
 
+	bool ReCalculate(GameObject* new_game_object);
 public:
 	KDTree();
 	~KDTree();
-
-	bool ReCalculate(GameObject* new_game_object);
 
 	bool AddGameObject(GameObject* new_game_object);
 

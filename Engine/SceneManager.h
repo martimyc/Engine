@@ -9,6 +9,7 @@
 #define CHECKERS_WIDTH 256
 
 class GameObject;
+class Asset;
 class Material;
 class Texture;
 class Mesh;
@@ -35,6 +36,7 @@ private:
 	bool wireframe;
 	bool normals;
 	bool polygons;
+	bool debug = true;
 
 	//Game Objects
 	GameObject* root;
@@ -43,20 +45,19 @@ private:
 	bool hirarchy_active = true;
 	KDTree* go_kdtree;
 
+	std::vector<Asset*> assets;
+
 	//materials
-	std::vector<Material*> materials;
 	unsigned int selected_material = 0;
 	unsigned int next_material = 0;
 	unsigned int material_priority = 0;
 	int current_mesh = 0; //determines to wich mesh of the selected Game object will the material go to MAYBE CHANGE NAME
 
 	//meshes //TODO UI
-	std::vector<Mesh*> meshes;
 	unsigned int selected_mesh = 0;
 	unsigned int next_mesh = 0;
 
 	//Textures
-	std::vector<Texture*> textures;
 	int texture_to_draw = 0;
 	bool debug_textures = false;
 	int current_material = 0;
@@ -73,8 +74,6 @@ public:
 	bool CleanUp();
 
 	UPDATE_STATUS Configuration(float dt);
-	UPDATE_STATUS MaterialsConfiguration(float dt);
-	UPDATE_STATUS TexturesConfiguration(float dt);
 
 	UPDATE_STATUS Update(float dt);
 
@@ -82,22 +81,16 @@ public:
 
 	void DrawMode() const;
 
-	void ApplyToMaterial(Texture* new_text, int material);
-
 	//reserve space in vecs to avoid having to move the whole mem if adding various elements
-	void ReserveMaterialSpace(const GLuint& num_materials);
-	void ReserveMeshSpace(const GLuint& num_meshes);
-	void ReserveTextureSpace(const GLuint& num_textures);
+	void PushBackAssets(const std::vector<Asset*>& assets_to_add);
 
 	void EmptyScene();
-
-	bool DrawNormals() const;
-	unsigned int NumMaterials() const;
 
 	//Game Objects
 	GameObject* CreateGameObject(const char* const name = nullptr);
 
 	void DrawKDT() const;
+	bool AddToKDT( GameObject* new_go);
 
 private:
 	void Hirarchy();
@@ -113,6 +106,8 @@ public:
 	bool HasMaterials() const;
 	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 	const GameObject* GetFocused() const;
+	void ApplyToMaterial(Texture* new_text, int material);
+	unsigned int GetNumMaterials() const;
 
 	//Meshes
 	Mesh* CreateMesh(const char* const name = nullptr);
@@ -126,11 +121,11 @@ public:
 	Texture* GetTexture(const std::string& name) const;
 	void DeleteTexture(Texture* texture_to_delete);
 	void AddTexture(Texture* new_texture);
-	void EmptyTextures();
 	const int GetTextureToDraw() const;
 	bool DebugTextures() const;
-	bool Exsists(const std::string& path) const;
+	bool TextureExsists(const std::string& path) const;
 	void DrawTexture(unsigned int num_texture) const;
+	unsigned int GetNumTextures() const;
 
 	//Scene
 	//bool LoadScene(const std::string& path) const;

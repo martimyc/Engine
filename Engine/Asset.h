@@ -2,6 +2,10 @@
 #define ASSET
 
 #include <string>
+#include <vector>
+
+class GameObject;
+
 enum ASSET_TYPES
 {
 	AT_NO_TYPE = 0,
@@ -15,6 +19,7 @@ class Asset
 protected:
 	std::string name;
 	ASSET_TYPES type;
+	std::vector<const GameObject*> instances;
 
 public:
 	Asset(ASSET_TYPES type, const char* name): type(type), name(name)
@@ -24,10 +29,18 @@ public:
 
 	~Asset()
 	{}
-	
+
+	virtual bool Inspector() = 0; //False == delete
+
+	//Gets
 	const std::string& GetName() const
 	{
 		return name;
+	}
+
+	ASSET_TYPES GetType() const
+	{
+		return type;
 	}
 };
 

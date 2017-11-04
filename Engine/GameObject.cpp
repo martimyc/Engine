@@ -284,7 +284,7 @@ void GameObject::GetLocalPosZ(int & z) const
 	z = transform->GetTransformTranslation().z;
 }
 
-const math::vec& GameObject::GetLocalPosition() const
+math::vec GameObject::GetLocalPosition() const
 {
 	return transform->GetTransformTranslation();
 }
@@ -322,7 +322,7 @@ void GameObject::GetWorldPosZ(int & z) const
 	}
 }
 
-const math::vec& GameObject::GetWorldPosition() const
+math::vec GameObject::GetWorldPosition() const
 {
 	const GameObject* next_parent = parent;
 	math::float3 pos = transform->GetTransformTranslation();
