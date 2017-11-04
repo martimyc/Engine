@@ -49,6 +49,12 @@ public:
 	void ReArrange();
 
 	bool Empty() const;
+
+	void GetGameObjects(std::vector<const GameObject*>& vec) const;
+
+	bool IsIn(const GameObject* new_game_object) const;
+
+	void Draw() const;
 };
 
 class KDTree
@@ -57,11 +63,14 @@ private:
 	KDTNode* root;
 	AABB limits;
 
+	bool ReCalculate(GameObject* new_game_object);
 public:
-	KDTree(std::vector<GameObject*> all_game_objects);
+	KDTree();
 	~KDTree();
 
-	void ReCalculate(std::vector<GameObject*> all_game_objects);
+	bool AddGameObject(GameObject* new_game_object);
+
+	void Draw() const;
 };
 
 #endif // !KDTREE

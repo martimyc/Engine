@@ -81,7 +81,7 @@ public:
 	void GetLocalPosX(int& x) const;
 	void GetLocalPosY(int& y) const;
 	void GetLocalPosZ(int& z) const;
-	const math::vec& GetLocalPosition() const;
+	math::vec GetLocalPosition() const;
 	void GetWorldPosX(int& x) const;
 	void GetWorldPosY(int& y) const;
 	void GetWorldPosZ(int& z) const;
@@ -101,6 +101,9 @@ public:
 	void  GetWorldScaleZ(int& z) const;
 	const math::vec&  GetWorldScale(int& x, int& y, int& z) const;
 	//-----
+
+	//Sets
+	void SetTransform(const math::float4x4& new_transform);
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;

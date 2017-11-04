@@ -39,13 +39,11 @@ public:
 
 	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
 	void Empty();
-	const GLuint GetTextureCoordinateChannel(GLuint num_texture);
 
 	void EnableDraw() const;
 	void DisableDraw() const;
 
-	void InGameObjectConfig(const GLuint& num_uv_channels);
-	void LoneConfig();
+	bool Inspector();
 };
 
 #endif // !_MATERIAL

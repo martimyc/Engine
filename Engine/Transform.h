@@ -25,6 +25,8 @@ public:
 	Transform(const char* name = "Transform");
 	~Transform();
 
+	void SetTransform(const math::float4x4& new_transform);
+
 	const float4x4& GetTransformMatrix();
 	const vec& GetTransformTranslation();
 	const vec& GetTransformScale();

@@ -47,7 +47,6 @@ bool GameObject::Update()
 	if (transform->Update())
 		UpdateBounds();
 
-
 	//Update components
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 	{
@@ -59,6 +58,9 @@ bool GameObject::Update()
 		}
 	}
 
+	if (draw)
+		SentToDraw();
+
 	//Update childs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 		(*it)->Update();
@@ -68,26 +70,7 @@ bool GameObject::Update()
 
 void GameObject::SentToDraw() const
 {
-	if (draw)
-	{
-		App->renderer_3d->DrawGameObject(this);
-		/*if (components.size() > 0)
-		{
-			std::vector<Component*>::const_iterator transform_it;
-			for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-			if ((*it)->Enabled())
-			if ((*it)->GetType() == CT_TRANSFORMATION)
-			{
-			transform_it = it;
-			((Transform*)*it)->TranslateRotateScalate();
-			}
-
-			//((Transform*)*transform_it)->ResetTranslateRotateScalate();
-		}*/
-	}
-
-	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
-		(*it)->SentToDraw();
+	App->renderer_3d->DrawGameObject(this);
 }
 
 void GameObject::AddComponent(Component * component)
@@ -287,7 +270,7 @@ void GameObject::GetLocalPosZ(int & z) const
 	z = transform->GetTransformTranslation().z;
 }
 
-const math::vec& GameObject::GetLocalPosition() const
+math::vec GameObject::GetLocalPosition() const
 {
 	return transform->GetTransformTranslation();
 }
@@ -337,7 +320,7 @@ math::vec GameObject::GetWorldPosition() const
 	return pos;
 }
 
-const math::vec & GameObject::GetLocalRotationEuler() const
+math::vec GameObject::GetLocalRotationEuler() const
 {
 	return transform->GetTransformRotationAngles();
 }
@@ -434,6 +417,11 @@ const math::vec&  GameObject::GetWorldScale(int & x, int & y, int & z) const
 		next_parent = next_parent->parent;
 	}
 	return scale;
+}
+
+void GameObject::SetTransform(const math::float4x4& new_transform)
+{
+	transform->SetTransform(new_transform);
 }
 
 bool GameObject::HasMeshFilter() const

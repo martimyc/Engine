@@ -118,21 +118,27 @@ void Mesh::Draw(const AppliedMaterial* draw_material) const
 		glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void Mesh::Inspector()
+bool Mesh::Inspector()
 {
-	if(ImGui::TreeNode(name.c_str()))
+	bool ret = true;
+
+	ImGui::Text("Name: %s", name.c_str());
+	ImGui::Text("Vertices: %i", num_vertices);
+	ImGui::Text("Indices: %i", num_indices);
+	ImGui::Text("UV channels: %i", num_uv_channels);
+
+	if(has_vertex_colors)
+		ImGui::Text("Has %i Vertex Color channels", num_color_channels);
+	else
+		ImGui::Text("Does not have Vertex Colors");
+
+	if (ImGui::Button("Delete"))
 	{
-		ImGui::Text("Vertices: %i", num_vertices);
-		ImGui::Text("Indices: %i", num_indices);
-		ImGui::Text("UV channels: %i", num_uv_channels);
-
-		if(has_vertex_colors)
-			ImGui::Text("Has %i Vertex Color channels", num_color_channels);
-		else
-			ImGui::Text("Does not have Vertex Colors");
-
-		ImGui::TreePop();
+		LOG("Deleting mesh");
+		ret = false;
 	}
+
+	return ret;
 }
 
 const GLuint Mesh::GetVerticesID() const

@@ -1,3 +1,5 @@
+#include <queue>
+#include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
 #include "GameObject.h"
@@ -131,7 +133,31 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis)
 
 float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis) const
 {
-	return 0.0f;
+	std::priority_queue<float> queue;
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		if (game_objects[i] != nullptr)
+			queue.push(game_objects[i]->GetWorldPosition()[partition_axis]);
+		else
+			break;
+
+	if (queue.size() % 2 != 0)
+	{
+		for (unsigned int to_pop = 0; to_pop < queue.size() / 2; to_pop++)
+			queue.pop();		
+		return queue.top();
+	}
+	else
+	{
+		for (unsigned int to_pop = 0; to_pop < queue.size() / 2 - 1; to_pop++)
+			queue.pop();
+		float first = queue.top();
+
+		queue.pop();
+		float second = queue.top();
+
+		return (first + second) / 2;
+	}
 }
 
 bool KDTNode::AddGameObject(const GameObject * new_game_object)
@@ -184,6 +210,7 @@ bool KDTNode::RemoveGameObject(const GameObject * new_game_object)
 			{
 				game_objects[i] = nullptr;
 				ret = true;
+				ReArrange();
 				break;
 			}
 	}
@@ -225,23 +252,213 @@ bool KDTNode::Empty() const
 	}
 }
 
-/*KDTree::KDTree(std::vector<GameObject*> all_game_objects;)
+void KDTNode::GetGameObjects(std::vector<const GameObject*>& vec) const
 {
-	for (std::vector<GameObject*>::iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+	if (partition_axis != NO_PARTITION)
 	{
-
+		childs[0]->GetGameObjects(vec);
+		childs[1]->GetGameObjects(vec);
 	}
-	root = new KDTNode(math::vec(0.0f, 0.0f, 0.0f), math::vec(0.0f, 0.0f, 0.0f));
-}*/
+	else
+	{
+		if (game_objects[0] != nullptr)
+			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+			{
+				if (game_objects[i] != nullptr)
+					vec.push_back(game_objects[i]);
+				else
+					break;
+			}
+	}
+}
+
+bool KDTNode::IsIn(const GameObject * new_game_object) const
+{
+	math::vec position(new_game_object->GetWorldPosition());
+
+	if (position.x < limits->minPoint.x || position.x > limits->maxPoint.x)
+		return false;
+	if (position.y < limits->minPoint.y || position.y > limits->maxPoint.y)
+		return false;
+	if (position.z < limits->minPoint.z || position.z > limits->maxPoint.z)
+		return false;
+
+	return true;
+}
+
+void KDTNode::Draw() const
+{
+	if (partition_axis != NO_PARTITION)
+	{
+		if (partition_axis == X)
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		if (partition_axis == Y)
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+		if (partition_axis == Z)
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+		glBegin(GL_LINES);
+
+		switch (partition_axis)
+		{
+		case X:
+			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+
+			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
+
+			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+
+			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
+
+			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
+
+			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+			break;
+		case Y:
+			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+
+			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
+
+			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+
+			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
+
+			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+
+			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+			break;
+		case Z:
+			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
+			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+
+			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
+			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
+
+			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+
+			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
+
+			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
+
+			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
+			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+			break;
+		default:
+			break;
+		}
+
+		glEnd();
+
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+
+		glBegin(GL_POINTS);
+
+		switch (partition_axis)
+		{
+		case X:
+			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
+
+			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+			break;
+		case Y:
+			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+
+			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+			break;
+		case Z:
+			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
+			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+
+			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
+			break;
+		default:
+			break;
+		}
+
+		glEnd();
+
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+}
+
+KDTree::KDTree()
+{
+	AABB limits;
+	limits.SetNegativeInfinity();
+	root = new KDTNode(limits);
+}
 
 KDTree::~KDTree()
 {}
 
-/*void KDTree::ReCalculate()
+bool KDTree::ReCalculate(GameObject* new_game_object)
 {
-	std::vector<GameObject*> all_game_objects;
+	bool ret = false;
 
+	std::vector<const GameObject*> all_game_objects;
 
+	root->GetGameObjects(all_game_objects);
 
-	root->CalculateTree(all_game_objects);
-}*/
+	delete root;
+
+	AABB limits;
+	limits.SetNegativeInfinity();
+
+	limits.Enclose(&new_game_object->GetWorldPosition(), 1);
+
+	if (all_game_objects.size() > 0)
+	{
+		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+			limits.Enclose(&(*it)->GetWorldPosition(), 1);
+	}
+
+	root = new KDTNode(limits);
+
+	ret = root->AddGameObject(new_game_object);
+
+	if (all_game_objects.size() > 0)
+	{
+		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+			if (root->AddGameObject(*it) == false)
+				ret = false;
+	}
+
+	return ret;
+}
+
+bool KDTree::AddGameObject(GameObject * new_game_object)
+{
+	bool ret = false;
+
+	if (root->IsIn(new_game_object))
+		ret = root->AddGameObject(new_game_object);
+	else
+		ret = ReCalculate(new_game_object);
+
+	return ret;
+}
+
+void KDTree::Draw() const
+{
+	root->Draw();
+}

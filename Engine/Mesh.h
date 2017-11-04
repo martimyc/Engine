@@ -38,7 +38,7 @@ public:
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;
 
-	void Inspector();
+	bool Inspector();
 
 	//Getters
 		//Vertices
@@ -68,11 +68,6 @@ public:
 	void SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs);
 	void SetNormals(const GLuint& id, GLfloat* all_normals);
 	void SetColors(const GLuint& num_channels, GLuint* ids, GLfloat** all_colors);
-	void SetMaterial(unsigned int pos);
-
-	//For priority queue in renderer, draw all meshes with the same material and avoid changeing
-	bool operator > (const Mesh& mesh) const;
-	bool operator < (const Mesh & mesh) const;	
 };
 
 #endif // !_MESH
