@@ -14,6 +14,7 @@ class Texture;
 class Mesh;
 class vec3;
 class Tree;
+class KDTree;
 enum TEXTURE_TYPE;
 
 enum DRAW_MODE
@@ -40,6 +41,7 @@ private:
 	GameObject* focused;
 	unsigned int num_game_objects = 1;
 	bool hirarchy_active = true;
+	KDTree* go_kdtree;
 
 	//materials
 	std::vector<Material*> materials;
@@ -94,6 +96,9 @@ public:
 
 	//Game Objects
 	GameObject* CreateGameObject(const char* const name = nullptr);
+
+	void DrawKDT() const;
+
 private:
 	void Hirarchy();
 	void SendAllToDraw();

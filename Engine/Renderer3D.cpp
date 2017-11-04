@@ -229,6 +229,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	if (App->scene_manager->DebugTextures())
 		App->scene_manager->DrawTexture(App->scene_manager->GetTextureToDraw());
 
+	App->scene_manager->DrawKDT();
+
 	if (show_grid)
 		DrawGrid();
 	if (world_axis)

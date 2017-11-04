@@ -10,6 +10,8 @@
 #include "MeshFilter.h"
 #include "Transform.h"
 
+#include "KDTree.h"
+
 //Modules
 #include "Renderer3D.h"
 #include "BasicGeometry.h"
@@ -26,8 +28,12 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
+	go_kdtree = new KDTree();
+
 	root = new GameObject(nullptr, "Root");
 	focused = root;
+
+	go_kdtree->AddGameObject(root);
 
 	App->import_manager->LoadCheckers();
 
@@ -408,8 +414,15 @@ void SceneManager::EmptyScene()
 
 GameObject* SceneManager::CreateGameObject(const char* const name)
 {
+	GameObject* new_go = focused->CreateChild(name);
 	num_game_objects++;
-	return focused->CreateChild(name);
+	go_kdtree->AddGameObject(new_go);
+	return new_go;
+}
+
+void SceneManager::DrawKDT() const
+{
+	go_kdtree->Draw();
 }
 
 void SceneManager::Hirarchy()
