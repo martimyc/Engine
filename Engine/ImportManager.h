@@ -2,6 +2,7 @@
 #define MODULE_IMPORTER
 
 #include <string>
+#include <vector>
 #include "Assimp\include\cimport.h"
 #include "Assimp\include\cimport.h"
 #include "Assimp\include\scene.h"
@@ -59,7 +60,7 @@ public:
 	//bool LoadScene(const std::string& name) const;
 
 	//Objects
-	bool ImportObject(const aiNode& source, const aiScene& scene, GameObject& destination);
+	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const;
 
 	//Textures
 	Texture* LoadTexture(const std::string& name) const;

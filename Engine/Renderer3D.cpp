@@ -189,13 +189,11 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	const AppliedMaterial* material_in_use;
 	while (draw_queue.size() > 0)
 	{
-
 		material_in_use = draw_queue.top()->GetAppliedMaterial();
-		if(material_in_use != nullptr)
+		if (material_in_use != nullptr)
 			material_in_use->EnableDraw();
 
-
-		while (draw_queue.size() > 0 && draw_queue.top()->GetAppliedMaterial() == material_in_use)
+		while (draw_queue.top()->GetAppliedMaterial() == material_in_use)
 		{
 			glPushMatrix();
 			glLoadMatrixf(App->camera->GetViewMatrix());
@@ -206,6 +204,9 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 			glPopMatrix();
 			draw_queue.top()->DrawBoundingBoxes();
 			draw_queue.pop();
+
+			if (draw_queue.size() == 0)
+				break;
 		}
 
 		if (material_in_use != nullptr)
@@ -229,7 +230,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	if (App->scene_manager->DebugTextures())
 		App->scene_manager->DrawTexture(App->scene_manager->GetTextureToDraw());
 
-	App->scene_manager->DrawKDT();
+	//App->scene_manager->DrawKDT();
 
 	if (show_grid)
 		DrawGrid();
@@ -386,8 +387,8 @@ void Renderer3D::DrawGrid()
 
 bool CompareGOPointers::operator()(const GameObject * go1, const GameObject * go2)
 {
-	unsigned int priority_one = ((go1->GetAppliedMaterial()->GetMaterial() == nullptr) ? 0 : go1->GetAppliedMaterial()->GetMaterial()->GetPriority());
-	unsigned int priority_two = ((go2->GetAppliedMaterial()->GetMaterial() == nullptr) ? 0 : go2->GetAppliedMaterial()->GetMaterial()->GetPriority());
+	unsigned int priority_one = ((go1->GetAppliedMaterial() == nullptr) ? 0 : go1->GetAppliedMaterial()->GetMaterial()->GetPriority());
+	unsigned int priority_two = ((go2->GetAppliedMaterial() == nullptr) ? 0 : go2->GetAppliedMaterial()->GetMaterial()->GetPriority());
 	return priority_one > priority_two;
 }
 

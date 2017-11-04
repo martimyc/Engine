@@ -266,7 +266,6 @@ UPDATE_STATUS SceneManager::TexturesConfiguration(float dt)
 UPDATE_STATUS SceneManager::Update(float dt)
 {
 	UpdateGameObjects();
-	SendAllToDraw();
 
 	return UPDATE_CONTINUE;
 }
@@ -440,7 +439,15 @@ GameObject* SceneManager::CreateGameObject(const char* const name)
 {
 	GameObject* new_go = focused->CreateChild(name);
 	num_game_objects++;
-	go_kdtree->AddGameObject(new_go);
+	//go_kdtree->AddGameObject(new_go);
+	return new_go;
+}
+
+GameObject * SceneManager::CreateGameObject(GameObject * parent, const char * const name)
+{
+	GameObject* new_go = parent->CreateChild(name);
+	num_game_objects++;
+	//go_kdtree->AddGameObject(new_go);
 	return new_go;
 }
 
@@ -467,11 +474,6 @@ void SceneManager::Hirarchy()
 
 	if (focused != root)
 		focused->Inspector();
-}
-
-void SceneManager::SendAllToDraw()
-{
-	root->SentToDraw();
 }
 
 void SceneManager::UpdateGameObjects()

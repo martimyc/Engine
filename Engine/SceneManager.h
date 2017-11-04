@@ -66,6 +66,9 @@ private:
 	//GenerateGOVec() //for KDT
 	//RecalculateKDT(std::vector<GameObject*>);
 
+	void Hirarchy();
+	void UpdateGameObjects();
+
 public:
 	SceneManager(const char* name, bool start_enabled = true);
 	~SceneManager();
@@ -88,14 +91,10 @@ public:
 
 	//Game Objects
 	GameObject* CreateGameObject(const char* const name = nullptr);
+	GameObject* CreateGameObject( GameObject* parent, const char* const name = nullptr);
 
 	void DrawKDT() const;
 	bool AddToKDT( GameObject* new_go);
-
-private:
-	void Hirarchy();
-	void SendAllToDraw();
-	void UpdateGameObjects();
 
 public:
 	//Materials

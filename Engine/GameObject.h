@@ -86,8 +86,8 @@ public:
 	void GetWorldPosZ(int& z) const;
 	math::vec GetWorldPosition() const;
 		//Rotation
-	const math::vec& GetLocalRotationEuler() const;
-	const math::vec& GetWorldRotationEuler() const;
+	math::vec GetLocalRotationEuler() const;
+	math::vec GetWorldRotationEuler() const;
 	const math::Quat& GetLocalRotationQuat() const;
 	const math::Quat& GetWorldRotationQuat() const;
 		//Scale
@@ -100,6 +100,9 @@ public:
 	void  GetWorldScaleZ(int& z) const;
 	const math::vec&  GetWorldScale(int& x, int& y, int& z) const;
 	//-----
+
+	//Sets
+	void SetTransform(const math::float4x4& new_transform);
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;

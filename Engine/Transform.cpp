@@ -13,6 +13,11 @@ Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0),
 Transform::~Transform()
 {}
 
+void Transform::SetTransform(const math::float4x4& new_transform)
+{
+	transform_matrix = new_transform;
+}
+
 void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)
 {
 	double sinr = +2.0 * (q.x * q.y + q.z * q.w);
