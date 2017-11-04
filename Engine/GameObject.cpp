@@ -21,6 +21,9 @@ GameObject::GameObject(GameObject* const parent, const char* name): parent(paren
 	bounds.sphere_bounding_box.SetNegativeInfinity();
 	bounds.aabb_bounding_box.SetNegativeInfinity();
 	bounds.obb_bounding_box.SetNegativeInfinity();
+	bounds.obb_bounding_box.pos = vec(0, 0, 0);
+	bounds.original_obb_bounding_box.SetNegativeInfinity();
+	bounds.original_obb_bounding_box.pos = vec(0, 0, 0);
 }
 
 GameObject::~GameObject()
@@ -322,7 +325,7 @@ void GameObject::GetWorldPosZ(int & z) const
 	}
 }
 
-const math::vec& GameObject::GetWorldPosition() const
+math::vec GameObject::GetWorldPosition() const
 {
 	const GameObject* next_parent = parent;
 	math::float3 pos = transform->GetTransformTranslation();
@@ -339,7 +342,7 @@ const math::vec & GameObject::GetLocalRotationEuler() const
 	return transform->GetTransformRotationAngles();
 }
 
-const math::vec & GameObject::GetWorldRotationEuler() const
+math::vec GameObject::GetWorldRotationEuler() const
 {
 	const GameObject* next_parent = parent;
 	math::vec rotation_euler = transform->GetTransformRotationAngles();
@@ -356,7 +359,7 @@ const math::Quat& GameObject::GetLocalRotationQuat() const
 	return transform->GetTransformRotation();
 }
 
-const math::Quat & GameObject::GetWorldRotationQuat() const
+math::Quat GameObject::GetWorldRotationQuat() const
 {
 	const GameObject* next_parent = parent;
 	math::vec rotation_euler = transform->GetTransformRotationAngles();
@@ -467,11 +470,13 @@ const MeshFilter * GameObject::GetMeshFilter() const
 
 void GameObject::DrawBoundingBoxes() const
 {
-	bounds.aabb_bounding_box.Draw();
+	bounds.aabb_bounding_box.Draw(0.7f, 0.7f, 0.0f, 1.0f);
+	bounds.obb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
 	const GameObject* next_parent = parent;
 	while (next_parent)
 	{
-		next_parent->bounds.aabb_bounding_box.Draw();
+		next_parent->bounds.aabb_bounding_box.Draw(0.7f, 0.7f, 0.0f, 1.0f);
+		next_parent->bounds.obb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
 		next_parent = next_parent->parent;
 	}
 }
@@ -510,6 +515,9 @@ void GameObject::CreateBounds(const Mesh* mesh)
 	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint;
 	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint;
 
+	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
+	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
+
 	DELETE_ARRAY(vec_vertices);
 }
 
@@ -518,6 +526,9 @@ void GameObject::UpdateBounds()
 	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
 	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
 	bounds.aabb_bounding_box.TransformAsAABB(GetWorldTransform().Transposed());
+
+	bounds.obb_bounding_box = bounds.original_obb_bounding_box;
+	bounds.obb_bounding_box.Transform(GetWorldTransform().Transposed());
 
 	//Update Childs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
@@ -528,14 +539,21 @@ void GameObject::UpdateBounds()
 
 void GameObject::UpdateBoundsUpwards()
 {
-	GameObject* working_go = parent;
-	while (working_go->parent != nullptr)
+	GameObject* next_parent = parent;
+	while (next_parent->parent != nullptr)
 	{
-		working_go->bounds.aabb_bounding_box.SetNegativeInfinity();
-		for (std::vector<GameObject*>::const_iterator it = working_go->childs.begin(); it != working_go->childs.end(); ++it)
+		next_parent->bounds.aabb_bounding_box.SetNegativeInfinity();
+		//next_parent->bounds.obb_bounding_box.SetNegativeInfinity();
+		for (std::vector<GameObject*>::const_iterator it = next_parent->childs.begin(); it != next_parent->childs.end(); ++it)
 		{
-			working_go->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
+			next_parent->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
+			/*
+			vec obb_corner_points[8];
+			(*it)->bounds.obb_bounding_box.GetCornerPoints(obb_corner_points);
+			for (int i = 0; i < 8; i++)
+				next_parent->bounds.obb_bounding_box.Enclose(obb_corner_points[i]);
+			*/
 		}
-		working_go = working_go->parent;
+		next_parent = next_parent->parent;
 	}
 }

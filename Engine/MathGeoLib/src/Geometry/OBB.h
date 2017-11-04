@@ -67,6 +67,8 @@ public:
 		@see class AABB, SetFrom(), MinimalEnclosingAABB(). */
 	OBB(const AABB &aabb);
 
+	void Draw(float red, float green, float blue, float alpha)const;
+
 	FORCE_INLINE static int NumFaces() { return 6; }
 	FORCE_INLINE static int NumEdges() { return 12; }
 	FORCE_INLINE static int NumVertices() { return 8; }
