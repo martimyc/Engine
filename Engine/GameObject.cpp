@@ -15,12 +15,12 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const GameObject* const parent, const char* name): parent(parent), name(name)
+GameObject::GameObject(GameObject* const parent, const char* name): parent(parent), name(name)
 {
 	transform = new Transform("Transform");
-	sphere_bounding_box.SetNegativeInfinity();
-	AABB_bounding_box.SetNegativeInfinity();
-	OBB_bounding_box.SetNegativeInfinity();
+	bounds.sphere_bounding_box.SetNegativeInfinity();
+	bounds.aabb_bounding_box.SetNegativeInfinity();
+	bounds.obb_bounding_box.SetNegativeInfinity();
 }
 
 GameObject::~GameObject()
@@ -151,19 +151,6 @@ void GameObject::ReserveComponentSpace(const GLuint & num_components)
 	components.reserve(num_components * sizeof(Component*));
 }
 
-const float * const GameObject::GetTransformationMatrix()const
-{
-	float4x4 transf_matrix = transform->GetTransformMatrix();
-	const GameObject* temp_parent = parent;
-	while (temp_parent != nullptr)
-	{
-		transf_matrix = transf_matrix * (temp_parent->transform->GetTransformMatrix());
-		temp_parent = temp_parent->parent;
-	}
-
-	return &transf_matrix.At(0, 0);
-}
-
 void GameObject::ChangeMaterial(Material * new_material)
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
@@ -244,6 +231,42 @@ const unsigned int GameObject::GetNumComponents() const
 const std::string & GameObject::GetName() const
 {
 	return name;
+}
+
+math::float4x4 GameObject::GetLocalTransform() const
+{
+	return transform->GetTransformMatrix();
+}
+
+const float * GameObject::GetLocalGLTransform() const
+{
+	math::float4x4 ret = transform->GetTransformMatrix();
+	return &ret.At(0, 0);
+}
+
+math::float4x4 GameObject::GetWorldTransform() const
+{
+	const GameObject* next_parent = parent;
+	math::float4x4 ret = transform->GetTransformMatrix();
+	while (next_parent != nullptr)
+	{
+		ret = ret * next_parent->transform->GetTransformMatrix();
+		next_parent = next_parent->parent;
+	}
+	return ret;
+}
+
+const float * GameObject::GetWorldGLTransform() const
+{
+	const GameObject* next_parent = parent;
+	math::float4x4 ret = transform->GetTransformMatrix();
+	while (next_parent != nullptr)
+	{
+		ret = ret * next_parent->transform->GetTransformMatrix();
+		next_parent = next_parent->parent;
+	}
+
+	return &ret.At(0, 0);
 }
 
 void GameObject::GetLocalPosX(int & x) const
@@ -444,8 +467,13 @@ const MeshFilter * GameObject::GetMeshFilter() const
 
 void GameObject::DrawBoundingBoxes() const
 {
-	AABB_bounding_box.Draw();
-
+	bounds.aabb_bounding_box.Draw();
+	const GameObject* next_parent = parent;
+	while (next_parent)
+	{
+		next_parent->bounds.aabb_bounding_box.Draw();
+		next_parent = next_parent->parent;
+	}
 }
 
 void GameObject::RemoveMeshFilter()
@@ -478,32 +506,36 @@ void GameObject::CreateBounds(const Mesh* mesh)
 	math::vec* vec_vertices = new math::vec[num_vertices];
 	memcpy(vec_vertices, all_vertices, num_vertices * sizeof(GLfloat) * 3);
 
-	AABB_bounding_box.Enclose(vec_vertices, num_vertices);
-	original_AABB_bounding_box = AABB_bounding_box;
+	bounds.aabb_bounding_box.Enclose(vec_vertices, num_vertices);
+	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint;
+	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint;
 
 	DELETE_ARRAY(vec_vertices);
 }
 
 void GameObject::UpdateBounds()
 {
-	const GameObject* next_parent = parent;
-	math::float4x4 matrix_transformation = transform->GetTransformMatrix();
-	while (next_parent)
-	{
-		matrix_transformation = matrix_transformation * next_parent->transform->GetTransformMatrix();
-		next_parent = next_parent->parent;
-	}
-
-	AABB_bounding_box = original_AABB_bounding_box;
-	AABB_bounding_box.TransformAsAABB(matrix_transformation.Transposed());
+	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
+	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
+	bounds.aabb_bounding_box.TransformAsAABB(GetWorldTransform().Transposed());
 
 	//Update Childs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 		(*it)->UpdateBounds();
+
+	UpdateBoundsUpwards();
 }
 
-void GameObject::UpdateBoundsUpwards() const
+void GameObject::UpdateBoundsUpwards()
 {
-	if (parent)
-		parent->UpdateBoundsUpwards();
+	GameObject* working_go = parent;
+	while (working_go->parent != nullptr)
+	{
+		working_go->bounds.aabb_bounding_box.SetNegativeInfinity();
+		for (std::vector<GameObject*>::const_iterator it = working_go->childs.begin(); it != working_go->childs.end(); ++it)
+		{
+			working_go->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
+		}
+		working_go = working_go->parent;
+	}
 }

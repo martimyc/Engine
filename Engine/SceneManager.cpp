@@ -423,7 +423,8 @@ void SceneManager::Hirarchy()
 		ImGui::End();
 	}
 
-	focused->Inspector();
+	if (focused != root)
+		focused->Inspector();
 }
 
 void SceneManager::SendAllToDraw()

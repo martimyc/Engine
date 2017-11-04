@@ -15,27 +15,36 @@ class MeshFilter;
 class Material;
 class Mesh;
 
+struct Bounds
+{
+	Sphere sphere_bounding_box;
+	AABB aabb_bounding_box;
+	math::vec original_aabb_bb_points[2];
+	OBB obb_bounding_box;
+};
+
 class GameObject
 {
 private:
 	std::string name;
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
-	const GameObject* const parent;
+	GameObject* const parent;
 	bool draw = false;
 	Transform* transform = nullptr;
-	Sphere sphere_bounding_box;
-	AABB original_AABB_bounding_box;
-	AABB AABB_bounding_box;
-	OBB OBB_bounding_box;
-
+	Bounds bounds;
+	/*Sphere sphere_bounding_box;
+	AABB aabb_bounding_box;
+	math::vec original_aabb_bb_points[2];
+	OBB obb_bounding_box;
+	*/
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
-	void UpdateBoundsUpwards() const;
-
+	void UpdateBoundsUpwards();
+	
 public:
-	GameObject(const GameObject* const parent, const char* name);
+	GameObject(GameObject* const parent, const char* name);
 	~GameObject();
 
 	bool Update();
@@ -50,7 +59,6 @@ public:
 
 	void ReserveComponentSpace(const GLuint& num_components);
 
-	const float* const GetTransformationMatrix()const;
 
 	void ChangeMaterial(Material* new_material);
 
@@ -64,6 +72,10 @@ public:
 	//Gets
 	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
+	math::float4x4 GetLocalTransform()const;
+	const float* GetLocalGLTransform()const;
+	math::float4x4 GetWorldTransform()const;
+	const float* GetWorldGLTransform()const;
 		//Position
 	void GetLocalPosX(int& x) const;
 	void GetLocalPosY(int& y) const;
