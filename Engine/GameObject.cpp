@@ -320,7 +320,7 @@ math::vec GameObject::GetWorldPosition() const
 	return pos;
 }
 
-math::vec GameObject::GetLocalRotationEuler() const
+const math::vec& GameObject::GetLocalRotationEuler() const
 {
 	return transform->GetTransformRotationAngles();
 }
