@@ -250,7 +250,14 @@ bool ImportManager::ImportScene(const std::string & path) const
 
 		GameObject* scene_object = App->scene_manager->CreateGameObject(scene_name.c_str());
 
-		ImportHirarchy(*scene->mRootNode, *scene, *scene_object, scene_materials, material_loads, scene_meshes, mesh_loads);
+		if (scene_object == nullptr)
+			ret = false;
+		else
+			if (ImportHirarchy(*scene->mRootNode, *scene, *scene_object, scene_materials, material_loads, scene_meshes, mesh_loads) == false)
+				ret = false;
+
+		if (ret == false)
+			App->scene_manager->RemoveWithChilds(scene_object);
 
 		aiReleaseImport(scene);
 	}
@@ -268,7 +275,7 @@ void ImportManager::LoadCheckers()
 
 bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const
 {
-	bool ret = false;
+	bool ret = true;
 
 	math::float4x4 new_transform;
 	
@@ -288,6 +295,9 @@ bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, 
 			for (unsigned int i = 0; i < source.mNumMeshes; i++)
 			{
 				GameObject* child = App->scene_manager->CreateGameObject(&destination);
+
+				if (child == nullptr)
+					return false;
 
 				unsigned int mesh_num = source.mMeshes[i];
 
@@ -325,7 +335,10 @@ bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, 
 			else
 				child = App->scene_manager->CreateGameObject(&destination);
 
-			ImportHirarchy(*source.mChildren[i], scene, *child, materials, material_loads, meshes, mesh_loads);
+			if (child == nullptr)
+				return false;
+			if (ImportHirarchy(*source.mChildren[i], scene, *child, materials, material_loads, meshes, mesh_loads) == false)
+				return false;
 		}
 	}
 

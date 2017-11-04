@@ -92,6 +92,7 @@ public:
 	//Game Objects
 	GameObject* CreateGameObject(const char* const name = nullptr);
 	GameObject* CreateGameObject( GameObject* parent, const char* const name = nullptr);
+	void RemoveWithChilds(GameObject* to_remove);
 
 	void DrawKDT() const;
 	bool AddToKDT( GameObject* new_go);

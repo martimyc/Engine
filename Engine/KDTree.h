@@ -4,7 +4,7 @@
 #include <vector>
 #include "MathGeoLib\src\MathGeoLibFwd.h"
 
-#define MAX_NUM_OBJECTS 3
+#define MAX_NUM_OBJECTS 4
 
 class GameObject;
 
@@ -32,7 +32,7 @@ public:
 	KDTNode(const AABB& limits);
 	~KDTNode();
 
-	void SubDivide3D(const GameObject* new_game_object);
+	bool SubDivide3D(const GameObject* new_game_object);
 
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
@@ -55,6 +55,8 @@ public:
 	bool IsIn(const GameObject* new_game_object) const;
 
 	void Draw() const;
+
+	bool AllSamePos(const GameObject* new_game_object) const;
 };
 
 class KDTree

@@ -1,4 +1,6 @@
+#include <functional>
 #include <queue>
+#include <vector>
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
@@ -35,29 +37,36 @@ KDTNode::~KDTNode()
 	//Dont think deleting gameobjects through tree is best
 }
 
-void KDTNode::SubDivide3D(const GameObject* new_game_object)
+bool KDTNode::SubDivide3D(const GameObject* new_game_object)
 {
-	float median_x = FindBestMedian(X, new_game_object);
-	float median_y = FindBestMedian(Y, new_game_object);
-	float median_z = FindBestMedian(Z, new_game_object);
-
-	SubDivide(X, median_x);
-	SubDivideChilds(Y, median_y);
-	childs[0]->SubDivideChilds(Z, median_z);
-	childs[1]->SubDivideChilds(Z, median_z);
-
-	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	if (!AllSamePos(new_game_object))
 	{
-		math::vec vect(vec::zero);
-		vect[0] = 3;
-		if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-			childs[0]->AddGameObject(game_objects[i]);
+		float median_x = FindBestMedian(X, new_game_object);
+		float median_y = FindBestMedian(Y, new_game_object);
+		float median_z = FindBestMedian(Z, new_game_object);
 
-		if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-			childs[1]->AddGameObject(game_objects[i]);
+		SubDivide(X, median_x);
+		SubDivideChilds(Y, median_y);
+		childs[0]->SubDivideChilds(Z, median_z);
+		childs[1]->SubDivideChilds(Z, median_z);
 
-		game_objects[i] = nullptr;
+		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		{
+			math::vec vect(vec::zero);
+			vect[0] = 3;
+			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
+				childs[0]->AddGameObject(game_objects[i]);
+
+			if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
+				childs[1]->AddGameObject(game_objects[i]);
+
+			game_objects[i] = nullptr;
+		}
+		return true;
 	}
+	else
+		LOG("Trying to subdivide with all objects in the same place");
+	return false;
 }
 
 void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
@@ -137,7 +146,9 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
 
 float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const
 {
-	std::priority_queue<float> queue;
+	std::priority_queue <float, std::vector<float>, std::greater<float>> queue;
+
+	bool all_equal = true;
 
 	queue.push(new_game_object->GetWorldPosition()[partition_axis]);
 
@@ -182,12 +193,15 @@ bool KDTNode::AddGameObject(const GameObject * new_game_object)
 
 		if (ret == false)
 		{
-			SubDivide3D(new_game_object);
-			AddToCorrectChild(new_game_object);
+			if (SubDivide3D(new_game_object) == false)
+				return false;
+			if (AddToCorrectChild(new_game_object) == false)
+				return false;
 		}
 	}
 	else
-		AddToCorrectChild(new_game_object);
+		if (AddToCorrectChild(new_game_object) == false)
+			return false;
 
 	return ret;
 }
@@ -197,10 +211,19 @@ bool KDTNode::AddToCorrectChild(const GameObject * new_game_object)
 	bool ret = false;
 
 	if (new_game_object->GetWorldPosition()[partition_axis] <= median)
-		ret = childs[0]->AddGameObject(new_game_object);
+		if (childs[0]->AddGameObject(new_game_object) == false)
+			return false;
+		else
+			ret = true;
 
 	if (new_game_object->GetWorldPosition()[partition_axis] > median)
-		ret = childs[1]->AddGameObject(new_game_object);
+		if (childs[1]->AddGameObject(new_game_object) == false)
+			return false;
+		else
+			ret = true;
+
+	if (ret == false)
+		LOG("Gameobject does not fit inside any child");
 
 	return ret;
 }
@@ -420,6 +443,16 @@ void KDTNode::Draw() const
 	}
 }
 
+bool KDTNode::AllSamePos(const GameObject * new_game_object) const
+{
+	math::vec position = new_game_object->GetWorldPosition();
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		if (position.x != game_objects[i]->GetLocalPosition().x || position.y != game_objects[i]->GetLocalPosition().y || position.z != game_objects[i]->GetLocalPosition().z)
+			return false;
+	return true;
+}
+
 KDTree::KDTree()
 {
 	AABB limits;
@@ -432,8 +465,6 @@ KDTree::~KDTree()
 
 bool KDTree::ReCalculate(GameObject* new_game_object)
 {
-	bool ret = false;
-
 	std::vector<const GameObject*> all_game_objects;
 
 	root->GetGameObjects(all_game_objects);
@@ -453,16 +484,23 @@ bool KDTree::ReCalculate(GameObject* new_game_object)
 
 	root = new KDTNode(limits);
 
-	ret = root->AddGameObject(new_game_object);
+	if (root->AddGameObject(new_game_object) == false)
+	{
+		LOG("New GameObject: '%s' could not be added to KDT after recalculating", new_game_object->GetName().c_str());
+		return false;
+	}
 
 	if (all_game_objects.size() > 0)
 	{
 		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
 			if (root->AddGameObject(*it) == false)
-				ret = false;
+			{
+				LOG("GameObject: '%s' could not be re-added to KDT after recalculating", (*it)->GetName().c_str());
+				return false;
+			}
 	}
 
-	return ret;
+	return true;
 }
 
 bool KDTree::AddGameObject(GameObject * new_game_object)

@@ -60,6 +60,7 @@ public:
 
 	void ReserveComponentSpace(const GLuint& num_components);
 
+	void Delete(GameObject* to_delete);
 
 	void ChangeMaterial(Material* new_material);
 

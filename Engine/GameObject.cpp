@@ -137,6 +137,17 @@ void GameObject::ReserveComponentSpace(const GLuint & num_components)
 	components.reserve(num_components * sizeof(Component*));
 }
 
+void GameObject::Delete(GameObject * to_delete)
+{
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+		if (*it == to_delete)
+		{
+			delete *it;
+			childs.erase(it);
+			return;
+		}
+}
+
 void GameObject::ChangeMaterial(Material * new_material)
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)

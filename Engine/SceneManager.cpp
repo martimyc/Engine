@@ -439,7 +439,12 @@ GameObject* SceneManager::CreateGameObject(const char* const name)
 {
 	GameObject* new_go = focused->CreateChild(name);
 	num_game_objects++;
-	go_kdtree->AddGameObject(new_go);
+	if (go_kdtree->AddGameObject(new_go) == false)
+	{
+		LOG("GameObject: '%s' could not be added to KDT", new_go->GetName().c_str());
+		focused->Delete(new_go);
+		return nullptr;
+	}
 	return new_go;
 }
 
@@ -447,8 +452,18 @@ GameObject * SceneManager::CreateGameObject(GameObject * parent, const char * co
 {
 	GameObject* new_go = parent->CreateChild(name);
 	num_game_objects++;
-	go_kdtree->AddGameObject(new_go);
+	if (go_kdtree->AddGameObject(new_go) == false)
+	{
+		LOG("GameObject: '%s' could not be added to KDT", new_go->GetName().c_str());
+		parent->Delete(new_go);
+		return nullptr;
+	}
 	return new_go;
+}
+
+void SceneManager::RemoveWithChilds(GameObject * to_remove)
+{
+	root->Delete(to_remove);
 }
 
 void SceneManager::DrawKDT() const
@@ -531,7 +546,7 @@ Texture * SceneManager::GetTexture(unsigned int i) const
 	unsigned int num_texture = 0;
 	unsigned int num_asset = 0;
 
-	while (num_texture < i && num_asset < assets.size())
+	while (num_texture <= i && num_asset < assets.size())
 	{
 		if (assets[num_asset]->GetType() == AT_TEXTURE)
 		{
