@@ -16,6 +16,14 @@ Transform::~Transform()
 void Transform::SetTransform(const math::float4x4& new_transform)
 {
 	transform_matrix = new_transform;
+
+	translation = transform_matrix.TranslatePart();
+	float3x3 rotation_matrix = transform_matrix.RotatePart();
+	rotation_matrix.Orthonormalize(0, 1, 2);
+	rotation = rotation_matrix.ToQuat();
+	scaling = transform_matrix.GetScale();	
+
+	transform = true;
 }
 
 void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)

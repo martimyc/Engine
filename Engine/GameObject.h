@@ -21,6 +21,7 @@ struct Bounds
 	AABB aabb_bounding_box;
 	math::vec original_aabb_bb_points[2];
 	OBB obb_bounding_box;
+	OBB original_obb_bounding_box;
 };
 
 class GameObject
@@ -86,10 +87,10 @@ public:
 	void GetWorldPosZ(int& z) const;
 	math::vec GetWorldPosition() const;
 		//Rotation
-	math::vec GetLocalRotationEuler() const;
+	const math::vec& GetLocalRotationEuler() const;
 	math::vec GetWorldRotationEuler() const;
 	const math::Quat& GetLocalRotationQuat() const;
-	const math::Quat& GetWorldRotationQuat() const;
+	math::Quat GetWorldRotationQuat() const;
 		//Scale
 	void  GetLocalScaleX(int& x) const;
 	void  GetLocalScaleY(int& y) const;

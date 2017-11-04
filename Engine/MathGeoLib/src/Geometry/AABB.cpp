@@ -65,14 +65,14 @@ AABB::AABB(const Sphere &s)
 	SetFrom(s);
 }
 
-void AABB::Draw() const
+void AABB::Draw(float red, float green, float blue, float alpha) const
 {
 	math::float3 aabb_vertices[8];
 
 	GetCornerPoints(aabb_vertices);
 
 	glLineWidth(3.0f);
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+	glColor4f(red, green, blue, alpha);
 
 	glBegin(GL_LINES);
 

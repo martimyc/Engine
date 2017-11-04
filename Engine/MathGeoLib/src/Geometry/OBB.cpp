@@ -15,6 +15,7 @@
 /** @file OBB.cpp
 	@author Jukka Jylänki
 	@brief Implementation for the Oriented Bounding Box (OBB) geometry object. */
+#include "..\..\..\glew\include\GL\glew.h"
 #include "OBB.h"
 #ifdef MATH_ENABLE_STL_SUPPORT
 #include <iostream>
@@ -87,6 +88,58 @@ OBB::OBB(const vec &pos, const vec &r, const vec &axis0, const vec &axis1, const
 OBB::OBB(const AABB &aabb)
 {
 	SetFrom(aabb);
+}
+
+void OBB::Draw(float red, float green, float blue, float alpha)const
+{
+	math::float3 obb_vertices[8];
+
+	GetCornerPoints(obb_vertices);
+
+	glLineWidth(3.0f);
+	glColor4f(red, green, blue, alpha);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(obb_vertices[0].x, obb_vertices[0].y, obb_vertices[0].z);
+	glVertex3f(obb_vertices[1].x, obb_vertices[1].y, obb_vertices[1].z);
+
+	glVertex3f(obb_vertices[0].x, obb_vertices[0].y, obb_vertices[0].z);
+	glVertex3f(obb_vertices[2].x, obb_vertices[2].y, obb_vertices[2].z);
+
+	glVertex3f(obb_vertices[0].x, obb_vertices[0].y, obb_vertices[0].z);
+	glVertex3f(obb_vertices[4].x, obb_vertices[4].y, obb_vertices[4].z);
+
+	glVertex3f(obb_vertices[1].x, obb_vertices[1].y, obb_vertices[1].z);
+	glVertex3f(obb_vertices[3].x, obb_vertices[3].y, obb_vertices[3].z);
+
+	glVertex3f(obb_vertices[1].x, obb_vertices[1].y, obb_vertices[1].z);
+	glVertex3f(obb_vertices[5].x, obb_vertices[5].y, obb_vertices[5].z);
+
+	glVertex3f(obb_vertices[2].x, obb_vertices[2].y, obb_vertices[2].z);
+	glVertex3f(obb_vertices[3].x, obb_vertices[3].y, obb_vertices[3].z);
+
+	glVertex3f(obb_vertices[2].x, obb_vertices[2].y, obb_vertices[2].z);
+	glVertex3f(obb_vertices[6].x, obb_vertices[6].y, obb_vertices[6].z);
+
+	glVertex3f(obb_vertices[3].x, obb_vertices[3].y, obb_vertices[3].z);
+	glVertex3f(obb_vertices[7].x, obb_vertices[7].y, obb_vertices[7].z);
+
+	glVertex3f(obb_vertices[5].x, obb_vertices[5].y, obb_vertices[5].z);
+	glVertex3f(obb_vertices[4].x, obb_vertices[4].y, obb_vertices[4].z);
+
+	glVertex3f(obb_vertices[5].x, obb_vertices[5].y, obb_vertices[5].z);
+	glVertex3f(obb_vertices[7].x, obb_vertices[7].y, obb_vertices[7].z);
+
+	glVertex3f(obb_vertices[4].x, obb_vertices[4].y, obb_vertices[4].z);
+	glVertex3f(obb_vertices[6].x, obb_vertices[6].y, obb_vertices[6].z);
+
+	glVertex3f(obb_vertices[6].x, obb_vertices[6].y, obb_vertices[6].z);
+	glVertex3f(obb_vertices[7].x, obb_vertices[7].y, obb_vertices[7].z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void OBB::SetNegativeInfinity()
