@@ -52,8 +52,6 @@ bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object)
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			math::vec vect(vec::zero);
-			vect[0] = 3;
 			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
 				if (childs[0]->AddGameObject(game_objects[i]) == false)
 					return false;
@@ -62,11 +60,12 @@ bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object)
 				if (childs[1]->AddGameObject(game_objects[i]) == false)
 					return false;
 
-			if (AddToCorrectChild(new_game_object) == false)
-				return false;
-
 			game_objects[i] = nullptr;
 		}
+
+		if (AddToCorrectChild(new_game_object) == false)
+			return false;
+
 		return true;
 	}
 	else
@@ -220,8 +219,12 @@ bool KDTNodeGO::AddGameObject(const GameObject * new_game_object)
 				ret = true;
 	}
 	else
+	{
 		if (AddToCorrectChild(new_game_object) == false)
 			return false;
+		else
+			ret = true;
+	}
 
 	return ret;
 }
@@ -525,12 +528,16 @@ bool KDTreeGO::ReCalculate(GameObject* new_game_object)
 
 bool KDTreeGO::AddGameObject(GameObject * new_game_object)
 {
-	bool ret = false;
+	bool ret = true;
 
 	if (root->IsIn(new_game_object))
-		ret = root->AddGameObject(new_game_object);
+	{
+		if (root->AddGameObject(new_game_object) == false)
+			return false;
+	}
 	else
-		ret = ReCalculate(new_game_object);
+		if (ReCalculate(new_game_object) == false)
+			return false;
 
 	return ret;
 }
