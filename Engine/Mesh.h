@@ -12,7 +12,7 @@ class KDTreeVertex;
 
 namespace Geo
 {
-	class Vertex;
+	struct Vertex;
 
 	struct Triangle
 	{
@@ -150,6 +150,23 @@ public:
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
+
+	//Max & Min
+	float GetMinX() const;
+	float GetMinY() const;
+	float GetMinZ() const;
+
+	float GetMaxX() const;
+	float GetMaxY() const;
+	float GetMaxZ() const;
+
+	Geo::Vertex GetMinXVertex() const;
+	Geo::Vertex GetMinYVertex() const;
+	Geo::Vertex GetMinZVertex() const;
+
+	Geo::Vertex GetMaxXVertex() const;
+	Geo::Vertex GetMaxYVertex() const;
+	Geo::Vertex GetMaxZVertex() const;
 };
 
 #endif // !_MESH

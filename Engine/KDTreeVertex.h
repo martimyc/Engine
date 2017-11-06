@@ -9,7 +9,7 @@
 
 namespace Geo
 {
-	class Vertex;
+	struct Vertex;
 }
 
 enum PARTITION_AXIS

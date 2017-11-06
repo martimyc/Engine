@@ -3,6 +3,7 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Mesh.h"
 #include "KDTreeVertex.h"
@@ -347,11 +348,11 @@ void KDTNodeVertex::Draw() const
 	if (partition_axis != NO_PARTITION)
 	{
 		if (partition_axis == X)
-			glColor4f(1.0f, 0.0f, 0.0f, 0.8f);
+			glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
 		if (partition_axis == Y)
-			glColor4f(0.0f, 1.0f, 0.0f, 0.8f);
+			glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
 		if (partition_axis == Z)
-			glColor4f(0.0f, 0.0f, 1.0f, 0.8f);
+			glColor4f(0.0f, 0.0f, 1.0f, 0.5f);
 
 		glDisable(GL_CULL_FACE);
 
