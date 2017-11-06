@@ -97,7 +97,7 @@ enum FrustumHandedness
 /// Represents either an orthographic or a perspective viewing frustum.
 class Frustum
 {
-private:
+public:
 	/// Specifies whether this frustum is a perspective or an orthographic frustum.
 	/** [noscript] @todo Remove the noscript attribute. */
 	FrustumType type;
@@ -174,6 +174,8 @@ public:
 		[opaque-qtscript] @todo remove the opaque-qtscript attribute.
 		@see type, pos, front, up, nearPlaneDistance, projectiveSpace, handedness, farPlaneDistance, horizontalFov, verticalFov, orthographicWidth, orthographicHeight. */
 	Frustum();
+
+	void Draw(float red, float green, float blue, float alpha) const;
 
 	void SetType(FrustumType type);
 	void SetNearPlaneDistance(float dist);

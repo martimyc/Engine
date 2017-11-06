@@ -18,6 +18,7 @@ private:
 	bool fullscreen_desktop = false;
 
 	bool config_window = true;
+	float aspect_ratio;
 
 public:
 
@@ -35,6 +36,7 @@ public:
 	const int GetHeight() const;
 	const int GetWidth() const;
 	const int GetScale() const;
+	const float GetAspectRatio() const;	//width/height
 
 	void SetTitle(const char* title);
 

@@ -26,7 +26,8 @@ Renderer3D::Renderer3D(const char* name, bool start_enabled) : Module(name, star
 
 // Destructor
 Renderer3D::~Renderer3D()
-{}
+{
+}
 
 // Called before render is available
 bool Renderer3D::Init()
@@ -167,12 +168,12 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
 
-	render_to_texture->BindFrameBuffer();
+		render_to_texture->BindFrameBuffer();
 
 	ImVec4 clear_color = ImColor(25, 25, 25);
 	ImGuiIO io = ImGui::GetIO();
 	glViewport(0, 0, (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x), (int)(io.DisplaySize.y* io.DisplayFramebufferScale.y));
-	
+
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -182,6 +183,12 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
+
+	//Camera
+	glPushMatrix();
+	glLoadMatrixf(App->camera->GetViewMatrix());
+	App->scene_manager->DrawCamera();
+	glPopMatrix();
 
 	//meshes
 	const AppliedMaterial* material_in_use;
@@ -367,7 +374,7 @@ void Renderer3D::DrawGrid()
 	glEnd();
 
 	glLineWidth(1.0f);
-	glColor4f(255, 255, 255, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool CompareGOPointers::operator()(const GameObject * go1, const GameObject * go2)

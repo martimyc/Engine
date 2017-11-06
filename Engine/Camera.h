@@ -9,14 +9,30 @@ class Camera :	public Component
 private:
 	Frustum frustum;
 	bool frustum_culling = true;
+	std::vector<Plane> planes;
+
+	int vertical_fov = 90;
+	float near_plane_dist = 1.0f;
+	float far_plane_dist = 15.0f;
+
+	void RecalculateFOV();
+	void TransformCamera();
+	void ResetFrustumPlanes();
+
 
 public:
 	Camera(const char* name, bool enabled = true);
 	~Camera();
 
+	bool Start();
+
 	bool Update();
 
 	void Inspector();
+
+	bool IsFrustumActive();
+	bool FrustumCulling(const GameObject* root);
+	void DrawFrustum();
 
 };
 

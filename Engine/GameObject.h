@@ -14,6 +14,7 @@ class AppliedMaterial;
 class MeshFilter;
 class Material;
 class Mesh;
+class Camera;
 
 struct Bounds
 {
@@ -31,26 +32,25 @@ private:
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
 	GameObject* const parent;
-	bool draw = false;
 	Transform* transform = nullptr;
 	Bounds bounds;
-	/*Sphere sphere_bounding_box;
-	AABB aabb_bounding_box;
-	math::vec original_aabb_bb_points[2];
-	OBB obb_bounding_box;
-	*/
+	bool is_camera = false;
+	bool draw = false;
+
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
 	void UpdateBoundsUpwards();
 	
 public:
+	bool transformed = false;
+
 	GameObject(GameObject* const parent, const char* name);
 	~GameObject();
 
 	bool Update();
 
-	void SentToDraw() const;
+	void SentToDraw(Camera* camera) const;
 
 	void AddComponent(Component* component);
 
@@ -70,6 +70,7 @@ public:
 	GameObject* CreateChild(Component* component, const char* const name = nullptr);
 
 	void AddChild(GameObject* child);
+	GameObject* CreateCamera();
 
 	//Gets
 	const unsigned int GetNumComponents() const;
@@ -101,10 +102,14 @@ public:
 	void  GetWorldScaleY(int& y) const;
 	void  GetWorldScaleZ(int& z) const;
 	const math::vec&  GetWorldScale(int& x, int& y, int& z) const;
+
+	const AABB* GetAABB() const;
+	bool IsCamera()const;
 	//-----
 
 	//Sets
 	void SetTransform(const math::float4x4& new_transform);
+	void SetDraw(bool draw_);
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;

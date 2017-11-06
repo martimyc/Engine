@@ -13,6 +13,7 @@
 #define MAX_LIGHTS 8
 
 class GameObject;
+class Camera;
 
 struct CompareGOPointers
 {
@@ -61,12 +62,14 @@ private:
 	bool config_renderer = true;
 	FrameBuffer* render_to_texture = nullptr;
 
+	void DrawWorldAxis();
+	void DrawGrid();
+
 public:
 	Light lights[MAX_LIGHTS];
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 
-public:
 	Renderer3D(const char* name, bool start_enabled = true);
 	~Renderer3D();
 
@@ -83,11 +86,6 @@ public:
 	void DrawGameObject(const GameObject* game_object);
 
 	void Anisotrophy();
-
-private:
-	void DrawWorldAxis();	//Leaves the glColor at blue Be careful!
-	void DrawGrid(); //need a plane not a grid
-
 };
 
 #endif //_MODULE_RENDERER_3D

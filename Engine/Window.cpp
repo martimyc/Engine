@@ -46,6 +46,8 @@ bool Window::Init()
 		//Create window
 		int width = screen_width * scale;
 		int height = screen_height * scale;
+		aspect_ratio = width / height;
+
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 		//Use OpenGL 2.1
@@ -200,6 +202,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 				break;
 			}
 			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
+			aspect_ratio = screen_width / screen_height;
 		}
 
 		json_object_set_number(json_object(win), "screen_width", screen_width);
@@ -310,6 +313,11 @@ const int Window::GetWidth() const
 const int Window::GetScale() const
 {
 	return scale;
+}
+
+const float Window::GetAspectRatio() const
+{
+	return aspect_ratio;
 }
 
 void Window::SetTitle(const char* title)

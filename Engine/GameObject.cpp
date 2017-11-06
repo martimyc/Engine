@@ -8,10 +8,12 @@
 #include "Transform.h"
 #include "Texture.h"
 #include "Mesh.h"
+#include "Camera.h"
 
 //modules
 #include "Console.h"
 #include "Renderer3D.h"
+#include "SceneManager.h"
 #include "Application.h"
 #include "GameObject.h"
 
@@ -45,7 +47,10 @@ bool GameObject::Update()
 
 	//Update Transformation
 	if (transform->Update())
+	{
+		transformed = true;
 		UpdateBounds();
+	}
 
 	//Update components
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
@@ -58,8 +63,7 @@ bool GameObject::Update()
 		}
 	}
 
-	if (draw)
-		SentToDraw();
+	transformed = false;
 
 	//Update childs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
@@ -68,14 +72,31 @@ bool GameObject::Update()
 	return ret;
 }
 
-void GameObject::SentToDraw() const
+void GameObject::SentToDraw(Camera* camera) const
 {
-	App->renderer_3d->DrawGameObject(this);
+	if (draw)
+	{
+		if (camera != nullptr)
+		{
+			if (camera->IsFrustumActive())
+			{
+				if (camera->FrustumCulling(this))
+					App->renderer_3d->DrawGameObject(this);
+			}
+		}
+		else
+			App->renderer_3d->DrawGameObject(this);
+	}
+
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->SentToDraw(camera);
 }
 
 void GameObject::AddComponent(Component * component)
 {
 	bool add = true;
+
+	component->SetGameObject(this);
 
 	switch (component->GetType())
 	{
@@ -101,6 +122,8 @@ void GameObject::AddComponent(Component * component)
 	default:
 		break;
 	}
+	
+	component->Start();
 
 	if (add)
 		components.push_back(component);
@@ -210,7 +233,7 @@ GameObject * GameObject::CreateChild(const char* const name)
 
 GameObject * GameObject::CreateChild(Component * component, const char* const name)
 {
-	GameObject* new_child = CreateChild();
+	GameObject* new_child = CreateChild(name);
 	new_child->AddComponent(component);
 	return new_child;
 }
@@ -218,6 +241,16 @@ GameObject * GameObject::CreateChild(Component * component, const char* const na
 void GameObject::AddChild(GameObject* child)
 {
 	childs.push_back(child);
+}
+
+GameObject* GameObject::CreateCamera()
+{
+	GameObject* new_child = CreateChild("New Camera");
+	Camera* cam = new Camera("Camera");
+	new_child->AddComponent(cam);
+	new_child->is_camera = true;
+	App->scene_manager->SetCameraFocused(cam);
+	return new_child;
 }
 
 const unsigned int GameObject::GetNumComponents() const
@@ -430,9 +463,24 @@ const math::vec&  GameObject::GetWorldScale(int & x, int & y, int & z) const
 	return scale;
 }
 
+const AABB * GameObject::GetAABB() const
+{
+	return &bounds.aabb_bounding_box;
+}
+
+bool GameObject::IsCamera() const
+{
+	return is_camera;
+}
+
 void GameObject::SetTransform(const math::float4x4& new_transform)
 {
 	transform->SetTransform(new_transform);
+}
+
+void GameObject::SetDraw(bool draw_)
+{
+	draw = draw_;
 }
 
 bool GameObject::HasMeshFilter() const

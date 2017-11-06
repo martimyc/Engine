@@ -3,6 +3,8 @@
 
 #include <string>
 
+class GameObject;
+
 enum COMPONENT_TYPE
 {
 	CT_NO_TYPE = 0,
@@ -19,6 +21,7 @@ private:
 
 protected:
 	std::string name;
+	GameObject* game_object;
 
 public:	
 	Component(COMPONENT_TYPE type, const char* name, bool enabled = true): type(type), enabled(enabled), name(name)
@@ -38,6 +41,11 @@ public:
 		return enabled;
 	}
 
+	virtual bool Start()
+	{
+		return true;
+	}
+
 	virtual bool Update()
 	{
 		return true;
@@ -47,6 +55,8 @@ public:
 	{
 		enabled = false;
 	}
+
+	void SetGameObject(GameObject* go);
 
 	//Get
 	const COMPONENT_TYPE GetType() const

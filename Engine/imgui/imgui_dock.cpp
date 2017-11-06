@@ -1,6 +1,7 @@
 #include <string>
 #include "..\Parson\parson.h"
 #include "imgui.h"
+
 #define IMGUI_DEFINE_PLACEMENT_NEW
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
@@ -71,7 +72,7 @@ namespace ImGui
 	{
 		if (g_dock.workspace_pos != _pos || g_dock.workspace_size != _size)
 		{
-			g_dock.ShutdownDock();	//TODO: We must Save/Load
+			//g_dock.ShutdownDock();	//TODO: We must Save/Load
 			g_dock.workspace_pos = _pos;
 			g_dock.workspace_size = _size;
 		}
@@ -80,8 +81,8 @@ namespace ImGui
 	void DockContext::LoadDocks()
 	{
 		/*
-		JSON_Value* config = json_parse_file("config.json");
-		JSON_Object* obj = json_value_get_object(config);
+		JSON_Value* docks = json_parse_file("docks.json");
+		JSON_Object* obj = json_value_get_object(docks);
 		JSON_Object* all_docks = json_object_dotget_object(obj, "All Docks");
 
 		const int num_docks = json_object_get_number(all_docks, "num_docks");
@@ -92,21 +93,44 @@ namespace ImGui
 			JSON_Object* dock_obj = json_object_dotget_object(obj, temp.c_str());
 			
 			Dock* dock = new Dock();
-			//TODO: dock->label = json_object_get_string(dock_obj, "label");
-			//dock->id = json_object_get_number(dock_obj, "id");
+			//std::string label = 
+			dock->label = (char*)json_object_get_string(dock_obj, "label"); //label.c_str();
+			dock->id = json_object_get_number(dock_obj, "id");
 			//dock->prev_tab = json_object_get_number(dock_obj, "prev_tab");
-			//dock->id = json_object_get_number(dock_obj, "id");
-
+			//dock->next_tab = json_object_get_number(dock_obj, "next_tab");	//Parent && childs
+			dock->active = json_object_get_boolean(dock_obj, "active");
+			dock->pos.x = json_object_get_number(dock_obj, "pos_x");
+			dock->pos.y = json_object_get_number(dock_obj, "pos_y");
+			dock->size.x = json_object_get_number(dock_obj, "size_x");
+			dock->size.y = json_object_get_number(dock_obj, "size_y");
+			int status = json_object_get_number(dock_obj, "status");
+			switch (status)
+			{
+			case 0:
+				dock->status = Status_Docked;
+				break;
+			case 1:
+				dock->status = Status_Float;
+				break;
+			case 2:
+				dock->status = Status_Dragged;
+				break;
+			default :
+				break;
+			}
+			
+			dock->opened = json_object_get_boolean(dock_obj, "opened");
+			dock->first = json_object_get_boolean(dock_obj, "first");
+			dock->last_frame = json_object_get_number(dock_obj, "last_frame");
 			g_dock.m_docks.push_back(dock);
 		}
 		*/
 	}
-
 	void DockContext::SaveDocks()
 	{
 		/*
-		JSON_Value* config = json_parse_file("config.json");
-		JSON_Object* obj = json_value_get_object(config);
+		JSON_Value* docks = json_parse_file("docks.json");
+		JSON_Object* obj = json_value_get_object(docks);
 
 		//TODO: IDK WHY can't create a root to put all the docks & the number of them.
 		JSON_Object* dock_root_obj = json_object_dotget_object(obj, "AllDocks");
@@ -174,7 +198,7 @@ namespace ImGui
 			json_object_dotset_value(obj, temp.c_str(), dock);
 		}
 
-		json_serialize_to_file(config, "config.json");
+		json_serialize_to_file(docks, "docks.json");
 		*/
 	}
 

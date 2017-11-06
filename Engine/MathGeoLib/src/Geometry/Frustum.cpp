@@ -15,6 +15,7 @@
 /** @file Frustum.cpp
 	@author Jukka Jylänki
 	@brief Implementation for the Frustum geometry object. */
+#include "..\..\..\glew\include\GL\glew.h"
 #include "Frustum.h"
 #include "AABB.h"
 #include "Circle.h"
@@ -84,7 +85,59 @@ viewProjMatrix(float4x4::nan)
 #endif
 }
 
-   void Frustum::SetType(FrustumType _type)
+void Frustum::Draw(float red, float green, float blue, float alpha) const
+{
+	math::float3 frustum_vertices[8];
+
+	GetCornerPoints(frustum_vertices);
+
+	glLineWidth(3.0f);
+	glColor4f(red, green, blue, alpha);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(frustum_vertices[0].x, frustum_vertices[0].y, frustum_vertices[0].z);
+	glVertex3f(frustum_vertices[1].x, frustum_vertices[1].y, frustum_vertices[1].z);
+
+	glVertex3f(frustum_vertices[0].x, frustum_vertices[0].y, frustum_vertices[0].z);
+	glVertex3f(frustum_vertices[2].x, frustum_vertices[2].y, frustum_vertices[2].z);
+
+	glVertex3f(frustum_vertices[0].x, frustum_vertices[0].y, frustum_vertices[0].z);
+	glVertex3f(frustum_vertices[4].x, frustum_vertices[4].y, frustum_vertices[4].z);
+
+	glVertex3f(frustum_vertices[1].x, frustum_vertices[1].y, frustum_vertices[1].z);
+	glVertex3f(frustum_vertices[3].x, frustum_vertices[3].y, frustum_vertices[3].z);
+
+	glVertex3f(frustum_vertices[1].x, frustum_vertices[1].y, frustum_vertices[1].z);
+	glVertex3f(frustum_vertices[5].x, frustum_vertices[5].y, frustum_vertices[5].z);
+
+	glVertex3f(frustum_vertices[2].x, frustum_vertices[2].y, frustum_vertices[2].z);
+	glVertex3f(frustum_vertices[3].x, frustum_vertices[3].y, frustum_vertices[3].z);
+
+	glVertex3f(frustum_vertices[2].x, frustum_vertices[2].y, frustum_vertices[2].z);
+	glVertex3f(frustum_vertices[6].x, frustum_vertices[6].y, frustum_vertices[6].z);
+
+	glVertex3f(frustum_vertices[3].x, frustum_vertices[3].y, frustum_vertices[3].z);
+	glVertex3f(frustum_vertices[7].x, frustum_vertices[7].y, frustum_vertices[7].z);
+
+	glVertex3f(frustum_vertices[5].x, frustum_vertices[5].y, frustum_vertices[5].z);
+	glVertex3f(frustum_vertices[4].x, frustum_vertices[4].y, frustum_vertices[4].z);
+
+	glVertex3f(frustum_vertices[5].x, frustum_vertices[5].y, frustum_vertices[5].z);
+	glVertex3f(frustum_vertices[7].x, frustum_vertices[7].y, frustum_vertices[7].z);
+
+	glVertex3f(frustum_vertices[4].x, frustum_vertices[4].y, frustum_vertices[4].z);
+	glVertex3f(frustum_vertices[6].x, frustum_vertices[6].y, frustum_vertices[6].z);
+
+	glVertex3f(frustum_vertices[6].x, frustum_vertices[6].y, frustum_vertices[6].z);
+	glVertex3f(frustum_vertices[7].x, frustum_vertices[7].y, frustum_vertices[7].z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+void Frustum::SetType(FrustumType _type)
    {
 	   type = _type;
    }

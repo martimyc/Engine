@@ -9,6 +9,7 @@
 #include "AppliedMaterial.h"
 #include "MeshFilter.h"
 #include "Transform.h"
+#include "Camera.h"
 
 #include "KDTree.h"
 
@@ -476,6 +477,16 @@ bool SceneManager::AddToKDT(GameObject* new_go)
 	return go_kdtree->AddGameObject(new_go);
 }
 
+void SceneManager::CreateCamera()
+{
+	root->CreateCamera();
+}
+
+GameObject * SceneManager::GetRoot() const
+{
+	return root;
+}
+
 void SceneManager::Hirarchy()
 {
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((focused == root) ? ImGuiTreeNodeFlags_Selected : 0);
@@ -494,6 +505,7 @@ void SceneManager::Hirarchy()
 void SceneManager::UpdateGameObjects()
 {
 	root->Update();
+	root->SentToDraw(focused_camera);
 }
 
 Material * SceneManager::CreateMaterial(const char * const name)
@@ -637,6 +649,17 @@ unsigned int SceneManager::GetNumTextures() const
 			num_textures++;
 
 	return num_textures;
+}
+
+void SceneManager::DrawCamera()
+{
+	if (focused_camera != nullptr)
+		focused_camera->DrawFrustum();
+}
+
+void SceneManager::SetCameraFocused(Camera * camera)
+{
+	focused_camera = camera;
 }
 
 Texture * SceneManager::GetTexture(const std::string & name) const

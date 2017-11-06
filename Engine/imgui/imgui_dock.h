@@ -29,7 +29,7 @@ namespace ImGui
 
 	enum Status_
 	{
-		Status_Docked,
+		Status_Docked = 0,
 		Status_Float,
 		Status_Dragged
 	};

@@ -98,6 +98,10 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::MenuItem("Camera"))
+				App->scene_manager->CreateCamera();
+
 			ImGui::EndMenu();
 		}
 

@@ -555,7 +555,9 @@
     <ClInclude Include="KDTree.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Camera.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -786,10 +788,13 @@
     <ClCompile Include="KDTree.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Texture.cpp">
       <Filter>Sources\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

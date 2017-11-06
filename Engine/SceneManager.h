@@ -9,6 +9,7 @@
 #define CHECKERS_WIDTH 256
 
 class GameObject;
+class Camera;
 class Asset;
 class Material;
 class Texture;
@@ -63,6 +64,8 @@ private:
 	int current_material = 0;
 	unsigned int selected_texture = 0;
 
+	Camera* focused_camera = nullptr;
+
 	//GenerateGOVec() //for KDT
 	//RecalculateKDT(std::vector<GameObject*>);
 
@@ -97,6 +100,9 @@ public:
 	void DrawKDT() const;
 	bool AddToKDT( GameObject* new_go);
 
+	void CreateCamera();
+	GameObject* GetRoot() const;
+
 public:
 	//Materials
 	Material* CreateMaterial(const char* const name = nullptr);
@@ -126,6 +132,9 @@ public:
 	bool TextureExsists(const std::string& path) const;
 	void DrawTexture(unsigned int num_texture) const;
 	unsigned int GetNumTextures() const;
+
+	void DrawCamera();
+	void SetCameraFocused(Camera* camera);
 
 	//Scene
 	//bool LoadScene(const std::string& path) const;
