@@ -1,13 +1,22 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
-#include "Globals.h"
-#include "Application.h"
-#include "SceneManager.h"
+
+//Containers
+#include "KDTreeVertex.h"
+
+//Assets
 #include "GameObject.h"
 #include "Texture.h"
 #include "Transform.h"
 #include "AppliedMaterial.h"
 #include "Mesh.h"
+
+//Modules
+#include "Globals.h"
+#include "Application.h"
+#include "SceneManager.h"
+
+
 
 Mesh::Mesh(const char* const name): Asset(AT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
@@ -296,6 +305,22 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 	else
 		LOG("Colors where not set correctly");
 }
+
+void Mesh::DrawKDT() const
+{
+	if (vertex_kdt != nullptr)
+		vertex_kdt->Draw();
+}
+
+void Mesh::RecalculateKDT()
+{
+	if (vertex_kdt != nullptr)
+		delete vertex_kdt;
+
+	vertex_kdt = new KDTreeVertex();
+	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
+}
+
 /*
 void Mesh::Enclose(AABB & bounding_box) const
 {

@@ -1,3 +1,4 @@
+#include "imgui\imgui.h"
 #include "Mesh.h"
 #include "MeshFilter.h"
 
@@ -20,7 +21,23 @@ const Mesh * MeshFilter::GetMesh() const
 	return mesh;
 }
 
+void MeshFilter::RecalculateMeshKDT()
+{
+	mesh->RecalculateKDT();
+}
+
+void MeshFilter::DrawKDT() const
+{
+	if(draw_kdt)
+		mesh->DrawKDT();
+}
+
 void MeshFilter::Inspector()
 {
+	ImGui::Checkbox("Draw KDT", &draw_kdt);
+	
+	if (ImGui::Button("Recalculate KDT"))
+		RecalculateMeshKDT();
+	
 	mesh->Inspector();
 }

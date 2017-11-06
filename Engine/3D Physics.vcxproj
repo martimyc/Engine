@@ -137,7 +137,8 @@
     <ClInclude Include="gpudetect\ID3D10Extensions.h" />
     <ClInclude Include="imgui\imgui_dock.h" />
     <ClInclude Include="ImportManager.h" />
-    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="KDTreeGO.h" />
+    <ClInclude Include="KDTreeVertex.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialImporter.h" />
     <ClInclude Include="MeshFilter.h" />
@@ -253,7 +254,8 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="ImportManager.cpp" />
-    <ClCompile Include="KDTree.cpp" />
+    <ClCompile Include="KDTreeGO.cpp" />
+    <ClCompile Include="KDTreeVertex.cpp" />
     <ClCompile Include="MainMenuBar.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialImporter.cpp" />

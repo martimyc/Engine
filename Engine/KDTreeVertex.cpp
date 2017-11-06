@@ -4,30 +4,30 @@
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
-#include "GameObject.h"
-#include "KDTree.h"
+#include "Mesh.h"
+#include "KDTreeVertex.h"
 
-KDTNode::KDTNode(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION)
+KDTNodeVertex::KDTNodeVertex(const math::vec min_point, const math::vec max_point) : partition_axis(NO_PARTITION)
 {
 	limits = new AABB(min_point, max_point);
-	for(int i = 0; i < MAX_NUM_OBJECTS; i++)
-		game_objects[i] = nullptr;
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		vertices[i] = nullptr;
 
 	childs[0] = nullptr;
 	childs[1] = nullptr;
 }
 
-KDTNode::KDTNode(const AABB& limits) : partition_axis(NO_PARTITION)
+KDTNodeVertex::KDTNodeVertex(const AABB& limits) : partition_axis(NO_PARTITION)
 {
 	this->limits = new AABB(limits);
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		game_objects[i] = nullptr;
+		vertices[i] = nullptr;
 
 	childs[0] = nullptr;
 	childs[1] = nullptr;
 }
 
-KDTNode::~KDTNode()
+KDTNodeVertex::~KDTNodeVertex()
 {
 	delete limits;
 
@@ -37,13 +37,13 @@ KDTNode::~KDTNode()
 	//Dont think deleting gameobjects through tree is best
 }
 
-bool KDTNode::SubDivide3D(const GameObject* new_game_object)
+bool KDTNodeVertex::SubDivide3D(const Geo::Vertex* new_vertex)
 {
-	if (!AllSamePos(new_game_object))
+	if (!AllSamePos(new_vertex))
 	{
-		float median_x = FindBestMedian(X, new_game_object);
-		float median_y = FindBestMedian(Y, new_game_object);
-		float median_z = FindBestMedian(Z, new_game_object);
+		float median_x = FindBestMedian(X, new_vertex);
+		float median_y = FindBestMedian(Y, new_vertex);
+		float median_z = FindBestMedian(Z, new_vertex);
 
 		SubDivide(X, median_x);
 		SubDivideChilds(Y, median_y);
@@ -54,13 +54,13 @@ bool KDTNode::SubDivide3D(const GameObject* new_game_object)
 		{
 			math::vec vect(vec::zero);
 			vect[0] = 3;
-			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-				childs[0]->AddGameObject(game_objects[i]);
+			if ((*vertices[i])[partition_axis] <= median)
+				childs[0]->AddVertex(vertices[i]);
 
-			if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-				childs[1]->AddGameObject(game_objects[i]);
+			if ((*vertices[i])[partition_axis] > median)
+				childs[1]->AddVertex(vertices[i]);
 
-			game_objects[i] = nullptr;
+			vertices[i] = nullptr;
 		}
 		return true;
 	}
@@ -69,7 +69,7 @@ bool KDTNode::SubDivide3D(const GameObject* new_game_object)
 	return false;
 }
 
-void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
+void KDTNodeVertex::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] != nullptr)
 	{
@@ -80,7 +80,7 @@ void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 		LOG("No childs to subdivide");
 }
 
-void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
+void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] == nullptr)
 	{
@@ -112,7 +112,7 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
 			break;
 		}
 
-		childs[0] = new KDTNode(min_point, max_point);
+		childs[0] = new KDTNodeVertex(min_point, max_point);
 
 		max_point = limits->maxPoint;
 
@@ -138,30 +138,30 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
 			break;
 		}
 
-		childs[1] = new KDTNode(min_point, max_point);
+		childs[1] = new KDTNodeVertex(min_point, max_point);
 	}
 	else
 		LOG("Trying to subdivide node with existing childs");
 }
 
-float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const
+float KDTNodeVertex::FindBestMedian(PARTITION_AXIS partition_axis, const Geo::Vertex* new_vertex) const
 {
 	std::priority_queue <float, std::vector<float>, std::greater<float>> queue;
 
 	bool all_equal = true;
 
-	queue.push(new_game_object->GetWorldPosition()[partition_axis]);
+	queue.push((*new_vertex)[partition_axis]);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (game_objects[i] != nullptr)
-			queue.push(game_objects[i]->GetWorldPosition()[partition_axis]);
+		if (vertices[i] != nullptr)
+			queue.push((*vertices[i])[partition_axis]);
 		else
 			break;
 
 	if (queue.size() % 2 != 0)
 	{
 		for (unsigned int to_pop = 0; to_pop < queue.size() / 2; to_pop++)
-			queue.pop();		
+			queue.pop();
 		return queue.top();
 	}
 	else
@@ -177,47 +177,47 @@ float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* n
 	}
 }
 
-bool KDTNode::AddGameObject(const GameObject * new_game_object)
+bool KDTNodeVertex::AddVertex(const Geo::Vertex * new_vertex)
 {
 	bool ret = false;
 
 	if (partition_axis == NO_PARTITION)
 	{
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			if (game_objects[i] == nullptr)
+			if (vertices[i] == nullptr)
 			{
-				game_objects[i] = new_game_object;
+				vertices[i] = new_vertex;
 				ret = true;
 				break;
 			}
 
 		if (ret == false)
 		{
-			if (SubDivide3D(new_game_object) == false)
+			if (SubDivide3D(new_vertex) == false)
 				return false;
-			if (AddToCorrectChild(new_game_object) == false)
+			if (AddToCorrectChild(new_vertex) == false)
 				return false;
 		}
 	}
 	else
-		if (AddToCorrectChild(new_game_object) == false)
+		if (AddToCorrectChild(new_vertex) == false)
 			return false;
 
 	return ret;
 }
 
-bool KDTNode::AddToCorrectChild(const GameObject * new_game_object)
+bool KDTNodeVertex::AddToCorrectChild(const Geo::Vertex * new_vertex)
 {
 	bool ret = false;
 
-	if (new_game_object->GetWorldPosition()[partition_axis] <= median)
-		if (childs[0]->AddGameObject(new_game_object) == false)
+	if ((*new_vertex)[partition_axis] <= median)
+		if (childs[0]->AddVertex(new_vertex) == false)
 			return false;
 		else
 			ret = true;
 
-	if (new_game_object->GetWorldPosition()[partition_axis] > median)
-		if (childs[1]->AddGameObject(new_game_object) == false)
+	if ((*new_vertex)[partition_axis] > median)
+		if (childs[1]->AddVertex(new_vertex) == false)
 			return false;
 		else
 			ret = true;
@@ -228,23 +228,23 @@ bool KDTNode::AddToCorrectChild(const GameObject * new_game_object)
 	return ret;
 }
 
-bool KDTNode::RemoveGameObject(const GameObject * new_game_object)
+bool KDTNodeVertex::RemoveVertex(const Geo::Vertex * new_vertex)
 {
 	bool ret = false;
 
 	if (partition_axis == NO_PARTITION)
 	{
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			if (game_objects[i] == new_game_object)
+			if (vertices[i] == new_vertex)
 			{
-				game_objects[i] = nullptr;
+				vertices[i] = nullptr;
 				ret = true;
 				ReArrange();
 				break;
 			}
 	}
 	else
-		if (childs[0]->RemoveGameObject(new_game_object) || childs[1]->RemoveGameObject(new_game_object))
+		if (childs[0]->RemoveVertex(new_vertex) || childs[1]->RemoveVertex(new_vertex))
 			ret = true;
 
 	if (partition_axis == Z && Empty())
@@ -253,17 +253,17 @@ bool KDTNode::RemoveGameObject(const GameObject * new_game_object)
 	return ret;
 }
 
-void KDTNode::ReArrange()
+void KDTNodeVertex::ReArrange()
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS - 1; i++)
-		if (game_objects[i] == nullptr && game_objects[i + 1] != nullptr)
+		if (vertices[i] == nullptr && vertices[i + 1] != nullptr)
 		{
-			game_objects[i] = game_objects[i + 1];
+			vertices[i] = vertices[i + 1];
 			i = 0;
 		}
 }
 
-bool KDTNode::Empty() const
+bool KDTNodeVertex::Empty() const
 {
 	if (partition_axis == NO_PARTITION)
 	{
@@ -281,29 +281,29 @@ bool KDTNode::Empty() const
 	}
 }
 
-void KDTNode::GetGameObjects(std::vector<const GameObject*>& vec) const
+void KDTNodeVertex::GetVertices(std::vector<const Geo::Vertex*>& vec) const
 {
 	if (partition_axis != NO_PARTITION)
 	{
-		childs[0]->GetGameObjects(vec);
-		childs[1]->GetGameObjects(vec);
+		childs[0]->GetVertices(vec);
+		childs[1]->GetVertices(vec);
 	}
 	else
 	{
-		if (game_objects[0] != nullptr)
+		if (vertices[0] != nullptr)
 			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 			{
-				if (game_objects[i] != nullptr)
-					vec.push_back(game_objects[i]);
+				if (vertices[i] != nullptr)
+					vec.push_back(vertices[i]);
 				else
 					break;
 			}
 	}
 }
 
-bool KDTNode::IsIn(const GameObject * new_game_object) const
+bool KDTNodeVertex::IsIn(const Geo::Vertex * new_vertex) const
 {
-	math::vec position(new_game_object->GetWorldPosition());
+	math::vec position(new_vertex->MGLVec());
 
 	if (position.x < limits->minPoint.x || position.x > limits->maxPoint.x)
 		return false;
@@ -315,7 +315,7 @@ bool KDTNode::IsIn(const GameObject * new_game_object) const
 	return true;
 }
 
-void KDTNode::Draw() const
+void KDTNodeVertex::Draw() const
 {
 	if (partition_axis != NO_PARTITION)
 	{
@@ -428,11 +428,8 @@ void KDTNode::Draw() const
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			if (game_objects[i] != nullptr)
-			{
-				math::vec position = game_objects[i]->GetWorldPosition();
-				glVertex3f(position.x, position.y, position.z);
-			}
+			if (vertices[i] != nullptr)
+				glVertex3f(vertices[i]->x, vertices[i]->y, vertices[i]->z);
 			else
 				break;
 		}
@@ -443,59 +440,57 @@ void KDTNode::Draw() const
 	}
 }
 
-bool KDTNode::AllSamePos(const GameObject * new_game_object) const
+bool KDTNodeVertex::AllSamePos(const Geo::Vertex * new_vertex) const
 {
-	math::vec position = new_game_object->GetWorldPosition();
-
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (position.x != game_objects[i]->GetLocalPosition().x || position.y != game_objects[i]->GetLocalPosition().y || position.z != game_objects[i]->GetLocalPosition().z)
+		if (new_vertex->x != vertices[i]->x || new_vertex->y != vertices[i]->y || new_vertex->z != vertices[i]->z)
 			return false;
 	return true;
 }
 
-KDTree::KDTree()
+KDTreeVertex::KDTreeVertex()
 {
 	AABB limits;
 	limits.SetNegativeInfinity();
-	root = new KDTNode(limits);
+	root = new KDTNodeVertex(limits);
 }
 
-KDTree::~KDTree()
+KDTreeVertex::~KDTreeVertex()
 {}
 
-bool KDTree::ReCalculate(GameObject* new_game_object)
+bool KDTreeVertex::ReCalculate(Geo::Vertex* new_vertex)
 {
-	std::vector<const GameObject*> all_game_objects;
+	std::vector<const Geo::Vertex*> all_vertices;
 
-	root->GetGameObjects(all_game_objects);
+	root->GetVertices(all_vertices);
 
 	delete root;
 
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	limits.Enclose(&new_game_object->GetWorldPosition(), 1);
+	limits.Enclose(&new_vertex->MGLVec(), 1);
 
-	if (all_game_objects.size() > 0)
+	if (all_vertices.size() > 0)
 	{
-		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
-			limits.Enclose(&(*it)->GetWorldPosition(), 1);
+		for (std::vector<const Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
+			limits.Enclose(&(*it)->MGLVec(), 1);
 	}
 
-	root = new KDTNode(limits);
+	root = new KDTNodeVertex(limits);
 
-	if (root->AddGameObject(new_game_object) == false)
+	if (root->AddVertex(new_vertex) == false)
 	{
-		LOG("New GameObject: '%s' could not be added to KDT after recalculating", new_game_object->GetName().c_str());
+		LOG("New Vertex: '%f, %f, %f' could not be added to KDT after recalculating", new_vertex->x, new_vertex->y, new_vertex->z);
 		return false;
 	}
 
-	if (all_game_objects.size() > 0)
+	if (all_vertices.size() > 0)
 	{
-		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
-			if (root->AddGameObject(*it) == false)
+		for (std::vector<const Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
+			if (root->AddVertex(*it) == false)
 			{
-				LOG("GameObject: '%s' could not be re-added to KDT after recalculating", (*it)->GetName().c_str());
+				LOG("Vertex: '%f, %f, %f' could not be re-added to KDT after recalculating", (*it)->x, (*it)->y, (*it)->z);
 				return false;
 			}
 	}
@@ -503,19 +498,61 @@ bool KDTree::ReCalculate(GameObject* new_game_object)
 	return true;
 }
 
-bool KDTree::AddGameObject(GameObject * new_game_object)
+bool KDTreeVertex::AddVertex(Geo::Vertex * new_vertex)
 {
 	bool ret = false;
 
-	if (root->IsIn(new_game_object))
-		ret = root->AddGameObject(new_game_object);
+	if (root->IsIn(new_vertex))
+		ret = root->AddVertex(new_vertex);
 	else
-		ret = ReCalculate(new_game_object);
+		ret = ReCalculate(new_vertex);
 
 	return ret;
 }
 
-void KDTree::Draw() const
+bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_vertices, const GLuint * const new_indices, int num_indices)
+{
+	std::vector<Geo::Vertex*> all_vertices;
+
+	AABB limits;
+	limits.SetNegativeInfinity();
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		Geo::Vertex* vertex = new Geo::Vertex(&new_vertices[i * 3]);
+		all_vertices.push_back(vertex);
+		limits.Enclose(vertex->MGLVec());
+	}
+
+	for (int i = 0; i < num_indices / 3; i++)
+	{
+		Geo::Vertex* v1 = all_vertices[new_indices[i * 3]];
+		Geo::Vertex* v2 = all_vertices[new_indices[i * 3 + 1]];
+		Geo::Vertex* v3 = all_vertices[new_indices[i * 3 + 2]];
+
+		Geo::Triangle* triangle = new Geo::Triangle(*v1, *v2, *v3);
+
+		v1->AddTriangle(triangle);
+		v2->AddTriangle(triangle);
+		v3->AddTriangle(triangle);
+	}
+
+	root = new KDTNodeVertex(limits);
+
+	if (all_vertices.size() > 0)
+	{
+		for (std::vector<Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
+			if (root->AddVertex(*it) == false)
+			{
+				LOG("Vertex: '%f, %f, %f' could not be added to KDT", (*it)->x, (*it)->y, (*it)->z);
+				return false;
+			}
+	}
+
+	return true;
+}
+
+void KDTreeVertex::Draw() const
 {
 	root->Draw();
 }
