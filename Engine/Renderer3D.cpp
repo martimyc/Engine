@@ -205,6 +205,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 			glMultMatrixf(draw_queue.top()->GetWorldGLTransform());
 
 			draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
+			draw_queue.top()->GetMeshFilter()->DrawKDT();
 
 			glPopMatrix();
 			draw_queue.top()->DrawBoundingBoxes();

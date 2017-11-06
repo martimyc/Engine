@@ -552,7 +552,10 @@
     <ClInclude Include="AppliedMaterial.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="KDTree.h">
+    <ClInclude Include="KDTreeGO.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTreeVertex.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -788,8 +791,15 @@
     <ClCompile Include="KDTree.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Texture.cpp">
       <Filter>Sources\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="KDTreeGO.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="KDTreeVertex.cpp">
+      <Filter>Sources\Containers</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Sources\Game Objects\Components</Filter>

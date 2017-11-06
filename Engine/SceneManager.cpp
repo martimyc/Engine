@@ -11,7 +11,7 @@
 #include "Transform.h"
 #include "Camera.h"
 
-#include "KDTree.h"
+#include "KDTreeGO.h"
 
 //Modules
 #include "Renderer3D.h"
@@ -29,7 +29,7 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
-	go_kdtree = new KDTree();
+	go_kdtree = new KDTreeGO();
 
 	root = new GameObject(nullptr, "Root");
 	focused = root;

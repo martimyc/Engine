@@ -5,9 +5,9 @@
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
 #include "GameObject.h"
-#include "KDTree.h"
+#include "KDTreeGO.h"
 
-KDTNode::KDTNode(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION)
+KDTNodeGO::KDTNodeGO(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION)
 {
 	limits = new AABB(min_point, max_point);
 	for(int i = 0; i < MAX_NUM_OBJECTS; i++)
@@ -17,7 +17,7 @@ KDTNode::KDTNode(const math::vec min_point, const math::vec max_point): partitio
 	childs[1] = nullptr;
 }
 
-KDTNode::KDTNode(const AABB& limits) : partition_axis(NO_PARTITION)
+KDTNodeGO::KDTNodeGO(const AABB& limits) : partition_axis(NO_PARTITION)
 {
 	this->limits = new AABB(limits);
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
@@ -27,7 +27,7 @@ KDTNode::KDTNode(const AABB& limits) : partition_axis(NO_PARTITION)
 	childs[1] = nullptr;
 }
 
-KDTNode::~KDTNode()
+KDTNodeGO::~KDTNodeGO()
 {
 	delete limits;
 
@@ -37,7 +37,7 @@ KDTNode::~KDTNode()
 	//Dont think deleting gameobjects through tree is best
 }
 
-bool KDTNode::SubDivide3D(const GameObject* new_game_object)
+bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object)
 {
 	if (!AllSamePos(new_game_object))
 	{
@@ -52,16 +52,20 @@ bool KDTNode::SubDivide3D(const GameObject* new_game_object)
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			math::vec vect(vec::zero);
-			vect[0] = 3;
 			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-				childs[0]->AddGameObject(game_objects[i]);
+				if (childs[0]->AddGameObject(game_objects[i]) == false)
+					return false;
 
 			if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-				childs[1]->AddGameObject(game_objects[i]);
+				if (childs[1]->AddGameObject(game_objects[i]) == false)
+					return false;
 
 			game_objects[i] = nullptr;
 		}
+
+		if (AddToCorrectChild(new_game_object) == false)
+			return false;
+
 		return true;
 	}
 	else
@@ -69,7 +73,7 @@ bool KDTNode::SubDivide3D(const GameObject* new_game_object)
 	return false;
 }
 
-void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
+void KDTNodeGO::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] != nullptr)
 	{
@@ -80,7 +84,7 @@ void KDTNode::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 		LOG("No childs to subdivide");
 }
 
-void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
+void KDTNodeGO::SubDivide(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] == nullptr)
 	{
@@ -112,7 +116,7 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
 			break;
 		}
 
-		childs[0] = new KDTNode(min_point, max_point);
+		childs[0] = new KDTNodeGO(min_point, max_point);
 
 		max_point = limits->maxPoint;
 
@@ -138,25 +142,40 @@ void KDTNode::SubDivide(PARTITION_AXIS partition_axis, float median)
 			break;
 		}
 
-		childs[1] = new KDTNode(min_point, max_point);
+		childs[1] = new KDTNodeGO(min_point, max_point);
 	}
 	else
 		LOG("Trying to subdivide node with existing childs");
 }
 
-float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const
+float KDTNodeGO::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const
 {
+	std::vector<float> axis_points;
 	std::priority_queue <float, std::vector<float>, std::greater<float>> queue;
 
-	bool all_equal = true;
-
+	axis_points.push_back(new_game_object->GetWorldPosition()[partition_axis]);
 	queue.push(new_game_object->GetWorldPosition()[partition_axis]);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
 		if (game_objects[i] != nullptr)
-			queue.push(game_objects[i]->GetWorldPosition()[partition_axis]);
+		{
+			bool repeated = false;
+			float to_add = game_objects[i]->GetWorldPosition()[partition_axis];
+
+			for (std::vector<float>::const_iterator it = axis_points.begin(); it != axis_points.end(); ++it)
+				if (*it == to_add)
+					repeated = true;
+
+			if (!repeated)
+			{
+				axis_points.push_back(to_add);
+				queue.push(game_objects[i]->GetWorldPosition()[partition_axis]);
+			}
+		}
 		else
 			break;
+	}
 
 	if (queue.size() % 2 != 0)
 	{
@@ -177,36 +196,40 @@ float KDTNode::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* n
 	}
 }
 
-bool KDTNode::AddGameObject(const GameObject * new_game_object)
+bool KDTNodeGO::AddGameObject(const GameObject * new_game_object)
 {
 	bool ret = false;
 
 	if (partition_axis == NO_PARTITION)
 	{
-		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			if (game_objects[i] == nullptr)
-			{
-				game_objects[i] = new_game_object;
-				ret = true;
-				break;
-			}
-
-		if (ret == false)
+		if (game_objects[MAX_NUM_OBJECTS - 1] == nullptr)
 		{
+			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+				if (game_objects[i] == nullptr)
+				{
+					game_objects[i] = new_game_object;
+					ret = true;
+					break;
+				}
+		}
+		else
 			if (SubDivide3D(new_game_object) == false)
 				return false;
-			if (AddToCorrectChild(new_game_object) == false)
-				return false;
-		}
+			else
+				ret = true;
 	}
 	else
+	{
 		if (AddToCorrectChild(new_game_object) == false)
 			return false;
+		else
+			ret = true;
+	}
 
 	return ret;
 }
 
-bool KDTNode::AddToCorrectChild(const GameObject * new_game_object)
+bool KDTNodeGO::AddToCorrectChild(const GameObject * new_game_object)
 {
 	bool ret = false;
 
@@ -228,7 +251,7 @@ bool KDTNode::AddToCorrectChild(const GameObject * new_game_object)
 	return ret;
 }
 
-bool KDTNode::RemoveGameObject(const GameObject * new_game_object)
+bool KDTNodeGO::RemoveGameObject(const GameObject * new_game_object)
 {
 	bool ret = false;
 
@@ -253,7 +276,7 @@ bool KDTNode::RemoveGameObject(const GameObject * new_game_object)
 	return ret;
 }
 
-void KDTNode::ReArrange()
+void KDTNodeGO::ReArrange()
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS - 1; i++)
 		if (game_objects[i] == nullptr && game_objects[i + 1] != nullptr)
@@ -263,7 +286,7 @@ void KDTNode::ReArrange()
 		}
 }
 
-bool KDTNode::Empty() const
+bool KDTNodeGO::Empty() const
 {
 	if (partition_axis == NO_PARTITION)
 	{
@@ -281,7 +304,7 @@ bool KDTNode::Empty() const
 	}
 }
 
-void KDTNode::GetGameObjects(std::vector<const GameObject*>& vec) const
+void KDTNodeGO::GetGameObjects(std::vector<const GameObject*>& vec) const
 {
 	if (partition_axis != NO_PARTITION)
 	{
@@ -301,7 +324,7 @@ void KDTNode::GetGameObjects(std::vector<const GameObject*>& vec) const
 	}
 }
 
-bool KDTNode::IsIn(const GameObject * new_game_object) const
+bool KDTNodeGO::IsIn(const GameObject * new_game_object) const
 {
 	math::vec position(new_game_object->GetWorldPosition());
 
@@ -315,7 +338,7 @@ bool KDTNode::IsIn(const GameObject * new_game_object) const
 	return true;
 }
 
-void KDTNode::Draw() const
+void KDTNodeGO::Draw() const
 {
 	if (partition_axis != NO_PARTITION)
 	{
@@ -443,7 +466,7 @@ void KDTNode::Draw() const
 	}
 }
 
-bool KDTNode::AllSamePos(const GameObject * new_game_object) const
+bool KDTNodeGO::AllSamePos(const GameObject * new_game_object) const
 {
 	math::vec position = new_game_object->GetWorldPosition();
 
@@ -453,17 +476,17 @@ bool KDTNode::AllSamePos(const GameObject * new_game_object) const
 	return true;
 }
 
-KDTree::KDTree()
+KDTreeGO::KDTreeGO()
 {
 	AABB limits;
 	limits.SetNegativeInfinity();
-	root = new KDTNode(limits);
+	root = new KDTNodeGO(limits);
 }
 
-KDTree::~KDTree()
+KDTreeGO::~KDTreeGO()
 {}
 
-bool KDTree::ReCalculate(GameObject* new_game_object)
+bool KDTreeGO::ReCalculate(GameObject* new_game_object)
 {
 	std::vector<const GameObject*> all_game_objects;
 
@@ -482,7 +505,7 @@ bool KDTree::ReCalculate(GameObject* new_game_object)
 			limits.Enclose(&(*it)->GetWorldPosition(), 1);
 	}
 
-	root = new KDTNode(limits);
+	root = new KDTNodeGO(limits);
 
 	if (root->AddGameObject(new_game_object) == false)
 	{
@@ -503,19 +526,23 @@ bool KDTree::ReCalculate(GameObject* new_game_object)
 	return true;
 }
 
-bool KDTree::AddGameObject(GameObject * new_game_object)
+bool KDTreeGO::AddGameObject(GameObject * new_game_object)
 {
-	bool ret = false;
+	bool ret = true;
 
 	if (root->IsIn(new_game_object))
-		ret = root->AddGameObject(new_game_object);
+	{
+		if (root->AddGameObject(new_game_object) == false)
+			return false;
+	}
 	else
-		ret = ReCalculate(new_game_object);
+		if (ReCalculate(new_game_object) == false)
+			return false;
 
 	return ret;
 }
 
-void KDTree::Draw() const
+void KDTreeGO::Draw() const
 {
 	root->Draw();
 }

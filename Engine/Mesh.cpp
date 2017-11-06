@@ -1,13 +1,22 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
-#include "Globals.h"
-#include "Application.h"
-#include "SceneManager.h"
+
+//Containers
+#include "KDTreeVertex.h"
+
+//Assets
 #include "GameObject.h"
 #include "Texture.h"
 #include "Transform.h"
 #include "AppliedMaterial.h"
 #include "Mesh.h"
+
+//Modules
+#include "Globals.h"
+#include "Application.h"
+#include "SceneManager.h"
+
+
 
 Mesh::Mesh(const char* const name): Asset(AT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
@@ -126,6 +135,8 @@ bool Mesh::Inspector()
 	ImGui::Text("Vertices: %i", num_vertices);
 	ImGui::Text("Indices: %i", num_indices);
 	ImGui::Text("UV channels: %i", num_uv_channels);
+
+	int size = sizeof(*vertex_kdt);
 
 	if(has_vertex_colors)
 		ImGui::Text("Has %i Vertex Color channels", num_color_channels);
@@ -296,25 +307,150 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 	else
 		LOG("Colors where not set correctly");
 }
-/*
-void Mesh::Enclose(AABB & bounding_box) const
+
+void Mesh::DrawKDT() const
 {
-	vec* vec_vert = new vec[num_vertices];
-	memcpy(vec_vert, vertices, num_vertices * sizeof(GLfloat) * 3);
-	bounding_box.Enclose(vec_vert, num_vertices);
-}
-*/
-/*
-bool Mesh::operator >(const Mesh & mesh) const
-{
-	unsigned int priority_one = (material == nullptr ? 0 : material->GetPriority());
-	unsigned int priority_two = (mesh.material == nullptr ? 0 : mesh.material->GetPriority());
-	return priority_one > priority_two;
+	if (vertex_kdt != nullptr)
+		vertex_kdt->Draw();
 }
 
-bool Mesh::operator <(const Mesh & mesh) const
+void Mesh::RecalculateKDT()
 {
-	unsigned int priority_one = (material == nullptr ? 0 : material->GetPriority());
-	unsigned int priority_two = (mesh.material == nullptr ? 0 : mesh.material->GetPriority());
-	return priority_one < priority_two;
-}*/
+	if (vertex_kdt != nullptr)
+		delete vertex_kdt;
+
+	vertex_kdt = new KDTreeVertex();
+	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
+}
+
+float Mesh::GetMinX() const
+{
+	float min = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (min < vertices[i * 3])
+			min = vertices[i * 3];
+
+	return min;
+}
+
+float Mesh::GetMinY() const
+{
+	float min = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (min < vertices[i * 3 + 1])
+			min = vertices[i * 3 + 1];
+
+	return min;
+}
+
+float Mesh::GetMinZ() const
+{
+	float min = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (min < vertices[i * 3 + 2])
+			min = vertices[i * 3 + 2];
+
+	return min;
+}
+
+float Mesh::GetMaxX() const
+{
+	float max = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (max > vertices[i * 3])
+			max = vertices[i * 3];
+
+	return max;
+}
+
+float Mesh::GetMaxY() const
+{
+	float max = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (max > vertices[i * 3 + 1])
+			max = vertices[i * 3 + 1];
+
+	return max;
+}
+
+float Mesh::GetMaxZ() const
+{
+	float max = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (max > vertices[i * 3 + 2])
+			max = vertices[i * 3 + 2];
+
+	return max;
+}
+
+Geo::Vertex Mesh::GetMinXVertex() const
+{
+	int min = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (min < vertices[i * 3])
+			min = i;
+
+	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+}
+
+Geo::Vertex Mesh::GetMinYVertex() const
+{
+	int min = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (min < vertices[i * 3 + 1])
+			min = i;
+
+	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+}
+
+Geo::Vertex Mesh::GetMinZVertex() const
+{
+	int min = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (min < vertices[i * 3 + 2])
+			min = i;
+
+	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+}
+
+Geo::Vertex Mesh::GetMaxXVertex() const
+{
+	int max = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (max > vertices[i * 3])
+			max = i;
+
+	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+}
+
+Geo::Vertex Mesh::GetMaxYVertex() const
+{
+	int max = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (max > vertices[i * 3 + 1])
+			max = i;
+
+	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+}
+
+Geo::Vertex Mesh::GetMaxZVertex() const
+{
+	int max = 0.0f;
+
+	for (int i = 0; i < num_vertices; i++)
+		if (max > vertices[i * 3 + 2])
+			max = i;
+
+	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+}

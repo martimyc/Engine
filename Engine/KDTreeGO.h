@@ -1,5 +1,5 @@
-#ifndef KDTREE
-#define KDTREE
+#ifndef KDTREE_GO
+#define KDTREE_GO
 
 #include <vector>
 #include "MathGeoLib\src\MathGeoLibFwd.h"
@@ -16,7 +16,7 @@ enum PARTITION_AXIS
 	NO_PARTITION
 };
 
-class KDTNode
+class KDTNodeGO
 {
 private:
 	AABB* limits;
@@ -24,13 +24,13 @@ private:
 
 	//Partition
 	PARTITION_AXIS partition_axis;
-	KDTNode* childs[2];
+	KDTNodeGO* childs[2];
 	float median;
 
 public:
-	KDTNode(const math::vec min_point, const math::vec max_point);
-	KDTNode(const AABB& limits);
-	~KDTNode();
+	KDTNodeGO(const math::vec min_point, const math::vec max_point);
+	KDTNodeGO(const AABB& limits);
+	~KDTNodeGO();
 
 	bool SubDivide3D(const GameObject* new_game_object);
 
@@ -59,22 +59,22 @@ public:
 	bool AllSamePos(const GameObject* new_game_object) const;
 };
 
-class KDTree
+class KDTreeGO
 {
 private:
-	KDTNode* root;
+	KDTNodeGO* root;
 	AABB limits;
 
 	bool ReCalculate(GameObject* new_game_object);
 public:
-	KDTree();
-	~KDTree();
+	KDTreeGO();
+	~KDTreeGO();
 
 	bool AddGameObject(GameObject* new_game_object);
 
 	void Draw() const;
 };
 
-#endif // !KDTREE
+#endif // !KDTREE_GO
 
 

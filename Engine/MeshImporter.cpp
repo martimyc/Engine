@@ -4,6 +4,42 @@
 #include "Mesh.h"
 #include "MeshImporter.h"
 
+unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
+{
+	unsigned int total_size = FORMAT_SIZE;
+	total_size += sizeof(GLuint);
+
+	if (mesh->HasPositions())
+		total_size += sizeof(GLfloat) * mesh->mNumVertices * 3;
+
+	if (mesh->HasFaces())
+	{
+		total_size += sizeof(GLuint);
+		total_size += sizeof(GLuint) * 3 * mesh->mNumFaces;
+	}
+
+	total_size += sizeof(GLuint);
+	if (mesh->HasTextureCoords(0))
+	{
+		for (int i = 0; i < mesh->GetNumUVChannels(); i++)
+		{
+			total_size += sizeof(GLuint);
+			total_size += sizeof(GLfloat) * mesh->mNumVertices * mesh->mNumUVComponents[i];
+		}
+	}
+
+	total_size += sizeof(GLfloat) * mesh->mNumVertices * 3;
+
+	if (mesh->HasVertexColors(0))
+	{
+		total_size += sizeof(GLuint);
+		for (int i = 0; i < mesh->GetNumColorChannels(); i++)
+			total_size += sizeof(GLfloat) * mesh->mNumVertices * 4;
+	}
+
+	return total_size;
+}
+
 MeshImporter::MeshImporter()
 {}
 
@@ -15,7 +51,7 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 	bool ret = true;
 
 	char format[FORMAT_SIZE] = FORMAT_MESH;
-	char* buffer = new char[MAX_FILE_SIZE];
+	char* buffer = new char[GetTotalSize(mesh)];
 	char* iterator = buffer;
 
 	//First specify format
@@ -76,7 +112,7 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 
 		for (int i = 0; i < num_uv_channels; i++)
 		{
-			num_uv_components = mesh->mNumUVComponents[0];
+			num_uv_components = mesh->mNumUVComponents[i];
 			memcpy(iterator, &num_uv_components, sizeof(GLuint));
 			iterator += sizeof(GLuint);
 
@@ -112,6 +148,9 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 		iterator += sizeof(GLfloat) * num_vertices * 3;
 	}
 
+	int size_now = iterator - buffer;
+	int test = GetTotalSize(mesh);
+
 	if (mesh->HasVertexColors(0) && ret == true)
 	{
 		GLuint num_color_channels = mesh->GetNumColorChannels();
@@ -130,9 +169,6 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 	// Bones and TangentsAndBitangents not loaded yet TODO
 
 	uint length = iterator - buffer;
-
-	if (length > MAX_FILE_SIZE)
-		LOG("Maximum file size exeeded while importing %s from %s", name.c_str(), scene_path.c_str());
 
 	ret = App->file_system->SaveFile(buffer, length, LIBRARY_MESHES_FOLDER, name.c_str(), "mm");
 

@@ -10,6 +10,7 @@ class MeshFilter : public Component
 {
 private:
 	Mesh* mesh;
+	bool draw_kdt;
 
 public:
 	MeshFilter(const char* name, Mesh* mesh, bool enabled = true);
@@ -20,6 +21,10 @@ public:
 
 	//Gets
 	const Mesh* GetMesh() const;
+
+	void RecalculateMeshKDT();
+
+	void DrawKDT() const;
 
 	void Inspector();
 };
