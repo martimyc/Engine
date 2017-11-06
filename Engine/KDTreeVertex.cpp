@@ -52,19 +52,20 @@ bool KDTNodeVertex::SubDivide3D(const Geo::Vertex* new_vertex)
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			math::vec vect(vec::zero);
-			vect[0] = 3;
 			if ((*vertices[i])[partition_axis] <= median)
-				if (childs[0]->AddVertex(vertices[i]))
+				if (childs[0]->AddVertex(vertices[i]) == false)
 					return false;
 
 			if ((*vertices[i])[partition_axis] > median)
-				if (childs[1]->AddVertex(vertices[i]))
+				if (childs[1]->AddVertex(vertices[i]) == false)
 					return false;
-
 
 			vertices[i] = nullptr;
 		}
+
+		if (AddToCorrectChild(new_vertex) == false)
+			return false;
+
 		return true;
 	}
 	else
@@ -149,17 +150,34 @@ void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 
 float KDTNodeVertex::FindBestMedian(PARTITION_AXIS partition_axis, const Geo::Vertex* new_vertex) const
 {
+	std::vector<float> axis_points;
 	std::priority_queue <float, std::vector<float>, std::greater<float>> queue;
 
-	bool all_equal = true;
-
+	axis_points.push_back((*new_vertex)[partition_axis]);
 	queue.push((*new_vertex)[partition_axis]);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
 		if (vertices[i] != nullptr)
-			queue.push((*vertices[i])[partition_axis]);
+		{
+			bool repeated = false;
+			float to_add = (*vertices[i])[partition_axis];
+
+			for (std::vector<float>::const_iterator it = axis_points.begin(); it != axis_points.end(); ++it)
+			{
+				if (*it == to_add)
+					repeated = true;
+			}
+
+			if (!repeated)
+			{
+				axis_points.push_back(to_add);
+				queue.push((*vertices[i])[partition_axis]);
+			}
+		}
 		else
 			break;
+	}
 
 	if (queue.size() % 2 != 0)
 	{
@@ -197,16 +215,16 @@ bool KDTNodeVertex::AddVertex(const Geo::Vertex * new_vertex)
 				}
 		}
 		else
-		{
 			if (SubDivide3D(new_vertex) == false)
 				return false;
-			if (AddToCorrectChild(new_vertex) == false)
-				return false;
-		}
+			else
+				ret = true;
 	}
 	else
 		if (AddToCorrectChild(new_vertex) == false)
 			return false;
+		else
+			ret = true;
 
 	return ret;
 }
@@ -329,71 +347,34 @@ void KDTNodeVertex::Draw() const
 	if (partition_axis != NO_PARTITION)
 	{
 		if (partition_axis == X)
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			glColor4f(1.0f, 0.0f, 0.0f, 0.8f);
 		if (partition_axis == Y)
-			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+			glColor4f(0.0f, 1.0f, 0.0f, 0.8f);
 		if (partition_axis == Z)
-			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+			glColor4f(0.0f, 0.0f, 1.0f, 0.8f);
 
-		glBegin(GL_LINES);
+		glDisable(GL_CULL_FACE);
+
+		glBegin(GL_QUADS);
 
 		switch (partition_axis)
 		{
 		case X:
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
-
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
-
 			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
 			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);			
 			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
 			break;
 		case Y:
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
-
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);			
 			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
 			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
 			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
 			break;
 		case Z:
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
-
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
-
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
-
 			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
 			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
-
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
 			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
 			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
 			break;
 		default:
@@ -403,6 +384,8 @@ void KDTNodeVertex::Draw() const
 		glEnd();
 
 		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+
+		glPointSize(5.0f);
 
 		glBegin(GL_POINTS);
 
@@ -446,6 +429,13 @@ void KDTNodeVertex::Draw() const
 		glEnd();
 
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glEnable(GL_CULL_FACE);
+	}
+
+	if (partition_axis != NO_PARTITION)
+	{
+		childs[0]->Draw();
+		childs[1]->Draw();
 	}
 }
 

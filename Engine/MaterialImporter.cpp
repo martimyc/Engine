@@ -21,7 +21,7 @@ unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material, const s
 			size_t start = full_path.find_last_of("\\");
 			size_t count = full_path.find_last_of(".") - start;
 			total_size += sizeof(uint);
-			total_size += ((count - 1) - (start + 1) + 1);
+			total_size += count;
 		}
 	}
 

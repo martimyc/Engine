@@ -55,12 +55,15 @@ bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object)
 			math::vec vect(vec::zero);
 			vect[0] = 3;
 			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-				if (childs[0]->AddGameObject(game_objects[i]))
+				if (childs[0]->AddGameObject(game_objects[i]) == false)
 					return false;
 
 			if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-				if (childs[1]->AddGameObject(game_objects[i]))
+				if (childs[1]->AddGameObject(game_objects[i]) == false)
 					return false;
+
+			if (AddToCorrectChild(new_game_object) == false)
+				return false;
 
 			game_objects[i] = nullptr;
 		}
@@ -148,17 +151,32 @@ void KDTNodeGO::SubDivide(PARTITION_AXIS partition_axis, float median)
 
 float KDTNodeGO::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const
 {
+	std::vector<float> axis_points;
 	std::priority_queue <float, std::vector<float>, std::greater<float>> queue;
 
-	bool all_equal = true;
-
+	axis_points.push_back(new_game_object->GetWorldPosition()[partition_axis]);
 	queue.push(new_game_object->GetWorldPosition()[partition_axis]);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
 		if (game_objects[i] != nullptr)
-			queue.push(game_objects[i]->GetWorldPosition()[partition_axis]);
+		{
+			bool repeated = false;
+			float to_add = game_objects[i]->GetWorldPosition()[partition_axis];
+
+			for (std::vector<float>::const_iterator it = axis_points.begin(); it != axis_points.end(); ++it)
+				if (*it == to_add)
+					repeated = true;
+
+			if (!repeated)
+			{
+				axis_points.push_back(to_add);
+				queue.push(game_objects[i]->GetWorldPosition()[partition_axis]);
+			}
+		}
 		else
 			break;
+	}
 
 	if (queue.size() % 2 != 0)
 	{
@@ -196,12 +214,10 @@ bool KDTNodeGO::AddGameObject(const GameObject * new_game_object)
 				}
 		}
 		else
-		{
 			if (SubDivide3D(new_game_object) == false)
 				return false;
-			if (AddToCorrectChild(new_game_object) == false)
-				return false;
-		}
+			else
+				ret = true;
 	}
 	else
 		if (AddToCorrectChild(new_game_object) == false)

@@ -28,7 +28,7 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 		}
 	}
 
-	total_size = sizeof(GLfloat) * mesh->mNumVertices * 3;
+	total_size += sizeof(GLfloat) * mesh->mNumVertices * 3;
 
 	if (mesh->HasVertexColors(0))
 	{
@@ -147,6 +147,9 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 		}
 		iterator += sizeof(GLfloat) * num_vertices * 3;
 	}
+
+	int size_now = iterator - buffer;
+	int test = GetTotalSize(mesh);
 
 	if (mesh->HasVertexColors(0) && ret == true)
 	{

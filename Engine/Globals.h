@@ -62,4 +62,6 @@ enum UPDATE_STATUS
 #define FORMAT_MESH {0x6d, 0x73, 0x68} //MSH
 #define FORMAT_MATERIAL {0x6d, 0x61, 0x74} //MAT
 
+#define FLOAT_COMPARISON_ERROR 0.00001
+
 #endif //_GLOBALS
