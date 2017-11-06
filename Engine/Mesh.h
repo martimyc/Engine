@@ -22,6 +22,8 @@ namespace Geo
 
 		Triangle(const Vertex& first, const Vertex& second, const Vertex& third) : first(first), second(second), third(third)
 		{}
+		~Triangle()
+		{}
 	};
 
 	struct Vertex

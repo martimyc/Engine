@@ -55,10 +55,12 @@ bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object)
 			math::vec vect(vec::zero);
 			vect[0] = 3;
 			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-				childs[0]->AddGameObject(game_objects[i]);
+				if (childs[0]->AddGameObject(game_objects[i]))
+					return false;
 
 			if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-				childs[1]->AddGameObject(game_objects[i]);
+				if (childs[1]->AddGameObject(game_objects[i]))
+					return false;
 
 			game_objects[i] = nullptr;
 		}
@@ -183,15 +185,17 @@ bool KDTNodeGO::AddGameObject(const GameObject * new_game_object)
 
 	if (partition_axis == NO_PARTITION)
 	{
-		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			if (game_objects[i] == nullptr)
-			{
-				game_objects[i] = new_game_object;
-				ret = true;
-				break;
-			}
-
-		if (ret == false)
+		if (game_objects[MAX_NUM_OBJECTS - 1] == nullptr)
+		{
+			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+				if (game_objects[i] == nullptr)
+				{
+					game_objects[i] = new_game_object;
+					ret = true;
+					break;
+				}
+		}
+		else
 		{
 			if (SubDivide3D(new_game_object) == false)
 				return false;

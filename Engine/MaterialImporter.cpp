@@ -7,6 +7,27 @@
 #include "SceneManager.h"
 #include "MaterialImporter.h"
 
+unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material, const std::string& scene_path) const
+{
+	unsigned int total_size = FORMAT_SIZE;
+
+	for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
+	{
+		aiString Path;
+
+		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		{
+			std::string full_path = scene_path + Path.data;
+			size_t start = full_path.find_last_of("\\");
+			size_t count = full_path.find_last_of(".") - start;
+			total_size += sizeof(uint);
+			total_size += ((count - 1) - (start + 1) + 1);
+		}
+	}
+
+	return total_size;
+}
+
 MaterialImporter::MaterialImporter()
 {}
 
@@ -39,7 +60,7 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 	GLuint num_unknown_textures = material->GetTextureCount(aiTextureType_UNKNOWN);*/
 
 	char format[FORMAT_SIZE] = FORMAT_MATERIAL;
-	char* buffer = new char[MAX_FILE_SIZE];
+	char* buffer = new char[GetTotalSize(material, scene_path)];
 	char* iterator = buffer;
 
 	//First specify format
@@ -81,9 +102,6 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 		LOG("No difusse textures in this material");
 
 	uint length = iterator - buffer;
-
-	if (length > MAX_FILE_SIZE)
-		LOG("Maximum file size exeeded while importing %s from %s", name.c_str(), scene_path.c_str());
 
 	//TODO Blend and strenght functions when lightning is done
 

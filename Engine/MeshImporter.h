@@ -14,6 +14,7 @@ class Mesh;
 class MeshImporter
 {
 private:
+	unsigned int GetTotalSize(const aiMesh* mesh) const;
 
 public:
 	MeshImporter();

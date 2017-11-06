@@ -55,10 +55,13 @@ bool KDTNodeVertex::SubDivide3D(const Geo::Vertex* new_vertex)
 			math::vec vect(vec::zero);
 			vect[0] = 3;
 			if ((*vertices[i])[partition_axis] <= median)
-				childs[0]->AddVertex(vertices[i]);
+				if (childs[0]->AddVertex(vertices[i]))
+					return false;
 
 			if ((*vertices[i])[partition_axis] > median)
-				childs[1]->AddVertex(vertices[i]);
+				if (childs[1]->AddVertex(vertices[i]))
+					return false;
+
 
 			vertices[i] = nullptr;
 		}
@@ -183,15 +186,17 @@ bool KDTNodeVertex::AddVertex(const Geo::Vertex * new_vertex)
 
 	if (partition_axis == NO_PARTITION)
 	{
-		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			if (vertices[i] == nullptr)
-			{
-				vertices[i] = new_vertex;
-				ret = true;
-				break;
-			}
-
-		if (ret == false)
+		if (vertices[MAX_NUM_OBJECTS - 1] == nullptr)
+		{
+			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+				if (vertices[i] == nullptr)
+				{
+					vertices[i] = new_vertex;
+					ret = true;
+					break;
+				}
+		}
+		else
 		{
 			if (SubDivide3D(new_vertex) == false)
 				return false;
@@ -211,19 +216,23 @@ bool KDTNodeVertex::AddToCorrectChild(const Geo::Vertex * new_vertex)
 	bool ret = false;
 
 	if ((*new_vertex)[partition_axis] <= median)
+	{
 		if (childs[0]->AddVertex(new_vertex) == false)
 			return false;
 		else
 			ret = true;
+	}
 
 	if ((*new_vertex)[partition_axis] > median)
+	{
 		if (childs[1]->AddVertex(new_vertex) == false)
 			return false;
 		else
 			ret = true;
+	}
 
 	if (ret == false)
-		LOG("Gameobject does not fit inside any child");
+		LOG("Vertex does not fit inside any child");
 
 	return ret;
 }
@@ -517,14 +526,18 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	for (int i = 0; i < num_vertices; i++)
+	int i = 0;
+
+	for (; i < num_vertices; i++)
 	{
 		Geo::Vertex* vertex = new Geo::Vertex(&new_vertices[i * 3]);
 		all_vertices.push_back(vertex);
 		limits.Enclose(vertex->MGLVec());
 	}
 
-	for (int i = 0; i < num_indices / 3; i++)
+	int num_triangles = num_indices / 3;
+
+	for (i = 0; i < num_triangles; i++)
 	{
 		Geo::Vertex* v1 = all_vertices[new_indices[i * 3]];
 		Geo::Vertex* v2 = all_vertices[new_indices[i * 3 + 1]];

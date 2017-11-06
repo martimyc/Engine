@@ -20,6 +20,7 @@ struct MaterialTextureInfo
 class MaterialImporter
 {
 private:
+	unsigned int GetTotalSize(const aiMaterial * material, const std::string& scene_path) const;
 
 public:
 	MaterialImporter();
