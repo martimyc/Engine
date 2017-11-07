@@ -10,10 +10,7 @@
 
 class GameObject;
 class Camera;
-class Asset;
-class Material;
-class Texture;
-class Mesh;
+
 class vec3;
 class Tree;
 class KDTreeGO;
@@ -104,37 +101,12 @@ public:
 	GameObject* GetRoot() const;
 
 public:
-	//Materials
-	Material* CreateMaterial(const char* const name = nullptr);
-	Material* GetMaterial(unsigned int pos) const;
-	Material* GetMaterial(const std::string& name) const;
-	void DeleteMaterial(Material* material_to_delete);
-	bool HasMaterials() const;
-	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
-	const GameObject* GetFocused() const;
-	void ApplyToMaterial(Texture* new_text, int material);
-	unsigned int GetNumMaterials() const;
-
-	//Meshes
-	Mesh* CreateMesh(const char* const name = nullptr);
-	Mesh* GetMesh(unsigned int pos) const;
-	Mesh* GetMesh(const std::string& name) const;
-	void DeleteMesh(Mesh* mesh_to_delete);
-
-	//Textures
-	Texture* CreateTexture(const std::string& name, const TEXTURE_TYPE type = (TEXTURE_TYPE)1, const GLenum dimensions = GL_TEXTURE_2D, const GLuint& id = 0); //(TEXTURE_TYPE)1 == TT_DIFFUSE wich can not be forward declared
-	Texture* GetTexture(unsigned int i) const;
-	Texture* GetTexture(const std::string& name) const;
-	void DeleteTexture(Texture* texture_to_delete);
-	void AddTexture(Texture* new_texture);
-	const int GetTextureToDraw() const;
-	bool DebugTextures() const;
-	bool TextureExsists(const std::string& path) const;
-	void DrawTexture(unsigned int num_texture) const;
-	unsigned int GetNumTextures() const;
 
 	void DrawCamera();
 	void SetCameraFocused(Camera* camera);
+
+	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
+	const GameObject* GetFocused() const;
 
 	//Scene
 	//bool LoadScene(const std::string& path) const;

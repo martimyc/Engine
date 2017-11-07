@@ -3,7 +3,7 @@
 
 #include <string>
 #include "glew\include\GL\glew.h"
-#include "Asset.h"
+#include "Resource.h"
 
 enum TEXTURE_TYPE
 {
@@ -22,7 +22,7 @@ enum TEXTURE_TYPE
 	TT_UNKNOWN,
 };
 
-class Texture: public Asset
+class Texture: public Resource
 {
 private:
 	unsigned int height;

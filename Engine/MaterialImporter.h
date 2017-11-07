@@ -27,7 +27,7 @@ public:
 	~MaterialImporter();
 
 	bool Import(const aiMaterial* material, const std::string& scene_path, const std::string& name);
-	bool Load(const std::string& name, Material& new_material);
+	Material* Load(const std::string& name); //should probablly change to uid
 };
 
 #endif // !MATERIAL_IMPORTER

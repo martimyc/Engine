@@ -1,10 +1,14 @@
 #include "Globals.h"
+
+//Resources
+#include "Texture.h"
+#include "Material.h"
+
+//Modules
+#include "FileSystem.h"
+//#include "Manager.h"
 #include "ImportManager.h"
 #include "Application.h"
-#include "Texture.h"
-#include "FileSystem.h"
-#include "Material.h"
-#include "SceneManager.h"
 #include "MaterialImporter.h"
 
 unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material, const std::string& scene_path) const
@@ -112,9 +116,9 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 	return ret;
 }
 
-bool MaterialImporter::Load(const std::string & name, Material & new_material)
+Material* MaterialImporter::Load(const std::string & name)
 {
-	bool ret = true;
+	Material* new_material = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
@@ -127,6 +131,7 @@ bool MaterialImporter::Load(const std::string & name, Material & new_material)
 	
 	if (buffer != nullptr && length != 0)
 	{
+		new_material = new Material(name);
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
@@ -137,11 +142,9 @@ bool MaterialImporter::Load(const std::string & name, Material & new_material)
 			std::string texture_name(iterator);
 			iterator += texture_name_size + 1; // 1 for the and of char* "\0"
 			Texture* texture = App->import_manager->LoadTexture(texture_name);
-			new_material.AddTexture(texture);
+			new_material->AddTexture(texture);
 		}
 	}
-	else
-		ret = false;
 
-	return ret;
+	return new_material;
 }

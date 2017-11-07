@@ -48,7 +48,7 @@ bool ImportManager::CleanUp()
 	return true;
 }
 
-bool ImportManager::ImportFromPath(const std::string & path, IMPORT_TYPE type, void* imported)
+void ImportManager::Import(const std::string & path, IMPORT_TYPE type)
 {
 	bool ret = true;
 
@@ -67,13 +67,13 @@ bool ImportManager::ImportFromPath(const std::string & path, IMPORT_TYPE type, v
 		case IT_TEXTURE:
 			if (texture_importer->Import(name))
 			{
-				imported = App->scene_manager->CreateTexture(name);
-				if (!texture_importer->Load(name, *((Texture*)imported)))
+				App->scene_manager->CreateTexture(name);
+				/*if (!texture_importer->Load(name, *((Texture*)imported)))
 				{
 					LOG("Could not load %s corectlly", name.c_str());
 					ret = false;
 					App->scene_manager->DeleteTexture((Texture*)imported);
-				}
+				}*/
 			}
 			else
 			{

@@ -80,7 +80,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />
-    <ClInclude Include="Asset.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="assimp\include\ai_assert.h" />
     <ClInclude Include="assimp\include\anim.h" />
     <ClInclude Include="assimp\include\camera.h" />
@@ -230,6 +230,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer3D.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="Texture.h" />
@@ -312,6 +313,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />
     <ClCompile Include="Texture.cpp" />

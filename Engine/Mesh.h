@@ -4,7 +4,7 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Math\float3.h"
-#include "Asset.h"
+#include "Resource.h"
 
 class GameObject;
 class AppliedMaterial;
@@ -80,7 +80,7 @@ namespace Geo
 	};
 }
 
-class Mesh: public Asset
+class Mesh: public Resource
 {
 private:
 	//really only ids necesary if not animated
@@ -112,6 +112,7 @@ private:
 
 public:
 	Mesh(const char* const name);
+	Mesh(const std::string& name);
 	~Mesh();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;

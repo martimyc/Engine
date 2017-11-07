@@ -40,6 +40,9 @@ enum LOAD_TYPE
 class ImportManager : public Module
 {
 private:
+	std::string path;
+	IMPORT_TYPE import_type = IT_NO_TYPE;
+	bool importing = false;
 	
 	MeshImporter* mesh_importer = nullptr;
 	MaterialImporter* material_importer = nullptr;
@@ -54,6 +57,8 @@ public:
 
 	bool ImportFromPath(const std::string& path, IMPORT_TYPE type, void* imported = nullptr);
 	bool Load(const std::string& name, LOAD_TYPE type, void* loaded = nullptr);
+
+	void ImportConfig();
 
 	//Scene
 	bool ImportScene(const std::string& path) const;

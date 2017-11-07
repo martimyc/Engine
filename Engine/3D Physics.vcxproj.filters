@@ -537,9 +537,6 @@
     <ClInclude Include="Material.h">
       <Filter>Sources\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Asset.h">
-      <Filter>Sources\Assets</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
@@ -561,6 +558,10 @@
     <ClInclude Include="Camera.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Sources\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -788,9 +789,6 @@
     <ClCompile Include="MeshFilter.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="KDTree.cpp">
-      <Filter>Sources\Containers</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Texture.cpp">
       <Filter>Sources\Assets</Filter>
@@ -805,6 +803,9 @@
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

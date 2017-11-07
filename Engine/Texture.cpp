@@ -2,10 +2,10 @@
 #include "Globals.h"
 #include "Texture.h"
 
-Texture::Texture(const char* name, const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint& id) : Asset(AT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
+Texture::Texture(const char* name, const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint& id) : Resource(RT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
 {}
 
-Texture::Texture(const std::string& name, const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint& id) : Asset(AT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
+Texture::Texture(const std::string& name, const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint& id) : Resource(RT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
 {}
 
 Texture::~Texture()

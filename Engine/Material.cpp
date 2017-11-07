@@ -3,12 +3,20 @@
 #include "Material.h"
 #include "Texture.h"
 
-Material::Material(const char* name, unsigned int priority) : Asset(AT_MATERIAL, name), priority(priority)
+Material::Material(const char* name, unsigned int priority) : Resource(RT_MATERIAL, name), priority(priority)
+{}
+
+Material::Material(const std::string & name, unsigned int priority) : Resource(RT_MATERIAL, name), priority(priority)
 {}
 
 Material::~Material() //Deleting a material does not delete its textures
 {
 	textures.clear();
+}
+
+void Material::ChangePriority(unsigned int new_priority)
+{
+	priority = new_priority;
 }
 
 const int Material::GetNumTextures() const

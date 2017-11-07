@@ -16,9 +16,10 @@
 #include "Application.h"
 #include "SceneManager.h"
 
+Mesh::Mesh(const char* const name): Resource(RT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+{}
 
-
-Mesh::Mesh(const char* const name): Asset(AT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+Mesh::Mesh(const std::string & name): Resource(RT_MESH, name), vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
 
 Mesh::~Mesh()

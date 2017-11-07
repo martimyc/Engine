@@ -1,14 +1,15 @@
 #ifndef _MATERIAL
 #define _MATERIAL
 
+#include <string>
 #include <vector>
 #include "glew\include\GL\glew.h"
-#include "Asset.h"
+#include "Resource.h"
 
 class Texture;
 enum TEXTURE_TYPES;
 
-class Material : public Asset
+class Material : public Resource
 {
 private:
 	std::vector<Texture*> textures;
@@ -31,8 +32,11 @@ private:
 	unsigned int priority;
 
 public:
-	Material(const char* name, unsigned int priority);
+	Material(const char* name, unsigned int priority = 0);
+	Material(const std::string& name, unsigned int priority = 0);
 	~Material();
+
+	void ChangePriority(unsigned int new_priority);
 
 	const int GetNumTextures() const;
 	unsigned int GetPriority() const;

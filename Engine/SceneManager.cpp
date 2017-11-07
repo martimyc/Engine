@@ -525,6 +525,7 @@ Material * SceneManager::CreateMaterial(const char * const name)
 	assets.push_back(new_material);
 	return new_material;
 }
+
 /*
 Texture * SceneManager::LoadTextureStraightFromPath(const std::string & path)
 {
