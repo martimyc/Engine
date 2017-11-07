@@ -13,15 +13,16 @@ class Mesh;
 
 class MeshImporter
 {
-private:
-	unsigned int GetTotalSize(const aiMesh* mesh) const;
-
 public:
 	MeshImporter();
 	~MeshImporter();
 
+private:
+	unsigned int GetTotalSize(const aiMesh* mesh) const;
+
+public:
 	bool Import(const aiMesh* mesh, const std::string& scene_path,const std::string& name);
-	bool Load(const std::string& name, Mesh& new_mesh);
+	Mesh* Load(const std::string& name); //should be uid
 };
 
 #endif // !MESH_IMPORTER

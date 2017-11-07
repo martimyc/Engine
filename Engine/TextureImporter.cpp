@@ -79,9 +79,9 @@ bool TextureImporter::Import(std::string& file)
 	return ret;
 }
 
-bool TextureImporter::Load(const std::string& name, Texture& new_texture)
+Texture* TextureImporter::Load(const std::string& name)
 {
-	bool ret = true;
+	Texture* new_texture = nullptr;
 
 	std::string path(App->file_system->GetTextures());
 	path += "\\";
@@ -104,13 +104,14 @@ bool TextureImporter::Load(const std::string& name, Texture& new_texture)
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
 	{
+		new_texture = new Texture(name);
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
 		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 			iluFlipImage();
 
-		new_texture.SetDimensions(ImageInfo.Width, ImageInfo.Height);
+		new_texture->SetDimensions(ImageInfo.Width, ImageInfo.Height);
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
@@ -164,25 +165,26 @@ bool TextureImporter::Load(const std::string& name, Texture& new_texture)
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//Fill our texture class
-		new_texture.SetGLTextureType(GL_TEXTURE_2D);
-		new_texture.SetID(texture_id);
+		new_texture->SetGLTextureType(GL_TEXTURE_2D);
+		new_texture->SetID(texture_id);
 
 		LOG("Texture creation successful.");
+
+		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
+		return new_texture;
 	}
 	else // If we failed to open the image file in the first place...
 	{
 		error = ilGetError();
 		LOG("Image load failed - IL reports error:%i - %s", error, iluErrorString(error));
-		ret = false;
+		return nullptr;
 	}
-
-	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
-
-	return ret;
 }
 
-void TextureImporter::LoadCheckers(Texture & new_texture)
+Texture* TextureImporter::LoadCheckers()
 {
+	Texture* new_texture = new Texture("Checkers");
+
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
 		for (int j = 0; j < CHECKERS_WIDTH; j++) {
@@ -220,6 +222,8 @@ void TextureImporter::LoadCheckers(Texture & new_texture)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	new_texture.SetID(checkers_text_id);
-	new_texture.SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
+	new_texture->SetID(checkers_text_id);
+	new_texture->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
+
+	return new_texture;
 }

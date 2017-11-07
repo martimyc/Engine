@@ -4,6 +4,12 @@
 #include "Mesh.h"
 #include "MeshImporter.h"
 
+MeshImporter::MeshImporter()
+{}
+
+MeshImporter::~MeshImporter()
+{}
+
 unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 {
 	unsigned int total_size = FORMAT_SIZE;
@@ -39,12 +45,6 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 
 	return total_size;
 }
-
-MeshImporter::MeshImporter()
-{}
-
-MeshImporter::~MeshImporter()
-{}
 
 bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
 {
@@ -177,9 +177,9 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 	return ret;
 }
 
-bool MeshImporter::Load(const std::string & name, Mesh & new_mesh)
+Mesh* MeshImporter::Load(const std::string & name)
 {
-	bool ret = true;
+	Mesh* new_mesh = new Mesh(name);
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
@@ -214,12 +214,12 @@ bool MeshImporter::Load(const std::string & name, Mesh & new_mesh)
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* num_vertices * 3, vertices, GL_STATIC_DRAW);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			new_mesh.SetVertices(vertex_id, num_vertices, vertices);
+			new_mesh->SetVertices(vertex_id, num_vertices, vertices);
 		}
 		else
 		{
 			LOG("Mesh has no vertices");
-			ret = false;
+			return nullptr;
 		}
 
 		GLuint num_faces;
@@ -241,10 +241,13 @@ bool MeshImporter::Load(const std::string & name, Mesh & new_mesh)
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * num_indices, indices, GL_STATIC_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-			new_mesh.SetIndices(indices_id, num_indices, indices);
+			new_mesh->SetIndices(indices_id, num_indices, indices);
 		}
 		else
+		{
 			LOG("Mesh has no faces");
+			return nullptr;
+		}
 
 		GLuint num_uv_channels;
 		memcpy(&num_uv_channels, iterator, sizeof(GLuint));
@@ -271,7 +274,7 @@ bool MeshImporter::Load(const std::string & name, Mesh & new_mesh)
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 
-			new_mesh.SetUVs(num_uv_channels, num_uv_components, uv_ids, uvs);
+			new_mesh->SetUVs(num_uv_channels, num_uv_components, uv_ids, uvs);
 		}
 		else
 			LOG("Mesh has no UVs");
@@ -287,7 +290,7 @@ bool MeshImporter::Load(const std::string & name, Mesh & new_mesh)
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * 3, normals, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		new_mesh.SetNormals(normals_id, normals);
+		new_mesh->SetNormals(normals_id, normals);
 
 		GLuint num_color_channels;
 		memcpy(&num_color_channels, iterator, sizeof(GLuint));
@@ -311,12 +314,12 @@ bool MeshImporter::Load(const std::string & name, Mesh & new_mesh)
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 
-			new_mesh.SetColors(num_color_channels, color_ids, colors);
+			new_mesh->SetColors(num_color_channels, color_ids, colors);
 		}
 		else
 			LOG("Mesh has no vertex colors");
 	}
-	return ret;
+	return new_mesh;
 }
 
 
