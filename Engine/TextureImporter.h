@@ -16,7 +16,6 @@ struct TextureImporter
 
 	bool Import(std::string& file);
 	Texture* Load(const std::string& name);
-	Texture* LoadCheckers();
 };
 
 #endif // !TEXTURE_IMPORTER

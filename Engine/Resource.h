@@ -19,7 +19,6 @@ class Resource
 protected:
 	std::string name;
 	RESOURCE_TYPES type;
-	std::vector<const GameObject*> instances;
 
 public:
 	Resource(RESOURCE_TYPES type, const char* name): type(type), name(name)

@@ -267,10 +267,9 @@ bool ImportManager::ImportScene(const std::string & path) const
 	return ret;
 }
 
-void ImportManager::LoadCheckers()
+Texture* ImportManager::LoadCheckers()
 {
-	Texture* checkers = App->scene_manager->CreateTexture("Checkers");
-	texture_importer->LoadCheckers(*checkers);
+	return texture_importer->LoadCheckers();
 }
 
 bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const

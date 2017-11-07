@@ -1,12 +1,9 @@
-#include "Globals.h"
-
 //Resources
 #include "Texture.h"
 #include "Material.h"
 
 //Modules
 #include "FileSystem.h"
-//#include "Manager.h"
 #include "ImportManager.h"
 #include "Application.h"
 #include "MaterialImporter.h"

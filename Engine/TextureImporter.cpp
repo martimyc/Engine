@@ -1,10 +1,11 @@
 #include "imgui\imgui.h"
-#include "Application.h"
-#include "SceneManager.h"
-#include "GameObject.h"
-#include "Globals.h"
-#include "FileSystem.h"
+
+//Resources
 #include "Texture.h"
+
+//Modules
+#include "FileSystem.h"
+#include "Application.h"
 #include "TextureImporter.h"
 
 TextureImporter::TextureImporter()
@@ -179,51 +180,4 @@ Texture* TextureImporter::Load(const std::string& name)
 		LOG("Image load failed - IL reports error:%i - %s", error, iluErrorString(error));
 		return nullptr;
 	}
-}
-
-Texture* TextureImporter::LoadCheckers()
-{
-	Texture* new_texture = new Texture("Checkers");
-
-	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
-	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
-		for (int j = 0; j < CHECKERS_WIDTH; j++) {
-			int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
-			checkImage[i][j][0] = (GLubyte)c;
-			checkImage[i][j][1] = (GLubyte)c;
-			checkImage[i][j][2] = (GLubyte)c;
-			checkImage[i][j][3] = (GLubyte)255;
-		}
-	}
-
-	//Load Texture to VRAM
-	GLuint checkers_text_id;
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &checkers_text_id);
-	glBindTexture(GL_TEXTURE_2D, checkers_text_id);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//Anysotropy
-	GLfloat maxAniso = 0.0f;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	new_texture->SetID(checkers_text_id);
-	new_texture->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
-
-	return new_texture;
 }

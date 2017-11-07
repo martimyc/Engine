@@ -5,9 +5,6 @@
 #include "glew\include\GL\glew.h"
 #include "Module.h"
 
-#define CHECKERS_HEIGHT 256
-#define CHECKERS_WIDTH 256
-
 class GameObject;
 class Camera;
 
@@ -29,7 +26,6 @@ class SceneManager : public Module
 {
 private:
 	DRAW_MODE draw_mode;
-	bool assets_enable = true;
 	bool config_scene = true;
 	bool wireframe;
 	bool normals;
@@ -42,24 +38,6 @@ private:
 	unsigned int num_game_objects = 1;
 	bool hirarchy_active = true;
 	KDTreeGO* go_kdtree;
-
-	std::vector<Asset*> assets;
-
-	//materials
-	unsigned int selected_material = 0;
-	unsigned int next_material = 0;
-	unsigned int material_priority = 0;
-	int current_mesh = 0; //determines to wich mesh of the selected Game object will the material go to MAYBE CHANGE NAME
-
-	//meshes //TODO UI
-	unsigned int selected_mesh = 0;
-	unsigned int next_mesh = 0;
-
-	//Textures
-	int texture_to_draw = 0;
-	bool debug_textures = false;
-	int current_material = 0;
-	unsigned int selected_texture = 0;
 
 	Camera* focused_camera = nullptr;
 
