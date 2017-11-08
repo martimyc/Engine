@@ -4,6 +4,7 @@
 
 //Resources
 #include "Texture.h"
+#include "Asset.h"
 
 //Modules
 #include "FileSystem.h"
@@ -30,9 +31,9 @@ TextureImporter::TextureImporter()
 TextureImporter::~TextureImporter()
 {}
 
-bool TextureImporter::Import(const std::string& file, const TextureImportConfiguration& config)
+const UID TextureImporter::Import(const std::string& file, const TextureImportConfiguration& config)
 {
-	bool ret = true;
+	UID uid;
 
 	std::string path(App->file_system->GetAssets());
 	path += "\\";
@@ -42,7 +43,7 @@ bool TextureImporter::Import(const std::string& file, const TextureImportConfigu
 	unsigned int length = App->file_system->LoadFileBinary(path, &buffer);
 
 	if (buffer == nullptr || length == 0)
-		return false;
+		return uid;
 
 	ILuint imageID;				// Create an image ID as a ULuint
 
@@ -58,6 +59,8 @@ bool TextureImporter::Import(const std::string& file, const TextureImportConfigu
 
 	if (success)
 	{
+		uid.Generate(buffer, length);
+
 		ilEnable(IL_FILE_OVERWRITE);
 
 		ILuint size;
@@ -70,32 +73,29 @@ bool TextureImporter::Import(const std::string& file, const TextureImportConfigu
 			data = new ILubyte[size]; // allocate data buffer
 			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
 			{
-				size_t count = file.find_last_of(".");
-				//file = file.substr(0, count); //-1 to avoid dot
-				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, file.c_str(), "dds");
-				if (ret)
+				if (App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, uid.uid, "dds") == false)
+				{
+					LOG("Could not save %s correctlly", file.c_str());
+					return UID();
+				}
+				else
 					LOG("Saved %s succesfully", file.c_str());
 			}
 			DELETE_ARRAY(data);
 		}
 	}
 	
-	return ret;
+	return uid;
 }
 
-Texture* TextureImporter::Load(const std::string& name, const TextureLoadConfiguration& config)
+Texture* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration& config)
 {
 	Texture* new_texture = nullptr;
 
 	std::string path(App->file_system->GetTextures());
 	path += "\\";
-	path += name;
+	path += uid.uid;
 	path += ".dds";
-
-	char* buffer = nullptr;
-	unsigned int length = App->file_system->LoadFileBinary(path.c_str(), &buffer);
-
-	UID uid(buffer, length);
 
 	if(App->resource_manager->Exsists(uid) == true)
 	{
@@ -119,7 +119,7 @@ Texture* TextureImporter::Load(const std::string& name, const TextureLoadConfigu
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
 	{
-		new_texture = new Texture(name);
+		new_texture = new Texture;
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
@@ -156,13 +156,19 @@ Texture* TextureImporter::Load(const std::string& name, const TextureLoadConfigu
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		//Anysotropy
-		if()
-		GLfloat maxAniso = 0.0f;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+		if (config.anysotropy)
+		{
+			GLfloat ansio_level;
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+			if (config.max_anysotropy)
+				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ansio_level);
+			else
+				ansio_level = config.anysotropy_level;
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ansio_level);
+		}
 
 		// Specify the texture specification
 		glTexImage2D(GL_TEXTURE_2D, 				// Type of texture
@@ -182,13 +188,13 @@ Texture* TextureImporter::Load(const std::string& name, const TextureLoadConfigu
 
 		//Fill our texture class
 		new_texture->SetGLTextureType(GL_TEXTURE_2D);
-		new_texture->SetID(texture_id);
+		new_texture->SetTextureID(texture_id);
 
 		LOG("Texture creation successful.");
 
 		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
 
-		new_texture->SetID(uid);
+		new_texture->SetUID(uid);
 
 		return new_texture;
 	}

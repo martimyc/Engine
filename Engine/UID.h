@@ -35,7 +35,7 @@ struct UID
 		return uid == tmp;
 	}
 
-	bool operator == (const UID& cmp)
+	bool operator == (const UID& cmp) const
 	{
 		return memcmp(uid, cmp.uid, 16) == 0;
 	}

@@ -17,8 +17,6 @@
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 #pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
 
-#include "Console.h"
-
 enum MAIN_STATES
 {
 	MAIN_CREATION,

@@ -9,11 +9,18 @@
 #include "Assimp\include\postprocess.h"
 #include "Assimp\include\cfileio.h"
 #include "glew\include\GL\glew.h"
+#include "UID.h"
 #include "Module.h"
 
 class MeshImporter;
 class MaterialImporter;
 class TextureImporter;
+
+struct ImportConfiguration;
+struct LoadConfiguration;
+struct TextureLoadConfiguration;
+struct MaterialLoadConfiguration;
+struct MeshLoadConfiguration;
 
 class Resource;
 class Texture;
@@ -32,9 +39,11 @@ enum IMPORT_TYPE
 class ImportManager : public Module
 {
 private:
-	std::string path;
+	std::string import_path;
 	IMPORT_TYPE import_type = IT_NO_TYPE;
 	bool importing = false;
+	ImportConfiguration* import_config;
+	LoadConfiguration* load_config;
 	
 	MeshImporter* mesh_importer = nullptr;
 	MaterialImporter* material_importer = nullptr;
@@ -47,10 +56,10 @@ public:
 	~ImportManager();
 
 private:
-	bool Import(const std::string& path, IMPORT_TYPE type) const; //should return uid / 0 if it fails
-	Texture* LoadTexture(const std::string& name) const;
-	Material* LoadMaterial(const std::string& name) const;
-	Mesh* LoadMesh(const std::string& name) const;
+	const UID Import(const std::string& path, IMPORT_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
+	Texture* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
+	Material* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const;
+	Mesh* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
 	//Scene* LoadScene(const std::string& name) const;
 
 	//Scene
@@ -62,11 +71,13 @@ private:
 
 	void ImportConfig();
 
+	bool ImportAndLoad(const std::string& path, IMPORT_TYPE type);
+
 public:
 	bool Init();
 	bool CleanUp();
 
-	bool ImportAndLoad(const std::string& path, IMPORT_TYPE type);
+	void SentToImport(const std::string& path, IMPORT_TYPE type);
 };
 
 

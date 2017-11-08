@@ -3,8 +3,6 @@
 
 #include <vector>
 #include <string>
-#include "MathGeoLib\src\Time\Clock.h"
-#include "Globals.h"
 #include "Module.h"
 
 #define FPS_GRAPH_SIZE 30
@@ -28,6 +26,7 @@ namespace ImGui
 {
 	struct DockContext;
 }
+
 typedef int ImGuiWindowFlags;
 
 class Application

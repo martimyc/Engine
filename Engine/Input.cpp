@@ -137,11 +137,11 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				
 				//DevIL
 				if (IsImageFormat(extension))
-					App->import_manager->ImportAndLoad(full_path, IT_TEXTURE);//LoadTextureStraightFromPath(full_path);
+					App->import_manager->SentToImport(full_path, IT_TEXTURE);//LoadTextureStraightFromPath(full_path);
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
 				{
-					App->import_manager->ImportAndLoad(full_path, IT_SCENE);
+					App->import_manager->SentToImport(full_path, IT_SCENE);
 					//App->camera->CenterToObj();
 				}
 				else if (extension == ".mm")

@@ -186,7 +186,7 @@ const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_pa
 	return id;
 }
 
-Mesh* MeshImporter::Load(const UID & id)
+Mesh* MeshImporter::Load(const UID & id, const MeshLoadConfiguration& config)
 {
 	Mesh* new_mesh = nullptr;
 	char* buffer = nullptr;
@@ -205,7 +205,7 @@ Mesh* MeshImporter::Load(const UID & id)
 		iterator += FORMAT_SIZE;
 
 		std::string name(iterator);
-		iterator += name.length;
+		iterator += name.length();
 
 		new_mesh = new Mesh(name);
 

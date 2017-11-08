@@ -4,11 +4,6 @@
 #include <string>
 #include "Module.h"
 
-namespace MD5 
-{
-	class MD5Generator;
-}
-
 class FileSystem: public Module
 {
 private:

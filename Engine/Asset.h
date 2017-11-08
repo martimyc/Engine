@@ -18,14 +18,24 @@ struct Asset
 	LoadConfiguration config;
 	std::vector<const GameObject*> instances;
 
+	Asset(Resource* resource);
+	~Asset();
+
+	const UID& GetID() const
+	{
+		return resource->GetUID();
+	}
+
 	Resource* UseFor(const GameObject* go)
 	{
 		instances.push_back(go);
 		return resource;
 	}
 
-	Asset(Resource* resource);
-	~Asset();
+	bool IsInUse() const
+	{
+		return instances.size() > 0;
+	}
 };
 
 //Textures
@@ -58,11 +68,13 @@ struct TextureLoadConfiguration : public LoadConfiguration
 //Materials
 struct MaterialImportConfiguration : public ImportConfiguration
 {
+	TextureImportConfiguration* texture_import_config;
 
 };
 
 struct MaterialLoadConfiguration : public LoadConfiguration
 {
+	TextureLoadConfiguration* texture_load_config;
 
 };
 

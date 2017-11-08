@@ -300,6 +300,7 @@
     <ClCompile Include="MathGeoLib\src\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
+    <ClCompile Include="MD5.cpp" />
     <ClCompile Include="MeshFilter.cpp" />
     <ClCompile Include="MeshImporter.cpp" />
     <ClCompile Include="Mesh.cpp" />

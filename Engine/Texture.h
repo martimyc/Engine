@@ -32,7 +32,7 @@ private:
 	GLuint id;
 
 public:
-	Texture(const char* name, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0);
+	Texture(const char* name = nullptr, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0);
 
 	Texture(const std::string& name, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0);
 
@@ -47,16 +47,19 @@ public:
 
 	const GLenum& GetGLTextureType() const;
 
-	const GLuint& GetID() const;
+	const GLuint& GetTextureID() const;
 
 	//Sets
+	void SetName(const char* new_name);
+	void SetName(const std::string& new_name);
+
 	void SetDimensions(const unsigned int& width, const unsigned int& height);
 
 	void SetTextureType(const TEXTURE_TYPE& new_texture_type);
 
 	void SetGLTextureType(const GLenum& new_gl_texure_type);
 
-	void SetID(const GLuint& new_id);
+	void SetTextureID(const GLuint& new_id);
 
 	bool Inspector();
 };

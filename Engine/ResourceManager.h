@@ -14,6 +14,7 @@ class Texture;
 class Mesh;
 struct Asset;
 class UID;
+class GameObject;
 
 class ResourceManager: public Module
 {
@@ -44,7 +45,8 @@ public:
 	bool Init();
 
 	bool Exsists(const UID& id) const;
-	Resource* GetResource(const UID& id) const;
+	const Resource* GetResource(const UID& id) const;
+	Resource* UseResource(const UID& id, GameObject* go) const;
 
 	//Materials
 	void AddMaterial(Material* new_material);

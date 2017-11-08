@@ -1,5 +1,5 @@
-#ifndef _COMPONENT
-#define _COMPONENT
+#ifndef COMPONENT
+#define COMPONENT
 
 #include <string>
 
@@ -74,5 +74,5 @@ public:
 
 };
 
-#endif // !_COMPONENT
+#endif // !COMPONENT
 

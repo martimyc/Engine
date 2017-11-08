@@ -1,5 +1,6 @@
-//Assets & components
+//Assets
 #include "Resource.h"
+#include "Asset.h"
 #include "Texture.h"
 #include "Mesh.h"
 #include "Material.h"
@@ -54,79 +55,103 @@ bool ImportManager::CleanUp()
 	return true;
 }
 
-bool ImportManager::Import(const std::string & path, IMPORT_TYPE type) const
+void ImportManager::SentToImport(const std::string & path, IMPORT_TYPE type)
 {
-	std::string name(path); //this will go from full path to file name with extension in copy to assets 
-
-	if (!App->file_system->CopyToAssets(name))
-	{
-		LOG("Could not copy %s to assets", path.c_str());
-		return false;
-	}
+	importing = true;
+	import_path = path;
+	import_type = type;
 
 	switch (type)
 	{
 	case IT_TEXTURE:
-		if (!texture_importer->Import(name))
-			return true;
-		else
-		{
-			LOG("Could not import %s corectlly", name.c_str());
-			return false;
-		}
+		import_config = new TextureImportConfiguration;
+		load_config = new TextureLoadConfiguration;
+		break;
 	case IT_SCENE:
-		if (ImportScene(path))
-			return true;
-		else
-		{
-			LOG("Could not import %s corectlly", name.c_str());
-			return false;
-		}
+		break;
 	default:
-		LOG("Unknown import type");
-		return false;
+		break;
 	}
 }
 
-Texture * ImportManager::LoadTexture(const std::string & name) const
+const UID ImportManager::Import(const std::string & path, IMPORT_TYPE type, const ImportConfiguration* import_config) const
+{
+	std::string name(path); //this will go from full path to file name with extension in copy to assets 
+
+	UID uid;
+
+	if (!App->file_system->CopyToAssets(name))
+	{
+		LOG("Could not copy %s to assets", path.c_str());
+		return uid;
+	}
+
+	name = name.substr(0, name.find_last_of("."));
+
+	switch (type)
+	{
+	case IT_TEXTURE:
+		uid = texture_importer->Import(name, *((TextureImportConfiguration*)import_config));
+		if (uid.IsNull())
+		{
+			LOG("Could not import %s corectlly", name.c_str());
+			return UID();
+		}
+		else
+			return uid;
+	case IT_SCENE:
+		/*if (ImportScene(path))
+			return ;
+		else
+		{
+			LOG("Could not import %s corectlly", name.c_str());
+			return UID();
+		}*/
+	default:
+		LOG("Unknown import type");
+		return UID();
+	}
+}
+
+Texture * ImportManager::LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const
 {
 	//should check if loaded previouslly by uid
-	Texture* new_texture = texture_importer->Load(name);
+	Texture* new_texture = texture_importer->Load(uid, *load_config);
 	if (new_texture != nullptr)
 	{
 		App->resource_manager->AddTexture(new_texture);
 		return new_texture;
 	}
-	LOG("Could not load %s corectlly", name.c_str());
+	LOG("Could not load texture corectlly");
 	delete new_texture;
 	return nullptr;
 
 }
 
-Material * ImportManager::LoadMaterial(const std::string & name) const
+Material * ImportManager::LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const
 {
 	//should check if loaded previouslly by uid
-	Material* new_material = material_importer->Load(name);
+	Material* new_material = material_importer->Load(uid, *load_config);
 	if (new_material != nullptr)
 	{
 		App->resource_manager->AddMaterial(new_material);
 		return new_material;
 	}
-	LOG("Could not load %s corectlly", name.c_str());
+	LOG("Could not load material corectlly");
 	delete new_material;
 	return nullptr;
 }
 
-Mesh * ImportManager::LoadMesh(const std::string & name) const
+Mesh * ImportManager::LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const
 {
 	//should check if loaded previouslly by uid
-	Mesh* new_mesh = mesh_importer->Load(name);
+	Mesh* new_mesh = mesh_importer->Load(uid, *load_config);
 	if (new_mesh != nullptr)
 	{
 		App->resource_manager->AddMesh(new_mesh);
 		return new_mesh;
 	}
-	LOG("Could not load %s corectlly", name.c_str());
+	LOG("Could not load mesh corectlly");
 	delete new_mesh;
 	return nullptr;
 }
@@ -135,7 +160,7 @@ bool ImportManager::ImportAndLoad(const std::string & path, IMPORT_TYPE type)
 {
 	//TODO import return uid and load qith given uid
 
-	texture_importer->Import(path);
+	Import(path, type, import_config);
 	char* file;
 	int length = App->file_system->LoadFileBinary(path.c_str(), &file);
 
@@ -144,7 +169,7 @@ bool ImportManager::ImportAndLoad(const std::string & path, IMPORT_TYPE type)
 
 bool ImportManager::ImportScene(const std::string & path) const
 {
-	bool ret = true;
+	/*bool ret = true;
 
 	std::string dir;
 	std::string scene_name;
@@ -269,7 +294,9 @@ bool ImportManager::ImportScene(const std::string & path) const
 	else
 		LOG("Error loading scene %s", path);
 		
-	return ret;
+	return ret;*/
+
+	return true;
 }
 
 bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const

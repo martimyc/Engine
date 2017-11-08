@@ -1,10 +1,14 @@
 #include <string>
+
+//3rd Party
 #include "glew\include\GL\glew.h"
 #include "Parson\parson.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
 #include "imgui\imgui_dock.h"
 #include "Brofiler\Brofiler.h"
+
+//Modules
 #include "Window.h"
 #include "Input.h"
 #include "Audio.h"

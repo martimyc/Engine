@@ -12,6 +12,9 @@
 
 class Material;
 
+struct MaterialImportConfiguration;
+struct MaterialLoadConfiguration;
+
 struct MaterialTextureInfo
 {
 	unsigned int lenght;
@@ -27,8 +30,8 @@ public:
 	MaterialImporter();
 	~MaterialImporter();
 
-	const UID Import(const aiMaterial* material, const std::string& scene_path, const std::string& name);
-	Material* Load(const UID& id);
+	const UID Import(const aiMaterial* material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration& config);
+	Material* Load(const UID& id, const MaterialLoadConfiguration& config);
 };
 
 #endif // !MATERIAL_IMPORTER

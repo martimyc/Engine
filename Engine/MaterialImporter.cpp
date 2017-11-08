@@ -1,4 +1,5 @@
 //Resources
+#include "Asset.h"
 #include "Texture.h"
 #include "Material.h"
 
@@ -35,7 +36,7 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-const UID MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name)
+const UID MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration& config)
 {
 	bool ret = true;
 
@@ -83,21 +84,13 @@ const UID MaterialImporter::Import( const aiMaterial * material, const std::stri
 				size_t start = full_path.find_last_of("\\");
 				size_t count = full_path.find_last_of(".") - start;
 
-				if (!App->import_manager->Import(full_path, IT_TEXTURE))
-				{
+				UID texture_uid = App->import_manager->Import(full_path, IT_TEXTURE, config.texture_import_config);
+				if (texture_uid.IsNull())
 					LOG("Error importing texture '%s', it won't be aded to material '%s'", full_path.c_str(), name.c_str());
-				}
 				else
 				{
-					std::string texture_name(full_path.substr(start + 1, count - 1)); //-1 to avoid dot
-
-					uint text_name_length = texture_name.length();
-					memcpy(iterator, &text_name_length, sizeof(uint));
-					iterator += sizeof(uint);
-					memcpy(iterator, texture_name.c_str(), text_name_length);
-					iterator += text_name_length;
-					memcpy(iterator, "\0", 1);
-					iterator++;
+					memcpy(iterator, texture_uid.uid, SIZE_OF_UID);
+					iterator += SIZE_OF_UID;
 				}				
 			}
 		}
@@ -122,7 +115,7 @@ const UID MaterialImporter::Import( const aiMaterial * material, const std::stri
 	return id;
 }
 
-Material* MaterialImporter::Load(const UID& id)
+Material* MaterialImporter::Load(const UID& id, const MaterialLoadConfiguration& config)
 {
 	Material* new_material = nullptr;
 	char* buffer = nullptr;
@@ -141,17 +134,15 @@ Material* MaterialImporter::Load(const UID& id)
 		iterator += FORMAT_SIZE;
 
 		std::string name(iterator);
-		iterator += name.length;
+		iterator += name.length();
 
 		new_material = new Material(name);
 
 		while (iterator - buffer < length)
 		{
-			uint texture_name_size = *iterator;
-			iterator += sizeof(uint);
-			std::string texture_name(iterator);
-			iterator += texture_name_size + 1; // 1 for the and of char* "\0"
-			Texture* texture = App->import_manager->LoadTexture(texture_name);
+			UID texture_uid (iterator, SIZE_OF_UID);
+			iterator += SIZE_OF_UID;
+			Texture* texture = App->import_manager->LoadTexture(texture_uid, config.texture_load_config);
 			new_material->AddTexture(texture);
 		}
 	}

@@ -62,4 +62,6 @@ enum UPDATE_STATUS
 #define FORMAT_MESH {0x6d, 0x73, 0x68} //MSH
 #define FORMAT_MATERIAL {0x6d, 0x61, 0x74} //MAT
 
+#define SIZE_OF_UID 16
+
 #endif //_GLOBALS

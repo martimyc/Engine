@@ -34,9 +34,19 @@ const GLenum & Texture::GetGLTextureType() const
 	return gl_texure_type;
 }
 
-const GLuint & Texture::GetID() const
+const GLuint & Texture::GetTextureID() const
 {
 	return id;
+}
+
+void Texture::SetName(const char * new_name)
+{
+	name = new_name;
+}
+
+void Texture::SetName(const std::string & new_name)
+{
+	name = new_name;
 }
 
 void Texture::SetDimensions(const unsigned int & width, const unsigned int & height)
@@ -55,7 +65,7 @@ void Texture::SetGLTextureType(const GLenum & new_gl_texure_type)
 	gl_texure_type = new_gl_texure_type;
 }
 
-void Texture::SetID(const GLuint & new_id)
+void Texture::SetTextureID(const GLuint & new_id)
 {
 	id = new_id;
 }

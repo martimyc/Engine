@@ -58,7 +58,7 @@ void Material::EnableDraw() const
 		glActiveTexture(GL_TEXTURE0 + i);
 		//Textures
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, textures[i]->GetID());
+		glBindTexture(GL_TEXTURE_2D, textures[i]->GetTextureID());
 	}
 }
 
@@ -90,7 +90,7 @@ bool Material::Inspector()
 			ImVec2 uv0(0, 1);
 			ImVec2 uv1(1, 0);
 
-			ImGui::Image((void*)textures[i]->GetID(), size, uv0, uv1);
+			ImGui::Image((void*)textures[i]->GetTextureID(), size, uv0, uv1);
 			ImGui::SameLine();
 			ImGui::Text("Name: %s\nWidth: %i\nHeight: %i", textures[i]->GetName().c_str(), textures[i]->GetWidth(), textures[i]->GetHeight());
 

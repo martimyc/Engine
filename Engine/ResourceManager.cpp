@@ -1,6 +1,10 @@
 #include "glew\include\GL\glew.h"
 
+#include "UID.h"
+
 //Resources
+#include "Resource.h"
+#include "Asset.h"
 #include "Texture.h"
 #include "Material.h"
 #include "Mesh.h"
@@ -24,16 +28,24 @@ bool ResourceManager::Init()
 bool ResourceManager::Exsists(const UID & id) const
 {
 	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if (id == (*it)->resource.GetID())
+		if (id == (*it)->GetID())
 			return true;
 	return false;
 }
 
-Resource * ResourceManager::GetResource(const UID & id) const
+const Resource * ResourceManager::GetResource(const UID & id) const
 {
 	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if (id == (*it)->resource.GetID())
+		if (id == (*it)->GetID())
 			return (*it)->resource;
+	return nullptr;
+}
+
+Resource * ResourceManager::UseResource(const UID & id, GameObject * go) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->GetID())
+			return (*it)->UseFor(go);
 	return nullptr;
 }
 
@@ -152,7 +164,7 @@ const Texture* ResourceManager::LoadCheckers()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	new_texture->SetID(checkers_text_id);
+	new_texture->SetTextureID(checkers_text_id);
 	new_texture->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
 
 	assets.push_back(new Asset(new_texture));
@@ -182,7 +194,7 @@ void ResourceManager::DebugTextures() const
 	if (debug_textures)
 	{
 		// Select the texture to use
-		glBindTexture(GL_TEXTURE_2D, debug_texture->GetID());
+		glBindTexture(GL_TEXTURE_2D, debug_texture->GetTextureID());
 
 		float hsize = 6.0f; // Vertical size of the quad
 		float vsize = 4.0f; // Vertical size of the quad

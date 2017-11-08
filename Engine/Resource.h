@@ -49,12 +49,12 @@ public:
 		return type;
 	}
 
-	const UID& GetID() const
+	const UID& GetUID() const
 	{
 		return id;
 	}
 
-	void SetID(const UID& new_id)
+	void SetUID(const UID& new_id)
 	{
 		id = new_id;
 	}

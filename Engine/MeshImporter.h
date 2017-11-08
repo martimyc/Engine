@@ -12,6 +12,8 @@
 
 class Mesh;
 
+struct MeshLoadConfiguration;
+
 class MeshImporter
 {
 public:
@@ -23,7 +25,7 @@ private:
 
 public:
 	const UID Import(const aiMesh* mesh, const std::string& scene_path,const std::string& name);
-	Mesh* Load(const UID& id);
+	Mesh* Load(const UID& id, const MeshLoadConfiguration& config);
 };
 
 #endif // !MESH_IMPORTER
