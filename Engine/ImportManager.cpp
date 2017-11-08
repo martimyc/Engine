@@ -1,10 +1,15 @@
 //Assets & components
-#include "Transform.h"
+#include "Resource.h"
 #include "Texture.h"
 #include "Mesh.h"
-#include "MeshFilter.h"
 #include "Material.h"
+
+//Components
+#include "Transform.h"
+#include "MeshFilter.h"
 #include "AppliedMaterial.h"
+
+//GO
 #include "GameObject.h"
 
 //importers
@@ -15,6 +20,7 @@
 //Modules
 #include "Globals.h"
 #include "TextureImporter.h"
+#include "ResourceManager.h"
 #include "SceneManager.h"
 #include "FileSystem.h"
 #include "Application.h"
@@ -48,93 +54,87 @@ bool ImportManager::CleanUp()
 	return true;
 }
 
-void ImportManager::Import(const std::string & path, IMPORT_TYPE type)
+bool ImportManager::Import(const std::string & path, IMPORT_TYPE type) const
 {
-	bool ret = true;
-
-	std::string name(path); //this will go from full path to file name with extension in copy to assets and then to just name in load 
+	std::string name(path); //this will go from full path to file name with extension in copy to assets 
 
 	if (!App->file_system->CopyToAssets(name))
 	{
 		LOG("Could not copy %s to assets", path.c_str());
-		ret = false;
+		return false;
 	}
-
-	if (ret)
-	{
-		switch (type)
-		{
-		case IT_TEXTURE:
-			if (texture_importer->Import(name))
-			{
-				App->scene_manager->CreateTexture(name);
-				/*if (!texture_importer->Load(name, *((Texture*)imported)))
-				{
-					LOG("Could not load %s corectlly", name.c_str());
-					ret = false;
-					App->scene_manager->DeleteTexture((Texture*)imported);
-				}*/
-			}
-			else
-			{
-				LOG("Could not import %s corectlly", name.c_str());
-				ret = false;
-			}			
-			break;
-		case IT_SCENE:
-			ImportScene(path);
-			imported = nullptr;
-			break;
-		default:
-			LOG("Unknown import type");
-			break;
-		}
-	}
-
-	return ret;
-}
-
-bool ImportManager::Load(const std::string & name, LOAD_TYPE type, void * loaded)
-{
-	bool ret = true;
 
 	switch (type)
 	{
-	case LT_TEXTURE:
-		loaded = App->scene_manager->CreateTexture(name);
-		if (!texture_importer->Load(name, *((Texture*)loaded)))
+	case IT_TEXTURE:
+		if (!texture_importer->Import(name))
+			return true;
+		else
 		{
-			LOG("Could not load %s corectlly", name.c_str());
-			ret = false;
-			App->scene_manager->DeleteTexture((Texture*)loaded);
+			LOG("Could not import %s corectlly", name.c_str());
+			return false;
 		}
-		break;
-	case LT_SCENE:
-		//LoadScene(name); not for the time beeing
-		break;
-	case LT_MESH:
-		loaded = App->scene_manager->CreateMesh(name.c_str());
-		if (!mesh_importer->Load(name, *((Mesh*)loaded)))
+	case IT_SCENE:
+		if (ImportScene(path))
+			return true;
+		else
 		{
-			LOG("Could not load %s corectlly", name.c_str());
-			ret = false;
-			delete loaded;
+			LOG("Could not import %s corectlly", name.c_str());
+			return false;
 		}
-		break;
-	case LT_MATERIAL:
-		loaded = App->scene_manager->CreateTexture(name);
-		if (!material_importer->Load(name, *((Material*)loaded)))
-		{
-			LOG("Could not load %s corectlly", name.c_str());
-			ret = false;
-			delete loaded;
-		}
-		break;
 	default:
-		break;
+		LOG("Unknown import type");
+		return false;
 	}
+}
 
-	return ret;
+Texture * ImportManager::LoadTexture(const std::string & name) const
+{
+	//should check if loaded previouslly by uid
+	Texture* new_texture = texture_importer->Load(name);
+	if (new_texture != nullptr)
+	{
+		App->resource_manager->AddTexture(new_texture);
+		return new_texture;
+	}
+	LOG("Could not load %s corectlly", name.c_str());
+	delete new_texture;
+	return nullptr;
+
+}
+
+Material * ImportManager::LoadMaterial(const std::string & name) const
+{
+	//should check if loaded previouslly by uid
+	Material* new_material = material_importer->Load(name);
+	if (new_material != nullptr)
+	{
+		App->resource_manager->AddMaterial(new_material);
+		return new_material;
+	}
+	LOG("Could not load %s corectlly", name.c_str());
+	delete new_material;
+	return nullptr;
+}
+
+Mesh * ImportManager::LoadMesh(const std::string & name) const
+{
+	//should check if loaded previouslly by uid
+	Mesh* new_mesh = mesh_importer->Load(name);
+	if (new_mesh != nullptr)
+	{
+		App->resource_manager->AddMesh(new_mesh);
+		return new_mesh;
+	}
+	LOG("Could not load %s corectlly", name.c_str());
+	delete new_mesh;
+	return nullptr;
+}
+
+bool ImportManager::ImportAndLoad(const std::string & path, IMPORT_TYPE type)
+{
+	//TODO import return uid and load qith given uid
+	return false;
 }
 
 bool ImportManager::ImportScene(const std::string & path) const
@@ -227,7 +227,7 @@ bool ImportManager::ImportScene(const std::string & path) const
 					if (new_mesh == nullptr)
 					{
 						LOG("Mesh (%i) could not be loaded correctly", i);
-						App->scene_manager->DeleteMesh(new_mesh);
+						delete new_mesh;
 						ret = false;
 					}
 					else
@@ -265,11 +265,6 @@ bool ImportManager::ImportScene(const std::string & path) const
 		LOG("Error loading scene %s", path);
 		
 	return ret;
-}
-
-Texture* ImportManager::LoadCheckers()
-{
-	return texture_importer->LoadCheckers();
 }
 
 bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const
@@ -342,66 +337,4 @@ bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, 
 	}
 
 	return ret;
-}
-
-Texture * ImportManager::LoadTexture(const std::string & name) const
-{
-	if (App->scene_manager->GetTexture(name) == nullptr)
-	{
-		Texture* new_texture = App->scene_manager->CreateTexture(name);
-		if (texture_importer->Load(name, *new_texture) == false)
-		{
-			App->scene_manager->DeleteTexture(new_texture);
-			LOG("Could not load texture %s", name.c_str());
-			return nullptr;
-		}
-		return new_texture;
-	}
-	else
-	{
-		LOG("Texture already loaded");
-		return App->scene_manager->GetTexture(name);
-	}
-}
-
-Material* ImportManager::LoadMaterial(const std::string& name) const
-{
-	if (App->scene_manager->GetMaterial(name) == nullptr)
-	{
-		Material* new_material = App->scene_manager->CreateMaterial(name.c_str());
-
-		if (material_importer->Load(name, *new_material) == false)
-		{
-			App->scene_manager->DeleteMaterial(new_material);
-			LOG("Could not load material %s", name.c_str());
-			return nullptr;
-		}
-		return new_material;
-	}
-	else
-	{
-		LOG("Material already loaded");
-		return App->scene_manager->GetMaterial(name);
-	}
-}
-
-Mesh * ImportManager::LoadMesh(const std::string & name) const
-{
-	if (App->scene_manager->GetMesh(name) == nullptr)
-	{
-		Mesh* new_mesh = App->scene_manager->CreateMesh(name.c_str());
-
-		if (mesh_importer->Load(name, *new_mesh) == false)
-		{
-			App->scene_manager->DeleteMesh(new_mesh);
-			LOG("Could not load mesh %s", name.c_str());
-			return nullptr;
-		}
-		return new_mesh;
-	}
-	else
-	{
-		LOG("Material already loaded");
-		return App->scene_manager->GetMesh(name);
-	}
 }

@@ -8,8 +8,6 @@
 class GameObject;
 class Camera;
 
-class vec3;
-class Tree;
 class KDTreeGO;
 enum TEXTURE_TYPE;
 
@@ -52,7 +50,6 @@ public:
 	~SceneManager();
 
 	bool Init();
-	bool CleanUp();
 
 	UPDATE_STATUS Configuration(float dt);
 
@@ -61,9 +58,6 @@ public:
 	void OpenCloseConfigSceneWindow();
 
 	void DrawMode() const;
-
-	//reserve space in vecs to avoid having to move the whole mem if adding various elements
-	void PushBackAssets(const std::vector<Asset*>& assets_to_add);
 
 	void EmptyScene();
 
@@ -78,16 +72,10 @@ public:
 	void CreateCamera();
 	GameObject* GetRoot() const;
 
-public:
-
 	void DrawCamera();
 	void SetCameraFocused(Camera* camera);
 
-	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 	const GameObject* GetFocused() const;
-
-	//Scene
-	//bool LoadScene(const std::string& path) const;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

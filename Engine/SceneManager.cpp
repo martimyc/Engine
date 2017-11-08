@@ -36,17 +36,6 @@ bool SceneManager::Init()
 
 	go_kdtree->AddGameObject(root);
 
-	App->import_manager->LoadCheckers();
-
-	return true;
-}
-
-bool SceneManager::CleanUp()
-{
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		delete (*it);
-	assets.clear();
-
 	return true;
 }
 
@@ -101,44 +90,13 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 	}
 	App->EndDockWindow();
 
-	if (App->BeginDockWindow("Debug", &debug))
-	{
-		//All debug bools
-		if (ImGui::Button("Debug Textures"))
-			debug_textures = !debug_textures;
-
-		if (debug_textures)
-		{
-			if (ImGui::InputInt("Texture to draw", &texture_to_draw))
-			{
-				if (texture_to_draw >= GetNumTextures())
-				{
-					LOG("Texture %i does not exist, binding Checkers", texture_to_draw);
-					texture_to_draw = 0;
-				}
-				else if (texture_to_draw < 0)
-					texture_to_draw = 0;
-			}
-		}
-	}
-	App->EndDockWindow();
-
 	ImGui::ShowTestWindow();
-
-	if(ImGui::Begin("Assets", &assets_enable))
-	{
-		for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		{
-			//ImGui::ListBox((*it)->GetName().c_str(),);
-			//(*it)
-		}
-		ImGui::End();
-	}
 
 	Hirarchy();
 
 	return ret;
 }
+
 /*
 UPDATE_STATUS SceneManager::MaterialsConfiguration(float dt)
 {
@@ -286,18 +244,6 @@ void SceneManager::DrawMode() const
 
 	if (draw_mode == DM_NORMAL && *polygonMode != GL_FILL)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const
-{
-	AABB bounding_box(vec(0, 0, 0), vec(0, 0, 0));
-	//go->GenerateBoundingBox(bounding_box);
-	center.x = bounding_box.CenterPoint().x;
-	center.y = bounding_box.CenterPoint().y;
-	center.z = bounding_box.CenterPoint().z;
-	x_dist = bounding_box.MaxX() - bounding_box.MinX();
-	y_dist = bounding_box.MaxY() - bounding_box.MinY();
-	z_dist = bounding_box.MaxZ() - bounding_box.MinZ();
 }
 
 const GameObject * SceneManager::GetFocused() const

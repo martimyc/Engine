@@ -80,7 +80,7 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 				size_t start = full_path.find_last_of("\\");
 				size_t count = full_path.find_last_of(".") - start;
 
-				if (!App->import_manager->ImportFromPath(full_path, IT_TEXTURE))
+				if (!App->import_manager->Import(full_path, IT_TEXTURE))
 				{
 					LOG("Error importing texture '%s', it won't be aded to material '%s'", full_path.c_str(), name.c_str());
 				}

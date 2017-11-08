@@ -14,9 +14,11 @@ ResourceManager::ResourceManager(const char * name, bool start_enabled) : Module
 ResourceManager::~ResourceManager()
 {}
 
-void ResourceManager::AddAsset(Resource * new_resource)
+bool ResourceManager::Init()
 {
-	assets.push_back(new Asset(new_resource));
+	debug_texture = LoadCheckers();
+
+	return true;
 }
 
 //Materials
@@ -93,7 +95,7 @@ void ResourceManager::DeleteMesh(Mesh * mesh_to_delete)
 }
 
 //Textures
-void ResourceManager::LoadCheckers()
+const Texture* ResourceManager::LoadCheckers()
 {
 	Texture* new_texture = new Texture("Checkers");
 
@@ -139,6 +141,7 @@ void ResourceManager::LoadCheckers()
 
 	assets.push_back(new Asset(new_texture));
 	num_textures++;
+	return new_texture;
 }
 
 void ResourceManager::AddTexture(Texture * new_texture)
@@ -150,7 +153,7 @@ void ResourceManager::AddTexture(Texture * new_texture)
 void ResourceManager::DeleteTexture(Texture * texture_to_delete)
 {
 	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it) == texture_to_delete)
+		if ((*it)->resource == texture_to_delete)
 		{
 			delete (*it);
 			assets.erase(it);
@@ -163,7 +166,7 @@ void ResourceManager::DebugTextures() const
 	if (debug_textures)
 	{
 		// Select the texture to use
-		glBindTexture(GL_TEXTURE_2D, debug_texture.GetID());
+		glBindTexture(GL_TEXTURE_2D, debug_texture->GetID());
 
 		float hsize = 6.0f; // Vertical size of the quad
 		float vsize = 4.0f; // Vertical size of the quad

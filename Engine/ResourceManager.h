@@ -36,7 +36,7 @@ private:
 
 	//Textures
 	unsigned int num_textures = 0;
-	const Texture& debug_texture;
+	const Texture* debug_texture;
 	bool debug_textures = false;
 
 public:
@@ -47,7 +47,8 @@ private:
 	void ApplyToMaterial(Texture * new_text, unsigned int num_material);
 
 public:
-	void AddAsset(Resource* new_resource);
+
+	bool Init();
 
 	//Materials
 	void AddMaterial(Material* new_material);
@@ -59,14 +60,11 @@ public:
 	void DeleteMesh(Mesh* mesh_to_delete);
 
 	//Textures
-	void LoadCheckers();
+	const Texture* LoadCheckers();
 	void AddTexture(Texture* new_texture);
 	void DeleteTexture(Texture* texture_to_delete);
 
 	void DebugTextures() const;
-
 };
 
 #endif // !RESOURCE_MANAGER
-
-

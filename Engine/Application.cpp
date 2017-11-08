@@ -17,6 +17,7 @@
 #include "SceneManager.h"
 #include "FileSystem.h"
 #include "ImportManager.h"
+#include "ResourceManager.h"
 #include "Application.h"
 
 Application::Application()
@@ -33,6 +34,7 @@ Application::Application()
 	scene_manager = new SceneManager("Scene Manager");
 	file_system = new FileSystem("File System");
 	import_manager = new ImportManager("Import Manager");
+	resource_manager = new ResourceManager(Resource Manager);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -50,6 +52,7 @@ Application::Application()
 	AddModule(scene_manager);
 	AddModule(file_system);
 	AddModule(import_manager);
+	AddModule(resource_manager);
 	
 	// Scenes
 

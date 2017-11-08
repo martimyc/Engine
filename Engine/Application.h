@@ -22,6 +22,7 @@ class BasicGeometry;
 class SceneManager;
 class FileSystem;
 class ImportManager;
+class ResourceManager;
 
 namespace ImGui
 {
@@ -45,6 +46,7 @@ public:
 	SceneManager* scene_manager;
 	FileSystem* file_system;
 	ImportManager* import_manager;
+	ResourceManager* resource_manager;
 
 private:
 	std::string title;

@@ -18,6 +18,7 @@
 #include "Camera3D.h"
 #include "Console.h"
 #include "SceneManager.h"
+#include "ResourceManager.h"
 #include "Application.h"
 #include "Renderer3D.h"
 
@@ -179,8 +180,6 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//first geometry, then debug and then UI
 
-	Anisotrophy();
-
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
 
@@ -219,9 +218,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 			material_in_use->DisableDraw();
 	}
 
-	//Debug Textures
-	if (App->scene_manager->DebugTextures())
-		App->scene_manager->DrawTexture(App->scene_manager->GetTextureToDraw());
+	//DebugTextures
+	App->resource_manager->DebugTextures();
 
 	App->scene_manager->DrawKDT();
 
@@ -288,31 +286,6 @@ void Renderer3D::OnResize(int width, int height)
 void Renderer3D::DrawGameObject(const GameObject* game_object)
 {
 	draw_queue.push(game_object);
-}
-
-void Renderer3D::Anisotrophy()
-{
-	glEnableClientState(GL_TEXTURE_2D);
-
-	if(App->scene_manager->GetTexture(0) != nullptr)
-		glBindTexture(GL_TEXTURE_2D, App->scene_manager->GetTexture(0)->GetID());
-
-	glBegin(GL_QUADS);
-
-	glTexCoord2f(0.0f,0.0f);
-	glVertex3f(-100.0f, 0.0f, -100.0f);
-	glTexCoord2f(0.0f, 50.0f);
-	glVertex3f(-100.0f, 0.0f, 100.0f);
-	glTexCoord2f(50.0f, 50.0f);
-	glVertex3f(100.0f, 0.0f, 100.0f);
-	glTexCoord2f(50.0f, 0.0f);
-	glVertex3f(100.0f, 0.0f, -100.0f);
-
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glDisableClientState(GL_TEXTURE_2D);
 }
 
 void Renderer3D::DrawWorldAxis()

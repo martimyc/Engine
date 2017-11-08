@@ -84,8 +84,6 @@ public:
 	void OnResize(int width, int height);
 
 	void DrawGameObject(const GameObject* game_object);
-
-	void Anisotrophy();
 };
 
 #endif //_MODULE_RENDERER_3D
