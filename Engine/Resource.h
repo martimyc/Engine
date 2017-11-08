@@ -3,8 +3,7 @@
 
 #include <string>
 #include <vector>
-
-class GameObject;
+#include "UID.h"
 
 enum RESOURCE_TYPES
 {
@@ -19,10 +18,12 @@ class Resource
 protected:
 	std::string name;
 	RESOURCE_TYPES type;
+	UID id;
 
 public:
 	Resource(RESOURCE_TYPES type, const char* name): type(type), name(name)
 	{}
+
 	Resource(RESOURCE_TYPES type, const std::string& name) : type(type), name(name)
 	{}
 
@@ -40,6 +41,16 @@ public:
 	RESOURCE_TYPES GetType() const
 	{
 		return type;
+	}
+
+	const UID& GetID() const
+	{
+		return id;
+	}
+
+	void SetID(const UID& new_id)
+	{
+		id = new_id;
 	}
 };
 

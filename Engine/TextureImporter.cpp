@@ -1,12 +1,16 @@
 #include "imgui\imgui.h"
 
+#include "UID.h"
 //Resources
 #include "Texture.h"
 
 //Modules
 #include "FileSystem.h"
+#include "ResourceManager.h"
 #include "Application.h"
 #include "TextureImporter.h"
+
+
 
 TextureImporter::TextureImporter()
 {
@@ -27,7 +31,7 @@ TextureImporter::TextureImporter()
 TextureImporter::~TextureImporter()
 {}
 
-bool TextureImporter::Import(std::string& file)
+bool TextureImporter::Import(const std::string& file)
 {
 	bool ret = true;
 
@@ -68,7 +72,7 @@ bool TextureImporter::Import(std::string& file)
 			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
 			{
 				size_t count = file.find_last_of(".");
-				file = file.substr(0, count); //-1 to avoid dot
+				//file = file.substr(0, count); //-1 to avoid dot
 				ret = App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, file.c_str(), "dds");
 				if (ret)
 					LOG("Saved %s succesfully", file.c_str());
@@ -88,6 +92,17 @@ Texture* TextureImporter::Load(const std::string& name)
 	path += "\\";
 	path += name;
 	path += ".dds";
+
+	char* buffer = nullptr;
+	unsigned int length = App->file_system->LoadFileBinary(path.c_str(), &buffer);
+
+	UID uid(buffer, length);
+
+	if(App->resource_manager->Exsists(uid) == true)
+	{
+		LOG("Texture already loaded");
+		return (Texture*)App->resource_manager->GetResource(uid);
+	}
 
 	ILuint imageID;				// Create an image ID as a ULuint
 

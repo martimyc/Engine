@@ -29,15 +29,6 @@ enum IMPORT_TYPE
 	IT_SCENE
 };
 
-/*enum LOAD_TYPE
-{
-	LT_NO_TYPE = 0,
-	LT_TEXTURE,
-	LT_SCENE,
-	LT_MESH,
-	LT_MATERIAL
-};*/
-
 class ImportManager : public Module
 {
 private:

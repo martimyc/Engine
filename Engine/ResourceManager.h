@@ -12,6 +12,7 @@ class Resource;
 class Material;
 class Texture;
 class Mesh;
+class UID;
 
 struct Asset
 {
@@ -49,6 +50,9 @@ private:
 public:
 
 	bool Init();
+
+	bool Exsists(const UID& id) const;
+	Resource* GetResource(const UID& id) const;
 
 	//Materials
 	void AddMaterial(Material* new_material);

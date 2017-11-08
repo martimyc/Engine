@@ -134,6 +134,11 @@ Mesh * ImportManager::LoadMesh(const std::string & name) const
 bool ImportManager::ImportAndLoad(const std::string & path, IMPORT_TYPE type)
 {
 	//TODO import return uid and load qith given uid
+
+	texture_importer->Import(path);
+	char* file;
+	int length = App->file_system->LoadFileBinary(path.c_str(), &file);
+
 	return false;
 }
 

@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />
+    <ClInclude Include="MD5.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="assimp\include\ai_assert.h" />
     <ClInclude Include="assimp\include\anim.h" />
@@ -236,6 +237,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureImporter.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="UID.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

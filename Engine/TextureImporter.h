@@ -14,7 +14,7 @@ struct TextureImporter
 	TextureImporter();
 	~TextureImporter();
 
-	bool Import(std::string& file);
+	bool Import(const std::string& file);
 	Texture* Load(const std::string& name);
 };
 

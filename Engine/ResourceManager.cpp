@@ -21,6 +21,22 @@ bool ResourceManager::Init()
 	return true;
 }
 
+bool ResourceManager::Exsists(const UID & id) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->resource.GetID())
+			return true;
+	return false;
+}
+
+Resource * ResourceManager::GetResource(const UID & id) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->resource.GetID())
+			return (*it)->resource;
+	return nullptr;
+}
+
 //Materials
 void ResourceManager::AddMaterial(Material * new_material)
 {
