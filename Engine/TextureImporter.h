@@ -8,14 +8,16 @@
 #include "Devil\include\ilut.h"
 
 class Texture;
+struct TextureImportConfiguration;
+struct TextureLoadConfiguration;
 
 struct TextureImporter
 {
 	TextureImporter();
 	~TextureImporter();
 
-	bool Import(const std::string& file);
-	Texture* Load(const std::string& name);
+	bool Import(const std::string& file, const TextureImportConfiguration& config);
+	Texture* Load(const std::string& name, const TextureLoadConfiguration& config);
 };
 
 #endif // !TEXTURE_IMPORTER

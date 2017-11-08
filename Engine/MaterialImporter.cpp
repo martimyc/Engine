@@ -35,7 +35,7 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-bool MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name)
+const UID MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name)
 {
 	bool ret = true;
 
@@ -67,6 +67,9 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 	//First specify format
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
+
+	memcpy(iterator, name.c_str(), name.length());
+	iterator += name.length();
 
 	if (num_difusse_textures > 0)
 	{
@@ -106,14 +109,20 @@ bool MaterialImporter::Import( const aiMaterial * material, const std::string& s
 
 	//TODO Blend and strenght functions when lightning is done
 
-	ret = App->file_system->SaveFile(buffer, length, LIBRARY_MATERIALS_FOLDER, name.c_str(), "mm");
+	UID id(buffer, length);
+
+	if (App->file_system->SaveFile(buffer, length, LIBRARY_MATERIALS_FOLDER, id.uid, "mm") == false)
+	{
+		LOG("Could not save file %s correctlly", name.c_str());
+		return UID();
+	}
 
 	delete [] buffer;
 
-	return ret;
+	return id;
 }
 
-Material* MaterialImporter::Load(const std::string & name)
+Material* MaterialImporter::Load(const UID& id)
 {
 	Material* new_material = nullptr;
 	char* buffer = nullptr;
@@ -122,15 +131,19 @@ Material* MaterialImporter::Load(const std::string & name)
 
 	std::string path(App->file_system->GetMaterials());
 	path += "\\";
-	path += name;
+	path += id.uid;
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 	
 	if (buffer != nullptr && length != 0)
 	{
-		new_material = new Material(name);
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
+
+		std::string name(iterator);
+		iterator += name.length;
+
+		new_material = new Material(name);
 
 		while (iterator - buffer < length)
 		{

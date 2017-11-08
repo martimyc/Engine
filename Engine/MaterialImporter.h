@@ -8,6 +8,7 @@
 #include "Assimp\include\postprocess.h"
 #include "Assimp\include\cfileio.h"
 #include "glew\include\GL\glew.h"
+#include "UID.h"
 
 class Material;
 
@@ -26,8 +27,8 @@ public:
 	MaterialImporter();
 	~MaterialImporter();
 
-	bool Import(const aiMaterial* material, const std::string& scene_path, const std::string& name);
-	Material* Load(const std::string& name); //should probablly change to uid
+	const UID Import(const aiMaterial* material, const std::string& scene_path, const std::string& name);
+	Material* Load(const UID& id);
 };
 
 #endif // !MATERIAL_IMPORTER

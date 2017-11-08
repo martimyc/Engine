@@ -1,6 +1,7 @@
 #include "imgui\imgui.h"
 
 #include "UID.h"
+
 //Resources
 #include "Texture.h"
 
@@ -9,8 +10,6 @@
 #include "ResourceManager.h"
 #include "Application.h"
 #include "TextureImporter.h"
-
-
 
 TextureImporter::TextureImporter()
 {
@@ -31,7 +30,7 @@ TextureImporter::TextureImporter()
 TextureImporter::~TextureImporter()
 {}
 
-bool TextureImporter::Import(const std::string& file)
+bool TextureImporter::Import(const std::string& file, const TextureImportConfiguration& config)
 {
 	bool ret = true;
 
@@ -84,7 +83,7 @@ bool TextureImporter::Import(const std::string& file)
 	return ret;
 }
 
-Texture* TextureImporter::Load(const std::string& name)
+Texture* TextureImporter::Load(const std::string& name, const TextureLoadConfiguration& config)
 {
 	Texture* new_texture = nullptr;
 
@@ -157,6 +156,7 @@ Texture* TextureImporter::Load(const std::string& name)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		//Anysotropy
+		if()
 		GLfloat maxAniso = 0.0f;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
 
@@ -187,6 +187,9 @@ Texture* TextureImporter::Load(const std::string& name)
 		LOG("Texture creation successful.");
 
 		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
+
+		new_texture->SetID(uid);
+
 		return new_texture;
 	}
 	else // If we failed to open the image file in the first place...

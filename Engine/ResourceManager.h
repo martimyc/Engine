@@ -12,16 +12,8 @@ class Resource;
 class Material;
 class Texture;
 class Mesh;
+struct Asset;
 class UID;
-
-struct Asset
-{
-	Resource* resource;
-	std::vector<const GameObject*> instances;
-
-	Asset(Resource* resource);
-	~Asset();
-};
 
 class ResourceManager: public Module
 {

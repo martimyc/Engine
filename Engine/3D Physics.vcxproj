@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />
+    <ClInclude Include="Asset.h" />
     <ClInclude Include="MD5.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="assimp\include\ai_assert.h" />

@@ -8,6 +8,7 @@
 #include "Assimp\include\postprocess.h"
 #include "Assimp\include\cfileio.h"
 #include "glew\include\GL\glew.h"
+#include "UID.h"
 
 class Mesh;
 
@@ -21,8 +22,8 @@ private:
 	unsigned int GetTotalSize(const aiMesh* mesh) const;
 
 public:
-	bool Import(const aiMesh* mesh, const std::string& scene_path,const std::string& name);
-	Mesh* Load(const std::string& name); //should be uid
+	const UID Import(const aiMesh* mesh, const std::string& scene_path,const std::string& name);
+	Mesh* Load(const UID& id);
 };
 
 #endif // !MESH_IMPORTER

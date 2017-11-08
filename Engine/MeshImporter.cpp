@@ -46,7 +46,7 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 	return total_size;
 }
 
-bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
+const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
 {
 	bool ret = true;
 
@@ -57,6 +57,9 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 	//First specify format
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
+
+	memcpy(iterator, name.c_str(), name.length());
+	iterator += name.length();
 
 	GLuint num_vertices = mesh->mNumVertices;
 	memcpy(iterator, &num_vertices, sizeof(GLuint));
@@ -170,23 +173,29 @@ bool MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, c
 
 	uint length = iterator - buffer;
 
-	ret = App->file_system->SaveFile(buffer, length, LIBRARY_MESHES_FOLDER, name.c_str(), "mm");
+	UID id(buffer, length);
+
+	if (App->file_system->SaveFile(buffer, length, LIBRARY_MESHES_FOLDER, id.uid, "mm") == false)
+	{
+		LOG("Could not save file %s correctlly", name.c_str());
+		return UID();
+	}
 
 	delete[] buffer;
 
-	return ret;
+	return id;
 }
 
-Mesh* MeshImporter::Load(const std::string & name)
+Mesh* MeshImporter::Load(const UID & id)
 {
-	Mesh* new_mesh = new Mesh(name);
+	Mesh* new_mesh = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
 
 	std::string path(App->file_system->GetMeshes());
 	path += "\\";
-	path += name;
+	path += id.uid;
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 
@@ -194,6 +203,11 @@ Mesh* MeshImporter::Load(const std::string & name)
 	{
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
+
+		std::string name(iterator);
+		iterator += name.length;
+
+		new_mesh = new Mesh(name);
 
 		GLuint num_vertices;
 		memcpy(&num_vertices, iterator, sizeof(GLuint));

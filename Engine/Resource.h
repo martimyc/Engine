@@ -21,7 +21,13 @@ protected:
 	UID id;
 
 public:
-	Resource(RESOURCE_TYPES type, const char* name): type(type), name(name)
+	Resource(RESOURCE_TYPES type, const char* name, const UID& id): type(type), name(name), id(id)
+	{}
+
+	Resource(RESOURCE_TYPES type, const std::string& name, const UID& id) : type(type), name(name), id(id)
+	{}
+
+	Resource(RESOURCE_TYPES type, const char* name) : type(type), name(name)
 	{}
 
 	Resource(RESOURCE_TYPES type, const std::string& name) : type(type), name(name)
