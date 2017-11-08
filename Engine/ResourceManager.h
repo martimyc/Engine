@@ -40,7 +40,7 @@ private:
 	bool debug_textures = false;
 
 public:
-	ResourceManager(const char * name, bool start_enabled);
+	ResourceManager(const char * name, bool start_enabled = true);
 	~ResourceManager();
 
 private:

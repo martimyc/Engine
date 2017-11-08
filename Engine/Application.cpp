@@ -34,7 +34,7 @@ Application::Application()
 	scene_manager = new SceneManager("Scene Manager");
 	file_system = new FileSystem("File System");
 	import_manager = new ImportManager("Import Manager");
-	resource_manager = new ResourceManager(Resource Manager);
+	resource_manager = new ResourceManager("Resource Manager");
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order

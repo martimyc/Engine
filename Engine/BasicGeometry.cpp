@@ -71,8 +71,8 @@ bool BasicGeometry::GetPrimitiveId(PRIMITIVE_TYPE primitive, Mesh * mesh) const
 GameObject* BasicGeometry::Create3DCube()
 {
 	GameObject* go = App->scene_manager->CreateGameObject();
-	MeshFilter* mesh = new MeshFilter (App->scene_manager->CreateMesh());
-	go->AddComponent(mesh);
+	//MeshFilter* mesh = new MeshFilter (App->scene_manager->CreateMesh());
+	//go->AddComponent(mesh);
 	//GetPrimitiveId(PRIMITIVE_CUBE, mesh); //This should just return a mesh
 	//go->AddComponent(mesh);
 	return go;
@@ -81,8 +81,8 @@ GameObject* BasicGeometry::Create3DCube()
 GameObject* BasicGeometry::CreateSphere()
 {
 	GameObject* go = App->scene_manager->CreateGameObject();
-	MeshFilter* mesh = new MeshFilter(App->scene_manager->CreateMesh());
-	go->AddComponent(mesh);
+	//MeshFilter* mesh = new MeshFilter(App->scene_manager->CreateMesh());
+	//go->AddComponent(mesh);
 	//GetPrimitiveId(PRIMITIVE_SPHERE, mesh); //This should just return a mesh
 	//go->AddComponent(mesh); 
 	return go;
