@@ -5,58 +5,54 @@
 #include <vector>
 #include "UID.h"
 
-enum RESOURCE_TYPES
+enum RESOURCE_TYPE
 {
-	RT_NO_TYPE = 0,
+	RT_NO_TYPE,
 	RT_TEXTURE,
 	RT_MESH,
-	RT_MATERIAL
+	RT_MATERIAL,
+	RT_SCENE
 };
 
 class Resource
 {
+private:
+	RESOURCE_TYPE type;
+	UID uid;
+
 protected:
+	UID source_uid;
 	std::string name;
-	RESOURCE_TYPES type;
-	UID id;
+
+	Resource(RESOURCE_TYPE type, const std::string& name) : type(type), name(name)
+	{}
 
 public:
-	Resource(RESOURCE_TYPES type, const char* name, const UID& id): type(type), name(name), id(id)
-	{}
-
-	Resource(RESOURCE_TYPES type, const std::string& name, const UID& id) : type(type), name(name), id(id)
-	{}
-
-	Resource(RESOURCE_TYPES type, const char* name) : type(type), name(name)
-	{}
-
-	Resource(RESOURCE_TYPES type, const std::string& name) : type(type), name(name)
-	{}
-
-	~Resource()
+	Resource(RESOURCE_TYPE type, const std::string& name, const UID& uid, const UID& source_uid): type(type), name(name), uid(uid), source_uid(source_uid)
 	{}
 
 	virtual bool Inspector() = 0; //False == delete
 
-	//Gets
-	const std::string& GetName() const
-	{
-		return name;
-	}
+	virtual bool IsLoaded() const = 0;
 
-	RESOURCE_TYPES GetType() const
+	RESOURCE_TYPE GetType() const
 	{
 		return type;
 	}
 
-	const UID& GetUID() const
+	const UID& GetSourceUID() const
 	{
-		return id;
+		return source_uid;
 	}
 
-	void SetUID(const UID& new_id)
+	const UID& GetUID() const
 	{
-		id = new_id;
+		return uid;
+	}
+
+	const std::string& GetName() const
+	{
+		return name;
 	}
 };
 

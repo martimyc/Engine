@@ -1,4 +1,5 @@
 #include "Globals.h"
+#include "UID.h"
 #include "FileSystem.h"
 #include "Application.h"
 #include "Mesh.h"
@@ -186,9 +187,11 @@ const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_pa
 	return id;
 }
 
-Mesh* MeshImporter::Load(const UID & id, const MeshLoadConfiguration& config)
+MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration& config)
 {
-	Mesh* new_mesh = nullptr;
+	//TODO
+	return nullptr;
+	/*Mesh* new_mesh = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
@@ -333,7 +336,7 @@ Mesh* MeshImporter::Load(const UID & id, const MeshLoadConfiguration& config)
 		else
 			LOG("Mesh has no vertex colors");
 	}
-	return new_mesh;
+	return new_mesh;*/
 }
 
 

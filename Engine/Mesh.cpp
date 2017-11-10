@@ -4,22 +4,16 @@
 //Containers
 #include "KDTreeVertex.h"
 
-//Assets
-#include "GameObject.h"
-#include "Texture.h"
-#include "Transform.h"
-#include "AppliedMaterial.h"
-#include "Mesh.h"
-
 //Modules
 #include "Globals.h"
 #include "Application.h"
 #include "SceneManager.h"
 
-Mesh::Mesh(const char* const name): Resource(RT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
-{}
+//Assets
+#include "AppliedMaterial.h"
+#include "Mesh.h"
 
-Mesh::Mesh(const std::string & name): Resource(RT_MESH, name), vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+Mesh::Mesh(const std::string name):Resource(RT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
 
 Mesh::~Mesh()
@@ -132,7 +126,6 @@ bool Mesh::Inspector()
 {
 	bool ret = true;
 
-	ImGui::Text("Name: %s", name.c_str());
 	ImGui::Text("Vertices: %i", num_vertices);
 	ImGui::Text("Indices: %i", num_indices);
 	ImGui::Text("UV channels: %i", num_uv_channels);

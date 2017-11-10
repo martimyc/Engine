@@ -2,91 +2,60 @@
 #define ASSET
 
 #include <vector>
-#include "Resource.h"
+#include <string>
 
+struct UID;
 class GameObject;
+class Resource;
 
 struct ImportConfiguration
-{};
+{
+	virtual void Config() = 0;
+};
 
 struct LoadConfiguration
-{};
-
-struct Asset
 {
-	Resource* resource;
-	LoadConfiguration config;
-	std::vector<const GameObject*> instances;
+	virtual void Config() = 0;
+};
 
-	Asset(Resource* resource);
+enum ASSET_TYPE
+{
+	AT_NO_TYPE = 0,
+	AT_TEXTURE,
+	AT_MESH,
+	AT_MATERIAL,
+	AT_SCENE
+};
+
+class Asset
+{
+private:
+	ASSET_TYPE type;
+
+protected:
+	Resource* resource;
+	const LoadConfiguration* config;
+	std::vector<const GameObject*> instances;
+	
+public:
+
+	Asset(ASSET_TYPE type, const  LoadConfiguration* config);
+	Asset(ASSET_TYPE type, Resource* resource);
+
 	~Asset();
 
-	const UID& GetID() const
-	{
-		return resource->GetUID();
-	}
+	ASSET_TYPE GetType() const;
+	const LoadConfiguration* GetConfig() const;
 
-	Resource* UseFor(const GameObject* go)
-	{
-		instances.push_back(go);
-		return resource;
-	}
+	const UID& GetUID() const;
 
-	bool IsInUse() const
-	{
-		return instances.size() > 0;
-	}
-};
+	void Asset::SetResource(Resource * new_resource);
 
-//Textures
-struct TextureImportConfiguration : public ImportConfiguration
-{
-	enum TEXTURE_FORMATS
-	{
-		TF_NORMAL_FORMATS = 0,
-		TF_JPG,
-		TF_PNG,
-		TF_RLE_FORMATS
-	};
+	Resource* GetResource() const;
 
-	TEXTURE_FORMATS format;
-	unsigned int jpg_quality; // 0 - 99
-	bool interlaced;
-	bool rle;
-	unsigned int offset_x;
-	unsigned int offset_y;
-};
+	const std::string& GetName() const;
 
-struct TextureLoadConfiguration : public LoadConfiguration
-{
-	bool mip_mapping;
-	bool anysotropy;
-	bool max_anysotropy;
-	unsigned int anysotropy_level;
-};
-
-//Materials
-struct MaterialImportConfiguration : public ImportConfiguration
-{
-	TextureImportConfiguration* texture_import_config;
-
-};
-
-struct MaterialLoadConfiguration : public LoadConfiguration
-{
-	TextureLoadConfiguration* texture_load_config;
-
-};
-
-//Meshes
-struct MeshImportConfiguration : public ImportConfiguration
-{
-
-};
-
-struct MeshLoadConfiguration : public LoadConfiguration
-{
-
+	void AddInstance(const GameObject* go);
 };
 
 //Scenes

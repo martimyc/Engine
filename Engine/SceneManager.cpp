@@ -3,9 +3,6 @@
 #include "MathGeoLib\src\Geometry\AABB.h"
 
 //Components & Assets
-#include "Texture.h"
-#include "Mesh.h"
-#include "Material.h"
 #include "AppliedMaterial.h"
 #include "MeshFilter.h"
 #include "Transform.h"

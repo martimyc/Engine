@@ -5,11 +5,12 @@
 //Resources
 #include "Resource.h"
 #include "Asset.h"
+#include "TextureAsset.h"
 #include "Texture.h"
-#include "Material.h"
-#include "Mesh.h"
 
 //Modules
+#include "ImportManager.h"
+#include "Application.h"
 #include "ResourceManager.h"
 
 ResourceManager::ResourceManager(const char * name, bool start_enabled) : Module(name, start_enabled)
@@ -20,43 +21,54 @@ ResourceManager::~ResourceManager()
 
 bool ResourceManager::Init()
 {
-	debug_texture = LoadCheckers();
+	debug_textures = LoadCheckers();
 
 	return true;
+}
+
+void ResourceManager::AddAsset(Asset * new_asset)
+{
+	assets.push_back(new_asset);
+
+	/*if (new_asset->GetType() == AT_TEXTURE)
+		//TODO import textures and generate images to display in assets menu (textures are loaded cus we use them as image)*/
+}
+
+void ResourceManager::DeleteAsset(Asset * to_delete)
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (to_delete == *it)
+			delete *it;
 }
 
 bool ResourceManager::Exsists(const UID & id) const
 {
 	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if (id == (*it)->GetID())
+		if (id == (*it)->GetUID())
 			return true;
 	return false;
 }
 
-const Resource * ResourceManager::GetResource(const UID & id) const
+Resource * ResourceManager::Use(const UID & id, const GameObject * go) const
 {
+	//TODO will probablly work diferently
 	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if (id == (*it)->GetID())
-			return (*it)->resource;
-	return nullptr;
-}
+		if (id == (*it)->GetUID())
+		{
+			Resource* resource = (*it)->GetResource();
 
-Resource * ResourceManager::UseResource(const UID & id, GameObject * go) const
-{
-	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if (id == (*it)->GetID())
-			return (*it)->UseFor(go);
+			if (resource == nullptr)
+				if (App->import_manager->Load(resource, (*it)->GetConfig()) == false)
+					LOG("Could not load source for resource %s correctly", (*it)->GetName().c_str());
+
+			(*it)->AddInstance(go);
+			return resource;
+		}
 	return nullptr;
 }
 
 //Materials
-void ResourceManager::AddMaterial(Material * new_material)
-{
-	num_materials++;
-	assets.push_back(new Asset(new_material));
-}
-
-Material * ResourceManager::CreateEmptyMaterial(const char * const name)
+/*void ResourceManager::CreateEmptyMaterial(const char * const name)
 {
 	Material* new_material;
 
@@ -64,14 +76,12 @@ Material * ResourceManager::CreateEmptyMaterial(const char * const name)
 	{
 		char new_name[255];
 		sprintf(new_name, "Material %i", num_materials);
-		new_material = new Material(new_name, ++material_priority);
+		assets.push_back(new Asset(AT_MATERIAL, new Material(++material_priority), new_name));
 	}
 	else
-		new_material = new Material(name, ++material_priority);
+		assets.push_back(new Asset(AT_MATERIAL, new Material(++material_priority), name));
 
 	num_materials++;
-	assets.push_back(new Asset(new_material));
-	return new_material;
 }
 
 void ResourceManager::ApplyToMaterial(Texture * new_text, unsigned int num_material)
@@ -79,9 +89,9 @@ void ResourceManager::ApplyToMaterial(Texture * new_text, unsigned int num_mater
 	Material* material = nullptr;
 	unsigned int current_material = 0;
 
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+	for (std::vector<AssetWithInstances*>::iterator it = assets.begin(); it != assets.end(); ++it)
 	{
-		if ((*it)->resource->GetType() == RT_MATERIAL)
+		if ((*it)->type == AT_MATERIAL)
 		{
 			if (num_material == current_material)
 			{
@@ -92,40 +102,12 @@ void ResourceManager::ApplyToMaterial(Texture * new_text, unsigned int num_mater
 		}
 	}
 
-	LOG("Can not apply texture %s to material number %i, material non exsistent", new_text->GetName().c_str(), num_material);
-}
+	LOG("Can not apply texture to material number %i, material non exsistent", num_material);
+}*/
 
-void ResourceManager::DeleteMaterial(Material* material_to_delete)
+Texture* ResourceManager::LoadCheckers()
 {
-	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->resource == material_to_delete)
-		{
-			delete *it;
-			return;
-		}
-}
-
-//Meshes
-void ResourceManager::AddMesh(Mesh* new_mesh)
-{
-	num_meshes++;
-	assets.push_back(new Asset(new_mesh));
-}
-
-void ResourceManager::DeleteMesh(Mesh * mesh_to_delete)
-{
-	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->resource == mesh_to_delete)
-		{
-			delete *it;
-			return;
-		}
-}
-
-//Textures
-const Texture* ResourceManager::LoadCheckers()
-{
-	Texture* new_texture = new Texture("Checkers");
+	TextureSource* source = new TextureSource;
 
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	for (int i = 0; i < CHECKERS_HEIGHT; i++) {
@@ -164,29 +146,14 @@ const Texture* ResourceManager::LoadCheckers()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	new_texture->SetTextureID(checkers_text_id);
-	new_texture->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
+	source->SetTextureID(checkers_text_id);
+	source->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
 
-	assets.push_back(new Asset(new_texture));
+	Texture* new_texture = new Texture("Checkers", source);
+	assets.push_back(new Asset(AT_TEXTURE, new_texture));
 	num_textures++;
+
 	return new_texture;
-}
-
-void ResourceManager::AddTexture(Texture * new_texture)
-{
-	assets.push_back(new Asset(new_texture));
-	num_textures++;
-}
-
-void ResourceManager::DeleteTexture(Texture * texture_to_delete)
-{
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->resource == texture_to_delete)
-		{
-			delete (*it);
-			assets.erase(it);
-			break;
-		}
 }
 
 void ResourceManager::DebugTextures() const
@@ -222,15 +189,4 @@ void ResourceManager::DebugTextures() const
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
 	}
-}
-
-//Asset struct
-Asset::Asset(Resource * resource) : resource(resource)
-{}
-
-Asset::~Asset()
-{
-	delete resource;
-
-	instances.clear();
 }

@@ -1,5 +1,5 @@
-#ifndef _MATERIAL
-#define _MATERIAL
+#ifndef MATERIAL
+#define MATERIAL
 
 #include <string>
 #include <vector>
@@ -32,8 +32,7 @@ private:
 	unsigned int priority;
 
 public:
-	Material(const char* name, unsigned int priority = 0);
-	Material(const std::string& name, unsigned int priority = 0);
+	Material(const std::string name, unsigned int priority = 0);
 	~Material();
 
 	void ChangePriority(unsigned int new_priority);
@@ -50,5 +49,5 @@ public:
 	bool Inspector();
 };
 
-#endif // !_MATERIAL
+#endif // !MATERIAL
 

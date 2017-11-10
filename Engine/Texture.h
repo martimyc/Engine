@@ -1,5 +1,5 @@
-#ifndef _TEXTURE
-#define _TEXTURE
+#ifndef TEXTURE
+#define TEXTURE
 
 #include <string>
 #include "glew\include\GL\glew.h"
@@ -22,20 +22,35 @@ enum TEXTURE_TYPE
 	TT_UNKNOWN,
 };
 
-class Texture: public Resource
+struct TextureSource
 {
-private:
 	unsigned int height;
 	unsigned int width;
 	TEXTURE_TYPE texture_type;
 	GLenum gl_texure_type;
-	GLuint id;
+	GLuint texture_id;
+
+	TextureSource(const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& texture_id = 0);
+	~TextureSource();
+
+	void SetDimensions(const unsigned int& width, const unsigned int& height);
+
+	void SetTextureType(const TEXTURE_TYPE& new_texture_type);
+
+	void SetGLTextureType(const GLenum& new_gl_texure_type);
+
+	void SetTextureID(const GLuint& new_id);
+};
+
+class Texture: public Resource
+{
+private:
+	TextureSource* source;
 
 public:
-	Texture(const char* name = nullptr, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0);
-
-	Texture(const std::string& name, const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& id = 0);
-
+	//Texture(const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& texture_id = 0);
+	Texture(const std::string& name, const UID& ref_uid, const UID& source_uid);
+	Texture(const std::string& name, TextureSource* source);
 	~Texture();
 
 	//Gets
@@ -50,18 +65,10 @@ public:
 	const GLuint& GetTextureID() const;
 
 	//Sets
-	void SetName(const char* new_name);
-	void SetName(const std::string& new_name);
-
-	void SetDimensions(const unsigned int& width, const unsigned int& height);
-
-	void SetTextureType(const TEXTURE_TYPE& new_texture_type);
-
-	void SetGLTextureType(const GLenum& new_gl_texure_type);
-
-	void SetTextureID(const GLuint& new_id);
+	void SetSource(TextureSource* new_source);
 
 	bool Inspector();
-};
-#endif // !_TEXTURE
 
+	bool IsLoaded() const;
+};
+#endif // !TEXTURE

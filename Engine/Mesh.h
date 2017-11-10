@@ -1,5 +1,5 @@
-#ifndef _MESH
-#define _MESH
+#ifndef MESH
+#define MESH
 
 #include <vector>
 #include "glew\include\GL\glew.h"
@@ -80,7 +80,7 @@ namespace Geo
 	};
 }
 
-class Mesh: public Resource
+class Mesh : public Resource
 {
 private:
 	//really only ids necesary if not animated
@@ -111,8 +111,7 @@ private:
 	KDTreeVertex* vertex_kdt = nullptr;
 
 public:
-	Mesh(const char* const name);
-	Mesh(const std::string& name);
+	Mesh(const std::string name);
 	~Mesh();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;
@@ -170,4 +169,4 @@ public:
 	Geo::Vertex GetMaxZVertex() const;
 };
 
-#endif // !_MESH
+#endif // !MESH

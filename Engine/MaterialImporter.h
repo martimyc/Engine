@@ -8,12 +8,11 @@
 #include "Assimp\include\postprocess.h"
 #include "Assimp\include\cfileio.h"
 #include "glew\include\GL\glew.h"
-#include "UID.h"
-
-class Material;
 
 struct MaterialImportConfiguration;
 struct MaterialLoadConfiguration;
+struct MaterialSource;
+struct UID;
 
 struct MaterialTextureInfo
 {
@@ -31,7 +30,7 @@ public:
 	~MaterialImporter();
 
 	const UID Import(const aiMaterial* material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration& config);
-	Material* Load(const UID& id, const MaterialLoadConfiguration& config);
+	MaterialSource* Load(const UID& id, const MaterialLoadConfiguration& config);
 };
 
 #endif // !MATERIAL_IMPORTER

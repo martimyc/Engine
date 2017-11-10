@@ -85,6 +85,9 @@
     <Filter Include="Sources\Game Objects\Components">
       <UniqueIdentifier>{85904caa-b1fc-4f0e-bccf-f6ba90ee81d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Resources">
+      <UniqueIdentifier>{719b3869-8e28-4021-9919-d6679ab53f71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -528,15 +531,6 @@
     <ClInclude Include="MaterialImporter.h">
       <Filter>Sources\Importers</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Sources\Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Sources\Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Sources\Assets</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
@@ -558,9 +552,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Sources\Assets</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -572,6 +563,27 @@
     </ClInclude>
     <ClInclude Include="Asset.h">
       <Filter>Sources\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureAsset.h">
+      <Filter>Sources\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialAsset.h">
+      <Filter>Sources\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshAsset.h">
+      <Filter>Sources\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Sources\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -785,12 +797,6 @@
     <ClCompile Include="MaterialImporter.cpp">
       <Filter>Sources\Importers</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Sources\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Sources\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
@@ -801,9 +807,6 @@
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Texture.cpp">
-      <Filter>Sources\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="KDTreeGO.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
@@ -819,6 +822,20 @@
     </ClCompile>
     <ClCompile Include="MD5.cpp">
       <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset.cpp">
+      <Filter>Sources\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureAsset.cpp" />
+    <ClCompile Include="Texture.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="Material.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Sources\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

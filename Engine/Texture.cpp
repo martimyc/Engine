@@ -2,72 +2,92 @@
 #include "Globals.h"
 #include "Texture.h"
 
-Texture::Texture(const char* name, const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint& id) : Resource(RT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
+//TextureSource
+TextureSource::TextureSource(const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint & texture_id) : texture_type(texture_type), gl_texure_type(gl_texure_type), texture_id(texture_id)
 {}
 
-Texture::Texture(const std::string& name, const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint& id) : Resource(RT_TEXTURE, name), texture_type(texture_type), gl_texure_type(gl_texure_type), id(id)
-{}
-
-Texture::~Texture()
+TextureSource::~TextureSource()
 {
-	if (id != 0)
-		glDeleteTextures(1, &id);
+	if (texture_id != 0)
+		glDeleteTextures(1, &texture_id);
 }
 
-const unsigned int & Texture::GetHeight() const
-{
-	return height;
-}
-
-const unsigned int & Texture::GetWidth() const
-{
-	return width;
-}
-
-const TEXTURE_TYPE & Texture::GetTextureType() const
-{
-	return texture_type;
-}
-
-const GLenum & Texture::GetGLTextureType() const
-{
-	return gl_texure_type;
-}
-
-const GLuint & Texture::GetTextureID() const
-{
-	return id;
-}
-
-void Texture::SetName(const char * new_name)
-{
-	name = new_name;
-}
-
-void Texture::SetName(const std::string & new_name)
-{
-	name = new_name;
-}
-
-void Texture::SetDimensions(const unsigned int & width, const unsigned int & height)
+void TextureSource::SetDimensions(const unsigned int & width, const unsigned int & height)
 {
 	this->width = width;
 	this->height = height;
 }
 
-void Texture::SetTextureType(const TEXTURE_TYPE & new_texture_type)
+//Texture
+void TextureSource::SetTextureType(const TEXTURE_TYPE & new_texture_type)
 {
 	texture_type = new_texture_type;
 }
 
-void Texture::SetGLTextureType(const GLenum & new_gl_texure_type)
+void TextureSource::SetGLTextureType(const GLenum & new_gl_texure_type)
 {
 	gl_texure_type = new_gl_texure_type;
 }
 
-void Texture::SetTextureID(const GLuint & new_id)
+void TextureSource::SetTextureID(const GLuint & new_id)
 {
-	id = new_id;
+	texture_id = new_id;
+}
+
+Texture::Texture(const std::string& name, const UID& ref_uid, const UID& source_uid): Resource(RT_TEXTURE, name, ref_uid, source_uid), source(nullptr)
+{}
+
+Texture::Texture(const std::string & name, TextureSource * source): Resource(RT_TEXTURE, name), source(source)
+{}
+
+Texture::~Texture()
+{
+	delete source;
+}
+
+const unsigned int & Texture::GetHeight() const
+{
+	if (source != nullptr)
+		return source->height;
+	else
+		LOG("Asking for unloaded texture information");
+}
+
+const unsigned int & Texture::GetWidth() const
+{
+	if (source != nullptr)
+		return source->width;
+	else
+		LOG("Asking for unloaded texture information");
+}
+
+const TEXTURE_TYPE & Texture::GetTextureType() const
+{
+	if (source != nullptr)
+		return source->texture_type;
+	else
+		LOG("Asking for unloaded texture information");
+}
+
+const GLenum & Texture::GetGLTextureType() const
+{
+	if (source != nullptr)
+		return source->gl_texure_type;
+	else
+		LOG("Asking for unloaded texture information");
+}
+
+const GLuint & Texture::GetTextureID() const
+{
+	if (source != nullptr)
+		return source->texture_id;
+	else
+		LOG("Asking for unloaded texture information");
+}
+
+void Texture::SetSource(TextureSource * new_source)
+{
+	source = new_source;
 }
 
 bool Texture::Inspector()
@@ -78,9 +98,9 @@ bool Texture::Inspector()
 	ImVec2 uv0(0, 1);
 	ImVec2 uv1(1, 0);
 
-	ImGui::Image((void*)id, size, uv0, uv1);
+	ImGui::Image((void*)source->texture_id, size, uv0, uv1);
 	ImGui::SameLine();
-	ImGui::Text("Width: %i\nHeight: %i", width, height);
+	ImGui::Text("Width: %i\nHeight: %i", source->width, source->height);
 
 	if (ImGui::Button("Delete"))
 	{
@@ -89,4 +109,9 @@ bool Texture::Inspector()
 	}
 
 	return ret;
+}
+
+bool Texture::IsLoaded() const
+{
+	return source != nullptr;
 }

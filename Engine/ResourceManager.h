@@ -12,7 +12,7 @@ class Resource;
 class Material;
 class Texture;
 class Mesh;
-struct Asset;
+class Asset;
 class UID;
 class GameObject;
 
@@ -44,23 +44,13 @@ public:
 
 	bool Init();
 
+	void AddAsset(Asset* new_asset);
+	void DeleteAsset(Asset* to_delete);
 	bool Exsists(const UID& id) const;
-	const Resource* GetResource(const UID& id) const;
-	Resource* UseResource(const UID& id, GameObject* go) const;
-
-	//Materials
-	void AddMaterial(Material* new_material);
-	Material* CreateEmptyMaterial(const char* const name = nullptr);
-	void DeleteMaterial(Material* material_to_delete);
-
-	//Meshes
-	void AddMesh(Mesh* new_mesh);
-	void DeleteMesh(Mesh* mesh_to_delete);
+	Resource* Use(const UID& id, const GameObject* go) const;
 
 	//Textures
-	const Texture* LoadCheckers();
-	void AddTexture(Texture* new_texture);
-	void DeleteTexture(Texture* texture_to_delete);
+	Texture* LoadCheckers();
 
 	void DebugTextures() const;
 };

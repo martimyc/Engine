@@ -4,7 +4,7 @@
 
 //Resources
 #include "Texture.h"
-#include "Asset.h"
+#include "TextureAsset.h"
 
 //Modules
 #include "FileSystem.h"
@@ -88,20 +88,14 @@ const UID TextureImporter::Import(const std::string& file, const TextureImportCo
 	return uid;
 }
 
-Texture* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration& config)
+TextureSource* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration* config)
 {
-	Texture* new_texture = nullptr;
+	TextureSource* new_texture = nullptr;
 
 	std::string path(App->file_system->GetTextures());
 	path += "\\";
 	path += uid.uid;
 	path += ".dds";
-
-	if(App->resource_manager->Exsists(uid) == true)
-	{
-		LOG("Texture already loaded");
-		return (Texture*)App->resource_manager->GetResource(uid);
-	}
 
 	ILuint imageID;				// Create an image ID as a ULuint
 
@@ -119,7 +113,7 @@ Texture* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration& c
 
 	if (success)	// If we managed to load the image, then we can start to do things with it...
 	{
-		new_texture = new Texture;
+		new_texture = new TextureSource;
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
@@ -156,14 +150,14 @@ Texture* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration& c
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		//Anysotropy
-		if (config.anysotropy)
+		if (config->anysotropy)
 		{
 			GLfloat ansio_level;
 
-			if (config.max_anysotropy)
+			if (config->max_anysotropy)
 				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ansio_level);
 			else
-				ansio_level = config.anysotropy_level;
+				ansio_level = config->anysotropy_level;
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -193,8 +187,6 @@ Texture* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration& c
 		LOG("Texture creation successful.");
 
 		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
-
-		new_texture->SetUID(uid);
 
 		return new_texture;
 	}

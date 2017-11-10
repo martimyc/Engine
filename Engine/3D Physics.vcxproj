@@ -81,7 +81,9 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />
     <ClInclude Include="Asset.h" />
+    <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MD5.h" />
+    <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="assimp\include\ai_assert.h" />
     <ClInclude Include="assimp\include\anim.h" />
@@ -235,6 +237,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SpherePrimitive.h" />
+    <ClInclude Include="TextureAsset.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureImporter.h" />
     <ClInclude Include="Transform.h" />
@@ -244,6 +247,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AppliedMaterial.cpp" />
+    <ClCompile Include="Asset.cpp" />
     <ClCompile Include="BasicGeometry.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
@@ -317,9 +321,11 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />
+    <ClCompile Include="TextureAsset.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureImporter.cpp" />
     <ClCompile Include="Transform.cpp" />

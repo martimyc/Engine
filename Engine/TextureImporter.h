@@ -7,9 +7,10 @@
 #include "Devil\include\ilu.h"
 #include "Devil\include\ilut.h"
 
-class Texture;
+class TextureSource;
 struct TextureImportConfiguration;
 struct TextureLoadConfiguration;
+struct UID;
 
 struct TextureImporter
 {
@@ -17,7 +18,7 @@ struct TextureImporter
 	~TextureImporter();
 
 	const UID Import(const std::string& file, const TextureImportConfiguration& config);
-	Texture* Load(const UID& uid, const TextureLoadConfiguration& config);
+	TextureSource* Load(const UID& uid, const TextureLoadConfiguration* config);
 };
 
 #endif // !TEXTURE_IMPORTER

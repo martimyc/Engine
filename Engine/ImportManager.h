@@ -9,7 +9,6 @@
 #include "Assimp\include\postprocess.h"
 #include "Assimp\include\cfileio.h"
 #include "glew\include\GL\glew.h"
-#include "UID.h"
 #include "Module.h"
 
 class MeshImporter;
@@ -22,12 +21,15 @@ struct TextureLoadConfiguration;
 struct MaterialLoadConfiguration;
 struct MeshLoadConfiguration;
 
-class Resource;
-class Texture;
+struct UID;
+
+struct TextureSource;
+
 class Material;
 class Mesh;
 
-class GameObject;
+class Resource;
+enum RESOURCE_TYPE;
 
 enum IMPORT_TYPE
 {
@@ -49,17 +51,18 @@ private:
 	MaterialImporter* material_importer = nullptr;
 	TextureImporter* texture_importer = nullptr;
 
-	friend MaterialImporter;
-
 public:
 	ImportManager(const char* name, bool start_enabled = true);
 	~ImportManager();
 
 private:
 	const UID Import(const std::string& path, IMPORT_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
-	Texture* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
-	Material* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const;
-	Mesh* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
+
+	const UID GenerateReference(const std::string& name, const UID& resource_id, RESOURCE_TYPE type) const;
+
+	TextureSource* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
+	//Material* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const;
+	//Mesh* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
 	//Scene* LoadScene(const std::string& name) const;
 
 	//Scene
@@ -77,7 +80,14 @@ public:
 	bool Init();
 	bool CleanUp();
 
+	UPDATE_STATUS Update(float dt);
+
 	void SentToImport(const std::string& path, IMPORT_TYPE type);
+
+	bool Load(Resource* to_load, const LoadConfiguration* load_config);
+
+	Resource* LoadRef(const UID & ref) const; //creates one asset from a ref
+	
 };
 
 

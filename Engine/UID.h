@@ -18,12 +18,17 @@ struct UID
 		memcpy(uid, id.uid, 16);
 	}
 
-	UID(char* buffer, unsigned int length)
+	UID(const char* id)
+	{
+		memcpy(uid, id, 16);
+	}
+
+	UID(const char* buffer, unsigned int length)
 	{
 		memcpy(uid, MD5::md5(buffer, length), 16);
 	}
 
-	void Generate(char* buffer, unsigned int length)
+	void Generate(const char* buffer, unsigned int length)
 	{
 		memcpy(uid, MD5::md5(buffer, length), 16);
 	}

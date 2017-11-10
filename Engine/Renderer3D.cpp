@@ -219,7 +219,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	}
 
 	//DebugTextures
-	App->resource_manager->DebugTextures();
+	//App->resource_manager->DebugTextures();
 
 	App->scene_manager->DrawKDT();
 
