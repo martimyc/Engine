@@ -1,6 +1,7 @@
 #ifndef TEXTURE_ASSET
 #define TEXTURE_ASSET
 
+#include "glew\include\GL\glew.h"
 #include "Asset.h"
 
 struct TextureImportConfiguration : public ImportConfiguration
@@ -30,7 +31,8 @@ struct TextureLoadConfiguration : public LoadConfiguration
 	bool mip_mapping;
 	bool anysotropy;
 	bool max_anysotropy;
-	unsigned int anysotropy_level;
+	GLfloat max_possible_anystropy;
+	float anysotropy_level;
 
 	TextureLoadConfiguration();
 	TextureLoadConfiguration(const TextureLoadConfiguration& config);

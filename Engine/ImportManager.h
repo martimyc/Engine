@@ -72,8 +72,6 @@ private:
 	//Objects
 	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const;
 
-	void ImportConfig();
-
 	bool ImportAndLoad(const std::string& path, IMPORT_TYPE type);
 
 public:

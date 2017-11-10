@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "Globals.h"
 #include "TextureAsset.h"
 
 TextureImportConfiguration::TextureImportConfiguration(const std::string & format)
@@ -42,13 +43,37 @@ void TextureImportConfiguration::Config()
 }
 
 TextureLoadConfiguration::TextureLoadConfiguration(): mip_mapping(true), anysotropy(true), max_anysotropy(true), anysotropy_level(0)
-{}
+{
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_possible_anystropy);
+}
 
 TextureLoadConfiguration::TextureLoadConfiguration(const TextureLoadConfiguration & config) : anysotropy(config.anysotropy), anysotropy_level(config.anysotropy_level), max_anysotropy(config.max_anysotropy), mip_mapping(config.mip_mapping)
-{}
+{
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_possible_anystropy);
+	if (anysotropy_level > max_possible_anystropy)
+	{
+		anysotropy_level = max_possible_anystropy;
+		LOG("Anystropy level over max possible anystropy level");
+	}
+}
 
 void TextureLoadConfiguration::Config()
-{}
+{
+	ImGui::Checkbox("Mip-Mapping", &mip_mapping);
+
+	if (mip_mapping)
+	{
+		ImGui::Checkbox("Anystropy", &anysotropy);
+		if (anysotropy)
+			ImGui::Checkbox("Max Anystophy", &max_anysotropy);
+		if (!max_anysotropy)
+		{
+			ImGui::Text("Anystropy level");
+			ImGui::SameLine();
+			ImGui::SliderFloat("", &anysotropy_level, 0.0f, max_possible_anystropy);
+		}
+	}
+}
 
 TextureAsset::TextureAsset(const LoadConfiguration* config) : Asset(AT_TEXTURE, config)
 {}
