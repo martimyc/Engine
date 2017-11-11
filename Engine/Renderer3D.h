@@ -49,6 +49,8 @@ class Renderer3D : public Module
 {
 private:
 	std::priority_queue<const GameObject*, std::vector<const GameObject* >, CompareGOPointers> draw_queue;
+	Light lights[MAX_LIGHTS];
+
 	bool debug_draw;
 	//TODO DebugDraw
 	bool world_axis = true;
@@ -62,17 +64,16 @@ private:
 	bool config_renderer = true;
 	FrameBuffer* render_to_texture = nullptr;
 
+public:
+	Renderer3D(const char* name, bool start_enabled = true);
+	~Renderer3D();
+
+private:
+	void Anisotrophy();
 	void DrawWorldAxis();
 	void DrawGrid();
 
 public:
-	Light lights[MAX_LIGHTS];
-	mat3x3 NormalMatrix;
-	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
-
-	Renderer3D(const char* name, bool start_enabled = true);
-	~Renderer3D();
-
 	bool Init();
 	UPDATE_STATUS Configuration(float dt);
 	UPDATE_STATUS PreUpdate(float dt);
@@ -84,8 +85,6 @@ public:
 	void OnResize(int width, int height);
 
 	void DrawGameObject(const GameObject* game_object);
-
-	void Anisotrophy();
 };
 
 #endif //_MODULE_RENDERER_3D

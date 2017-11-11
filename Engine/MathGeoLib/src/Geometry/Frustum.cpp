@@ -836,6 +836,11 @@ void Frustum::Transform(const Quat &transform)
 	Transform(transform.ToFloat3x3());
 }
 
+void Frustum::TransformInverted(const Quat &transform)
+{
+	Transform(transform.ToFloat3x3().Inverted());
+}
+
 void Frustum::GetPlanes(Plane *outArray) const
 {
 	assume(outArray);

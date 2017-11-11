@@ -357,18 +357,6 @@ bool SceneManager::HasMaterials() const
 	return GetNumMaterials() > 0;
 }
 
-void SceneManager::CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const
-{
-	AABB bounding_box(vec(0, 0, 0), vec(0, 0, 0));
-	//go->GenerateBoundingBox(bounding_box);
-	center.x = bounding_box.CenterPoint().x;
-	center.y = bounding_box.CenterPoint().y;
-	center.z = bounding_box.CenterPoint().z;
-	x_dist = bounding_box.MaxX() - bounding_box.MinX();
-	y_dist = bounding_box.MaxY() - bounding_box.MinY();
-	z_dist = bounding_box.MaxZ() - bounding_box.MinZ();
-}
-
 const GameObject * SceneManager::GetFocused() const
 {
 	return focused;

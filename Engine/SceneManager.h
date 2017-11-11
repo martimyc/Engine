@@ -110,7 +110,6 @@ public:
 	Material* GetMaterial(const std::string& name) const;
 	void DeleteMaterial(Material* material_to_delete);
 	bool HasMaterials() const;
-	void CalculateDistanceToObj(const GameObject* go, vec3& center, float& x_dist, float& y_dist, float& z_dist) const;
 	const GameObject* GetFocused() const;
 	void ApplyToMaterial(Texture* new_text, int material);
 	unsigned int GetNumMaterials() const;

@@ -553,6 +553,7 @@ public:
 	void Transform(const float3x4 &transform);
 	void Transform(const float4x4 &transform);
 	void Transform(const Quat &transform);
+	void TransformInverted(const Quat &transform);
 
 	/// Returns the tightest AABB that contains this Frustum.
 	/** This function computes the optimal minimum volume AABB that encloses this Frustum.
