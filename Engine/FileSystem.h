@@ -18,7 +18,7 @@ public:
 	bool CreateFolder(const char* name, bool hidden = false, const char* relative_path = nullptr);
 
 	unsigned int LoadFileBinary(const std::string& path, char** buffer);
-	unsigned int LoadFileBinary(const char* path, char** buffer);
+	unsigned int LoadMetaFile(const std::string& file, char** buffer);
 
 	bool SaveFile(const char* buffer, unsigned int size, const char* relative_path, const char* name, const char* format);
 

@@ -826,7 +826,6 @@
     <ClCompile Include="Asset.cpp">
       <Filter>Sources\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="TextureAsset.cpp" />
     <ClCompile Include="Texture.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
@@ -835,6 +834,9 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureAsset.cpp">
+      <Filter>Sources\Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

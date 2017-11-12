@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "Parson\parson.h"
 
 //Assets
 #include "Resource.h"
@@ -67,13 +68,20 @@ UPDATE_STATUS ImportManager::Update(float dt)
 
 		if (ImGui::Button("Import"))
 		{
+			if (!App->file_system->CopyToAssets(import_path))
+				LOG("Could not copy %s to assets", import_path.c_str());
+
 			UID uid(Import(import_path, import_type, import_config));
-			GenerateMeta(import_path, uid, import_type, import_config, load_config);
-			App->resource_manager->AddAsset(import_type, load_config);		
+
+			std::string file(import_path.substr(import_path.find_last_of("\\") + 1)); // +1 to avoid \\
+
+			MetaSave(file, uid, import_type, import_config, load_config);
+
+			App->resource_manager->AddAsset(GetImportFileName(), uid, import_type, import_config, load_config);		
 
 			importing = false;
 			import_type = RT_NO_TYPE;
-			delete import_config;
+			import_config = nullptr;
 			load_config = nullptr;			
 		}
 
@@ -128,15 +136,9 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	}
 }
 
-const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
+const UID& ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
 {
 	std::string name(path); //this will go from full path to file name with extension in copy to assets 
-
-	if (!App->file_system->CopyToAssets(name))
-	{
-		LOG("Could not copy %s to assets", path.c_str());
-		return UID();
-	}
 
 	UID uid;
 
@@ -165,9 +167,64 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 	return uid;
 }
 
-void ImportManager::GenerateMeta(const std::string & path, const UID & resource_id, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config) const
+void ImportManager::MetaSave(const std::string & file, const UID & resource_id, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config) const
 {
+	char* buffer = new char[file.size() + SIZE_OF_UID + sizeof(type) + import_config->GetMetaSize() + load_config->GetMetaSize()];
+	char* iterator = buffer;
 
+	memcpy(iterator, file.c_str(), file.length() + 1);
+	iterator += file.length() + 1;
+
+	memcpy(iterator, resource_id.uid, SIZE_OF_UID);
+	iterator += SIZE_OF_UID;
+
+	memcpy(iterator, &type, sizeof(type));
+	iterator += sizeof(type);
+
+	import_config->MetaSave();
+	load_config->MetaSave();
+}
+
+Asset* ImportManager::MetaLoad(const std::string & file) const
+{
+	char* buffer = nullptr;
+	unsigned int length = App->file_system->LoadMetaFile(file, &buffer);
+
+	if (buffer != nullptr && length != 0)
+	{
+		char* iterator = buffer;
+		std::string name(iterator);
+		iterator += name.length() + 1;
+
+		UID uid(iterator);
+		iterator += SIZE_OF_UID;
+
+		RESOURCE_TYPE type = *((RESOURCE_TYPE*)iterator);
+		iterator += sizeof(type);
+
+		Resource* new_resource = nullptr;
+		ImportConfiguration* import_config = nullptr;
+		LoadConfiguration* load_config = nullptr;
+		Asset* new_asset = nullptr;
+
+		switch (type)
+		{
+		case RT_TEXTURE:
+			new_resource = new Texture(name, uid);
+			import_config = new TextureImportConfiguration;
+			import_config->MetaLoad(iterator);
+			load_config = new TextureLoadConfiguration;
+			load_config->MetaLoad(iterator);
+			new_asset = new Asset(RT_TEXTURE, new_resource, import_config, load_config);
+			return new_asset;
+		case RT_SCENE:
+			//new_resource = new Scene(name, uid);
+			break;
+		}
+	}
+	
+	LOG("Metafile %s could not be loaded correctly", file.c_str());
+	return nullptr;
 }
 
 TextureSource * ImportManager::LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const
@@ -408,4 +465,11 @@ bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, 
 	}
 
 	return ret;
+}
+
+const std::string & ImportManager::GetImportFileName() const
+{
+	size_t start = import_path.find_last_of("\\");
+	size_t count = import_path.find_last_of(".") - start;
+	return import_path.substr(start + 1, count - 1);
 }

@@ -47,7 +47,7 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 	return total_size;
 }
 
-const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
+const UID& MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
 {
 	bool ret = true;
 

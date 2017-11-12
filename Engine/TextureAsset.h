@@ -21,9 +21,13 @@ struct TextureImportConfiguration : public ImportConfiguration
 	int offset_x = 0;
 	int offset_y = 0;
 
+	TextureImportConfiguration();
 	TextureImportConfiguration(const std::string& format);
 
 	void Config();
+	void MetaSave() const;
+	void MetaLoad(char* buffer);
+	virtual unsigned int GetMetaSize() const;
 };
 
 struct TextureLoadConfiguration : public LoadConfiguration
@@ -38,6 +42,9 @@ struct TextureLoadConfiguration : public LoadConfiguration
 	TextureLoadConfiguration(const TextureLoadConfiguration& config);
 
 	void Config();
+	void MetaSave() const;
+	void MetaLoad(char* buffer);
+	virtual unsigned int GetMetaSize() const;
 };
 
 class TextureAsset : public Asset
@@ -45,7 +52,7 @@ class TextureAsset : public Asset
 private:
 
 public:
-	TextureAsset(const LoadConfiguration* config);
+	TextureAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~TextureAsset();
 };
 

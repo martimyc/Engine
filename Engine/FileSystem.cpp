@@ -116,10 +116,13 @@ unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 	return size;
 }
 
-unsigned int FileSystem::LoadFileBinary(const char * path, char ** buffer)
+unsigned int FileSystem::LoadMetaFile(const std::string & file, char ** buffer)
 {
-	std::string str(path);
-	return LoadFileBinary(str, buffer);
+	std::string path(GetAssets());
+	path += "\\";
+	path += file;
+
+	return LoadFileBinary(path, buffer);
 }
 
 bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const char * name, const char * format)
@@ -155,16 +158,16 @@ bool FileSystem::CopyToAssets(std::string& path)
 	std::string name;
 	std::string extension;
 	std::string dir;
+	
+	size_t bar = path.find_last_of("\\");
+	size_t dot = path.find_last_of(".");
 
-	size_t start = path.find_last_of("\\"); 
-
-	if (start != path.length())
+	if (bar != path.length() && dot != path.length())
 	{
-		dir = path.substr(0, start);
-		path = path.substr(start + 1);
-		size_t count = path.find_last_of(".");
-		name = path.substr(0, count);  //-1 to avoid dot and +1 to avoid "\\"
-		extension = path.substr(count + 1); // +1 to avoid dot
+		dir = path.substr(0, bar);
+		size_t count = dot - bar - 1; // -1 to avoid dot
+		name = path.substr(bar + 1, count);  //and +1 to avoid "\\"
+		extension = path.substr(dot + 1); // +1 to avoid dot
 	}
 
 	unsigned int length;

@@ -26,14 +26,16 @@ bool ResourceManager::Init()
 	return true;
 }
 
-void ResourceManager::AddAsset(RESOURCE_TYPE type, const LoadConfiguration* config)
+void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
 {
+	Resource* new_resource = nullptr;
 	Asset* new_asset = nullptr;
 
 	switch (type)
 	{
 	case RT_TEXTURE:
-		new_asset = new TextureAsset(config);
+		new_resource = new Texture(name, uid);
+		new_asset = new TextureAsset(new_resource, import_config, load_config);
 		break;
 	case RT_SCENE:
 		//new_asset = new SceneAsset(load_config);
@@ -72,7 +74,7 @@ Resource * ResourceManager::Use(const UID & id, const GameObject * go) const
 			Resource* resource = (*it)->GetResource();
 
 			if (resource == nullptr)
-				if (App->import_manager->Load(resource, (*it)->GetConfig()) == false)
+				if (App->import_manager->Load(resource, (*it)->GetLoadConfig()) == false)
 					LOG("Could not load source for resource %s correctly", (*it)->GetName().c_str());
 
 			(*it)->AddInstance(go);

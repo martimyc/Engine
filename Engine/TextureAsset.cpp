@@ -3,7 +3,10 @@
 #include "Resource.h"
 #include "TextureAsset.h"
 
-TextureImportConfiguration::TextureImportConfiguration(const std::string & format)
+TextureImportConfiguration::TextureImportConfiguration() : format (TF_NORMAL_FORMATS), jpg_quality(99), interlaced(false), rle(false), offset_x(0), offset_y(0)
+{}
+
+TextureImportConfiguration::TextureImportConfiguration(const std::string & format) : format(TF_NORMAL_FORMATS), jpg_quality(99), interlaced(false), rle(false), offset_x(0), offset_y(0)
 {
 	if (format == "JPG" || format == "jpg")
 	{
@@ -43,6 +46,20 @@ void TextureImportConfiguration::Config()
 	ImGui::InputInt("", &offset_y);
 }
 
+void TextureImportConfiguration::MetaSave() const
+{
+
+}
+
+void TextureImportConfiguration::MetaLoad(char* buffer)
+{
+}
+
+unsigned int TextureImportConfiguration::GetMetaSize() const
+{
+	return 0;
+}
+
 TextureLoadConfiguration::TextureLoadConfiguration(): mip_mapping(true), anysotropy(true), max_anysotropy(true), anysotropy_level(0)
 {
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_possible_anystropy);
@@ -76,7 +93,22 @@ void TextureLoadConfiguration::Config()
 	}
 }
 
-TextureAsset::TextureAsset(const LoadConfiguration* config) : Asset(RT_TEXTURE, config)
+void TextureLoadConfiguration::MetaSave() const
+{
+
+}
+
+void TextureLoadConfiguration::MetaLoad(char* buffer)
+{
+
+}
+
+unsigned int TextureLoadConfiguration::GetMetaSize() const
+{
+	return 0;
+}
+
+TextureAsset::TextureAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config) : Asset(RT_TEXTURE, resource, import_config, load_config)
 {}
 
 TextureAsset::~TextureAsset()

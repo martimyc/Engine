@@ -38,7 +38,7 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-const UID MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration& config)
+const UID& MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration& config)
 {
 	bool ret = true;
 

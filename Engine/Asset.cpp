@@ -4,15 +4,16 @@
 #include "Asset.h"
 #include "TextureAsset.h"
 
-Asset::Asset(RESOURCE_TYPE type, const LoadConfiguration* config) : resource(nullptr), type(type), config(config)
+Asset::Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config) : resource(resource), type(type), import_config(import_config), load_config(load_config)
 {}
 
-Asset::Asset(RESOURCE_TYPE type, Resource * resource): resource(resource), type(type), config(nullptr)
+Asset::Asset(RESOURCE_TYPE type, Resource* resource): resource(resource), type(type), import_config(nullptr), load_config(nullptr)
 {}
 
 Asset::~Asset()
 {
-	delete config;
+	delete import_config;
+	delete load_config;
 	if (resource != nullptr)
 		delete resource;
 }
@@ -22,9 +23,14 @@ RESOURCE_TYPE Asset::GetType() const
 	return type;
 }
 
-const LoadConfiguration * Asset::GetConfig() const
+const ImportConfiguration * Asset::GetImportConfig() const
 {
-	return config;
+	return import_config;
+}
+
+const LoadConfiguration * Asset::GetLoadConfig() const
+{
+	return load_config;
 }
 
 const UID & Asset::GetUID() const
@@ -37,7 +43,7 @@ void Asset::SetResource(Resource * new_resource)
 	resource = new_resource;
 }
 
-Resource * Asset::GetResource() const
+Resource* Asset::GetResource() const
 {
 	return resource;
 }

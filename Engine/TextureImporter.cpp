@@ -31,7 +31,7 @@ TextureImporter::TextureImporter()
 TextureImporter::~TextureImporter()
 {}
 
-const UID TextureImporter::Import(const std::string& file, const TextureImportConfiguration& config)
+const UID& TextureImporter::Import(const std::string& file, const TextureImportConfiguration& config)
 {
 	UID uid;
 

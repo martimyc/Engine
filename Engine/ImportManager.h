@@ -30,6 +30,7 @@ class Mesh;
 
 class Resource;
 enum RESOURCE_TYPE;
+class Asset;
 
 class ImportManager : public Module
 {
@@ -49,8 +50,11 @@ public:
 	~ImportManager();
 
 private:
-	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
-	void GenerateMeta(const std::string& path, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
+	const UID& Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
+
+	//Meta files
+	void MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
+	Asset* MetaLoad(const std::string& file) const;
 
 	TextureSource* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
 	//Material* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const;
@@ -63,6 +67,8 @@ private:
 
 	//Objects
 	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const;
+
+	const std::string& GetImportFileName() const;
 
 public:
 	bool Init();

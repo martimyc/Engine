@@ -11,11 +11,17 @@ class Resource;
 struct ImportConfiguration
 {
 	virtual void Config() = 0;
+	virtual void MetaSave() const = 0;
+	virtual void MetaLoad(char* buffer) = 0;
+	virtual unsigned int GetMetaSize() const = 0;
 };
 
 struct LoadConfiguration
 {
 	virtual void Config() = 0;
+	virtual void MetaSave() const = 0;
+	virtual void MetaLoad(char* buffer) = 0;
+	virtual unsigned int GetMetaSize() const = 0;
 };
 
 enum RESOURCE_TYPE;
@@ -27,22 +33,25 @@ private:
 
 protected:
 	Resource* resource;
-	const LoadConfiguration* config;
+	const ImportConfiguration* import_config;
+	const LoadConfiguration* load_config;
 	std::vector<const GameObject*> instances;
 	
 public:
 
-	Asset(RESOURCE_TYPE type, const  LoadConfiguration* config);
+	Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config);
 	Asset(RESOURCE_TYPE type, Resource* resource);
 
 	~Asset();
 
 	RESOURCE_TYPE GetType() const;
-	const LoadConfiguration* GetConfig() const;
+
+	const ImportConfiguration* GetImportConfig() const;
+	const LoadConfiguration* GetLoadConfig() const;
 
 	const UID& GetUID() const;
 
-	void Asset::SetResource(Resource * new_resource);
+	void Asset::SetResource(Resource* new_resource);
 
 	Resource* GetResource() const;
 
