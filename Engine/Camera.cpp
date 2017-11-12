@@ -35,9 +35,6 @@ void Camera::ResetFrustumPlanes()
 
 bool Camera::FrustumCulling(const GameObject* game_object)
 {
-	uint corners_out = 0;
-	bool aabb_is_out = false;
-	
 	if (!game_object->IsCamera() && game_object != App->scene_manager->GetRoot())
 	{
 		math::vec corner_points[8];
@@ -45,6 +42,7 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 
 		for (int p = 0; p < 6; ++p)
 		{
+			uint corners_out = 0;
 			for (int i = 0; i < 8; ++i)
 			{
 				if (corner_points[i].IsFinite())
@@ -64,8 +62,7 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 
 		}
 		return true;
-	}
-	
+	}	
 }
 
 Camera::Camera(const char* name, bool enabled) : Component(CT_CAMERA, name, enabled), vertical_fov(90), far_plane_dist(15.0f), near_plane_dist(1.0f)

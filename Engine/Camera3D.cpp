@@ -14,7 +14,7 @@
 #include "Camera3D.h"
 
 Camera3D::Camera3D(const char* name, bool start_enabled) : Module(name, start_enabled),
-near_plane_dist_editor_camera(1.0f),
+near_plane_dist_editor_camera(0.5f),
 far_plane_dist_editor_camera(500.0f),
 pos(0.0f, 1.0f, 3.0f),
 vertical_fov_editor_camera(80)
@@ -27,18 +27,11 @@ bool Camera3D::Init()
 {
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 
-	editor_camera_frustum.SetKind(FrustumSpaceGL, FrustumLeftHanded);
+	editor_camera_frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	editor_camera_frustum.SetType(math::FrustumType::PerspectiveFrustum);
 	editor_camera_frustum.SetViewPlaneDistances(near_plane_dist_editor_camera, far_plane_dist_editor_camera);
-	editor_camera_frustum.SetFrame(pos, vec(0, 0, 1), vec(0, 1, 0));
+	editor_camera_frustum.SetFrame(pos, vec(0, 0, -1), vec(0, 1, 0));
 	RecalculateFOV();
-
-	/*glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, App->window->GetWidth(), 0, App->window->GetHeight(), 0.0f, 1.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();*/
 
 	return true;
 }
@@ -70,14 +63,16 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 				ImGui::SliderFloat("Zoom speed", &camera_zoom_speed, 0.5f, 5.0f);
 				ImGui::SliderFloat("Rotation sensivility", &sensibility, 0.1f, 0.5f);
 
-				if (ImGui::SliderFloat("Near Plane Distance", &near_plane_dist_editor_camera, 0.5f, 2.0f))
-					editor_camera_frustum.SetNearPlaneDistance(near_plane_dist_editor_camera);
+				//ImGui::SliderFloat("Near Plane Distance", &near_plane_dist_editor_camera, 0.1f, 0.5f);
+				ImGui::SliderFloat("Far Plane Distance", &far_plane_dist_editor_camera, 250.0f, 1000.0f);
+				ImGui::SliderFloat("Field of View", &vertical_fov_editor_camera, 60.0f, 103.0f);
 
-				if (ImGui::SliderFloat("Far Plane Distance", &far_plane_dist_editor_camera, 250.0f, 1000.0f))
+				if (ImGui::Button("Apply"))
+				{
+					//editor_camera_frustum.SetNearPlaneDistance(near_plane_dist_editor_camera);
 					editor_camera_frustum.SetFarPlaneDistance(far_plane_dist_editor_camera);
-
-				if (ImGui::SliderFloat("Field of View", &vertical_fov_editor_camera, 60.0f, 103.0f))
-					RecalculateFOV();	
+					RecalculateFOV();
+				}
 			}
 		}
 	}
@@ -105,7 +100,8 @@ bool Camera3D::CleanUp()
 UPDATE_STATUS Camera3D::Update(float dt)
 {
 	BROFILER_CATEGORY("Camera Update", Profiler::Color::AliceBlue)
-		
+
+	bool camera_moved = false;
 	float speed = camera_speed * dt;
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		speed = camera_speed * 2 * dt;
@@ -113,31 +109,48 @@ UPDATE_STATUS Camera3D::Update(float dt)
 	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 	{
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)	//Frontwards
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * speed);
-		
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)	//Backwards
+		{
 			editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * speed);
-
+			camera_moved = true;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)	//Backwards
+		{
+			editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * speed); 
+			camera_moved = true;
+		}
 		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)	//Left
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos + math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed);
-
+		{
+			editor_camera_frustum.SetPos(editor_camera_frustum.pos - math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed); 
+			camera_moved = true;
+		}
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)	//Right
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos - math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed);
-
+		{
+			editor_camera_frustum.SetPos(editor_camera_frustum.pos + math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed); 
+			camera_moved = true;
+		}
 		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT)	//Up
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.up * speed);
-
+		{
+			editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.up * speed); 
+			camera_moved = true;
+		}
 		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)	//Bottom
+		{
 			editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.up * speed);
+			camera_moved = true;
+		}
 	}
 	
 	// Mouse whell motion:	-1 equals down, 1 equals up
 	if (App->input->GetMouseZ() == -1)
-		editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * camera_zoom_speed);
-
+	{
+		editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * camera_zoom_speed); 
+		camera_moved = true;
+	}
 	else if (App->input->GetMouseZ() == 1)
-		editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * camera_zoom_speed);
-
+	{
+		editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * camera_zoom_speed);
+		camera_moved = true;
+	}
 
 	// Center game object
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
@@ -146,6 +159,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 		if (focused_game_object != nullptr)
 		{
 			CenterToGameObject(focused_game_object);
+			camera_moved = true;
 		}
 	}
 
@@ -164,6 +178,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 			editor_camera_frustum.TransformInverted(rotation);
 			editor_camera_frustum.pos = temp_pos;
 			editor_camera_frustum.WorldMatrixChanged();
+			camera_moved = true;
 		}
 
 		if(dy != 0)
@@ -174,15 +189,19 @@ UPDATE_STATUS Camera3D::Update(float dt)
 			editor_camera_frustum.TransformInverted(rotation);
 			editor_camera_frustum.pos = temp_pos;
 			editor_camera_frustum.WorldMatrixChanged();
+			camera_moved = true;
 		}
 	}
+
+	if (camera_moved)
+		ResetFrustumPlanes();
 
 	return UPDATE_CONTINUE;
 }
 
 void Camera3D::LookAt(const vec &spot, float distance)
 {
-	editor_camera_frustum.SetPos(spot + (editor_camera_frustum.front * distance));
+	editor_camera_frustum.SetPos(spot - (editor_camera_frustum.front * distance));
 }
 
 void Camera3D::RecalculateFOV()
@@ -245,7 +264,7 @@ void Camera3D::ShowMatrixDebug()
 
 	ImGui::Text("Frustum View Matrix:");
 	float* view_mat = editor_camera_frustum.ViewMatrix().ptr();
-	ImGui::Columns(4, "proj_mat", false);
+	ImGui::Columns(4, "view_mat", false);
 	ImGui::Separator();
 	for (int i = 0; i < 16; i++)
 	{
@@ -257,7 +276,7 @@ void Camera3D::ShowMatrixDebug()
 
 	ImGui::Text("Frustum View Projection Matrix:");
 	float* view_proj_mat = editor_camera_frustum.ViewProjMatrix().ptr();
-	ImGui::Columns(4, "proj_mat", false);
+	ImGui::Columns(4, "view_proj_mat", false);
 	ImGui::Separator();
 	for (int i = 0; i < 16; i++)
 	{
@@ -318,11 +337,44 @@ void Camera3D::CenterToGameObject(const GameObject* game_object)
 	vec center = game_object->GetWorldPosition();
 	float distance = game_object->GetAABB()->Diagonal().Length();
 	if (distance == inf)
-		distance = 0.0f;
+		distance = 2.0f;	//Standard distance if the object has no AABB (i.e. camera)
 	LookAt(center, distance);
 }
 
 void Camera3D::OpenCloseMatricesDebugWindow()
 {
 	show_matrix_debug = !show_matrix_debug;
+}
+
+bool Camera3D::DoFrustumCulling(const GameObject * game_obj)
+{
+	editor_camera_frustum.Draw(1, 0, 0, 1);
+	if (!game_obj->IsCamera() && game_obj != App->scene_manager->GetRoot())
+	{
+		math::vec corner_points[8];
+		game_obj->GetAABB()->GetCornerPoints(corner_points);
+
+		for (int p = 0; p < 6; ++p)
+		{
+			uint corners_out = 0;
+			for (int i = 0; i < 8; ++i)
+			{
+				if (corner_points[i].IsFinite())
+				{
+					if (frustum_planes[p].IsOnPositiveSide(corner_points[i]))
+					{
+						corners_out++;
+					}
+				}
+			}
+			if (corners_out == 8)
+			{
+				//Is out
+				//Dont draw
+				return false;
+			}
+
+		}
+		return true;
+	}
 }

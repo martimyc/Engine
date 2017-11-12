@@ -13,7 +13,7 @@ class Camera3D : public Module
 {
 private :
 	Frustum editor_camera_frustum;
-	float near_plane_dist_editor_camera = 1.0f;
+	float near_plane_dist_editor_camera = 0.5f;
 	float far_plane_dist_editor_camera = 500.0f;
 	math::vec pos;
 	math::Quat rotation;
@@ -59,6 +59,8 @@ public:
 	
 	void CenterToGameObject(const GameObject* game_object);
 	void OpenCloseMatricesDebugWindow();
+
+	bool DoFrustumCulling(const GameObject* game_obj);
 };
 
 #endif //_MODULE_CAMERA
