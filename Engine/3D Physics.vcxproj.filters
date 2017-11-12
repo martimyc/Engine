@@ -830,7 +830,6 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Material.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>

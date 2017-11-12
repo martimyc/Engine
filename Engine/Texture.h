@@ -48,8 +48,7 @@ private:
 	TextureSource* source;
 
 public:
-	//Texture(const TEXTURE_TYPE texture_type = TT_DIFFUSE, const GLenum gl_texure_type = GL_TEXTURE_2D, const GLuint& texture_id = 0);
-	Texture(const std::string& name, const UID& ref_uid, const UID& source_uid);
+	Texture(const std::string& name, const UID& ref_uid);
 	Texture(const std::string& name, TextureSource* source);
 	~Texture();
 

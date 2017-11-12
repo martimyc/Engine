@@ -68,26 +68,11 @@ UPDATE_STATUS ImportManager::Update(float dt)
 		if (ImGui::Button("Import"))
 		{
 			UID uid(Import(import_path, import_type, import_config));
-			Asset* new_asset = nullptr;
-
-			ASSET_TYPE new_asset_type = AT_NO_TYPE;
-			switch (import_type)
-			{
-			case IT_TEXTURE:
-				new_asset = new TextureAsset(load_config);
-				break;
-			case IT_SCENE:
-				//new_asset = new SceneAsset(load_config);
-				break;
-			default:
-				LOG("Non standard import type");
-				break;
-			}
-
-			App->resource_manager->AddAsset(new_asset);
+			GenerateMeta(import_path, uid, import_type, import_config, load_config);
+			App->resource_manager->AddAsset(import_type, load_config);		
 
 			importing = false;
-			import_type = IT_NO_TYPE;
+			import_type = RT_NO_TYPE;
 			delete import_config;
 			load_config = nullptr;			
 		}
@@ -98,7 +83,7 @@ UPDATE_STATUS ImportManager::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ImportManager::SentToImport(const std::string & path, IMPORT_TYPE type)
+void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 {
 	importing = true;
 	import_path = path;
@@ -108,11 +93,11 @@ void ImportManager::SentToImport(const std::string & path, IMPORT_TYPE type)
 
 	switch (type)
 	{
-	case IT_TEXTURE:
+	case RT_TEXTURE:
 		import_config = new TextureImportConfiguration(format);
 		load_config = new TextureLoadConfiguration();
 		break;
-	case IT_SCENE:
+	case RT_SCENE:
 		break;
 	default:
 		break;
@@ -130,7 +115,7 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	switch (to_load->GetType())
 	{
 	case RT_TEXTURE:
-		texture_importer->Load(to_load->GetSourceUID(), (TextureLoadConfiguration*)load_config);
+		texture_importer->Load(to_load->GetUID(), (TextureLoadConfiguration*)load_config);
 		break;
 	case RT_MESH:
 		break;
@@ -143,7 +128,7 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	}
 }
 
-const UID ImportManager::Import(const std::string & path, IMPORT_TYPE type, const ImportConfiguration* import_config) const
+const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
 {
 	std::string name(path); //this will go from full path to file name with extension in copy to assets 
 
@@ -155,21 +140,16 @@ const UID ImportManager::Import(const std::string & path, IMPORT_TYPE type, cons
 
 	UID uid;
 
-	name = name.substr(0, name.find_last_of(".")); //take out extension
-
-	RESOURCE_TYPE ref_type = RT_NO_TYPE;
-
 	switch (type)
 	{
-	case IT_TEXTURE:
-		ref_type = RT_TEXTURE;
+	case RT_TEXTURE:
 		uid = texture_importer->Import(name, *((TextureImportConfiguration*)import_config));
 		if (uid.IsNull())
 		{
-			LOG("Could not import %s corectlly", name.c_str());
+			LOG("Could not import file from %s corectlly", path.c_str());
 			return UID();
 		}
-	case IT_SCENE:
+	case RT_SCENE:
 		/*if (ImportScene(path))
 			return ;
 		else
@@ -182,99 +162,12 @@ const UID ImportManager::Import(const std::string & path, IMPORT_TYPE type, cons
 		return UID();
 	}
 
-	return GenerateReference(name, uid, ref_type);
+	return uid;
 }
 
-Resource * ImportManager::LoadRef(const UID & ref) const
+void ImportManager::GenerateMeta(const std::string & path, const UID & resource_id, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config) const
 {
-	if (App->resource_manager->Exsists(ref) == true)
-	{
-		LOG("Texture already loaded");
-		return nullptr;
-	}
 
-	Resource* new_resource = nullptr;
-	char* buffer = nullptr;
-	char* iterator = nullptr;
-	uint length = 0;
-
-	std::string path(App->file_system->GetRefs());
-	path += "\\";
-	path += ref.uid;
-	path += ".mm";
-	length = App->file_system->LoadFileBinary(path, &buffer);
-
-	if (buffer != nullptr && length > 0)
-	{
-		iterator = buffer;
-		iterator += FORMAT_SIZE;
-
-		int name_size = *iterator;
-		iterator += sizeof(int);
-
-		char* name = new char[name_size];
-		memcpy(name, iterator, name_size);
-		iterator += name_size + 1; // "\0"
-
-		UID resource_uid(iterator);
-		iterator += SIZE_OF_UID;
-
-		ASSET_TYPE type = (ASSET_TYPE)*iterator;
-		iterator += sizeof(int);
-
-		switch (type)
-		{
-		case AT_TEXTURE:
-			new_resource = new Texture(name, ref, resource_uid);
-			break;
-		case AT_MESH:
-			break;
-		case AT_MATERIAL:
-			break;
-		case AT_SCENE:
-			break;
-		default:
-			break;
-		}
-
-	}
-
-	return new_resource;
-}
-
-const UID ImportManager::GenerateReference(const std::string & name, const UID & resource_id, RESOURCE_TYPE type) const
-{
-	char* buffer = new char[name.length()+ sizeof(int) + SIZE_OF_UID + sizeof(int)];
-	char* iterator = buffer;
-
-	char format[FORMAT_SIZE] = FORMAT_REF;
-
-	//First specify format
-	memcpy(iterator, format, FORMAT_SIZE);
-	iterator += FORMAT_SIZE;
-
-	int name_length = name.length();
-	memcpy(iterator, &name_length, sizeof(int));
-	iterator += sizeof(int);
-
-	memcpy(iterator, name.c_str(), name.length());
-	iterator += name.length();
-
-	memcpy(iterator, resource_id.uid, SIZE_OF_UID);
-	iterator += SIZE_OF_UID;
-
-	int asset_type = (int)type;
-	memcpy(iterator, &asset_type, sizeof(int));
-	iterator += sizeof(int);
-
-	unsigned int length = iterator - buffer;
-
-	UID ref_uid(buffer, length);
-
-	if (App->file_system->SaveFile(buffer, length, LIBRARY_REFS_FOLDER, ref_uid.uid, "mm"))
-		return ref_uid;
-	else
-		return UID();
 }
 
 TextureSource * ImportManager::LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const
@@ -312,17 +205,6 @@ Mesh * ImportManager::LoadMesh(const UID & uid, const MeshLoadConfiguration* loa
 	delete new_mesh;
 	return nullptr;
 }*/
-
-bool ImportManager::ImportAndLoad(const std::string & path, IMPORT_TYPE type)
-{
-	//TODO import return uid and load qith given uid
-
-	Import(path, type, import_config);
-	char* file;
-	int length = App->file_system->LoadFileBinary(path.c_str(), &file);
-
-	return false;
-}
 
 bool ImportManager::ImportScene(const std::string & path) const
 {

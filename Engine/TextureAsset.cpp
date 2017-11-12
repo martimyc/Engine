@@ -1,5 +1,6 @@
 #include "imgui\imgui.h"
 #include "Globals.h"
+#include "Resource.h"
 #include "TextureAsset.h"
 
 TextureImportConfiguration::TextureImportConfiguration(const std::string & format)
@@ -75,7 +76,7 @@ void TextureLoadConfiguration::Config()
 	}
 }
 
-TextureAsset::TextureAsset(const LoadConfiguration* config) : Asset(AT_TEXTURE, config)
+TextureAsset::TextureAsset(const LoadConfiguration* config) : Asset(RT_TEXTURE, config)
 {}
 
 TextureAsset::~TextureAsset()

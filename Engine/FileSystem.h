@@ -32,7 +32,6 @@ public:
 	const std::string GetTextures() const;
 	const std::string GetMaterials() const;
 	const std::string GetMeshes() const;
-	const std::string GetRefs() const;
 };
 
 #endif //!MODULE_FILE_SYSTEM

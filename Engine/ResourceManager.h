@@ -16,6 +16,9 @@ class Asset;
 class UID;
 class GameObject;
 
+enum RESOURCE_TYPE;
+struct LoadConfiguration;
+
 class ResourceManager: public Module
 {
 private:
@@ -44,7 +47,7 @@ public:
 
 	bool Init();
 
-	void AddAsset(Asset* new_asset);
+	void AddAsset(RESOURCE_TYPE type, const LoadConfiguration* config);
 	void DeleteAsset(Asset* to_delete);
 	bool Exsists(const UID& id) const;
 	Resource* Use(const UID& id, const GameObject* go) const;

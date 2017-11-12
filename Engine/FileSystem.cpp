@@ -49,13 +49,6 @@ bool FileSystem::Init()
 		if (!CreateFolder("Textures", false, LIBRARY_FOLDER))
 			LOG("Textures folder could not be created");
 
-	std::string refs = working_directory;
-	textures += LIBRARY_REFS_FOLDER;
-
-	if (!Exsists(textures))
-		if (!CreateFolder("Refs", false, LIBRARY_REFS_FOLDER))
-			LOG("Refs folder could not be created");
-
 	return true;
 }
 
@@ -228,9 +221,4 @@ const std::string FileSystem::GetMaterials() const
 const std::string FileSystem::GetMeshes() const
 {
 	return working_directory + LIBRARY_MESHES_FOLDER;
-}
-
-const std::string FileSystem::GetRefs() const
-{
-	return working_directory + LIBRARY_REFS_FOLDER;
 }

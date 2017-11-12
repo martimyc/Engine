@@ -321,7 +321,6 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
-    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />

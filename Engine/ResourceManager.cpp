@@ -26,8 +26,22 @@ bool ResourceManager::Init()
 	return true;
 }
 
-void ResourceManager::AddAsset(Asset * new_asset)
+void ResourceManager::AddAsset(RESOURCE_TYPE type, const LoadConfiguration* config)
 {
+	Asset* new_asset = nullptr;
+
+	switch (type)
+	{
+	case RT_TEXTURE:
+		new_asset = new TextureAsset(config);
+		break;
+	case RT_SCENE:
+		//new_asset = new SceneAsset(load_config);
+		break;
+	default:
+		LOG("Non standard import type");
+		break;
+	}
 	assets.push_back(new_asset);
 
 	/*if (new_asset->GetType() == AT_TEXTURE)
@@ -150,7 +164,7 @@ Texture* ResourceManager::LoadCheckers()
 	source->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
 
 	Texture* new_texture = new Texture("Checkers", source);
-	assets.push_back(new Asset(AT_TEXTURE, new_texture));
+	assets.push_back(new Asset(RT_TEXTURE, new_texture));
 	num_textures++;
 
 	return new_texture;

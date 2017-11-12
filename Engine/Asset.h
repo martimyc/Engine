@@ -18,19 +18,12 @@ struct LoadConfiguration
 	virtual void Config() = 0;
 };
 
-enum ASSET_TYPE
-{
-	AT_NO_TYPE = 0,
-	AT_TEXTURE,
-	AT_MESH,
-	AT_MATERIAL,
-	AT_SCENE
-};
+enum RESOURCE_TYPE;
 
 class Asset
 {
 private:
-	ASSET_TYPE type;
+	RESOURCE_TYPE type;
 
 protected:
 	Resource* resource;
@@ -39,12 +32,12 @@ protected:
 	
 public:
 
-	Asset(ASSET_TYPE type, const  LoadConfiguration* config);
-	Asset(ASSET_TYPE type, Resource* resource);
+	Asset(RESOURCE_TYPE type, const  LoadConfiguration* config);
+	Asset(RESOURCE_TYPE type, Resource* resource);
 
 	~Asset();
 
-	ASSET_TYPE GetType() const;
+	RESOURCE_TYPE GetType() const;
 	const LoadConfiguration* GetConfig() const;
 
 	const UID& GetUID() const;

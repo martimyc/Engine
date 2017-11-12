@@ -34,7 +34,7 @@ void TextureSource::SetTextureID(const GLuint & new_id)
 	texture_id = new_id;
 }
 
-Texture::Texture(const std::string& name, const UID& ref_uid, const UID& source_uid): Resource(RT_TEXTURE, name, ref_uid, source_uid), source(nullptr)
+Texture::Texture(const std::string& name, const UID& ref_uid): Resource(RT_TEXTURE, name, ref_uid), source(nullptr)
 {}
 
 Texture::Texture(const std::string & name, TextureSource * source): Resource(RT_TEXTURE, name), source(source)

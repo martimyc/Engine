@@ -4,10 +4,10 @@
 #include "Asset.h"
 #include "TextureAsset.h"
 
-Asset::Asset(ASSET_TYPE type, const LoadConfiguration* config) : resource(nullptr), type(type), config(config)
+Asset::Asset(RESOURCE_TYPE type, const LoadConfiguration* config) : resource(nullptr), type(type), config(config)
 {}
 
-Asset::Asset(ASSET_TYPE type, Resource * resource): resource(resource), type(type), config(nullptr)
+Asset::Asset(RESOURCE_TYPE type, Resource * resource): resource(resource), type(type), config(nullptr)
 {}
 
 Asset::~Asset()
@@ -17,7 +17,7 @@ Asset::~Asset()
 		delete resource;
 }
 
-ASSET_TYPE Asset::GetType() const
+RESOURCE_TYPE Asset::GetType() const
 {
 	return type;
 }

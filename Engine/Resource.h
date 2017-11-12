@@ -18,17 +18,16 @@ class Resource
 {
 private:
 	RESOURCE_TYPE type;
-	UID uid;
 
 protected:
-	UID source_uid;
+	UID uid;
 	std::string name;
 
 	Resource(RESOURCE_TYPE type, const std::string& name) : type(type), name(name)
 	{}
 
 public:
-	Resource(RESOURCE_TYPE type, const std::string& name, const UID& uid, const UID& source_uid): type(type), name(name), uid(uid), source_uid(source_uid)
+	Resource(RESOURCE_TYPE type, const std::string& name, const UID& uid): type(type), name(name), uid(uid)
 	{}
 
 	virtual bool Inspector() = 0; //False == delete
@@ -38,11 +37,6 @@ public:
 	RESOURCE_TYPE GetType() const
 	{
 		return type;
-	}
-
-	const UID& GetSourceUID() const
-	{
-		return source_uid;
 	}
 
 	const UID& GetUID() const

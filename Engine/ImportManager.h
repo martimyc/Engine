@@ -31,18 +31,11 @@ class Mesh;
 class Resource;
 enum RESOURCE_TYPE;
 
-enum IMPORT_TYPE
-{
-	IT_NO_TYPE = 0,
-	IT_TEXTURE,
-	IT_SCENE
-};
-
 class ImportManager : public Module
 {
 private:
 	std::string import_path;
-	IMPORT_TYPE import_type = IT_NO_TYPE;
+	RESOURCE_TYPE import_type;
 	bool importing = false;
 	ImportConfiguration* import_config;
 	LoadConfiguration* load_config;
@@ -56,9 +49,8 @@ public:
 	~ImportManager();
 
 private:
-	const UID Import(const std::string& path, IMPORT_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
-
-	const UID GenerateReference(const std::string& name, const UID& resource_id, RESOURCE_TYPE type) const;
+	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
+	void GenerateMeta(const std::string& path, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
 
 	TextureSource* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
 	//Material* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const;
@@ -72,20 +64,15 @@ private:
 	//Objects
 	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const;
 
-	bool ImportAndLoad(const std::string& path, IMPORT_TYPE type);
-
 public:
 	bool Init();
 	bool CleanUp();
 
 	UPDATE_STATUS Update(float dt);
 
-	void SentToImport(const std::string& path, IMPORT_TYPE type);
+	void SentToImport(const std::string& path, RESOURCE_TYPE type);
 
 	bool Load(Resource* to_load, const LoadConfiguration* load_config);
-
-	Resource* LoadRef(const UID & ref) const; //creates one asset from a ref
-	
 };
 
 
