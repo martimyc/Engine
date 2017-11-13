@@ -169,12 +169,18 @@ bool TextureLoadConfiguration::Config()
 	{
 		ImGui::Columns(2);
 
-		if(ImGui::Checkbox("Blur Gaussian", &blur_gaussian))
+		if (ImGui::Checkbox("Blur Gaussian", &blur_gaussian))
+		{
+			blur_average = false;
 			changed = true;
+		}
 		ImGui::NextColumn();
 
-		if(ImGui::Checkbox("Blur Average", &blur_average))
+		if (ImGui::Checkbox("Blur Average", &blur_average))
+		{
+			blur_gaussian = false;
 			changed = true;
+		}
 
 		if (blur_gaussian || blur_average)
 		{
@@ -247,6 +253,7 @@ bool TextureLoadConfiguration::Config()
 
 		if(ImGui::Checkbox("Noise", &noise))
 			changed = true;
+		ImGui::NextColumn();
 
 		if (noise)
 		{
@@ -257,17 +264,9 @@ bool TextureLoadConfiguration::Config()
 			ImGui::Columns(2);
 		}
 
-		if (pixelize)
-		{
-			while (ImGui::GetColumnIndex() != 0)
-				ImGui::NextColumn();
-		}
-		else
-			ImGui::NextColumn();
-
 		if(ImGui::Checkbox("Pixelize", &pixelize))
 			changed = true;
-		ImGui::NextColumn();
+		ImGui::NextColumn();			
 
 		if (pixelize)
 		{

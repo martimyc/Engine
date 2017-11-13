@@ -60,21 +60,31 @@ bool ImportManager::CleanUp()
 
 UPDATE_STATUS ImportManager::Update(float dt)
 {
+	if (importing == false && import_type != RT_NO_TYPE)
+	{
+		importing = false;
+		import_type = RT_NO_TYPE;
+		import_config = nullptr;
+		load_config = nullptr;
+	}
+
 	if (importing)
 	{
 		bool image_changed = false;
 		ImVec2 settings_pos;
 		ImVec2 settings_size;
 
-		if (ImGui::Begin("Import Settings", &importing))
+		if (ImGui::Begin("Import & Load", &importing))
 		{
-			if (ImGui::TreeNodeEx("Import", ImGuiTreeNodeFlags_Framed))
+			if (ImGui::TreeNodeEx("Import Settings", ImGuiTreeNodeFlags_Framed))
 			{
 				if(import_config->Config())
 					image_changed = true;
 				ImGui::TreePop();
+				
 			}
-			if (ImGui::TreeNodeEx("Load", ImGuiTreeNodeFlags_Framed))
+
+			if (ImGui::TreeNodeEx("Load Settings", ImGuiTreeNodeFlags_Framed))
 			{
 				if(load_config->Config())
 					image_changed = true;
@@ -120,6 +130,12 @@ UPDATE_STATUS ImportManager::Update(float dt)
 			importing_img_height = importing_img_height / 2;
 		}
 
+		while (importing_img_width * 2 < settings_size.x || importing_img_height * 2 < settings_size.y)
+		{
+			importing_img_width = importing_img_width * 2;
+			importing_img_height = importing_img_height * 2;
+		}
+
 		ImVec2 image_size(importing_img_width, importing_img_height);
 		ImVec2 window_size (image_size.x, image_size.y + ImGui::GetTextLineHeight());
 		ImGui::SetNextWindowSize(window_size);
@@ -129,15 +145,6 @@ UPDATE_STATUS ImportManager::Update(float dt)
 		ImGui::Image((void*)importing_img_id, image_size, ImVec2(0,1), ImVec2(1,0));
 
 		ImGui::End();
-
-	}
-
-	if (importing == false && import_type != RT_NO_TYPE)
-	{
-		importing = false;
-		import_type = RT_NO_TYPE;
-		import_config = nullptr;
-		load_config = nullptr;
 	}
 
 	return UPDATE_CONTINUE;
