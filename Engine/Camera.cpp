@@ -35,9 +35,6 @@ void Camera::ResetFrustumPlanes()
 
 bool Camera::FrustumCulling(const GameObject* game_object)
 {
-	uint corners_out = 0;
-	bool aabb_is_out = false;
-	
 	if (!game_object->IsCamera() && game_object != App->scene_manager->GetRoot())
 	{
 		math::vec corner_points[8];
@@ -45,6 +42,7 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 
 		for (int p = 0; p < 6; ++p)
 		{
+			uint corners_out = 0;
 			for (int i = 0; i < 8; ++i)
 			{
 				if (corner_points[i].IsFinite())
@@ -64,8 +62,7 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 
 		}
 		return true;
-	}
-	
+	}	
 }
 
 Camera::Camera(const char* name, bool enabled) : Component(CT_CAMERA, name, enabled), vertical_fov(90), far_plane_dist(15.0f), near_plane_dist(1.0f)
@@ -106,7 +103,18 @@ void Camera::Inspector()
 	{
 		ImGui::Checkbox("Frustum Culling", &frustum_culling);
 		if (ImGui::SliderInt("Field of View", &vertical_fov, 80, 103))
-			RecalculateFOV();		
+			RecalculateFOV();	
+
+		if (ImGui::SliderFloat("Near Plane Distance", &near_plane_dist, 0.1f, 2.0f))
+		{
+			frustum.SetNearPlaneDistance(near_plane_dist);
+			frustum.ProjectionMatrixChanged();
+		}
+		if (ImGui::SliderFloat("Far Plane Distance", &far_plane_dist, 0.0f, 1000.0f))
+		{
+			frustum.SetFarPlaneDistance(far_plane_dist);
+			frustum.ProjectionMatrixChanged();
+		}
 
 		ImGui::TreePop();
 	}

@@ -179,14 +179,19 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//first geometry, then debug and then UI
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->GetViewMatrix());
 
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
 
 	//Camera
-	glPushMatrix();
-	glLoadMatrixf(App->camera->GetViewMatrix());
 	App->scene_manager->DrawCamera();
+
+	if (show_grid)
+		DrawGrid();
+	if (world_axis)
+		DrawWorldAxis(); 
 	glPopMatrix();
 
 	//meshes
@@ -201,14 +206,18 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		{
 			glPushMatrix();
 			glLoadMatrixf(App->camera->GetViewMatrix());
-			glMultMatrixf(draw_queue.top()->GetWorldGLTransform());
 
-			draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
-			draw_queue.top()->GetMeshFilter()->DrawKDT();
+			if (App->camera->DoFrustumCulling(draw_queue.top()))
+			{
+				draw_queue.top()->DrawBoundingBoxes();	//First bounding boxes, which don't need the transform to be applied
+				glMultMatrixf(draw_queue.top()->GetWorldGLTransform());
+
+				draw_queue.top()->GetMeshFilter()->Draw(material_in_use);
+				draw_queue.top()->GetMeshFilter()->DrawKDT();
+			}
+			draw_queue.pop();
 
 			glPopMatrix();
-			draw_queue.top()->DrawBoundingBoxes();
-			draw_queue.pop();
 
 			if (draw_queue.size() == 0)
 				break;
@@ -217,16 +226,16 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		if (material_in_use != nullptr)
 			material_in_use->DisableDraw();
 	}
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->GetViewMatrix());
 
 	//DebugTextures
 	//App->resource_manager->DebugTextures();
 
 	App->scene_manager->DrawKDT();
 
-	if (show_grid)
-		DrawGrid();
-	if (world_axis)
-		DrawWorldAxis();
+	glPopMatrix();
+
 	//------
 
 	render_to_texture->UnBindFrameBuffer();
@@ -272,15 +281,14 @@ void Renderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-	glLoadMatrixf(&ProjectionMatrix);
+	glLoadMatrixf(App->camera->GetProjMatrix());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+	glLoadMatrixf(App->camera->GetViewProjMatrix());
 }
 
 void Renderer3D::DrawGameObject(const GameObject* game_object)
