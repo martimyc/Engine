@@ -348,7 +348,6 @@ void Camera3D::OpenCloseMatricesDebugWindow()
 
 bool Camera3D::DoFrustumCulling(const GameObject * game_obj)
 {
-	editor_camera_frustum.Draw(1, 0, 0, 1);
 	if (!game_obj->IsCamera() && game_obj != App->scene_manager->GetRoot())
 	{
 		math::vec corner_points[8];

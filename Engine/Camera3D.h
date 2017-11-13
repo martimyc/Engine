@@ -26,7 +26,7 @@ private :
 	float camera_zoom_speed = 1.75f;
 	float sensibility = 0.25f;
 
-	bool show_matrix_debug = true;
+	bool show_matrix_debug = false;
 
 public:
 	Camera3D(const char* name, bool start_enabled = true);

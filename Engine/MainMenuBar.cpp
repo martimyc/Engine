@@ -42,7 +42,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 		{
 			if (ImGui::BeginMenu("Debug"))
 			{
-				if (ImGui::MenuItem("Camera Matrices"))
+				if (ImGui::MenuItem("Show Editor Camera Info"))
 					App->camera->OpenCloseMatricesDebugWindow();
 
 				ImGui::EndMenu();
