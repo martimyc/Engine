@@ -70,7 +70,7 @@ bool TextureImportConfiguration::Config()
 		if (ImGui::Checkbox("Create stamp", &tga_stamp))
 			changed = true;
 	if (format == TF_JPG)
-		if(ImGui::SliderInt("Quality", &jpg_quality, 0, 99, "%i"))
+		if(ImGui::SliderInt("Quality", &jpg_quality, 0, 99))
 			changed = true;
 	if (format == TF_PNG)
 		if(ImGui::Checkbox("Interlaced", &interlaced))
@@ -141,9 +141,7 @@ bool TextureLoadConfiguration::Config()
 	if(ImGui::InputInt("Offset X:", &offset_x, 1, 100, ImGuiInputTextFlags_LabelTop))
 		changed = true;
 
-	ImGui::Text("Offset Y:");
-	ImGui::SameLine();
-	if(ImGui::InputInt("", &offset_y))
+	if(ImGui::InputInt("Offset Y:", &offset_y, 1, 100, ImGuiInputTextFlags_LabelTop))
 		changed = true;
 
 	if(ImGui::Checkbox("Mip-Mapping", &mip_mapping))
@@ -160,9 +158,9 @@ bool TextureLoadConfiguration::Config()
 
 		if (!max_anysotropy)
 		{
-			ImGui::Text("Anystropy level");
+			ImGui::Text("Anystropy Level");
 			ImGui::SameLine();
-			if(ImGui::SliderFloat("", &anysotropy_level, 0.0f, max_possible_anystropy))
+			if(ImGui::SliderFloat("Anystropy Level", &anysotropy_level, 0.0f, max_possible_anystropy, false))
 				changed = true;
 		}
 	}
@@ -182,7 +180,7 @@ bool TextureLoadConfiguration::Config()
 		{
 			ImGui::Columns(1);
 			ImGui::Text("Blur Iterations:");
-			if(ImGui::SliderInt("", &blur_iterations, 0, 10))
+			if(ImGui::SliderInt("Blur Iterations", &blur_iterations, 0, 10, false))
 				changed = true;
 			ImGui::Columns(2);
 		}
@@ -203,7 +201,7 @@ bool TextureLoadConfiguration::Config()
 		{
 			ImGui::Columns(1);
 			ImGui::Text("Amount of Contrast:");
-			if(ImGui::SliderFloat("", &amount_of_contrast, 0.0f, 1.7f))
+			if(ImGui::SliderFloat("Amount of Contrast", &amount_of_contrast, 0.0f, 1.7f, false))
 				changed = true;
 			ImGui::Columns(2);
 		}
@@ -231,7 +229,7 @@ bool TextureLoadConfiguration::Config()
 		{
 			ImGui::Columns(1);
 			ImGui::Text("Gamma Correction Factor:");
-			if(ImGui::SliderFloat("", &gamma_correction_factor, 0.0f, 3.0f))
+			if(ImGui::SliderFloat("Gamma Correction Factor", &gamma_correction_factor, 0.0f, 3.0f, false))
 				changed = true;
 			ImGui::Columns(2);
 		}
@@ -254,7 +252,7 @@ bool TextureLoadConfiguration::Config()
 		{
 			ImGui::Columns(1);
 			ImGui::Text("Noise Tolerance:");
-			if(ImGui::SliderFloat("", &noise_tolerance, 0.0f, 1.0f))
+			if(ImGui::SliderFloat("Noise Tolerance", &noise_tolerance, 0.0f, 1.0f, false))
 				changed = true;
 			ImGui::Columns(2);
 		}
@@ -275,7 +273,7 @@ bool TextureLoadConfiguration::Config()
 		{
 			ImGui::Columns(1);
 			ImGui::Text("Pixels Acorss:");
-			if(ImGui::SliderInt("", &pixels_across, 1, 30))
+			if(ImGui::SliderInt("Pixels Acorss", &pixels_across, 1, 30, false))
 				changed = true;
 			ImGui::Columns(2);
 		}
@@ -296,10 +294,10 @@ bool TextureLoadConfiguration::Config()
 		{
 			ImGui::Columns(1);
 			ImGui::Text("Sharpen Factor:");
-			if(ImGui::SliderFloat("", &sharpening_factor, 0.0f, 2.5f))
+			if(ImGui::SliderFloat("Sharpen Factor", &sharpening_factor, 0.0f, 2.5f, false))
 				changed = true;
 			ImGui::Text("Sharpen Iterations:");
-			if(ImGui::SliderInt("", &sharpen_iterations, 1, 10))
+			if(ImGui::SliderInt("Sharpen Iterations", &sharpen_iterations, 1, 10, false))
 				changed = true;
 			ImGui::Columns(2);
 		}
@@ -314,15 +312,15 @@ bool TextureLoadConfiguration::Config()
 	if (scaling)
 	{
 		ImGui::Text("Width:");
-		if(ImGui::InputInt("", &scale_width))
+		if(ImGui::InputInt("Width", &scale_width, false))
 			changed = true;
 
 		ImGui::Text("Height:");
-		if(ImGui::InputInt("", &scale_height))
+		if(ImGui::InputInt("Height", &scale_height, false))
 			changed = true;
 
 		ImGui::Text("Depth:");
-		if(ImGui::InputInt("", &scale_depth))
+		if(ImGui::InputInt("Depth", &scale_depth, false))
 			changed = true;
 
 		const char* items[] = { "Nearest", "Linear", "Bilinear", "Scale Box", "Scale Triangle", "Scale Bell", "Scale B Spline", "Scale Lanczos", "Scale Mitchell"};

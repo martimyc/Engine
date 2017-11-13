@@ -359,8 +359,8 @@ void ImGui::ShowTestWindow(bool* p_open)
                 ImGui::SameLine(); ShowHelpMarker("CTRL+click to input value.");
 
                 static float f1=0.123f, f2=0.0f;
-                ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
-                ImGui::SliderFloat("slider log float", &f2, -10.0f, 10.0f, "%.4f", 3.0f);
+                ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, true, "ratio = %.3f");
+                ImGui::SliderFloat("slider log float", &f2, -10.0f, 10.0f, true, "%.4f", 3.0f);
                 static float angle = 0.0f;
                 ImGui::SliderAngle("slider angle", &angle);
             }
@@ -496,7 +496,7 @@ void ImGui::ShowTestWindow(bool* p_open)
                 ImGui::Spacing();
 
                 static float wrap_width = 200.0f;
-                ImGui::SliderFloat("Wrap width", &wrap_width, -20, 600, "%.0f");
+                ImGui::SliderFloat("Wrap width", &wrap_width, -20, 600, true, "%.0f");
 
                 ImGui::Text("Test paragraph 1:");
                 ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -1817,22 +1817,22 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
 
     if (ImGui::TreeNode("Settings"))
     {
-        ImGui::SliderFloat2("WindowPadding", (float*)&style.WindowPadding, 0.0f, 20.0f, "%.0f");
-        ImGui::SliderFloat("WindowRounding", &style.WindowRounding, 0.0f, 16.0f, "%.0f");
-        ImGui::SliderFloat("ChildWindowRounding", &style.ChildWindowRounding, 0.0f, 16.0f, "%.0f");
-        ImGui::SliderFloat2("FramePadding", (float*)&style.FramePadding, 0.0f, 20.0f, "%.0f");
-        ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 16.0f, "%.0f");
-        ImGui::SliderFloat2("ItemSpacing", (float*)&style.ItemSpacing, 0.0f, 20.0f, "%.0f");
-        ImGui::SliderFloat2("ItemInnerSpacing", (float*)&style.ItemInnerSpacing, 0.0f, 20.0f, "%.0f");
-        ImGui::SliderFloat2("TouchExtraPadding", (float*)&style.TouchExtraPadding, 0.0f, 10.0f, "%.0f");
-        ImGui::SliderFloat("IndentSpacing", &style.IndentSpacing, 0.0f, 30.0f, "%.0f");
-        ImGui::SliderFloat("ScrollbarSize", &style.ScrollbarSize, 1.0f, 20.0f, "%.0f");
-        ImGui::SliderFloat("ScrollbarRounding", &style.ScrollbarRounding, 0.0f, 16.0f, "%.0f");
-        ImGui::SliderFloat("GrabMinSize", &style.GrabMinSize, 1.0f, 20.0f, "%.0f");
-        ImGui::SliderFloat("GrabRounding", &style.GrabRounding, 0.0f, 16.0f, "%.0f");
+        ImGui::SliderFloat2("WindowPadding", (float*)&style.WindowPadding, 0.0f, 20.0f, true, "%.0f");
+        ImGui::SliderFloat("WindowRounding", &style.WindowRounding, 0.0f, 16.0f, true, "%.0f");
+        ImGui::SliderFloat("ChildWindowRounding", &style.ChildWindowRounding, 0.0f, 16.0f, true, "%.0f");
+        ImGui::SliderFloat2("FramePadding", (float*)&style.FramePadding, 0.0f, 20.0f, true, "%.0f");
+        ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 16.0f, true, "%.0f");
+        ImGui::SliderFloat2("ItemSpacing", (float*)&style.ItemSpacing, 0.0f, 20.0f, true, "%.0f");
+        ImGui::SliderFloat2("ItemInnerSpacing", (float*)&style.ItemInnerSpacing, 0.0f, 20.0f, true, "%.0f");
+        ImGui::SliderFloat2("TouchExtraPadding", (float*)&style.TouchExtraPadding, 0.0f, 10.0f, true, "%.0f");
+        ImGui::SliderFloat("IndentSpacing", &style.IndentSpacing, 0.0f, 30.0f, true, "%.0f");
+        ImGui::SliderFloat("ScrollbarSize", &style.ScrollbarSize, 1.0f, 20.0f, true, "%.0f");
+        ImGui::SliderFloat("ScrollbarRounding", &style.ScrollbarRounding, 0.0f, 16.0f, true, "%.0f");
+        ImGui::SliderFloat("GrabMinSize", &style.GrabMinSize, 1.0f, 20.0f, true, "%.0f");
+        ImGui::SliderFloat("GrabRounding", &style.GrabRounding, 0.0f, 16.0f, true, "%.0f");
         ImGui::Text("Alignment");
-        ImGui::SliderFloat2("WindowTitleAlign", (float*)&style.WindowTitleAlign, 0.0f, 1.0f, "%.2f");
-        ImGui::SliderFloat2("ButtonTextAlign", (float*)&style.ButtonTextAlign, 0.0f, 1.0f, "%.2f"); ImGui::SameLine(); ShowHelpMarker("Alignment applies when a button is larger than its text content.");
+        ImGui::SliderFloat2("WindowTitleAlign", (float*)&style.WindowTitleAlign, 0.0f, 1.0f, true, "%.2f");
+        ImGui::SliderFloat2("ButtonTextAlign", (float*)&style.ButtonTextAlign, 0.0f, 1.0f, true, "%.2f"); ImGui::SameLine(); ShowHelpMarker("Alignment applies when a button is larger than its text content.");
         ImGui::TreePop();
     }
 

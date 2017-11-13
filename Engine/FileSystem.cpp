@@ -178,6 +178,8 @@ bool FileSystem::CopyToAssets(std::string& path)
 	if (length != 0 && buffer != nullptr)
 		ret = SaveFile(buffer, length, ASSETS_FOLDER, name.c_str(), extension.c_str());
 
+	delete[] buffer;
+
 	return ret;
 }
 

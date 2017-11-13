@@ -101,6 +101,7 @@ const UID& TextureImporter::Import(const std::string& file, const TextureImportC
 		}
 	}
 	
+	delete[] buffer;
 	return uid;
 }
 
@@ -393,8 +394,9 @@ bool TextureImporter::GenerateImage(const std::string & path, const TextureImpor
 
 		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
 
-
+		delete[] buffer;
 		return true;
 	}
+	delete[] buffer;
 	return false;
 }
