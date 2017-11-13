@@ -168,8 +168,8 @@ UPDATE_STATUS Camera3D::Update(float dt)
 
 	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
 	{
-		int dx = -App->input->GetMouseXMotion();
-		int dy = -App->input->GetMouseYMotion();
+		int dx = App->input->GetMouseXMotion();
+		int dy = App->input->GetMouseYMotion();
 
 		if(dx != 0)
 		{
