@@ -137,7 +137,7 @@ UPDATE_STATUS ImportManager::Update(float dt)
 		}
 
 		ImVec2 image_size(importing_img_width, importing_img_height);
-		ImVec2 window_size (image_size.x, image_size.y + ImGui::GetTextLineHeight());
+		ImVec2 window_size (image_size.x, image_size.y + 30); //lil extra for the cam
 		ImGui::SetNextWindowSize(window_size);
 
 		ImGui::Begin("Image");
