@@ -8383,6 +8383,26 @@ bool ImGui::InputScalarEx(const char* label, ImGuiDataType data_type, void* data
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
     BeginGroup();
+
+	if (extra_flags & ImGuiInputTextFlags_LabelTop)
+	{
+		if (label_size.x > 0)
+		{
+			RenderText(ImVec2(window->DC.CursorPos.x, window->DC.CursorPos.y + style.FramePadding.y), label);
+			ItemSize(label_size, style.FramePadding.y);
+		}
+	}
+
+	if (extra_flags & ImGuiInputTextFlags_LabelFront)
+	{
+		if (label_size.x > 0)
+		{
+			RenderText(ImVec2(window->DC.CursorPos.x, window->DC.CursorPos.y + style.FramePadding.y), label);
+			ItemSize(label_size, style.FramePadding.y);
+			SameLine(0, style.ItemInnerSpacing.x);
+		}
+	}
+
     PushID(label);
     const ImVec2 button_sz = ImVec2(g.FontSize, g.FontSize) + style.FramePadding*2.0f;
     if (step_ptr)
@@ -8417,12 +8437,16 @@ bool ImGui::InputScalarEx(const char* label, ImGuiDataType data_type, void* data
     }
     PopID();
 
-    if (label_size.x > 0)
-    {
-        SameLine(0, style.ItemInnerSpacing.x);
-        RenderText(ImVec2(window->DC.CursorPos.x, window->DC.CursorPos.y + style.FramePadding.y), label);
-        ItemSize(label_size, style.FramePadding.y);
-    }
+	if (!(extra_flags & ImGuiInputTextFlags_LabelFront) && !(extra_flags & ImGuiInputTextFlags_LabelTop))
+	{
+		if (label_size.x > 0)
+		{
+			SameLine(0, style.ItemInnerSpacing.x);
+			RenderText(ImVec2(window->DC.CursorPos.x, window->DC.CursorPos.y + style.FramePadding.y), label);
+			ItemSize(label_size, style.FramePadding.y);
+		}
+	}
+
     EndGroup();
 
     return value_changed;

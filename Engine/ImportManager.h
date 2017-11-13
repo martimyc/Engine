@@ -40,7 +40,10 @@ private:
 	bool importing = false;
 	ImportConfiguration* import_config;
 	LoadConfiguration* load_config;
-	
+	GLuint importing_img_id;
+	unsigned int importing_img_height;
+	unsigned int importing_img_width;
+
 	MeshImporter* mesh_importer = nullptr;
 	MaterialImporter* material_importer = nullptr;
 	TextureImporter* texture_importer = nullptr;
@@ -68,7 +71,8 @@ private:
 	//Objects
 	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const;
 
-	const std::string& GetImportFileName() const;
+	const std::string GetImportFileNameNoExtension() const;
+	const std::string GetImportFileNameWithExtension() const;
 
 public:
 	bool Init();

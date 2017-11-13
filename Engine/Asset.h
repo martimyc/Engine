@@ -10,7 +10,7 @@ class Resource;
 
 struct ImportConfiguration
 {
-	virtual void Config() = 0;
+	virtual bool Config() = 0;
 	virtual void MetaSave() const = 0;
 	virtual void MetaLoad(char* buffer) = 0;
 	virtual unsigned int GetMetaSize() const = 0;
@@ -18,7 +18,7 @@ struct ImportConfiguration
 
 struct LoadConfiguration
 {
-	virtual void Config() = 0;
+	virtual bool Config() = 0;
 	virtual void MetaSave() const = 0;
 	virtual void MetaLoad(char* buffer) = 0;
 	virtual unsigned int GetMetaSize() const = 0;

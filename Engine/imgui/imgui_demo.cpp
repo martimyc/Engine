@@ -672,7 +672,6 @@ void ImGui::ShowTestWindow(bool* p_open)
             ImGui::TreePop();
         }
 
-
         if (ImGui::TreeNode("Plots widgets"))
         {
             static bool animate = true;

@@ -62,30 +62,82 @@ UPDATE_STATUS ImportManager::Update(float dt)
 {
 	if (importing)
 	{
-		ImGui::Begin("Import Settings");
-		import_config->Config();
-		load_config->Config();
+		bool image_changed = false;
+		ImVec2 settings_pos;
+		ImVec2 settings_size;
 
-		if (ImGui::Button("Import"))
+		if (ImGui::Begin("Import Settings", &importing))
 		{
-			if (!App->file_system->CopyToAssets(import_path))
-				LOG("Could not copy %s to assets", import_path.c_str());
+			if (ImGui::TreeNodeEx("Import", ImGuiTreeNodeFlags_Framed))
+			{
+				if(import_config->Config())
+					image_changed = true;
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNodeEx("Load", ImGuiTreeNodeFlags_Framed))
+			{
+				if(load_config->Config())
+					image_changed = true;
+				ImGui::TreePop();
+			}
 
-			UID uid(Import(import_path, import_type, import_config));
+			if (ImGui::Button("Import"))
+			{
+				if (!App->file_system->CopyToAssets(import_path))
+					LOG("Could not copy %s to assets", import_path.c_str());
 
-			std::string file(import_path.substr(import_path.find_last_of("\\") + 1)); // +1 to avoid \\
+				std::string file_name_ext(GetImportFileNameWithExtension());
+				std::string file_name_no_ext(GetImportFileNameNoExtension());
 
-			MetaSave(file, uid, import_type, import_config, load_config);
+				UID uid(Import(file_name_ext, import_type, import_config));
 
-			App->resource_manager->AddAsset(GetImportFileName(), uid, import_type, import_config, load_config);		
+				MetaSave(file_name_ext, uid, import_type, import_config, load_config);
 
-			importing = false;
-			import_type = RT_NO_TYPE;
-			import_config = nullptr;
-			load_config = nullptr;			
+				App->resource_manager->AddAsset(file_name_no_ext, uid, import_type, import_config, load_config);
+
+				importing = false;
+				import_type = RT_NO_TYPE;
+				import_config = nullptr;
+				load_config = nullptr;
+			}
+
+			settings_pos = ImGui::GetWindowPos();
+			settings_size = ImGui::GetWindowSize();
+		}
+		ImGui::End();
+
+		if (image_changed)
+		{
+			glDeleteTextures(1, &importing_img_id);
+			texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
 		}
 
+		ImGui::SetNextWindowPos(ImVec2(settings_pos.x + settings_size.x, settings_pos.y));
+
+		while (importing_img_width > settings_size.x || importing_img_height > settings_size.y)
+		{
+			importing_img_width = importing_img_width / 2;
+			importing_img_height = importing_img_height / 2;
+		}
+
+		ImVec2 image_size(importing_img_width, importing_img_height);
+		ImVec2 window_size (image_size.x, image_size.y + ImGui::GetTextLineHeight());
+		ImGui::SetNextWindowSize(window_size);
+
+		ImGui::Begin("Image");
+
+		ImGui::Image((void*)importing_img_id, image_size, ImVec2(0,1), ImVec2(1,0));
+
 		ImGui::End();
+
+	}
+
+	if (importing == false && import_type != RT_NO_TYPE)
+	{
+		importing = false;
+		import_type = RT_NO_TYPE;
+		import_config = nullptr;
+		load_config = nullptr;
 	}
 
 	return UPDATE_CONTINUE;
@@ -97,7 +149,7 @@ void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 	import_path = path;
 	import_type = type;
 
-	std::string format(path.substr(path.find_last_of(".")));
+	std::string format(path.substr(path.find_last_of(".") + 1));
 
 	switch (type)
 	{
@@ -110,6 +162,8 @@ void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 	default:
 		break;
 	}
+
+	texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
 }
 
 bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_config)
@@ -136,19 +190,17 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	}
 }
 
-const UID& ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
+const UID& ImportManager::Import(const std::string & file, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
 {
-	std::string name(path); //this will go from full path to file name with extension in copy to assets 
-
 	UID uid;
 
 	switch (type)
 	{
 	case RT_TEXTURE:
-		uid = texture_importer->Import(name, *((TextureImportConfiguration*)import_config));
+		uid = texture_importer->Import(file, (TextureImportConfiguration*)import_config);
 		if (uid.IsNull())
 		{
-			LOG("Could not import file from %s corectlly", path.c_str());
+			LOG("Could not import file from %s corectlly", file.c_str());
 			return UID();
 		}
 	case RT_SCENE:
@@ -467,9 +519,15 @@ bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, 
 	return ret;
 }
 
-const std::string & ImportManager::GetImportFileName() const
+const std::string ImportManager::GetImportFileNameNoExtension() const
 {
 	size_t start = import_path.find_last_of("\\");
 	size_t count = import_path.find_last_of(".") - start;
 	return import_path.substr(start + 1, count - 1);
+}
+
+const std::string ImportManager::GetImportFileNameWithExtension() const
+{
+	size_t start = import_path.find_last_of("\\");
+	return import_path.substr(start + 1);
 }

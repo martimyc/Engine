@@ -17,6 +17,7 @@ class UID;
 class GameObject;
 
 enum RESOURCE_TYPE;
+struct ImportConfiguration;
 struct LoadConfiguration;
 
 class ResourceManager: public Module
