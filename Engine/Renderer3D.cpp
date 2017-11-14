@@ -239,8 +239,13 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	//------
 
 	render_to_texture->UnBindFrameBuffer();
+
+
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 	App->BeginDockWindow("Scene", nullptr, flags);
+
+	render_to_texture->SetWidth(ImGui::GetWindowWidth());
+	render_to_texture->SetHeight(ImGui::GetWindowHeight());		
 
 	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth(), render_to_texture->GetHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
@@ -272,6 +277,8 @@ void Renderer3D::OpenCloseConfigRendererWindow()
 void Renderer3D::OnResize(int width, int height)
 {
 	glViewport(0, 0, width, height);
+
+	App->SetDockContextSize(width, height);
 
 	if (render_to_texture)
 	{

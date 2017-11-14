@@ -63,6 +63,7 @@ private:
 
 	bool config_renderer = true;
 	FrameBuffer* render_to_texture = nullptr;
+	bool mouse_on_scene_window = true;
 
 public:
 	Renderer3D(const char* name, bool start_enabled = true);

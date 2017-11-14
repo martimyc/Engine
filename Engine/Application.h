@@ -74,6 +74,7 @@ public:
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
 	void OpenCloseConfigAppWindow();
+	void SetDockContextSize(const int width, const int height);
 	bool BeginDockWindow(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0);
 	void EndDockWindow();
 

@@ -82,7 +82,7 @@ namespace ImGui
 		bool BeginDock(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0, const ImVec2& default_size = ImVec2(-1, -1));
 		void EndDock();
 
-		void SetWorkspacePosSize(ImVec2 _pos, ImVec2 _size);
+		void SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_);
 
 		void LoadDocks();
 		void SaveDocks();

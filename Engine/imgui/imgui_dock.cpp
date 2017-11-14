@@ -68,13 +68,13 @@ namespace ImGui
 		g_dock.end();
 	}
 
-	void DockContext::SetWorkspacePosSize(ImVec2 _pos, ImVec2 _size)
+	void DockContext::SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_)
 	{
-		if (g_dock.workspace_pos != _pos || g_dock.workspace_size != _size)
+		if (g_dock.workspace_pos != pos_ || g_dock.workspace_size != size_)
 		{
-			//g_dock.ShutdownDock();	//TODO: We must Save/Load
-			g_dock.workspace_pos = _pos;
-			g_dock.workspace_size = _size;
+			g_dock.ShutdownDock();
+			g_dock.workspace_pos = pos_;
+			g_dock.workspace_size = size_;
 		}
 	}
 
@@ -346,6 +346,7 @@ namespace ImGui
 			if (m_docks[i]->id == id) return *m_docks[i];
 		}
 
+		//TODO: LoadDock Their respective positioning if it exist, if not create new with the following:
 		Dock* new_dock = (Dock*)MemAlloc(sizeof(Dock));
 		IM_PLACEMENT_NEW(new_dock) Dock();
 		m_docks.push_back(new_dock);
