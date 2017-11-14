@@ -47,7 +47,7 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 	return total_size;
 }
 
-const UID& MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
+const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
 {
 	bool ret = true;
 
@@ -187,7 +187,7 @@ const UID& MeshImporter::Import(const aiMesh * mesh, const std::string & scene_p
 	return id;
 }
 
-MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration& config)
+MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* config)
 {
 	//TODO
 	return nullptr;

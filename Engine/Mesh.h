@@ -80,9 +80,8 @@ namespace Geo
 	};
 }
 
-class Mesh : public Resource
+struct MeshSource
 {
-private:
 	//really only ids necesary if not animated
 	GLuint vertex_id = 0;
 	GLuint num_vertices = 0;
@@ -107,8 +106,71 @@ private:
 	GLfloat** colors = nullptr;
 
 	//-------
-	
+
 	KDTreeVertex* vertex_kdt = nullptr;
+
+	MeshSource();
+	~MeshSource();
+
+	void Draw(const AppliedMaterial* draw_material = nullptr) const;
+
+	void Inspector();
+
+	//Getters
+	//Vertices
+	const GLuint GetVerticesID() const;
+	const GLuint GetNumVertices() const;
+	const GLfloat* GetVertices() const;
+	//Indices
+	const GLuint GetIndicesID() const;
+	const GLuint GetNumIndices() const;
+	const GLuint* GetIndices() const;
+	//UVs
+	const GLuint GetUVsNumChannels() const;
+	const GLuint* GetUVsNumComponents() const;
+	const GLuint* GetUVsIDs() const;
+	const GLfloat*const* GetUVs() const;
+	//Normals
+	const GLuint GetNormalsID() const;
+	const GLfloat* GetNormals() const;
+	//Colors
+	const GLuint GetColorsNumChannels()const;
+	const GLuint* GetColorsIDs()const;
+	const GLfloat*const* GetColors()const;
+
+	//Setters
+	void SetVertices(const GLuint& id, const GLuint& num, GLfloat* all_vertices);
+	void SetIndices(const GLuint& id, const GLuint& num, GLuint* all_indices);
+	void SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs);
+	void SetNormals(const GLuint& id, GLfloat* all_normals);
+	void SetColors(const GLuint& num_channels, GLuint* ids, GLfloat** all_colors);
+
+	//KDT
+	void DrawKDT() const;
+	void RecalculateKDT();
+
+	//Max & Min
+	float GetMinX() const;
+	float GetMinY() const;
+	float GetMinZ() const;
+
+	float GetMaxX() const;
+	float GetMaxY() const;
+	float GetMaxZ() const;
+
+	Geo::Vertex GetMinXVertex() const;
+	Geo::Vertex GetMinYVertex() const;
+	Geo::Vertex GetMinZVertex() const;
+
+	Geo::Vertex GetMaxXVertex() const;
+	Geo::Vertex GetMaxYVertex() const;
+	Geo::Vertex GetMaxZVertex() const;
+};
+
+class Mesh : public Resource
+{
+private:
+	MeshSource* source;
 
 public:
 	Mesh(const std::string name);

@@ -3,9 +3,11 @@
 
 //Assets
 #include "Resource.h"
-#include "TextureAsset.h"
 #include "Texture.h"
+#include "TextureAsset.h"
+#include "Mesh.h"
 #include "MeshAsset.h"
+#include "Material.h"
 #include "MaterialAsset.h"
 
 //Components
@@ -62,7 +64,6 @@ UPDATE_STATUS ImportManager::Update(float dt)
 {
 	if (importing == false && import_type != RT_NO_TYPE)
 	{
-		importing = false;
 		import_type = RT_NO_TYPE;
 		import_config = nullptr;
 		load_config = nullptr;
@@ -116,35 +117,47 @@ UPDATE_STATUS ImportManager::Update(float dt)
 		}
 		ImGui::End();
 
-		if (image_changed)
+		if (importing)
 		{
-			glDeleteTextures(1, &importing_img_id);
-			texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
+			if (image_changed)
+			{
+				glDeleteTextures(1, &importing_img_id);
+				switch (import_type)
+				{
+				case RT_TEXTURE:
+					texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
+					break;
+				case RT_SCENE:
+					break;
+				default:
+					break;
+				}
+			}
+
+			ImGui::SetNextWindowPos(ImVec2(settings_pos.x + settings_size.x, settings_pos.y));
+
+			while (importing_img_width > settings_size.x || importing_img_height > settings_size.y)
+			{
+				importing_img_width = importing_img_width / 2;
+				importing_img_height = importing_img_height / 2;
+			}
+
+			while (importing_img_width * 2 < settings_size.x || importing_img_height * 2 < settings_size.y)
+			{
+				importing_img_width = importing_img_width * 2;
+				importing_img_height = importing_img_height * 2;
+			}
+
+			ImVec2 image_size(importing_img_width, importing_img_height);
+			ImVec2 window_size(image_size.x, image_size.y + 30); //lil extra for the cam
+			ImGui::SetNextWindowSize(window_size);
+
+			ImGui::Begin("Image");
+
+			ImGui::Image((void*)importing_img_id, image_size, ImVec2(0, 1), ImVec2(1, 0));
+
+			ImGui::End();
 		}
-
-		ImGui::SetNextWindowPos(ImVec2(settings_pos.x + settings_size.x, settings_pos.y));
-
-		while (importing_img_width > settings_size.x || importing_img_height > settings_size.y)
-		{
-			importing_img_width = importing_img_width / 2;
-			importing_img_height = importing_img_height / 2;
-		}
-
-		while (importing_img_width * 2 < settings_size.x || importing_img_height * 2 < settings_size.y)
-		{
-			importing_img_width = importing_img_width * 2;
-			importing_img_height = importing_img_height * 2;
-		}
-
-		ImVec2 image_size(importing_img_width, importing_img_height);
-		ImVec2 window_size (image_size.x, image_size.y + 30); //lil extra for the cam
-		ImGui::SetNextWindowSize(window_size);
-
-		ImGui::Begin("Image");
-
-		ImGui::Image((void*)importing_img_id, image_size, ImVec2(0,1), ImVec2(1,0));
-
-		ImGui::End();
 	}
 
 	return UPDATE_CONTINUE;
@@ -187,8 +200,10 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 		texture_importer->Load(to_load->GetUID(), (TextureLoadConfiguration*)load_config);
 		break;
 	case RT_MESH:
+		mesh_importer->Load(to_load->GetUID(), (MeshLoadConfiguration*)load_config);
 		break;
 	case RT_MATERIAL:
+		material_importer->Load(to_load->GetUID(), App->resource_manager->GetNumMaterials(), (MaterialLoadConfiguration*) load_config);
 		break;
 	case RT_SCENE:
 		break;
@@ -197,7 +212,7 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	}
 }
 
-const UID& ImportManager::Import(const std::string & file, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
+const UID ImportManager::Import(const std::string & file, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
 {
 	UID uid;
 
@@ -210,6 +225,7 @@ const UID& ImportManager::Import(const std::string & file, RESOURCE_TYPE type, c
 			LOG("Could not import file from %s corectlly", file.c_str());
 			return UID();
 		}
+		break;
 	case RT_SCENE:
 		/*if (ImportScene(path))
 			return ;
@@ -218,6 +234,7 @@ const UID& ImportManager::Import(const std::string & file, RESOURCE_TYPE type, c
 			LOG("Could not import %s corectlly", name.c_str());
 			return UID();
 		}*/
+		break;
 	default:
 		LOG("Unknown import type");
 		return UID();
@@ -240,8 +257,9 @@ void ImportManager::MetaSave(const std::string & file, const UID & resource_id, 
 	memcpy(iterator, &type, sizeof(type));
 	iterator += sizeof(type);
 
-	import_config->MetaSave();
-	load_config->MetaSave();
+	import_config->MetaSave(iterator);
+
+	load_config->MetaSave(iterator);
 }
 
 Asset* ImportManager::MetaLoad(const std::string & file) const
@@ -297,11 +315,11 @@ TextureSource * ImportManager::LoadTexture(const UID & uid, const TextureLoadCon
 	return nullptr;
 }
 
-/*
-Material * ImportManager::LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const
+
+MaterialSource * ImportManager::LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config, unsigned int priority) const
 {
 	//should check if loaded previouslly by uid
-	Material* new_material = material_importer->Load(uid, *load_config);
+	MaterialSource* new_material = material_importer->Load(uid, priority, load_config);
 	if (new_material != nullptr)
 		return new_material;
 
@@ -310,17 +328,17 @@ Material * ImportManager::LoadMaterial(const UID & uid, const MaterialLoadConfig
 	return nullptr;
 }
 
-Mesh * ImportManager::LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const
+MeshSource * ImportManager::LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const
 {
 	//should check if loaded previouslly by uid
-	Mesh* new_mesh = mesh_importer->Load(uid, *load_config);
+	MeshSource* new_mesh = mesh_importer->Load(uid, load_config);
 	if (new_mesh != nullptr)
 		return new_mesh;
 
 	LOG("Could not load mesh corectlly");
 	delete new_mesh;
 	return nullptr;
-}*/
+}
 
 bool ImportManager::ImportScene(const std::string & path) const
 {
@@ -537,4 +555,9 @@ const std::string ImportManager::GetImportFileNameWithExtension() const
 {
 	size_t start = import_path.find_last_of("\\");
 	return import_path.substr(start + 1);
+}
+
+const UID ImportManager::ImportClient::Import(const ImportManager * importer, const std::string & path, RESOURCE_TYPE type, const ImportConfiguration * import_config)
+{
+	return importer->Import(path, type, import_config);
 }

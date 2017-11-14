@@ -13,10 +13,10 @@
 #include "AppliedMaterial.h"
 #include "Mesh.h"
 
-Mesh::Mesh(const std::string name):Resource(RT_MESH, name), vertex_id(0), num_vertices(0), vertices (nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+MeshSource::MeshSource(): vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
 
-Mesh::~Mesh()
+MeshSource::~MeshSource()
 {
 	if (vertex_id != 0)
 		glDeleteBuffers(1, &vertex_id);
@@ -49,7 +49,7 @@ Mesh::~Mesh()
 
 	if (color_ids != nullptr)
 		delete[] color_ids;
-	
+
 	for (int i = 0; i < num_color_channels; i++)
 	{
 		if (color_ids[i] != 0)
@@ -63,7 +63,8 @@ Mesh::~Mesh()
 		delete[] colors;
 }
 
-void Mesh::Draw(const AppliedMaterial* draw_material) const
+
+void MeshSource::Draw(const AppliedMaterial* draw_material) const
 {
 	//Enable state & Bind vertices
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -81,13 +82,13 @@ void Mesh::Draw(const AppliedMaterial* draw_material) const
 		glBindBuffer(GL_ARRAY_BUFFER, indices_id);
 		glColorPointer(4, GL_FLOAT, 0, NULL);
 	}
-	
+
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, normals_id);
 	glNormalPointer(GL_FLOAT, 0, NULL);
 
 	//bind uvs channel 1 for now
-	if(has_uvs && draw_material != nullptr)
+	if (has_uvs && draw_material != nullptr)
 		for (int i = 0; i < draw_material->GetNumTextures(); i++)
 		{
 			//UVs
@@ -109,7 +110,7 @@ void Mesh::Draw(const AppliedMaterial* draw_material) const
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
-	 //After draw bind buffer 0
+	//After draw bind buffer 0
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//Indicies buffer unbind
@@ -122,106 +123,96 @@ void Mesh::Draw(const AppliedMaterial* draw_material) const
 		glDisableClientState(GL_COLOR_ARRAY);
 }
 
-bool Mesh::Inspector()
+void MeshSource::Inspector()
 {
-	bool ret = true;
-
 	ImGui::Text("Vertices: %i", num_vertices);
 	ImGui::Text("Indices: %i", num_indices);
 	ImGui::Text("UV channels: %i", num_uv_channels);
 
 	int size = sizeof(*vertex_kdt);
 
-	if(has_vertex_colors)
+	if (has_vertex_colors)
 		ImGui::Text("Has %i Vertex Color channels", num_color_channels);
 	else
 		ImGui::Text("Does not have Vertex Colors");
-
-	if (ImGui::Button("Delete"))
-	{
-		LOG("Deleting mesh");
-		ret = false;
-	}
-
-	return ret;
 }
 
-const GLuint Mesh::GetVerticesID() const
+const GLuint MeshSource::GetVerticesID() const
 {
 	return vertex_id;
 }
 
-const GLuint Mesh::GetNumVertices() const
+const GLuint MeshSource::GetNumVertices() const
 {
 	return num_vertices;
 }
 
-const GLfloat* Mesh::GetVertices() const
+const GLfloat* MeshSource::GetVertices() const
 {
 	return vertices;
 }
 
-const GLuint Mesh::GetIndicesID() const
+const GLuint MeshSource::GetIndicesID() const
 {
 	return indices_id;
 }
 
-const GLuint Mesh::GetNumIndices() const
+const GLuint MeshSource::GetNumIndices() const
 {
 	return num_indices;
 }
 
-const GLuint * Mesh::GetIndices() const
+const GLuint * MeshSource::GetIndices() const
 {
 	return indices;
 }
 
-const GLuint Mesh::GetUVsNumChannels() const
+const GLuint MeshSource::GetUVsNumChannels() const
 {
 	return num_uv_channels;
 }
 
-const GLuint * Mesh::GetUVsNumComponents() const
+const GLuint * MeshSource::GetUVsNumComponents() const
 {
 	return num_uv_components;
 }
 
-const GLuint * Mesh::GetUVsIDs() const
+const GLuint * MeshSource::GetUVsIDs() const
 {
 	return uv_ids;
 }
 
-const GLfloat * const* Mesh::GetUVs() const
+const GLfloat * const* MeshSource::GetUVs() const
 {
 	return uvs;
 }
 
-const GLuint Mesh::GetNormalsID() const
+const GLuint MeshSource::GetNormalsID() const
 {
 	return normals_id;
 }
 
-const GLfloat * Mesh::GetNormals() const
+const GLfloat * MeshSource::GetNormals() const
 {
 	return normals;
 }
 
-const GLuint Mesh::GetColorsNumChannels() const
+const GLuint MeshSource::GetColorsNumChannels() const
 {
 	return num_color_channels;
 }
 
-const GLuint * Mesh::GetColorsIDs() const
+const GLuint * MeshSource::GetColorsIDs() const
 {
 	return color_ids;
 }
 
-const GLfloat * const * Mesh::GetColors() const
+const GLfloat * const * MeshSource::GetColors() const
 {
 	return colors;
 }
 
-void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
+void MeshSource::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
 {
 	vertex_id = id;
 	num_vertices = num;
@@ -232,7 +223,7 @@ void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vert
 	vertices = all_vertices;
 }
 
-void Mesh::SetIndices(const GLuint & id, const GLuint & num, GLuint * all_indices)
+void MeshSource::SetIndices(const GLuint & id, const GLuint & num, GLuint * all_indices)
 {
 	indices_id = id;
 	num_indices = num;
@@ -243,7 +234,7 @@ void Mesh::SetIndices(const GLuint & id, const GLuint & num, GLuint * all_indice
 	indices = all_indices;
 }
 
-void Mesh::SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs)
+void MeshSource::SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* ids, GLfloat** all_uvs)
 {
 	if (num_uv_components != nullptr)
 		delete[] num_uv_components;
@@ -270,7 +261,7 @@ void Mesh::SetUVs(const GLuint& num_channels, GLuint* num_components, GLuint* id
 		LOG("UVs where not set correctly");
 }
 
-void Mesh::SetNormals(const GLuint & id, GLfloat * all_normals)
+void MeshSource::SetNormals(const GLuint & id, GLfloat * all_normals)
 {
 	normals_id = id;
 
@@ -279,7 +270,7 @@ void Mesh::SetNormals(const GLuint & id, GLfloat * all_normals)
 	normals = all_normals;
 }
 
-void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_colors)
+void MeshSource::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_colors)
 {
 	if (color_ids != nullptr)
 		delete[] color_ids;
@@ -296,19 +287,19 @@ void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_c
 	//must be last to delete well if necesary
 	num_color_channels = num_channels;
 
-	if ( num_channels > 0 && ids != nullptr && all_colors != nullptr)
+	if (num_channels > 0 && ids != nullptr && all_colors != nullptr)
 		has_vertex_colors = true;
 	else
 		LOG("Colors where not set correctly");
 }
 
-void Mesh::DrawKDT() const
+void MeshSource::DrawKDT() const
 {
 	if (vertex_kdt != nullptr)
 		vertex_kdt->Draw();
 }
 
-void Mesh::RecalculateKDT()
+void MeshSource::RecalculateKDT()
 {
 	if (vertex_kdt != nullptr)
 		delete vertex_kdt;
@@ -317,7 +308,7 @@ void Mesh::RecalculateKDT()
 	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
 }
 
-float Mesh::GetMinX() const
+float MeshSource::GetMinX() const
 {
 	float min = 0.0f;
 
@@ -328,7 +319,7 @@ float Mesh::GetMinX() const
 	return min;
 }
 
-float Mesh::GetMinY() const
+float MeshSource::GetMinY() const
 {
 	float min = 0.0f;
 
@@ -339,7 +330,7 @@ float Mesh::GetMinY() const
 	return min;
 }
 
-float Mesh::GetMinZ() const
+float MeshSource::GetMinZ() const
 {
 	float min = 0.0f;
 
@@ -350,7 +341,7 @@ float Mesh::GetMinZ() const
 	return min;
 }
 
-float Mesh::GetMaxX() const
+float MeshSource::GetMaxX() const
 {
 	float max = 0.0f;
 
@@ -361,7 +352,7 @@ float Mesh::GetMaxX() const
 	return max;
 }
 
-float Mesh::GetMaxY() const
+float MeshSource::GetMaxY() const
 {
 	float max = 0.0f;
 
@@ -372,7 +363,7 @@ float Mesh::GetMaxY() const
 	return max;
 }
 
-float Mesh::GetMaxZ() const
+float MeshSource::GetMaxZ() const
 {
 	float max = 0.0f;
 
@@ -383,7 +374,7 @@ float Mesh::GetMaxZ() const
 	return max;
 }
 
-Geo::Vertex Mesh::GetMinXVertex() const
+Geo::Vertex MeshSource::GetMinXVertex() const
 {
 	int min = 0.0f;
 
@@ -394,7 +385,7 @@ Geo::Vertex Mesh::GetMinXVertex() const
 	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Geo::Vertex Mesh::GetMinYVertex() const
+Geo::Vertex MeshSource::GetMinYVertex() const
 {
 	int min = 0.0f;
 
@@ -405,7 +396,7 @@ Geo::Vertex Mesh::GetMinYVertex() const
 	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Geo::Vertex Mesh::GetMinZVertex() const
+Geo::Vertex MeshSource::GetMinZVertex() const
 {
 	int min = 0.0f;
 
@@ -416,7 +407,7 @@ Geo::Vertex Mesh::GetMinZVertex() const
 	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Geo::Vertex Mesh::GetMaxXVertex() const
+Geo::Vertex MeshSource::GetMaxXVertex() const
 {
 	int max = 0.0f;
 
@@ -427,7 +418,7 @@ Geo::Vertex Mesh::GetMaxXVertex() const
 	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-Geo::Vertex Mesh::GetMaxYVertex() const
+Geo::Vertex MeshSource::GetMaxYVertex() const
 {
 	int max = 0.0f;
 
@@ -438,7 +429,7 @@ Geo::Vertex Mesh::GetMaxYVertex() const
 	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-Geo::Vertex Mesh::GetMaxZVertex() const
+Geo::Vertex MeshSource::GetMaxZVertex() const
 {
 	int max = 0.0f;
 
@@ -447,4 +438,312 @@ Geo::Vertex Mesh::GetMaxZVertex() const
 			max = i;
 
 	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+}
+
+//Mesh
+Mesh::Mesh(const std::string name):Resource(RT_MESH, name), source(nullptr)
+{}
+
+Mesh::~Mesh()
+{
+	if (source != nullptr)
+		delete source;
+}
+
+void Mesh::Draw(const AppliedMaterial * draw_material) const
+{
+	if (source != nullptr)
+		source->Draw(draw_material);
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+bool Mesh::Inspector()
+{
+	bool ret = true;
+
+	if (source != nullptr)
+		source->Inspector();
+	else
+		LOG("Trying to acces non loaded mesh");
+
+	if (ImGui::Button("Delete"))
+	{
+		LOG("Deleting mesh");
+		ret = false;
+	}
+
+	return ret;
+}
+
+const GLuint Mesh::GetVerticesID() const
+{
+	if (source != nullptr)
+		return source->GetVerticesID();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLuint Mesh::GetNumVertices() const
+{
+	if (source != nullptr)
+		return source->GetNumVertices();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLfloat * Mesh::GetVertices() const
+{
+	if (source != nullptr)
+		return source->GetVertices();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLuint Mesh::GetIndicesID() const
+{
+	if (source != nullptr)
+		return source->GetIndicesID();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLuint Mesh::GetNumIndices() const
+{
+	if (source != nullptr)
+		return source->GetNumIndices();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLuint * Mesh::GetIndices() const
+{
+	if (source != nullptr)
+		return source->GetIndices();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLuint Mesh::GetUVsNumChannels() const
+{
+	if (source != nullptr)
+		return source->GetUVsNumChannels();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLuint * Mesh::GetUVsNumComponents() const
+{
+	if (source != nullptr)
+		return source->GetUVsNumComponents();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLuint * Mesh::GetUVsIDs() const
+{
+	if (source != nullptr)
+		return source->GetUVsIDs();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLfloat * const * Mesh::GetUVs() const
+{
+	if (source != nullptr)
+		return source->GetUVs();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLuint Mesh::GetNormalsID() const
+{
+	if (source != nullptr)
+		return source->GetNormalsID();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLfloat * Mesh::GetNormals() const
+{
+	if (source != nullptr)
+		return source->GetNormals();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLuint Mesh::GetColorsNumChannels() const
+{
+	if (source != nullptr)
+		return source->GetColorsNumChannels();
+	LOG("Trying to acces non loaded mesh");
+	return 0;
+}
+
+const GLuint * Mesh::GetColorsIDs() const
+{
+	if (source != nullptr)
+		return source->GetColorsIDs();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+const GLfloat * const * Mesh::GetColors() const
+{
+	if (source != nullptr)
+		return source->GetColors();
+	LOG("Trying to acces non loaded mesh");
+	return nullptr;
+}
+
+void Mesh::SetVertices(const GLuint & id, const GLuint & num, GLfloat * all_vertices)
+{
+	if (source != nullptr)
+		source->SetVertices(id, num, all_vertices);
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+void Mesh::SetIndices(const GLuint & id, const GLuint & num, GLuint * all_indices)
+{
+	if (source != nullptr)
+		source->SetIndices(id, num, all_indices);
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+void Mesh::SetUVs(const GLuint & num_channels, GLuint * num_components, GLuint * ids, GLfloat ** all_uvs)
+{
+	if (source != nullptr)
+		source->SetUVs(num_channels, num_components, ids, all_uvs);
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+void Mesh::SetNormals(const GLuint & id, GLfloat * all_normals)
+{
+	if (source != nullptr)
+		source->SetNormals(id, all_normals);
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+void Mesh::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat ** all_colors)
+{
+	if (source != nullptr)
+		source->SetColors(num_channels, ids, all_colors);
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+void Mesh::DrawKDT() const
+{
+	if (source != nullptr)
+		source->DrawKDT();
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+void Mesh::RecalculateKDT()
+{
+	if (source != nullptr)
+		source->RecalculateKDT();
+	else
+		LOG("Trying to acces non loaded mesh");
+}
+
+float Mesh::GetMinX() const
+{
+	if (source != nullptr)
+		source->GetMinX();
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetMinY() const
+{
+	if (source != nullptr)
+		source->GetMinY();
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetMinZ() const
+{
+	if (source != nullptr)
+		source->GetMinZ();
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetMaxX() const
+{
+	if (source != nullptr)
+		source->GetMaxX();
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetMaxY() const
+{
+	if (source != nullptr)
+		source->GetMaxY();
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetMaxZ() const
+{
+	if (source != nullptr)
+		source->GetMaxZ();
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+Geo::Vertex Mesh::GetMinXVertex() const
+{
+	if (source != nullptr)
+		return source->GetMinXVertex();
+	LOG("Trying to acces non loaded mesh");
+	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+}
+
+Geo::Vertex Mesh::GetMinYVertex() const
+{
+	if (source != nullptr)
+		return source->GetMinYVertex();
+	LOG("Trying to acces non loaded mesh");
+	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+}
+
+Geo::Vertex Mesh::GetMinZVertex() const
+{
+	if (source != nullptr)
+		return source->GetMinZVertex();
+	LOG("Trying to acces non loaded mesh");
+	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+}
+
+Geo::Vertex Mesh::GetMaxXVertex() const
+{
+	if (source != nullptr)
+		return source->GetMaxXVertex();
+	LOG("Trying to acces non loaded mesh");
+	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+}
+
+Geo::Vertex Mesh::GetMaxYVertex() const
+{
+	if (source != nullptr)
+		return source->GetMaxYVertex();
+	LOG("Trying to acces non loaded mesh");
+	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+}
+
+Geo::Vertex Mesh::GetMaxZVertex() const
+{
+	if (source != nullptr)
+		return source->GetMaxZVertex();
+	LOG("Trying to acces non loaded mesh");
+	return Geo::Vertex(0.0f, 0.0f, 0.0f);
 }

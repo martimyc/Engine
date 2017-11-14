@@ -37,12 +37,25 @@ private:
 	const Texture* debug_texture;
 	bool debug_textures = false;
 
+	friend class Client;
+
 public:
 	ResourceManager(const char * name, bool start_enabled = true);
 	~ResourceManager();
 
+	class Client
+	{
+		static Texture* GetTexture(ResourceManager* resource_manager, const UID& uid)
+		{
+			return resource_manager->GetTexture(uid);
+		}
+		friend class MaterialImporter;
+	};
+
 private:
 	void ApplyToMaterial(Texture * new_text, unsigned int num_material);
+
+	Texture* GetTexture(const UID& uid);
 
 public:
 	bool Init();
@@ -54,6 +67,9 @@ public:
 
 	//Textures
 	Texture* LoadCheckers();
+
+	//Materials
+	unsigned int GetNumMaterials();
 
 	void DebugTextures() const;
 };

@@ -48,7 +48,7 @@ private:
 	TextureSource* source;
 
 public:
-	Texture(const std::string& name, const UID& ref_uid);
+	Texture(const std::string& name, const UID& uid);
 	Texture(const std::string& name, TextureSource* source);
 	~Texture();
 

@@ -18,7 +18,6 @@ void TextureSource::SetDimensions(const unsigned int & width, const unsigned int
 	this->height = height;
 }
 
-//Texture
 void TextureSource::SetTextureType(const TEXTURE_TYPE & new_texture_type)
 {
 	texture_type = new_texture_type;
@@ -34,7 +33,7 @@ void TextureSource::SetTextureID(const GLuint & new_id)
 	texture_id = new_id;
 }
 
-Texture::Texture(const std::string& name, const UID& ref_uid): Resource(RT_TEXTURE, name, ref_uid), source(nullptr)
+Texture::Texture(const std::string& name, const UID& uid): Resource(RT_TEXTURE, name, uid), source(nullptr)
 {}
 
 Texture::Texture(const std::string & name, TextureSource * source): Resource(RT_TEXTURE, name), source(source)
@@ -42,7 +41,8 @@ Texture::Texture(const std::string & name, TextureSource * source): Resource(RT_
 
 Texture::~Texture()
 {
-	delete source;
+	if(source != nullptr)
+		delete source;
 }
 
 const unsigned int & Texture::GetHeight() const

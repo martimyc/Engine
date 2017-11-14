@@ -1,44 +1,47 @@
 #include "imgui\imgui.h"
 #include "Globals.h"
 #include "Material.h"
+#include "GameObject.h"
+#include "ResourceManager.h"
+#include "Application.h"
 #include "Texture.h"
 
-Material::Material(const std::string name, unsigned int priority) : Resource(RT_MATERIAL, name), priority(priority)
+MaterialSource::MaterialSource()
 {}
 
-Material::~Material() //Deleting a material does not delete its textures
+MaterialSource::~MaterialSource()
 {
 	textures.clear();
 }
 
-void Material::ChangePriority(unsigned int new_priority)
+void MaterialSource::ChangePriority(unsigned int new_priority)
 {
 	priority = new_priority;
 }
 
-const int Material::GetNumTextures() const
+const int MaterialSource::GetNumTextures() const
 {
 	return textures.size();
 }
 
-unsigned int Material::GetPriority() const
+unsigned int MaterialSource::GetPriority() const
 {
 	return priority;
 }
 
-void Material::AddTexture(Texture* new_text, const GLuint& uv_channel)
+void MaterialSource::AddTexture(Texture* new_text, const GLuint& uv_channel)
 {
 	textures.push_back(new_text);
 	num_difusse_textures++;
 }
 
-void Material::Empty()
+void MaterialSource::Empty()
 {
 	textures.clear();
 	num_difusse_textures = 0;
 }
 
-void Material::EnableDraw() const
+void MaterialSource::EnableDraw() const
 {
 	GLint max_texture_units = 0;
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_units);
@@ -59,7 +62,7 @@ void Material::EnableDraw() const
 	}
 }
 
-void Material::DisableDraw() const
+void MaterialSource::DisableDraw() const
 {
 	for (int i = 0; i < textures.size(); i++)
 	{
@@ -70,11 +73,8 @@ void Material::DisableDraw() const
 	}
 }
 
-bool Material::Inspector()
+void MaterialSource::Inspector()
 {
-	bool ret = true;
-
-	ImGui::Text("Name: %s", name.c_str());
 	ImGui::Text("Difuse textures: %i", num_difusse_textures);
 
 	std::vector<int> textures_to_remove;
@@ -105,6 +105,90 @@ bool Material::Inspector()
 		textures.erase(textures.begin() + (*it));
 		num_difusse_textures--;
 	}
+}
+
+void MaterialSource::Use(const GameObject* go)
+{
+	for (std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+		App->resource_manager->Use((*it)->GetUID(), go);
+}
+
+//Material
+Material::Material(const std::string name, const UID& uid) : Resource(RT_MATERIAL, name, uid), source(nullptr)
+{}
+
+Material::Material(const std::string name, MaterialSource * source) : Resource(RT_MATERIAL, name), source(source)
+{}
+
+Material::~Material() //Deleting a material does not delete its textures
+{
+	if (source != nullptr)
+		delete source;
+}
+
+void Material::ChangePriority(unsigned int new_priority)
+{
+	if (source != nullptr)
+		source->ChangePriority(new_priority);
+	else
+		LOG("Trying to acces non loaded material");
+}
+
+const int Material::GetNumTextures() const
+{
+	if (source != nullptr)
+		return source->GetNumTextures();
+	LOG("Trying to acces non loaded material");
+	return 0;
+}
+
+unsigned int Material::GetPriority() const
+{
+	if (source != nullptr)
+		return source->GetPriority();
+	LOG("Trying to acces non loaded material");
+	return 0;
+}
+
+void Material::AddTexture(Texture * new_text, const GLuint & uv_channel)
+{
+	if (source != nullptr)
+		source->AddTexture(new_text, uv_channel);
+	else
+		LOG("Trying to acces non loaded material");
+}
+
+void Material::Empty()
+{
+	if (source != nullptr)
+		source->Empty();
+	else
+		LOG("Trying to acces non loaded material");
+}
+
+void Material::EnableDraw() const
+{
+	if (source != nullptr)
+		source->EnableDraw();
+	else
+		LOG("Trying to acces non loaded material");
+}
+
+void Material::DisableDraw() const
+{
+	if (source != nullptr)
+		source->DisableDraw();
+	else
+		LOG("Trying to acces non loaded material");
+}
+
+bool Material::Inspector()
+{
+	bool ret = true;
+
+	ImGui::Text("Name: %s", name.c_str());
+
+	source->Inspector();
 
 	if (ImGui::Button("Delete"))
 	{
@@ -115,3 +199,10 @@ bool Material::Inspector()
 	return ret;
 }
 
+void Material::Use(const GameObject* go)
+{
+	if (source != nullptr)
+		source->Use(go);
+	else
+		LOG("Trying to acces non loaded material");
+}

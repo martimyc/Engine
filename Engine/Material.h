@@ -6,12 +6,12 @@
 #include "glew\include\GL\glew.h"
 #include "Resource.h"
 
+class GameObject;
 class Texture;
 enum TEXTURE_TYPES;
 
-class Material : public Resource
+struct MaterialSource
 {
-private:
 	std::vector<Texture*> textures;
 	GLuint num_difusse_textures = 0;
 
@@ -31,8 +31,33 @@ private:
 	bool edit_name = false;
 	unsigned int priority;
 
+	MaterialSource();
+	~MaterialSource();
+
+	void ChangePriority(unsigned int new_priority);
+
+	const int GetNumTextures() const;
+	unsigned int GetPriority() const;
+
+	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
+	void Empty();
+
+	void EnableDraw() const;
+	void DisableDraw() const;
+
+	void Inspector();
+
+	void Use(const GameObject* go);
+};
+
+class Material : public Resource
+{
+private:
+	MaterialSource* source;
+
 public:
-	Material(const std::string name, unsigned int priority = 0);
+	Material(const std::string name, const UID& uid);
+	Material(const std::string name, MaterialSource* source);
 	~Material();
 
 	void ChangePriority(unsigned int new_priority);
@@ -47,6 +72,8 @@ public:
 	void DisableDraw() const;
 
 	bool Inspector();
+
+	void Use(const GameObject* go);
 };
 
 #endif // !MATERIAL

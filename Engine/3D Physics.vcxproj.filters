@@ -806,9 +806,6 @@
     <ClCompile Include="MeshFilter.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Sources\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="KDTreeGO.cpp">
       <Filter>Sources\Containers</Filter>
@@ -846,6 +843,15 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialAsset.cpp">
+      <Filter>Sources\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshAsset.cpp">
+      <Filter>Sources\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Sources\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

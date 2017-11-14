@@ -11,16 +11,16 @@ class Resource;
 struct ImportConfiguration
 {
 	virtual bool Config() = 0;
-	virtual void MetaSave() const = 0;
-	virtual void MetaLoad(char* buffer) = 0;
+	virtual void MetaSave(char* iterator) const = 0;
+	virtual void MetaLoad(char* iterator) = 0;
 	virtual unsigned int GetMetaSize() const = 0;
 };
 
 struct LoadConfiguration
 {
 	virtual bool Config() = 0;
-	virtual void MetaSave() const = 0;
-	virtual void MetaLoad(char* buffer) = 0;
+	virtual void MetaSave(char* iterator) const = 0;
+	virtual void MetaLoad(char* iterator) = 0;
 	virtual unsigned int GetMetaSize() const = 0;
 };
 

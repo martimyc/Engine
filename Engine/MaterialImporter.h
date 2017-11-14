@@ -29,8 +29,8 @@ public:
 	MaterialImporter();
 	~MaterialImporter();
 
-	const UID& Import(const aiMaterial* material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration& config);
-	MaterialSource* Load(const UID& id, const MaterialLoadConfiguration& config);
+	const UID Import(const aiMaterial* material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration* config);
+	MaterialSource* Load(const UID& id, unsigned int priority, const MaterialLoadConfiguration* config);
 };
 
 #endif // !MATERIAL_IMPORTER

@@ -31,7 +31,7 @@ TextureImporter::TextureImporter()
 TextureImporter::~TextureImporter()
 {}
 
-const UID& TextureImporter::Import(const std::string& file, const TextureImportConfiguration* config)
+const UID TextureImporter::Import(const std::string& file, const TextureImportConfiguration* config)
 {
 	UID uid;
 
@@ -57,10 +57,10 @@ const UID& TextureImporter::Import(const std::string& file, const TextureImportC
 
 	success = ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, length); 	// Load the image file
 
+	delete[] buffer;
+
 	if (success)
 	{
-		uid.Generate(buffer, length);
-
 		ilEnable(IL_FILE_OVERWRITE);
 
 		ILuint size;
@@ -97,11 +97,10 @@ const UID& TextureImporter::Import(const std::string& file, const TextureImportC
 				else
 					LOG("Saved %s succesfully", file.c_str());
 			}
+			uid.Generate((char*)data, size);
 			DELETE_ARRAY(data);
 		}
 	}
-	
-	delete[] buffer;
 	return uid;
 }
 

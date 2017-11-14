@@ -267,6 +267,7 @@
     <ClCompile Include="KDTreeVertex.cpp" />
     <ClCompile Include="MainMenuBar.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialAsset.cpp" />
     <ClCompile Include="MaterialImporter.cpp" />
     <ClCompile Include="MathGeoLib\src\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\src\Algorithm\Random\LCG.cpp" />
@@ -305,6 +306,7 @@
     <ClCompile Include="MathGeoLib\src\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\src\Time\Clock.cpp" />
     <ClCompile Include="MD5.cpp" />
+    <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MeshFilter.cpp" />
     <ClCompile Include="MeshImporter.cpp" />
     <ClCompile Include="Mesh.cpp" />

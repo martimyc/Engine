@@ -23,13 +23,14 @@ struct MeshLoadConfiguration;
 
 struct UID;
 
-struct TextureSource;
-
 class Material;
 class Mesh;
 
 class Resource;
 enum RESOURCE_TYPE;
+struct TextureSource;
+struct MaterialSource;
+struct MeshSource;
 class Asset;
 
 class ImportManager : public Module
@@ -48,21 +49,33 @@ private:
 	MaterialImporter* material_importer = nullptr;
 	TextureImporter* texture_importer = nullptr;
 
+	friend class ImportClient;
+
 public:
+
+	//Give acces to private funct Import() to importers who need it
+	class ImportClient
+	{
+	private:
+		static const UID Import(const ImportManager* importer, const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config);
+
+		friend class MaterialImporter;
+	};
+
 	ImportManager(const char* name, bool start_enabled = true);
 	~ImportManager();
 
 private:
-	const UID& Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
+	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
 
 	//Meta files
 	void MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
 	Asset* MetaLoad(const std::string& file) const;
 
 	TextureSource* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
-	//Material* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config) const;
-	//Mesh* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
-	//Scene* LoadScene(const std::string& name) const;
+	MaterialSource* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config, unsigned int priority = 0) const;
+	MeshSource* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
+	//SceneSource* LoadScene(const std::string& name) const;
 
 	//Scene
 	bool ImportScene(const std::string& path) const;

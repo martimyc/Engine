@@ -5,8 +5,10 @@
 //Resources
 #include "Resource.h"
 #include "Asset.h"
-#include "TextureAsset.h"
 #include "Texture.h"
+#include "TextureAsset.h"
+#include "Material.h"
+
 
 //Modules
 #include "ImportManager.h"
@@ -18,6 +20,14 @@ ResourceManager::ResourceManager(const char * name, bool start_enabled) : Module
 
 ResourceManager::~ResourceManager()
 {}
+
+Texture * ResourceManager::GetTexture(const UID & uid)
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetType() == RT_TEXTURE && uid == (*it)->GetUID())
+			return (Texture*)(*it)->GetResource();
+	return nullptr;
+}
 
 bool ResourceManager::Init()
 {
@@ -76,6 +86,9 @@ Resource * ResourceManager::Use(const UID & id, const GameObject * go) const
 			if (resource == nullptr)
 				if (App->import_manager->Load(resource, (*it)->GetLoadConfig()) == false)
 					LOG("Could not load source for resource %s correctly", (*it)->GetName().c_str());
+
+			if ((*it)->GetType() == RT_MATERIAL)
+				((Material*)(*it))->Use(go);
 
 			(*it)->AddInstance(go);
 			return resource;
@@ -170,6 +183,11 @@ Texture* ResourceManager::LoadCheckers()
 	num_textures++;
 
 	return new_texture;
+}
+
+unsigned int ResourceManager::GetNumMaterials()
+{
+	return num_materials;
 }
 
 void ResourceManager::DebugTextures() const

@@ -25,8 +25,8 @@ private:
 
 public:
 	//TODO change for config
-	const UID& Import(const aiMesh* mesh, const std::string& scene_path, const std::string& name);
-	MeshSource* Load(const UID& id, const MeshLoadConfiguration& config);
+	const UID Import(const aiMesh* mesh, const std::string& scene_path, const std::string& name);
+	MeshSource* Load(const UID& id, const MeshLoadConfiguration* config);
 };
 
 #endif // !MESH_IMPORTER

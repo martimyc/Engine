@@ -82,18 +82,21 @@ bool TextureImportConfiguration::Config()
 	return changed;
 }
 
-void TextureImportConfiguration::MetaSave() const
+void TextureImportConfiguration::MetaSave(char* iterator) const
 {
-
+	memcpy(iterator, this, GetMetaSize());
+	iterator += GetMetaSize();
 }
 
-void TextureImportConfiguration::MetaLoad(char* buffer)
+void TextureImportConfiguration::MetaLoad(char* iterator)
 {
+	memcpy(this, iterator, GetMetaSize());
+	iterator += GetMetaSize();
 }
 
 unsigned int TextureImportConfiguration::GetMetaSize() const
 {
-	return 0;
+	return sizeof(TextureImportConfiguration);
 }
 
 const char * TextureImportConfiguration::GetCompresionCString() const
@@ -279,7 +282,7 @@ bool TextureLoadConfiguration::Config()
 
 		if (sharpen)
 		{
-			while (ImGui::GetColumnIndex() != 1)
+			while (ImGui::GetColumnIndex() != 0)
 				ImGui::NextColumn();
 		}
 		else
@@ -345,19 +348,21 @@ bool TextureLoadConfiguration::Config()
 	return changed;
 }
 
-void TextureLoadConfiguration::MetaSave() const
+void TextureLoadConfiguration::MetaSave(char* iterator) const
 {
-
+	memcpy(iterator, this, GetMetaSize());
+	iterator += GetMetaSize();
 }
 
-void TextureLoadConfiguration::MetaLoad(char* buffer)
+void TextureLoadConfiguration::MetaLoad(char* iterator)
 {
-
+	memcpy(this, iterator, GetMetaSize());
+	iterator += GetMetaSize();
 }
 
 unsigned int TextureLoadConfiguration::GetMetaSize() const
 {
-	return 0;
+	return sizeof(TextureLoadConfiguration);
 }
 
 TextureAsset::TextureAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config) : Asset(RT_TEXTURE, resource, import_config, load_config)
