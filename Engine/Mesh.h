@@ -173,12 +173,14 @@ private:
 	MeshSource* source;
 
 public:
-	Mesh(const std::string name);
+	Mesh(const std::string name,const UID& uid);
 	~Mesh();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;
 
 	bool Inspector();
+
+	bool IsLoaded() const;
 
 	//Getters
 		//Vertices

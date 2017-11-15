@@ -55,20 +55,27 @@ public:
 
 	Resource* GetResource() const;
 
+	unsigned int GetNumInsatances() const;
+
 	const std::string& GetName() const;
 
 	void AddInstance(const GameObject* go);
 };
 
-//Scenes
 struct SceneImportConfiguration : public ImportConfiguration
 {
-
+	virtual bool Config();
+	virtual void MetaSave(char* iterator) const;
+	virtual void MetaLoad(char* iterator);
+	virtual unsigned int GetMetaSize() const;
 };
 
 struct SceneLoadConfiguration : public LoadConfiguration
 {
-
+	virtual bool Config();
+	virtual void MetaSave(char* iterator) const;
+	virtual void MetaLoad(char* iterator);
+	virtual unsigned int GetMetaSize() const;
 };
 
 #endif // !ASSET

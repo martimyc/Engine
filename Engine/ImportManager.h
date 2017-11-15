@@ -14,12 +14,15 @@
 class MeshImporter;
 class MaterialImporter;
 class TextureImporter;
+class PrefabImporter;
 
 struct ImportConfiguration;
 struct LoadConfiguration;
 struct TextureLoadConfiguration;
 struct MaterialLoadConfiguration;
 struct MeshLoadConfiguration;
+struct SceneImportConfiguration;
+struct SceneLoadConfiguration;
 
 struct UID;
 
@@ -48,6 +51,7 @@ private:
 	MeshImporter* mesh_importer = nullptr;
 	MaterialImporter* material_importer = nullptr;
 	TextureImporter* texture_importer = nullptr;
+	PrefabImporter* prefab_importer = nullptr;
 
 	friend class ImportClient;
 
@@ -69,20 +73,18 @@ private:
 	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
 
 	//Meta files
-	void MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
+	bool MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
 	Asset* MetaLoad(const std::string& file) const;
 
 	TextureSource* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
 	MaterialSource* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config, unsigned int priority = 0) const;
 	MeshSource* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
-	//SceneSource* LoadScene(const std::string& name) const;
 
 	//Scene
-	bool ImportScene(const std::string& path) const;
-	//bool LoadScene(const std::string& name) const;
+	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
 
 	//Objects
-	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const;
+	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads) const;
 
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;

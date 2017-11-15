@@ -73,6 +73,8 @@ public:
 
 	bool Inspector();
 
+	bool IsLoaded() const;
+
 	void Use(const GameObject* go);
 };
 

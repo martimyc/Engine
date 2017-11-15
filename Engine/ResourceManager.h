@@ -60,6 +60,8 @@ private:
 public:
 	bool Init();
 
+	UPDATE_STATUS Update(float dt);
+
 	void AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	void DeleteAsset(Asset* to_delete);
 	bool Exsists(const UID& id) const;

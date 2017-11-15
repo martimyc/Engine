@@ -441,7 +441,7 @@ Geo::Vertex MeshSource::GetMaxZVertex() const
 }
 
 //Mesh
-Mesh::Mesh(const std::string name):Resource(RT_MESH, name), source(nullptr)
+Mesh::Mesh(const std::string name, const UID& uid):Resource(RT_MESH, name, uid), source(nullptr)
 {}
 
 Mesh::~Mesh()
@@ -474,6 +474,11 @@ bool Mesh::Inspector()
 	}
 
 	return ret;
+}
+
+bool Mesh::IsLoaded() const
+{
+	return source != nullptr;
 }
 
 const GLuint Mesh::GetVerticesID() const

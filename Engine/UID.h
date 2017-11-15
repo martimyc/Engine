@@ -2,6 +2,7 @@
 #define UNIQUE_IDENTIFIER
 
 #include <cstring>
+#include <stdio.h>
 #include "MD5.h"
 
 struct UID
@@ -48,6 +49,13 @@ struct UID
 	void operator = (const UID& new_id)
 	{
 		memcpy(uid, new_id.uid, 16);
+	}
+
+	char* GetAsName() const
+	{
+		char name[17];
+		sprintf(name, "%.*s", 16, uid);
+		return name;
 	}
 };
 

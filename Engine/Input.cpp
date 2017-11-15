@@ -141,7 +141,7 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				//Assimp
 				else if (extension == "fbx" || extension == "FBX")
 				{
-					App->import_manager->SentToImport(full_path, RT_SCENE);
+					App->import_manager->SentToImport(full_path, RT_PREFAB);
 					//App->camera->CenterToObj();
 				}
 				else if (extension == ".mm")

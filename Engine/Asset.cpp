@@ -4,6 +4,7 @@
 #include "Asset.h"
 #include "TextureAsset.h"
 
+
 Asset::Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config) : resource(resource), type(type), import_config(import_config), load_config(load_config)
 {}
 
@@ -48,6 +49,11 @@ Resource* Asset::GetResource() const
 	return resource;
 }
 
+unsigned int Asset::GetNumInsatances() const
+{
+	return instances.size();
+}
+
 const std::string & Asset::GetName() const
 {
 	return resource->GetName();
@@ -56,4 +62,36 @@ const std::string & Asset::GetName() const
 void Asset::AddInstance(const GameObject * go)
 {
 	instances.push_back(go);
+}
+
+bool SceneImportConfiguration::Config()
+{
+	return false;
+}
+
+void SceneImportConfiguration::MetaSave(char * iterator) const
+{}
+
+void SceneImportConfiguration::MetaLoad(char * iterator)
+{}
+
+unsigned int SceneImportConfiguration::GetMetaSize() const
+{
+	return 0;
+}
+
+bool SceneLoadConfiguration::Config()
+{
+	return false;
+}
+
+void SceneLoadConfiguration::MetaSave(char * iterator) const
+{}
+
+void SceneLoadConfiguration::MetaLoad(char * iterator)
+{}
+
+unsigned int SceneLoadConfiguration::GetMetaSize() const
+{
+	return 0;
 }

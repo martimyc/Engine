@@ -49,6 +49,13 @@ bool FileSystem::Init()
 		if (!CreateFolder("Textures", false, LIBRARY_FOLDER))
 			LOG("Textures folder could not be created");
 
+	std::string prefabs = working_directory;
+	prefabs += LIBRARY_PREFABS_FOLDER;
+
+	if (!Exsists(textures))
+		if (!CreateFolder("Prefabs", false, LIBRARY_FOLDER))
+			LOG("Prefabs folder could not be created");
+
 	return true;
 }
 
@@ -152,7 +159,12 @@ bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * r
 	return ret;
 }
 
-bool FileSystem::CopyToAssets(std::string& path)
+bool FileSystem::SaveMetaFile(const char * buffer, unsigned int size, const char * name)
+{
+	return SaveFile(buffer, size, ASSETS_FOLDER, name, "meta");
+}
+
+bool FileSystem::CopyToAssets(const std::string& path)
 {
 	bool ret = true;
 	std::string name;
@@ -226,4 +238,9 @@ const std::string FileSystem::GetMaterials() const
 const std::string FileSystem::GetMeshes() const
 {
 	return working_directory + LIBRARY_MESHES_FOLDER;
+}
+
+const std::string FileSystem::GetPrefabs() const
+{
+	return working_directory + LIBRARY_PREFABS_FOLDER;
 }

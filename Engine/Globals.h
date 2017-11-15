@@ -54,6 +54,7 @@ enum UPDATE_STATUS
 #define LIBRARY_TEXTURES_FOLDER "\\Library\\Textures"
 #define LIBRARY_MESHES_FOLDER "\\Library\\Meshes"
 #define LIBRARY_MATERIALS_FOLDER "\\Library\\Materials"
+#define LIBRARY_PREFABS_FOLDER "\\Library\\Prefabs"
 #define LIBRARY_FOLDER "\\Library"
 #define ASSETS_FOLDER "\\Assets"
 
@@ -61,6 +62,7 @@ enum UPDATE_STATUS
 #define FORMAT_SIZE 3 // 3 chars
 #define FORMAT_MESH {0x6d, 0x73, 0x68} //MSH
 #define FORMAT_MATERIAL {0x6d, 0x61, 0x74} //MAT
+#define FORMAT_PREFAB {0x50, 0x52, 0x45} //PRE
 
 #define SIZE_OF_UID 16
 

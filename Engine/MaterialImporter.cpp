@@ -14,7 +14,7 @@
 #include "Application.h"
 #include "MaterialImporter.h"
 
-unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material, const std::string& scene_path) const
+unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material) const
 {
 	unsigned int total_size = FORMAT_SIZE;
 
@@ -24,7 +24,7 @@ unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material, const s
 
 		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = scene_path + Path.data;
+			std::string full_path = App->file_system->GetAssets() + Path.data;
 			size_t start = full_path.find_last_of("\\");
 			size_t count = full_path.find_last_of(".") - start;
 			total_size += sizeof(uint);
@@ -41,7 +41,7 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-const UID MaterialImporter::Import( const aiMaterial * material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration* config)
+const UID MaterialImporter::Import( const aiMaterial * material, const MaterialImportConfiguration* config)
 {
 	bool ret = true;
 
@@ -67,7 +67,7 @@ const UID MaterialImporter::Import( const aiMaterial * material, const std::stri
 	GLuint num_unknown_textures = material->GetTextureCount(aiTextureType_UNKNOWN);*/
 
 	char format[FORMAT_SIZE] = FORMAT_MATERIAL;
-	char* buffer = new char[GetTotalSize(material, scene_path)];
+	char* buffer = new char[GetTotalSize(material)];
 	char* iterator = buffer;
 
 	//First specify format
@@ -85,7 +85,7 @@ const UID MaterialImporter::Import( const aiMaterial * material, const std::stri
 
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) 
 			{
-				std::string full_path = scene_path + Path.data;
+				std::string full_path = App->file_system->GetAssets() + Path.data;
 				size_t start = full_path.find_last_of("\\");
 				size_t count = full_path.find_last_of(".") - start;
 
@@ -93,7 +93,7 @@ const UID MaterialImporter::Import( const aiMaterial * material, const std::stri
 				UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, config->texture_import_config);
 				if (texture_uid.IsNull())
 				{
-					LOG("Error importing texture '%s', it won't be aded to material '%s'", full_path.c_str(), name.c_str());
+					LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
 					failed_textures++;
 				}
 				else
@@ -117,9 +117,9 @@ const UID MaterialImporter::Import( const aiMaterial * material, const std::stri
 
 	UID id(buffer, length);
 
-	if (App->file_system->SaveFile(buffer, length, LIBRARY_MATERIALS_FOLDER, id.uid, "mm") == false)
+	if (App->file_system->SaveFile(buffer, length, LIBRARY_MATERIALS_FOLDER, id.GetAsName(), "mm") == false)
 	{
-		LOG("Could not save file %s correctlly", name.c_str());
+		LOG("Could not save material correctlly");
 		return UID();
 	}
 

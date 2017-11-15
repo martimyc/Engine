@@ -8,12 +8,10 @@ bool MeshImportConfiguration::Config()
 }
 
 void MeshImportConfiguration::MetaSave(char * iterator) const
-{
-}
+{}
 
 void MeshImportConfiguration::MetaLoad(char * iterator)
-{
-}
+{}
 
 unsigned int MeshImportConfiguration::GetMetaSize() const
 {

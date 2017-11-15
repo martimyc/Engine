@@ -84,6 +84,8 @@
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MD5.h" />
     <ClInclude Include="MeshAsset.h" />
+    <ClInclude Include="PreFab.h" />
+    <ClInclude Include="PrefabAsset.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="assimp\include\ai_assert.h" />
     <ClInclude Include="assimp\include\anim.h" />
@@ -235,6 +237,7 @@
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="PrefabImporter.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="TextureAsset.h" />
@@ -321,6 +324,9 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="PreFab.cpp" />
+    <ClCompile Include="PrefabAsset.cpp" />
+    <ClCompile Include="PrefabImporter.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="ResourceManager.cpp" />

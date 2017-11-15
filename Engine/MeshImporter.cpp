@@ -47,7 +47,7 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 	return total_size;
 }
 
-const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_path, const std::string & name)
+const UID MeshImporter::Import(const aiMesh * mesh)
 {
 	bool ret = true;
 
@@ -58,9 +58,6 @@ const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_pa
 	//First specify format
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
-
-	memcpy(iterator, name.c_str(), name.length());
-	iterator += name.length();
 
 	GLuint num_vertices = mesh->mNumVertices;
 	memcpy(iterator, &num_vertices, sizeof(GLuint));
@@ -176,9 +173,9 @@ const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_pa
 
 	UID id(buffer, length);
 
-	if (App->file_system->SaveFile(buffer, length, LIBRARY_MESHES_FOLDER, id.uid, "mm") == false)
+	if (App->file_system->SaveFile(buffer, length, LIBRARY_MESHES_FOLDER, id.GetAsName(), "mm") == false)
 	{
-		LOG("Could not save file %s correctlly", name.c_str());
+		LOG("Could not save mesh correctlly");
 		return UID();
 	}
 
@@ -189,9 +186,7 @@ const UID MeshImporter::Import(const aiMesh * mesh, const std::string & scene_pa
 
 MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* config)
 {
-	//TODO
-	return nullptr;
-	/*Mesh* new_mesh = nullptr;
+	MeshSource* new_mesh = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
@@ -207,10 +202,7 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
-		std::string name(iterator);
-		iterator += name.length();
-
-		new_mesh = new Mesh(name);
+		new_mesh = new MeshSource();
 
 		GLuint num_vertices;
 		memcpy(&num_vertices, iterator, sizeof(GLuint));
@@ -336,7 +328,7 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 		else
 			LOG("Mesh has no vertex colors");
 	}
-	return new_mesh;*/
+	return new_mesh;
 }
 
 

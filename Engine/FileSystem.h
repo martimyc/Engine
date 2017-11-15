@@ -21,8 +21,9 @@ public:
 	unsigned int LoadMetaFile(const std::string& file, char** buffer);
 
 	bool SaveFile(const char* buffer, unsigned int size, const char* relative_path, const char* name, const char* format);
+	bool SaveMetaFile(const char* buffer, unsigned int size, const char* name);
 
-	bool CopyToAssets(std::string& path);
+	bool CopyToAssets(const std::string& path);
 
 	//Gets
 	bool Exsists(const char* path) const;
@@ -32,6 +33,7 @@ public:
 	const std::string GetTextures() const;
 	const std::string GetMaterials() const;
 	const std::string GetMeshes() const;
+	const std::string GetPrefabs() const;
 };
 
 #endif //!MODULE_FILE_SYSTEM

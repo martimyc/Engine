@@ -1,6 +1,8 @@
 #include "imgui\imgui.h"
 #include "Parson\parson.h"
 
+#include "UID.h"
+
 //Assets
 #include "Resource.h"
 #include "Texture.h"
@@ -9,6 +11,8 @@
 #include "MeshAsset.h"
 #include "Material.h"
 #include "MaterialAsset.h"
+#include "PreFab.h"
+#include "PrefabAsset.h"
 
 //Components
 #include "Transform.h"
@@ -22,6 +26,7 @@
 #include "TextureImporter.h"
 #include "MeshImporter.h"
 #include "MaterialImporter.h"
+#include "PrefabImporter.h"
 
 //Modules
 #include "Globals.h"
@@ -43,7 +48,7 @@ bool ImportManager::Init()
 	texture_importer = new TextureImporter();
 	material_importer = new MaterialImporter();
 	mesh_importer = new MeshImporter();
-	//scene_inporter = new ImportManager();
+	prefab_importer = new PrefabImporter();
 
 	// Stream log messages to Debug window
 	struct aiLogStream stream;
@@ -55,6 +60,11 @@ bool ImportManager::Init()
 
 bool ImportManager::CleanUp()
 {	
+	delete texture_importer;
+	delete material_importer;
+	delete mesh_importer;
+	delete prefab_importer;
+
 	// detach log stream
 	aiDetachAllLogStreams();
 	return true;
@@ -82,7 +92,6 @@ UPDATE_STATUS ImportManager::Update(float dt)
 				if(import_config->Config())
 					image_changed = true;
 				ImGui::TreePop();
-				
 			}
 
 			if (ImGui::TreeNodeEx("Load Settings", ImGuiTreeNodeFlags_Framed))
@@ -94,17 +103,9 @@ UPDATE_STATUS ImportManager::Update(float dt)
 
 			if (ImGui::Button("Import"))
 			{
-				if (!App->file_system->CopyToAssets(import_path))
-					LOG("Could not copy %s to assets", import_path.c_str());
-
-				std::string file_name_ext(GetImportFileNameWithExtension());
-				std::string file_name_no_ext(GetImportFileNameNoExtension());
-
-				UID uid(Import(file_name_ext, import_type, import_config));
-
-				MetaSave(file_name_ext, uid, import_type, import_config, load_config);
-
-				App->resource_manager->AddAsset(file_name_no_ext, uid, import_type, import_config, load_config);
+				UID uid(Import(import_path, import_type, import_config));
+				if (uid.IsNull())
+					LOG("Could not import %s correctly", import_path.c_str());
 
 				importing = false;
 				import_type = RT_NO_TYPE;
@@ -127,7 +128,7 @@ UPDATE_STATUS ImportManager::Update(float dt)
 				case RT_TEXTURE:
 					texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
 					break;
-				case RT_SCENE:
+				case RT_PREFAB:
 					break;
 				default:
 					break;
@@ -177,7 +178,9 @@ void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 		import_config = new TextureImportConfiguration(format);
 		load_config = new TextureLoadConfiguration();
 		break;
-	case RT_SCENE:
+	case RT_PREFAB:
+		import_config = new SceneImportConfiguration();
+		load_config = new SceneLoadConfiguration();
 		break;
 	default:
 		break;
@@ -188,7 +191,7 @@ void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 
 bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_config)
 {
-	if (to_load->IsLoaded() == false)
+	if (to_load->IsLoaded() == true)
 	{
 		LOG("Allready loaded this resource");
 		return false;
@@ -205,47 +208,60 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	case RT_MATERIAL:
 		material_importer->Load(to_load->GetUID(), App->resource_manager->GetNumMaterials(), (MaterialLoadConfiguration*) load_config);
 		break;
-	case RT_SCENE:
+	case RT_PREFAB:
 		break;
 	default:
 		break;
 	}
 }
 
-const UID ImportManager::Import(const std::string & file, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
+const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
 {
+	if (!App->file_system->CopyToAssets(import_path))
+	{
+		LOG("Could not copy %s to assets", import_path.c_str());
+		return UID();
+	}
+
 	UID uid;
+
+	std::string file_name_ext(GetImportFileNameWithExtension());
+	std::string file_name_no_ext(GetImportFileNameNoExtension());
 
 	switch (type)
 	{
 	case RT_TEXTURE:
-		uid = texture_importer->Import(file, (TextureImportConfiguration*)import_config);
+		uid = texture_importer->Import(file_name_no_ext, (TextureImportConfiguration*)import_config);
 		if (uid.IsNull())
 		{
-			LOG("Could not import file from %s corectlly", file.c_str());
+			LOG("Could not import texture from %s corectlly", path.c_str());
 			return UID();
 		}
 		break;
-	case RT_SCENE:
-		/*if (ImportScene(path))
-			return ;
-		else
+	case RT_PREFAB:
+		uid = ImportScene(file_name_ext, (SceneImportConfiguration*)import_config);
+		if (uid.IsNull())
 		{
-			LOG("Could not import %s corectlly", name.c_str());
+			LOG("Could not import scene from %s corectlly", path.c_str());
 			return UID();
-		}*/
+		}
 		break;
 	default:
 		LOG("Unknown import type");
 		return UID();
 	}
 
+	if (MetaSave(file_name_ext, uid, import_type, import_config, load_config) == false)
+		return UID();
+
+	App->resource_manager->AddAsset(file_name_no_ext, uid, import_type, import_config, load_config);
+
 	return uid;
 }
 
-void ImportManager::MetaSave(const std::string & file, const UID & resource_id, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config) const
+bool ImportManager::MetaSave(const std::string & file, const UID & resource_id, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config) const
 {
-	char* buffer = new char[file.size() + SIZE_OF_UID + sizeof(type) + import_config->GetMetaSize() + load_config->GetMetaSize()];
+	char* buffer = new char[file.size() + SIZE_OF_UID + sizeof(type) + import_config->GetMetaSize() + load_config->GetMetaSize() + 10]; //+10 out when configs are done TODO
 	char* iterator = buffer;
 
 	memcpy(iterator, file.c_str(), file.length() + 1);
@@ -260,6 +276,15 @@ void ImportManager::MetaSave(const std::string & file, const UID & resource_id, 
 	import_config->MetaSave(iterator);
 
 	load_config->MetaSave(iterator);
+
+	int size = iterator - buffer;
+
+	if (App->file_system->SaveMetaFile(buffer, size, file.c_str()) == false)
+		return false;
+
+	delete[] buffer;
+
+	return true;
 }
 
 Asset* ImportManager::MetaLoad(const std::string & file) const
@@ -294,7 +319,7 @@ Asset* ImportManager::MetaLoad(const std::string & file) const
 			load_config->MetaLoad(iterator);
 			new_asset = new Asset(RT_TEXTURE, new_resource, import_config, load_config);
 			return new_asset;
-		case RT_SCENE:
+		case RT_PREFAB:
 			//new_resource = new Scene(name, uid);
 			break;
 		}
@@ -340,23 +365,15 @@ MeshSource * ImportManager::LoadMesh(const UID & uid, const MeshLoadConfiguratio
 	return nullptr;
 }
 
-bool ImportManager::ImportScene(const std::string & path) const
+const UID ImportManager::ImportScene(const std::string & file, const SceneImportConfiguration* load_config) const
 {
-	/*bool ret = true;
+	UID prefab_uid;
 
-	std::string dir;
-	std::string scene_name;
+	std::string path(App->file_system->GetAssets());
+	path += "\\";
+	path += file;
 
-	size_t pos = path.find_last_of("\\");
-	size_t count = path.find_last_of(".") - pos;
-
-	if (pos != path.length())
-	{
-		dir = path.substr(NULL, pos + 1);
-		scene_name = path.substr(pos + 1, count - 1);
-	}
-	else
-		LOG("No dir in path");
+	std::string scene_name(GetImportFileNameNoExtension());
 
 	const aiScene* scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
 
@@ -365,8 +382,8 @@ bool ImportManager::ImportScene(const std::string & path) const
 		bool* material_loads = nullptr;
 		bool* mesh_loads = nullptr;
 
-		std::vector<Material*> scene_materials;
-		std::vector<Mesh*> scene_meshes;
+		std::vector<UID> scene_materials;
+		std::vector<UID> scene_meshes;
 
 		if (scene->HasMaterials())
 		{
@@ -385,25 +402,21 @@ bool ImportManager::ImportScene(const std::string & path) const
 				sprintf(ptr, "Material_%s_%i", scene_name.c_str(), i);
 				std::string material_name(ptr);
 
-				if (material_importer->Import(scene->mMaterials[i], dir, material_name))
+				MaterialImportConfiguration i_config;
+				MaterialLoadConfiguration l_config;
+
+				UID uid(material_importer->Import(scene->mMaterials[i], &i_config));
+
+				if (uid.IsNull() == false)
 				{
-					Material* new_material = LoadMaterial(material_name);
-					if (new_material == nullptr)
-					{
-						LOG("Material (%i) could not be loaded correctly", i);
-						ret = false;
-					}
-					else
-					{
-						material_loads[i] = true;
-						scene_materials.push_back(new_material);
-					}
+					material_loads[i] = true;
+					scene_materials.push_back(uid);
+					App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, &i_config, &l_config);
 				}
 				else
 				{
 					LOG("Material (%i) could not be imported correctly", i);
 					material_loads[i] = false;
-					ret = false;
 				}
 			}
 		}
@@ -414,7 +427,7 @@ bool ImportManager::ImportScene(const std::string & path) const
 		if (scene->HasMeshes())
 		{
 			scene_meshes.reserve(scene->mNumMeshes);
-			mesh_loads = new bool[scene->mNumMeshes];		
+			mesh_loads = new bool[scene->mNumMeshes];
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
@@ -424,55 +437,57 @@ bool ImportManager::ImportScene(const std::string & path) const
 				sprintf(ptr, "%s_Mesh_%i", scene_name.c_str(), i);
 				std::string mesh_name(ptr);
 
-				if (mesh_importer->Import(scene->mMeshes[i], dir, mesh_name))
+				MeshImportConfiguration i_config;
+				MeshLoadConfiguration l_config;
+
+				UID uid(mesh_importer->Import(scene->mMeshes[i])); //TODO import should take import config
+
+				mesh_loads[i] = true;
+				scene_meshes.push_back(uid);
+
+				if (uid.IsNull() == false)
 				{
-					Mesh* new_mesh = LoadMesh(mesh_name);
-					if (new_mesh == nullptr)
-					{
-						LOG("Mesh (%i) could not be loaded correctly", i);
-						delete new_mesh;
-						ret = false;
-					}
-					else
-					{
-						mesh_loads[i] = true;
-						scene_meshes.push_back(new_mesh);
-					}
+					mesh_loads[i] = true;
+					scene_meshes.push_back(uid);
+					App->resource_manager->AddAsset(mesh_name, uid, RT_MESH, &i_config, &l_config);
 				}
 				else
+				{
 					LOG("Mesh (%i) could not be imported correctly", i);
+					material_loads[i] = false;
+				}
 			}
 		}
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
 
-		//Load object hirarchy and add components to them
-		char go_char[255];
-		sprintf(go_char, "%s_GO", scene_name.c_str());
-		scene_name = go_char;
+		if (scene->mRootNode != nullptr)
+		{
+			PrefabImportConfiguration i_config;
+			PrefabLoadConfiguration l_config;
 
-		GameObject* scene_object = App->scene_manager->CreateGameObject(scene_name.c_str());
+			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, &i_config);
 
-		if (scene_object == nullptr)
-			ret = false;
-		else
-			if (ImportHirarchy(*scene->mRootNode, *scene, *scene_object, scene_materials, material_loads, scene_meshes, mesh_loads) == false)
-				ret = false;
-
-		if (ret == false)
-			App->scene_manager->RemoveWithChilds(scene_object);
+			if (prefab_uid.IsNull() == false)
+				App->resource_manager->AddAsset(scene_name, prefab_uid, RT_PREFAB, &i_config, &l_config);
+			else
+			{
+				LOG("Scene could not be loaded as prefab");
+				prefab_uid = UID();
+			}
+		}
 
 		aiReleaseImport(scene);
 	}
 	else
-		LOG("Error loading scene %s", path);
+	{
+		LOG("Error loading scene %s", path.c_str());
+	}
 		
-	return ret;*/
-
-	return true;
+	return prefab_uid;
 }
 
-bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<Material*>& materials, bool* material_loads, const std::vector<Mesh*>& meshes, bool* mesh_loads) const
+bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads) const
 {
 	bool ret = true;
 
@@ -500,18 +515,19 @@ bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, 
 
 				unsigned int mesh_num = source.mMeshes[i];
 
-				/*if (mesh_loads[mesh_num] == true)
-					child->AddComponent(new MeshFilter(meshes[mesh_num]));
+				if (mesh_loads[mesh_num] == true)
+					child->AddComponent(new MeshFilter((Mesh*)App->resource_manager->Use(meshes[mesh_num], child), "AluAcbar"));
 				else
-					LOG("Can not add mesh to game object, mesh didn't load correctly");*/
+					LOG("Can not add mesh to game object, mesh didn't load correctly");
 
-				if (material_loads[scene.mMeshes[mesh_num]->mMaterialIndex] == true && materials.size() > scene.mMeshes[mesh_num]->mMaterialIndex)
-					child->AddComponent(new AppliedMaterial(materials[scene.mMeshes[mesh_num]->mMaterialIndex]));
+				/*if (material_loads[scene.mMeshes[mesh_num]->mMaterialIndex] == true && materials.size() > scene.mMeshes[mesh_num]->mMaterialIndex)
+					child->AddComponent(new AppliedMaterial(materials[scene.mMeshes[mesh_num]->mMaterialIndex]));*/
 			}
 		}
 		else
 		{
 			unsigned int mesh_num = source.mMeshes[0];
+			destination.AddComponent(new MeshFilter((Mesh*)App->resource_manager->Use(meshes[mesh_num], &destination), "AluAcbar"));
 
 			/*if (mesh_loads[mesh_num] == true)
 				destination.AddComponent(new MeshFilter(meshes[mesh_num]));

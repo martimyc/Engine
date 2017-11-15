@@ -1,4 +1,5 @@
 #include "glew\include\GL\glew.h"
+#include "imgui\imgui.h"
 
 #include "UID.h"
 
@@ -8,7 +9,11 @@
 #include "Texture.h"
 #include "TextureAsset.h"
 #include "Material.h"
-
+#include "MaterialAsset.h"
+#include "Mesh.h"
+#include "MeshAsset.h"
+#include "PreFab.h"
+#include "PrefabAsset.h"
 
 //Modules
 #include "ImportManager.h"
@@ -36,6 +41,17 @@ bool ResourceManager::Init()
 	return true;
 }
 
+UPDATE_STATUS ResourceManager::Update(float dt)
+{
+	if (ImGui::Begin("Assets"))
+	{
+		for(std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+			ImGui::Text("Name: %s\nUID: %s\nNum Instances: %i",(*it)->GetName().c_str(), (*it)->GetUID().GetAsName(), (*it)->GetNumInsatances());
+	}
+	ImGui::End();
+	return UPDATE_CONTINUE;
+}
+
 void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
 {
 	Resource* new_resource = nullptr;
@@ -47,9 +63,16 @@ void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE
 		new_resource = new Texture(name, uid);
 		new_asset = new TextureAsset(new_resource, import_config, load_config);
 		break;
-	case RT_SCENE:
-		//new_asset = new SceneAsset(load_config);
+	case RT_PREFAB:
+		new_resource = new Prefab(name, uid);
+		new_asset = new PrefabAsset(new_resource, import_config, load_config);
 		break;
+	case RT_MESH:
+		new_resource = new Mesh(name, uid);
+		new_asset = new MeshAsset(new_resource, import_config, load_config);
+	case RT_MATERIAL:
+		new_resource = new Material(name, uid);
+		new_asset = new MaterialAsset(new_resource, import_config, load_config);
 	default:
 		LOG("Non standard import type");
 		break;
@@ -83,7 +106,7 @@ Resource * ResourceManager::Use(const UID & id, const GameObject * go) const
 		{
 			Resource* resource = (*it)->GetResource();
 
-			if (resource == nullptr)
+			if (resource->IsLoaded() == false)
 				if (App->import_manager->Load(resource, (*it)->GetLoadConfig()) == false)
 					LOG("Could not load source for resource %s correctly", (*it)->GetName().c_str());
 

@@ -23,13 +23,13 @@ struct MaterialTextureInfo
 class MaterialImporter
 {
 private:
-	unsigned int GetTotalSize(const aiMaterial * material, const std::string& scene_path) const;
+	unsigned int GetTotalSize(const aiMaterial * material) const;
 
 public:
 	MaterialImporter();
 	~MaterialImporter();
 
-	const UID Import(const aiMaterial* material, const std::string& scene_path, const std::string& name, const MaterialImportConfiguration* config);
+	const UID Import(const aiMaterial* material, const MaterialImportConfiguration* config);
 	MaterialSource* Load(const UID& id, unsigned int priority, const MaterialLoadConfiguration* config);
 };
 

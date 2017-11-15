@@ -199,6 +199,11 @@ bool Material::Inspector()
 	return ret;
 }
 
+bool Material::IsLoaded() const
+{
+	return source != nullptr;
+}
+
 void Material::Use(const GameObject* go)
 {
 	if (source != nullptr)
