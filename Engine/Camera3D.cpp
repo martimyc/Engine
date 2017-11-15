@@ -2,6 +2,7 @@
 #include "Brofiler\Brofiler.h"
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Window.h"
@@ -11,6 +12,7 @@
 #include "Component.h"
 #include "Mesh.h"
 #include "SceneManager.h"
+#include "Renderer3D.h"
 #include "Camera3D.h"
 
 Camera3D::Camera3D(const char* name, bool start_enabled) : Module(name, start_enabled),
@@ -100,102 +102,114 @@ bool Camera3D::CleanUp()
 // -----------------------------------------------------------------
 UPDATE_STATUS Camera3D::Update(float dt)
 {
-	BROFILER_CATEGORY("Camera Update", Profiler::Color::AliceBlue)
+	BROFILER_CATEGORY("Camera Update", Profiler::Color::AliceBlue);
 
-	bool camera_moved = false;
-	float speed = camera_speed * dt;
-	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed = camera_speed * 2 * dt;
-
-	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	if (App->renderer_3d->IsSceneWindowHovered())
 	{
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)	//Frontwards
+		bool camera_moved = false;
+		float speed = camera_speed * dt;
+		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+			speed = camera_speed * 2 * dt;
+
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 		{
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * speed);
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)	//Frontwards
+			{
+				editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * speed);
+				camera_moved = true;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)	//Backwards
+			{
+				editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * speed);
+				camera_moved = true;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)	//Left
+			{
+				editor_camera_frustum.SetPos(editor_camera_frustum.pos - math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed);
+				camera_moved = true;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)	//Right
+			{
+				editor_camera_frustum.SetPos(editor_camera_frustum.pos + math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed);
+				camera_moved = true;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT)	//Up
+			{
+				editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.up * speed);
+				camera_moved = true;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)	//Bottom
+			{
+				editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.up * speed);
+				camera_moved = true;
+			}
+		}
+
+		// Mouse whell motion:	-1 equals down, 1 equals up
+		if (App->input->GetMouseZ() == -1)
+		{
+			editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * camera_zoom_speed);
 			camera_moved = true;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)	//Backwards
+		else if (App->input->GetMouseZ() == 1)
 		{
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * speed); 
+			editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * camera_zoom_speed);
 			camera_moved = true;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)	//Left
+
+		// Center game object
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 		{
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos - math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed); 
-			camera_moved = true;
+			const GameObject* focused_game_object = App->scene_manager->GetFocused();
+			if (focused_game_object != nullptr)
+			{
+				CenterToGameObject(focused_game_object);
+				camera_moved = true;
+			}
 		}
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)	//Right
+
+		// Mouse motion ----------------
+
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
 		{
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos + math::Cross(editor_camera_frustum.front, editor_camera_frustum.up) * speed); 
-			camera_moved = true;
+			int dx = App->input->GetMouseXMotion();
+			int dy = App->input->GetMouseYMotion();
+
+			if (dx != 0)
+			{
+				vec temp_pos = editor_camera_frustum.pos;
+				float delta_x = (float)dx * sensibility;
+				rotation.SetFromAxisAngle(vec(0, 1, 0), delta_x * DEGTORAD);
+				editor_camera_frustum.TransformInverted(rotation);
+				editor_camera_frustum.pos = temp_pos;
+				editor_camera_frustum.WorldMatrixChanged();
+				camera_moved = true;
+			}
+
+			if (dy != 0)
+			{
+				vec temp_pos = editor_camera_frustum.pos;
+				float delta_y = (float)dy * sensibility;
+				rotation.SetFromAxisAngle(math::Cross(editor_camera_frustum.front, vec(0, 1, 0)), delta_y * DEGTORAD);
+				editor_camera_frustum.TransformInverted(rotation);
+				editor_camera_frustum.pos = temp_pos;
+				editor_camera_frustum.WorldMatrixChanged();
+				camera_moved = true;
+			}
 		}
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT)	//Up
+
+		if (camera_moved)
+			ResetFrustumPlanes();
+
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
 		{
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.up * speed); 
-			camera_moved = true;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)	//Bottom
-		{
-			editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.up * speed);
-			camera_moved = true;
+			//Transform position to range [-1,1] for UnProjectLineSegment
+			float raycast_x = (float)(((float)(App->input->GetMouseX() - App->renderer_3d->GetScenePosX()) / (float)App->renderer_3d->GetSceneWidth()) * 2.0f) - 1;
+			float raycast_y = (float)(((float)(App->input->GetMouseY() - App->renderer_3d->GetScenePosY()) / (float)(App->renderer_3d->GetSceneHeight())) * 2.0f) - 1;
+			LineSegment picking_ray = editor_camera_frustum.UnProjectLineSegment(raycast_x, raycast_y);
+			App->scene_manager->GetRoot()->PickGameObject(&picking_ray, editor_camera_frustum.FarPlaneDistance());
 		}
 	}
-	
-	// Mouse whell motion:	-1 equals down, 1 equals up
-	if (App->input->GetMouseZ() == -1)
-	{
-		editor_camera_frustum.SetPos(editor_camera_frustum.pos - editor_camera_frustum.front * camera_zoom_speed); 
-		camera_moved = true;
-	}
-	else if (App->input->GetMouseZ() == 1)
-	{
-		editor_camera_frustum.SetPos(editor_camera_frustum.pos + editor_camera_frustum.front * camera_zoom_speed);
-		camera_moved = true;
-	}
-
-	// Center game object
-	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-	{
-		const GameObject* focused_game_object = App->scene_manager->GetFocused();
-		if (focused_game_object != nullptr)
-		{
-			CenterToGameObject(focused_game_object);
-			camera_moved = true;
-		}
-	}
-
-	// Mouse motion ----------------
-
-	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
-	{
-		int dx = App->input->GetMouseXMotion();
-		int dy = App->input->GetMouseYMotion();
-
-		if(dx != 0)
-		{
-			vec temp_pos = editor_camera_frustum.pos;
-			float delta_x = (float)dx * sensibility;
-			rotation.SetFromAxisAngle(vec(0, 1, 0), delta_x * DEGTORAD);
-			editor_camera_frustum.TransformInverted(rotation);
-			editor_camera_frustum.pos = temp_pos;
-			editor_camera_frustum.WorldMatrixChanged();
-			camera_moved = true;
-		}
-
-		if(dy != 0)
-		{
-			vec temp_pos = editor_camera_frustum.pos;
-			float delta_y = (float)dy * sensibility;
-			rotation.SetFromAxisAngle(math::Cross(editor_camera_frustum.front, vec(0, 1, 0)), delta_y * DEGTORAD);
-			editor_camera_frustum.TransformInverted(rotation);
-			editor_camera_frustum.pos = temp_pos;
-			editor_camera_frustum.WorldMatrixChanged();
-			camera_moved = true;
-		}
-	}
-
-	if (camera_moved)
-		ResetFrustumPlanes();
 
 	return UPDATE_CONTINUE;
 }

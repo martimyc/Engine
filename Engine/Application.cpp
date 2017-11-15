@@ -83,7 +83,7 @@ bool Application::Init()
 	std::vector<Module*>::const_iterator it = modules.begin();
 
 	dock_context = new ImGui::DockContext();
-
+	SetDockContextSize(App->window->GetWidth(), App->window->GetHeight());
 	dock_context->LoadDocks();
 
 	// Call Init() in all modules
@@ -113,10 +113,10 @@ void Application::FinishUpdate()
  
 UPDATE_STATUS Application::CreateConfigApp()
 {
+	BROFILER_CATEGORY("App Config", Profiler::Color::Black)
+		
 	UPDATE_STATUS ret = UPDATE_CONTINUE;
 	
-	dock_context->SetWorkspacePosSize(ImVec2(0, 23), ImVec2(App->window->GetWidth(), App->window->GetHeight()));
-
 	if (BeginDockWindow("Application", &config_app))
 	{
 		JSON_Value* config = json_parse_file("config.json");
@@ -232,6 +232,11 @@ const char* Application::GetOrganization() const
 void Application::OpenCloseConfigAppWindow()
 {
 	config_app = !config_app;
+}
+
+void Application::SetDockContextSize(const int width, const int height)
+{
+	dock_context->SetWorkspacePosSize(ImVec2(0, 23), ImVec2(width, height));
 }
 
 bool Application::BeginDockWindow(const char * label, bool * opened, ImGuiWindowFlags extra_flags)

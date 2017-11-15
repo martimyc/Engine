@@ -32,10 +32,14 @@ public:
 	void UnBindFrameBuffer();
 
 	GLuint GetTextureID();
-	const uint GetWidth();
-	const uint GetHeight();
-	void SetWidth(const uint _width);
-	void SetHeight(const uint _height);
+	uint GetWidth() const;
+	uint GetHeight() const;
+	uint GetPosX() const;
+	uint GetPosY() const;
+	void SetWidth(const uint width_);
+	void SetHeight(const uint height_);
+	void SetPosX(const uint x);
+	void SetPosY(const uint y);
 
 private:
 	GLuint frame_buffer_id = 0;
@@ -43,6 +47,8 @@ private:
 	GLuint depth_render_id;
 	uint width = 0;
 	uint height = 0;
+	uint pos_x = 0;
+	uint pos_y = 0;
 };
 
 class Renderer3D : public Module
@@ -63,6 +69,7 @@ private:
 
 	bool config_renderer = true;
 	FrameBuffer* render_to_texture = nullptr;
+	bool mouse_on_scene_window = true;
 
 public:
 	Renderer3D(const char* name, bool start_enabled = true);
@@ -85,6 +92,12 @@ public:
 	void OnResize(int width, int height);
 
 	void DrawGameObject(const GameObject* game_object);
+
+	int GetScenePosX() const;
+	int GetScenePosY() const; 
+	int GetSceneWidth() const;
+	int GetSceneHeight() const;
+	bool IsSceneWindowHovered()const;
 };
 
 #endif //_MODULE_RENDERER_3D

@@ -132,7 +132,7 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Renderer3D Configuration", Profiler::Color::Beige)
 
-		UPDATE_STATUS ret = UPDATE_CONTINUE;
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
 	if (App->BeginDockWindow("Renderer 3D", &config_renderer))
 	{
@@ -239,8 +239,16 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	//------
 
 	render_to_texture->UnBindFrameBuffer();
+
+
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 	App->BeginDockWindow("Scene", nullptr, flags);
+
+	mouse_on_scene_window = ImGui::IsWindowHovered();
+	render_to_texture->SetPosX(ImGui::GetWindowPos().x);
+	render_to_texture->SetPosY(ImGui::GetWindowPos().y);
+	render_to_texture->SetWidth(ImGui::GetWindowWidth());
+	render_to_texture->SetHeight(ImGui::GetWindowHeight());
 
 	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth(), render_to_texture->GetHeight()), ImVec2(0, 1), ImVec2(1, 0));
 
@@ -273,6 +281,8 @@ void Renderer3D::OnResize(int width, int height)
 {
 	glViewport(0, 0, width, height);
 
+	App->SetDockContextSize(width, height);
+
 	if (render_to_texture)
 	{
 		render_to_texture->SetWidth(width);
@@ -294,6 +304,31 @@ void Renderer3D::OnResize(int width, int height)
 void Renderer3D::DrawGameObject(const GameObject* game_object)
 {
 	draw_queue.push(game_object);
+}
+
+int Renderer3D::GetScenePosX() const
+{
+	return render_to_texture->GetPosX();
+}
+
+int Renderer3D::GetScenePosY() const
+{
+	return render_to_texture->GetPosY();
+}
+
+int Renderer3D::GetSceneWidth() const
+{
+	return render_to_texture->GetWidth();
+}
+
+int Renderer3D::GetSceneHeight() const
+{
+	return render_to_texture->GetHeight();
+}
+
+bool Renderer3D::IsSceneWindowHovered() const
+{
+	return mouse_on_scene_window;
 }
 
 void Renderer3D::DrawWorldAxis()
@@ -448,22 +483,42 @@ GLuint FrameBuffer::GetTextureID()
 	return rendered_texture_id;
 }
 
-const uint FrameBuffer::GetWidth()
+uint FrameBuffer::GetWidth() const
 {
 	return width;
 }
 
-const uint FrameBuffer::GetHeight()
+uint FrameBuffer::GetHeight() const
 {
 	return height;
 }
 
-void FrameBuffer::SetWidth(const uint _width)
+uint FrameBuffer::GetPosX() const
 {
-	width = _width;
+	return pos_x;
 }
 
-void FrameBuffer::SetHeight(const uint _height)
+uint FrameBuffer::GetPosY() const
 {
-	height = _height;
+	return pos_y;
+}
+
+void FrameBuffer::SetWidth(const uint width_)
+{
+	width = width_;
+}
+
+void FrameBuffer::SetHeight(const uint height_)
+{
+	height = height_;
+}
+
+void FrameBuffer::SetPosX(const uint x)
+{
+	pos_x = x;
+}
+
+void FrameBuffer::SetPosY(const uint y)
+{
+	pos_y = y;
 }
