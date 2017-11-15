@@ -1,5 +1,7 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\LineSegment.h"
+#include "MathGeoLib\src\Geometry\Triangle.h"
 
 //Containers
 #include "KDTreeVertex.h"
@@ -447,4 +449,29 @@ Geo::Vertex Mesh::GetMaxZVertex() const
 			max = i;
 
 	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+}
+
+bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
+{
+	Triangle triangle_to_test;
+	float original_dist = *distance;
+	bool no_hits = true;
+
+	int num_triangles = num_indices / 3;
+
+	for (int i = 0; i < num_triangles; i++)
+	{
+		triangle_to_test.a = vec(vertices[indices[i * 3]], vertices[indices[i * 3 + 1]], vertices[indices[i * 3 + 2]]); i++;
+		triangle_to_test.b = vec(vertices[indices[i * 3]], vertices[indices[i * 3 + 1]], vertices[indices[i * 3 + 2]]); i++;
+		triangle_to_test.c = vec(vertices[indices[i * 3]], vertices[indices[i * 3 + 1]], vertices[indices[i * 3 + 2]]);
+
+		//Check all mesh triangles
+		if (ray->Intersects(triangle_to_test, distance, nullptr))
+			no_hits = false;
+	}
+
+	if(no_hits)
+		distance = &original_dist;
+
+	return false;
 }

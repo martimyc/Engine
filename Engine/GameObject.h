@@ -116,10 +116,12 @@ public:
 	const AppliedMaterial* GetAppliedMaterial() const;
 	const MeshFilter* GetMeshFilter() const;
 	void DrawBoundingBoxes() const;
-
+	
 	//Remove unique components
 	void RemoveMeshFilter();
 	void RemoveAppliedMaterial();
+
+	void PickGameObject(const LineSegment* ray, float ray_distance) const;
 };
 
 #endif // !_GAME_OBJECT

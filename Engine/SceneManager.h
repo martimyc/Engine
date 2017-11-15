@@ -75,6 +75,7 @@ public:
 	void DrawCamera();
 	void SetCameraFocused(Camera* camera);
 
+	void SetFocused(GameObject* game_obj);
 	const GameObject* GetFocused() const;
 };
 

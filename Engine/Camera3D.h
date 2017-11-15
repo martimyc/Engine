@@ -9,6 +9,8 @@
 #include "Globals.h"
 #include "glmath.h"
 
+class GameObject;
+
 class Camera3D : public Module
 {
 private :
@@ -35,7 +37,6 @@ public:
 private:
 	void LookAt(const vec &spot, float distance);
 
-	void RecalculateFOV();
 	void ResetFrustumPlanes();
 	void ShowMatrixDebug();
 
@@ -47,6 +48,7 @@ public:
 	bool CleanUp();
 
 	void OpenCloseConfigCameraWindow();
+	void RecalculateFOV();
 
 	const float GetFovVertical()const;
 	const float* GetProjMatrix()const;

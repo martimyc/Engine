@@ -2,10 +2,11 @@
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_sdl.h"
 #include "Brofiler\Brofiler.h"
+#include "Parson\parson.h"
 #include "Globals.h"
 #include "Application.h"
-#include "Parson\parson.h"
 #include "Console.h"
+#include "Camera3D.h"
 #include "Window.h"
 
 Window::Window(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -203,6 +204,8 @@ UPDATE_STATUS Window::Configuration(float dt)
 			}
 			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
 			aspect_ratio = (float)screen_width / screen_height;
+			App->camera->RecalculateFOV();
+			App->SetDockContextSize(screen_width*scale, screen_height*scale);
 		}
 
 		json_object_set_number(json_object(win), "screen_width", screen_width);
@@ -225,6 +228,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 				break;
 			}
 			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
+			App->SetDockContextSize(screen_width*scale, screen_height*scale);
 		}
 		json_object_set_number(json_object(win), "scale", scale);
 		json_object_dotset_value(obj, "Window", win);

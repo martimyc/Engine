@@ -243,6 +243,11 @@ void SceneManager::DrawMode() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+void SceneManager::SetFocused(GameObject* game_obj)
+{
+	focused = game_obj;
+}
+
 const GameObject * SceneManager::GetFocused() const
 {
 	return focused;
