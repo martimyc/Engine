@@ -165,6 +165,8 @@ struct MeshSource
 	Geo::Vertex GetMaxXVertex() const;
 	Geo::Vertex GetMaxYVertex() const;
 	Geo::Vertex GetMaxZVertex() const;
+
+	bool CheckTriangleCollision(const LineSegment * ray, float* distance) const;
 };
 
 class Mesh : public Resource
