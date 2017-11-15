@@ -587,11 +587,12 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 			if (tmp_mesh->CheckTriangleCollision(ray, &triangle_distance))
 			{
 				 //Check triangle distance
-				if (closest_triangle_distance > triangle_distance)
+				if (closest_triangle_distance > triangle_distance && triangle_distance != 0)
 				{
 					App->scene_manager->SetFocused(it->second);
 					closest_triangle_distance = triangle_distance;
 				}
+				break;
 			}
 		}
 	}

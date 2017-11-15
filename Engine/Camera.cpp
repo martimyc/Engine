@@ -9,16 +9,15 @@
 
 void Camera::RecalculateFOV()
 {
-	frustum.verticalFov = vertical_fov * DEGTORAD;
-	frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2) * App->window->GetAspectRatio()));
+	frustum.SetVerticalFovAndAspectRatio(vertical_fov * DEGTORAD, App->window->GetAspectRatio());
 	ResetFrustumPlanes();
 }
 
 void Camera::TransformCamera()
 {
-	frustum.pos = game_object->GetLocalPosition();
-	frustum.front = game_object->GetWorldTransform().Col3(2);
-	frustum.up = game_object->GetWorldTransform().Col3(1);
+	frustum.SetFrame(game_object->GetLocalPosition(),	//Pos
+		game_object->GetWorldTransform().Col3(2),		//Front
+		game_object->GetWorldTransform().Col3(1));		//Up
 	ResetFrustumPlanes();
 }
 
@@ -65,7 +64,7 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 	}	
 }
 
-Camera::Camera(const char* name, bool enabled) : Component(CT_CAMERA, name, enabled), vertical_fov(90), far_plane_dist(15.0f), near_plane_dist(1.0f)
+Camera::Camera(const char* name, bool enabled) : Component(CT_CAMERA, name, enabled), vertical_fov(90), far_plane_dist(500.0f), near_plane_dist(0.5f)
 {
 }
 
@@ -75,11 +74,9 @@ Camera::~Camera()
 
 bool Camera::Start()
 {
-	frustum.type = math::PerspectiveFrustum;
-
-	frustum.SetNearPlaneDistance(near_plane_dist);
-	frustum.SetFarPlaneDistance(far_plane_dist);
-
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	frustum.SetType(math::FrustumType::PerspectiveFrustum);
+	frustum.SetViewPlaneDistances(near_plane_dist, far_plane_dist);
 	TransformCamera();
 	RecalculateFOV();
 
