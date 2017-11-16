@@ -445,8 +445,8 @@ Geo::Vertex MeshSource::GetMaxZVertex() const
 bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
 {
 	Triangle triangle_to_test;
-	float original_dist = *distance;
-	bool no_hits = true;
+	//float original_dist = *distance;
+	bool hit = false;
 
 	int num_triangles = num_indices / 3;
 
@@ -458,11 +458,13 @@ bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distanc
 
 		//Check all mesh triangles
 		if (ray->Intersects(triangle_to_test, distance, nullptr))
-			no_hits = false;
+			hit = true;
 	}
 
-	if (no_hits)
-		distance = &original_dist;
+	if (hit)
+		return true;
+	//if (no_hits)
+	//	distance = &original_dist;
 
 	return false;
 }

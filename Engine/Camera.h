@@ -13,8 +13,8 @@ private:
 	std::vector<Plane> planes;
 
 	int vertical_fov = 90;
-	float near_plane_dist = 1.0f;
-	float far_plane_dist = 15.0f;
+	float near_plane_dist = 0.5f;
+	float far_plane_dist = 500.0f;
 
 	void RecalculateFOV();
 	void TransformCamera();
