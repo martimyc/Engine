@@ -235,6 +235,8 @@ public:
 	Geo::Vertex GetMaxZVertex() const;
 
 	bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
+
+	void SetSource(MeshSource* source);
 };
 
 #endif // !MESH

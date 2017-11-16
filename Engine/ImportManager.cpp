@@ -200,16 +200,16 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 	switch (to_load->GetType())
 	{
 	case RT_TEXTURE:
-		texture_importer->Load(to_load->GetUID(), (TextureLoadConfiguration*)load_config);
+		texture_importer->Load((Texture*)to_load, (TextureLoadConfiguration*)load_config);
 		break;
 	case RT_MESH:
-		mesh_importer->Load(to_load->GetUID(), (MeshLoadConfiguration*)load_config);
+		mesh_importer->Load((Mesh*)to_load, (MeshLoadConfiguration*)load_config);
 		break;
 	case RT_MATERIAL:
-		material_importer->Load(to_load->GetUID(), App->resource_manager->GetNumMaterials(), (MaterialLoadConfiguration*) load_config);
+		material_importer->Load((Material*)to_load, App->resource_manager->GetNumMaterials(), (MaterialLoadConfiguration*) load_config);
 		break;
 	case RT_PREFAB:
-		prefab_importer->Load(to_load->GetUID(), (PrefabLoadConfiguration*)load_config);
+		prefab_importer->Load((Prefab*)to_load, (PrefabLoadConfiguration*)load_config);
 		break;
 	default:
 		break;
@@ -255,7 +255,8 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 	if (MetaSave(file_name_ext, uid, import_type, import_config, load_config) == false)
 		return UID();
 
-	App->resource_manager->AddAsset(file_name_no_ext, uid, import_type, import_config, load_config);
+	if(type != RT_PREFAB)
+		App->resource_manager->AddAsset(file_name_no_ext, uid, import_type, import_config, load_config);
 
 	return uid;
 }
@@ -330,42 +331,6 @@ Asset* ImportManager::MetaLoad(const std::string & file) const
 	return nullptr;
 }
 
-TextureSource * ImportManager::LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const
-{
-	TextureSource* new_texture = texture_importer->Load(uid, load_config);
-	if (new_texture != nullptr)
-		return new_texture;
-
-	LOG("Could not load texture corectlly");
-	delete new_texture;
-	return nullptr;
-}
-
-
-MaterialSource * ImportManager::LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config, unsigned int priority) const
-{
-	//should check if loaded previouslly by uid
-	MaterialSource* new_material = material_importer->Load(uid, priority, load_config);
-	if (new_material != nullptr)
-		return new_material;
-
-	LOG("Could not load material corectlly");
-	delete new_material;
-	return nullptr;
-}
-
-MeshSource * ImportManager::LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const
-{
-	//should check if loaded previouslly by uid
-	MeshSource* new_mesh = mesh_importer->Load(uid, load_config);
-	if (new_mesh != nullptr)
-		return new_mesh;
-
-	LOG("Could not load mesh corectlly");
-	delete new_mesh;
-	return nullptr;
-}
-
 const UID ImportManager::ImportScene(const std::string & file, const SceneImportConfiguration* load_config) const
 {
 	UID prefab_uid;
@@ -391,32 +356,36 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 			scene_materials.reserve(scene->mNumMaterials);
 			material_loads = new bool[scene->mNumMaterials];
 
-			uint num_textures = 0;
-			for (int i = 0; i < scene->mNumMaterials; i++)
-				num_textures += scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE);
-
 			for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 			{
-				LOG("Importing Material %i", i);
-
-				char ptr[255];
-				sprintf(ptr, "Material_%s_%i", scene_name.c_str(), i);
-				std::string material_name(ptr);
-
-				MaterialImportConfiguration i_config;
-				MaterialLoadConfiguration l_config;
-
-				UID uid(material_importer->Import(scene->mMaterials[i], &i_config));
-
-				if (uid.IsNull() == false)
+				if (scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE))
 				{
-					material_loads[i] = true;
-					scene_materials.push_back(uid);
-					App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, &i_config, &l_config);
+					LOG("Importing Material %i", i);
+
+					char ptr[255];
+					sprintf(ptr, "Material_%s_%i", scene_name.c_str(), i);
+					std::string material_name(ptr);
+
+					MaterialImportConfiguration i_config;
+					MaterialLoadConfiguration l_config;
+
+					UID uid(material_importer->Import(scene->mMaterials[i], &i_config));
+
+					if (uid.IsNull() == false)
+					{
+						material_loads[i] = true;
+						scene_materials.push_back(uid);
+						App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, &i_config, &l_config);
+					}
+					else
+					{
+						LOG("Material (%i) could not be imported correctly", i);
+						material_loads[i] = false;
+					}
 				}
 				else
 				{
-					LOG("Material (%i) could not be imported correctly", i);
+					LOG("Material (%i) was empty", i);
 					material_loads[i] = false;
 				}
 			}

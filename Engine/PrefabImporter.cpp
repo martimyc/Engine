@@ -103,12 +103,12 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		ImportNode(child->mChildren[i], iterator, scene, materials, material_loads, meshes, mesh_loads, config);
 }
 
-GameObject* PrefabImporter::LoadChild(char ** iterator)
+GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 {
 	std::string name (*iterator);
 	*iterator += name.length() + 1;
 
-	GameObject* new_game_object = new GameObject(nullptr, name);
+	GameObject* new_game_object = new GameObject(parent, name);
 
 	math::float4x4 transform;
 	memcpy(&transform, *iterator, sizeof(float) * 16);
@@ -174,7 +174,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 
 	for (int i = 0; i < num_childs; i++)
 	{
-		new_game_object->AddChild(LoadChild(iterator));
+		new_game_object->AddChild(LoadChild(iterator, new_game_object));
 	}
 
 	return new_game_object;
@@ -208,16 +208,15 @@ const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& m
 	return uid;
 }
 
-PrefabSource * PrefabImporter::Load(const UID & id, const PrefabLoadConfiguration * config)
+void PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration * config)
 {
-	PrefabSource* new_prefab = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
 
 	std::string path(App->file_system->GetPrefabs());
 	path += "\\";
-	path += id.GetAsName();
+	path += to_load->GetUID().GetAsName();
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 
@@ -226,10 +225,6 @@ PrefabSource * PrefabImporter::Load(const UID & id, const PrefabLoadConfiguratio
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
-		new_prefab = new PrefabSource();
-
-		new_prefab->root->AddChild(LoadChild(&iterator));
+		to_load->SetSource(new PrefabSource(LoadChild(&iterator, nullptr)));
 	}
-
-	return new_prefab;
 }

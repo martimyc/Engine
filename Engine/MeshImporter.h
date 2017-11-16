@@ -9,7 +9,7 @@
 #include "Assimp\include\cfileio.h"
 #include "glew\include\GL\glew.h"
 
-struct MeshSource;
+struct Mesh;
 struct UID;
 struct MeshImportConfiguration;
 struct MeshLoadConfiguration;
@@ -26,7 +26,7 @@ private:
 public:
 	//TODO change for config
 	const UID Import(const aiMesh* mesh);
-	MeshSource* Load(const UID& id, const MeshLoadConfiguration* config);
+	void Load(Mesh* to_load, const MeshLoadConfiguration* config);
 };
 
 #endif // !MESH_IMPORTER

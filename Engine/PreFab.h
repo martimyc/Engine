@@ -10,6 +10,9 @@ class GameObject;
 struct PrefabSource
 {
 	GameObject* root;
+
+	PrefabSource(GameObject* root);
+	~PrefabSource();
 };
 
 class Prefab: public Resource
@@ -27,6 +30,8 @@ public:
 	bool IsLoaded() const;
 
 	bool Inspector();
+
+	void SetSource(PrefabSource* source);
 };
 
 #endif // !PREFAB

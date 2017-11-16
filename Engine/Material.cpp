@@ -211,3 +211,8 @@ void Material::Use(const GameObject* go)
 	else
 		LOG("Trying to acces non loaded material");
 }
+
+void Material::SetSource(MaterialSource * source)
+{
+	this->source = source;
+}

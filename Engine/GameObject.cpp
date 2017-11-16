@@ -10,12 +10,14 @@
 #include "Transform.h"
 #include "Texture.h"
 #include "Mesh.h"
+#include "Material.h"
 #include "Camera.h"
 
 //modules
 #include "Console.h"
 #include "Renderer3D.h"
 #include "SceneManager.h"
+#include "ResourceManager.h"
 #include "Application.h"
 #include "GameObject.h"
 

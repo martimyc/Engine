@@ -76,10 +76,6 @@ private:
 	bool MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
 	Asset* MetaLoad(const std::string& file) const;
 
-	TextureSource* LoadTexture(const UID & uid, const TextureLoadConfiguration* load_config) const;
-	MaterialSource* LoadMaterial(const UID & uid, const MaterialLoadConfiguration* load_config, unsigned int priority = 0) const;
-	MeshSource* LoadMesh(const UID & uid, const MeshLoadConfiguration* load_config) const;
-
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
 

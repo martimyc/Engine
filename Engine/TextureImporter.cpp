@@ -104,13 +104,11 @@ const UID TextureImporter::Import(const std::string& file, const TextureImportCo
 	return uid;
 }
 
-TextureSource* TextureImporter::Load(const UID& uid, const TextureLoadConfiguration* config)
+void TextureImporter::Load(Texture* to_load, const TextureLoadConfiguration* config)
 {
-	TextureSource* new_texture = nullptr;
-
 	std::string path(App->file_system->GetTextures());
 	path += "\\";
-	path += uid.GetAsName();
+	path += to_load->GetUID().GetAsName();
 	path += ".dds";
 
 	ILuint imageID;				// Create an image ID as a ULuint
@@ -161,7 +159,7 @@ TextureSource* TextureImporter::Load(const UID& uid, const TextureLoadConfigurat
 		}
 		//--
 
-		new_texture = new TextureSource;
+		TextureSource* new_texture = new TextureSource;
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
@@ -237,13 +235,12 @@ TextureSource* TextureImporter::Load(const UID& uid, const TextureLoadConfigurat
 
 		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
 
-		return new_texture;
+		to_load->SetSource(new_texture);
 	}
 	else // If we failed to open the image file in the first place...
 	{
 		error = ilGetError();
 		LOG("Image load failed - IL reports error:%i - %s", error, iluErrorString(error));
-		return nullptr;
 	}
 }
 

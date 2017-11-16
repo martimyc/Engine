@@ -76,6 +76,8 @@ public:
 	bool IsLoaded() const;
 
 	void Use(const GameObject* go);
+
+	void SetSource(MaterialSource* source);
 };
 
 #endif // !MATERIAL

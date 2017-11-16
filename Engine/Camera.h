@@ -20,7 +20,6 @@ private:
 	void TransformCamera();
 	void ResetFrustumPlanes();
 
-
 public:
 	Camera(const std::string& name, bool enabled = true);
 	~Camera();

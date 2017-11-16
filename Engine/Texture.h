@@ -64,10 +64,10 @@ public:
 	const GLuint& GetTextureID() const;
 
 	//Sets
-	void SetSource(TextureSource* new_source);
-
 	bool Inspector();
 
 	bool IsLoaded() const;
+
+	void SetSource(TextureSource* source);
 };
 #endif // !TEXTURE

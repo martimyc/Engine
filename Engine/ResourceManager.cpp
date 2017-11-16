@@ -53,8 +53,11 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 {
 	if (ImGui::Begin("Assets"))
 	{
-		for(std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-			ImGui::Text("Name: %s\nNum Instances: %i",(*it)->GetName().c_str(), (*it)->GetNumInsatances());
+		for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		{
+			std::string uid((*it)->GetUID().GetAsName());
+			ImGui::Text("Name: %s\nUID: %s\nNum Instances: %i", (*it)->GetName().c_str(), uid.c_str(), (*it)->GetNumInsatances());
+		}
 
 		if (ImGui::Button("Add Prefab to focused"))
 		{
@@ -62,7 +65,7 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 				if ((*it)->GetType() == RT_PREFAB)
 				{
 					Prefab* prefab = (Prefab*) UseFirst(RT_PREFAB, App->scene_manager->GetFocused());
-					App->scene_manager->AddPrefabToFocused(((Prefab*)(*it)->GetResource())->GetRoot());
+					App->scene_manager->AddPrefabToFocused(prefab->GetRoot());
 				}
 		}
 	}
@@ -88,6 +91,7 @@ void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE
 	case RT_MESH:
 		new_resource = new Mesh(name, uid);
 		new_asset = new MeshAsset(new_resource, import_config, load_config);
+		break;
 	case RT_MATERIAL:
 		new_resource = new Material(name, uid);
 		new_asset = new MaterialAsset(new_resource, import_config, load_config);

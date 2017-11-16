@@ -11,7 +11,7 @@
 
 struct MaterialImportConfiguration;
 struct MaterialLoadConfiguration;
-struct MaterialSource;
+struct Material;
 struct UID;
 
 struct MaterialTextureInfo
@@ -30,7 +30,7 @@ public:
 	~MaterialImporter();
 
 	const UID Import(const aiMaterial* material, const MaterialImportConfiguration* config);
-	MaterialSource* Load(const UID& id, unsigned int priority, const MaterialLoadConfiguration* config);
+	void Load(Material* to_load, unsigned int priority, const MaterialLoadConfiguration* config);
 };
 
 #endif // !MATERIAL_IMPORTER

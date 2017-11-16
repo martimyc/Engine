@@ -787,3 +787,8 @@ bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) cons
 	LOG("Trying to acces non loaded mesh");
 	return false;
 }
+
+void Mesh::SetSource(MeshSource * source)
+{
+	this->source = source;
+}

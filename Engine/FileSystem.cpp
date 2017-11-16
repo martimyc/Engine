@@ -52,7 +52,7 @@ bool FileSystem::Init()
 	std::string prefabs = working_directory;
 	prefabs += LIBRARY_PREFABS_FOLDER;
 
-	if (!Exsists(textures))
+	if (!Exsists(prefabs))
 		if (!CreateFolder("Prefabs", false, LIBRARY_FOLDER))
 			LOG("Prefabs folder could not be created");
 

@@ -184,16 +184,15 @@ const UID MeshImporter::Import(const aiMesh * mesh)
 	return id;
 }
 
-MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* config)
+void MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 {
-	MeshSource* new_mesh = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
 
 	std::string path(App->file_system->GetMeshes());
 	path += "\\";
-	path += id.GetAsName();
+	path += to_load->GetUID().GetAsName();
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 
@@ -202,7 +201,7 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
-		new_mesh = new MeshSource();
+		MeshSource* new_mesh = new MeshSource();
 
 		GLuint num_vertices;
 		memcpy(&num_vertices, iterator, sizeof(GLuint));
@@ -228,7 +227,7 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 		else
 		{
 			LOG("Mesh has no vertices");
-			return nullptr;
+			return;
 		}
 
 		GLuint num_faces;
@@ -255,7 +254,7 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 		else
 		{
 			LOG("Mesh has no faces");
-			return nullptr;
+			return;
 		}
 
 		GLuint num_uv_channels;
@@ -327,8 +326,9 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 		}
 		else
 			LOG("Mesh has no vertex colors");
+
+		to_load->SetSource(new_mesh);
 	}
-	return new_mesh;
 }
 
 

@@ -85,11 +85,6 @@ const GLuint & Texture::GetTextureID() const
 		LOG("Asking for unloaded texture information");
 }
 
-void Texture::SetSource(TextureSource * new_source)
-{
-	source = new_source;
-}
-
 bool Texture::Inspector()
 {
 	bool ret = true;
@@ -114,4 +109,9 @@ bool Texture::Inspector()
 bool Texture::IsLoaded() const
 {
 	return source != nullptr;
+}
+
+void Texture::SetSource(TextureSource* source)
+{
+	this->source = source;
 }

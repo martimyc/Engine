@@ -128,16 +128,15 @@ const UID MaterialImporter::Import( const aiMaterial * material, const MaterialI
 	return id;
 }
 
-MaterialSource* MaterialImporter::Load(const UID& id, unsigned int priority, const MaterialLoadConfiguration* config)
+void MaterialImporter::Load(Material* to_load, unsigned int priority, const MaterialLoadConfiguration* config)
 {
-	MaterialSource* new_material = nullptr;
 	char* buffer = nullptr;
 	char* iterator = nullptr;
 	uint length = 0;
 
 	std::string path(App->file_system->GetMaterials());
 	path += "\\";
-	path += id.GetAsName();
+	path += to_load->GetUID().GetAsName();
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 	
@@ -146,7 +145,7 @@ MaterialSource* MaterialImporter::Load(const UID& id, unsigned int priority, con
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
-		new_material = new MaterialSource();
+		MaterialSource* new_material = new MaterialSource();
 
 		size_t size = *iterator;
 		iterator += sizeof(size_t);
@@ -161,7 +160,7 @@ MaterialSource* MaterialImporter::Load(const UID& id, unsigned int priority, con
 			new_material->textures.push_back(ResourceManager::Client::GetTexture( App->resource_manager, *it));
 			new_material->num_difusse_textures++;
 		}
-	}
 
-	return new_material;
+		to_load->SetSource(new_material);
+	}
 }
