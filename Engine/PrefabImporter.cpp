@@ -1,8 +1,24 @@
-#include "Globals.h"
-#include "FileSystem.h"
-#include "Application.h"
+#include "MathGeoLib\src\Math\float4x4.h"
+
 #include "UID.h"
+#include "Globals.h"
+
+//Resources
+#include "Transform.h"
+#include "Mesh.h"
+#include "Material.h"
 #include "PreFab.h"
+
+//Components
+#include "MeshFilter.h"
+#include "AppliedMaterial.h"
+
+#include "GameObject.h"
+
+//Modules
+#include "FileSystem.h"
+#include "ResourceManager.h"
+#include "Application.h"
 #include "PrefabImporter.h"
 
 PrefabImporter::PrefabImporter()
@@ -64,7 +80,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		if (mesh_loads[child->mMeshes[i]])
 		{
 			UID id(meshes[child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], mesh_loads, scene->mNumMeshes)]);
-			memcpy(*iterator, id.uid, SIZE_OF_UID);
+			memcpy(*iterator, &id, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 
 			bool has_material = material_loads[scene->mMeshes[child->mMeshes[i]]->mMaterialIndex];
@@ -74,7 +90,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 			if (has_material)
 			{
 				UID id(materials[scene->mMeshes[child->mMeshes[i]]->mMaterialIndex - GetFailedBefore(scene->mMeshes[child->mMeshes[i]]->mMaterialIndex, material_loads, scene->mNumMaterials)]);
-				memcpy(*iterator, id.uid, SIZE_OF_UID);
+				memcpy(*iterator, &id, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
 			}
 		}
@@ -87,38 +103,69 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		ImportNode(child->mChildren[i], iterator, scene, materials, material_loads, meshes, mesh_loads, config);
 }
 
-void PrefabImporter::LoadNode(PrefabNode * node, char ** iterator)
+GameObject* PrefabImporter::LoadChild(char ** iterator)
 {
-	node->name = *iterator;
-	*iterator += node->name.length() + 1;
+	std::string name (*iterator);
+	*iterator += name.length() + 1;
 
-	memcpy(node->transform, *iterator, sizeof(float) * 16);
+	GameObject* new_game_object = new GameObject(nullptr, name);
+
+	math::float4x4 transform;
+	memcpy(&transform, *iterator, sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
+	new_game_object->SetTransform(transform);
 
 	uint num_meshes = **iterator;
 	*iterator += sizeof(uint);
 
 	if (num_meshes == 1)
 	{
-		memcpy(node->mesh.uid, *iterator, SIZE_OF_UID);
+		UID mesh_uid;
+		memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
 		*iterator += SIZE_OF_UID;
+		Mesh* mesh = (Mesh*)App->resource_manager->Use(mesh_uid, new_game_object);
+		new_game_object->AddComponent(new MeshFilter(mesh));
 
 		bool has_material = **iterator;
 		*iterator += sizeof(bool);
 
 		if (has_material)
 		{
-			memcpy(node->material.uid, *iterator, SIZE_OF_UID);
+			UID material_uid;
+			memcpy(&material_uid, *iterator, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
+			Material* material = (Material*)App->resource_manager->Use(mesh_uid, new_game_object);
+			new_game_object->AddComponent(new AppliedMaterial(material));
 		}
 	}
 	else
 	{
 		for (int i = 0; i < num_meshes; i++)
 		{
-			char name[255];
-			sprintf(name, "%s_child_%i", node->name.c_str(), i);
-			node->AddChild(name, &*iterator);
+			char child_name[255];
+			sprintf(child_name, "%s_child_%i", name.c_str(), i);
+
+			GameObject* new_child = new GameObject(new_game_object, child_name);
+
+			UID mesh_uid;
+			memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
+			*iterator += SIZE_OF_UID;
+			Mesh* mesh = (Mesh*)App->resource_manager->Use(mesh_uid, new_child);
+			new_child->AddComponent(new MeshFilter(mesh));
+
+			bool has_material = **iterator;
+			*iterator += sizeof(bool);
+
+			if (has_material)
+			{
+				UID material_uid;
+				memcpy(&material_uid, *iterator, SIZE_OF_UID);
+				*iterator += SIZE_OF_UID;
+				Material* material = (Material*)App->resource_manager->Use(mesh_uid, new_child);
+				new_child->AddComponent(new AppliedMaterial(material));
+			}
+			
+			new_game_object->AddChild(new_child);
 		}
 	}
 
@@ -127,10 +174,10 @@ void PrefabImporter::LoadNode(PrefabNode * node, char ** iterator)
 
 	for (int i = 0; i < num_childs; i++)
 	{
-		PrefabNode* new_child = new PrefabNode;
-		LoadNode(new_child, iterator);
-		node->childs.push_back(new_child);
+		new_game_object->AddChild(LoadChild(iterator));
 	}
+
+	return new_game_object;
 }
 
 const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const PrefabImportConfiguration* config)
@@ -170,7 +217,7 @@ PrefabSource * PrefabImporter::Load(const UID & id, const PrefabLoadConfiguratio
 
 	std::string path(App->file_system->GetPrefabs());
 	path += "\\";
-	path += id.uid;
+	path += id.GetAsName();
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 
@@ -181,7 +228,7 @@ PrefabSource * PrefabImporter::Load(const UID & id, const PrefabLoadConfiguratio
 
 		new_prefab = new PrefabSource();
 
-		LoadNode(new_prefab->parent, &iterator);
+		new_prefab->root->AddChild(LoadChild(&iterator));
 	}
 
 	return new_prefab;

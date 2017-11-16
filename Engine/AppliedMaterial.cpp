@@ -1,13 +1,7 @@
 #include "Material.h"
 #include "AppliedMaterial.h"
 
-AppliedMaterial::AppliedMaterial(const char * name, Material* material, bool enabled): Component(CT_APPLIED_MATERIAL,name, enabled), material(material)
-{
-	uv_channels = new unsigned int[material->GetNumTextures()];
-	memset(uv_channels, 0, material->GetNumTextures() * sizeof(unsigned int));
-}
-
-AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(CT_APPLIED_MATERIAL, material->GetName(), enabled), material(material)
+AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(CT_APPLIED_MATERIAL, enabled), material(material)
 {
 	uv_channels = new unsigned int[material->GetNumTextures()];
 	memset(uv_channels, 0, material->GetNumTextures() * sizeof(unsigned int));
@@ -47,4 +41,9 @@ void AppliedMaterial::Inspector()
 {
 	//TODO change to pick uv channel
 	material->Inspector();
+}
+
+const std::string & AppliedMaterial::GetName() const
+{
+	return material->GetName();
 }

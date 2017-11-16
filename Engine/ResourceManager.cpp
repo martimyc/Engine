@@ -17,6 +17,7 @@
 
 //Modules
 #include "ImportManager.h"
+#include "SceneManager.h"
 #include "Application.h"
 #include "ResourceManager.h"
 
@@ -34,6 +35,13 @@ Texture * ResourceManager::GetTexture(const UID & uid)
 	return nullptr;
 }
 
+Resource* ResourceManager::UseFirst(RESOURCE_TYPE type, const GameObject* go)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetType() == type)
+			return Use((*it)->GetUID(), go);
+}
+
 bool ResourceManager::Init()
 {
 	debug_textures = LoadCheckers();
@@ -46,7 +54,17 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 	if (ImGui::Begin("Assets"))
 	{
 		for(std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-			ImGui::Text("Name: %s\nUID: %s\nNum Instances: %i",(*it)->GetName().c_str(), (*it)->GetUID().GetAsName(), (*it)->GetNumInsatances());
+			ImGui::Text("Name: %s\nNum Instances: %i",(*it)->GetName().c_str(), (*it)->GetNumInsatances());
+
+		if (ImGui::Button("Add Prefab to focused"))
+		{
+			for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+				if ((*it)->GetType() == RT_PREFAB)
+				{
+					Prefab* prefab = (Prefab*) UseFirst(RT_PREFAB, App->scene_manager->GetFocused());
+					App->scene_manager->AddPrefabToFocused(((Prefab*)(*it)->GetResource())->GetRoot());
+				}
+		}
 	}
 	ImGui::End();
 	return UPDATE_CONTINUE;

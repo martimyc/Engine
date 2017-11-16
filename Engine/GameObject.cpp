@@ -19,7 +19,7 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(GameObject* const parent, const char* name): parent(parent), name(name)
+GameObject::GameObject(GameObject* const parent, const std::string& name): parent(parent), name(name)
 {
 	transform = new Transform("Transform");
 	bounds.sphere_bounding_box.SetNegativeInfinity();
@@ -243,6 +243,9 @@ GameObject * GameObject::CreateChild(Component * component, const char* const na
 void GameObject::AddChild(GameObject* child)
 {
 	childs.push_back(child);
+	
+	if(child->parent != this)
+		child->parent = this;
 }
 
 GameObject* GameObject::CreateCamera()

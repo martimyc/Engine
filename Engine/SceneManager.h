@@ -77,6 +77,8 @@ public:
 
 	void SetFocused(GameObject* game_obj);
 	const GameObject* GetFocused() const;
+
+	void AddPrefabToFocused(GameObject* root);
 };
 
 #endif // !_MODULE_SCENE_MANAGER

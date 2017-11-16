@@ -14,6 +14,7 @@ struct PrefabNode;
 struct UID;
 struct PrefabImportConfiguration;
 struct PrefabLoadConfiguration;
+class GameObject;
 
 class PrefabImporter
 {
@@ -25,7 +26,7 @@ private:
 	unsigned int GetFailedBefore(unsigned int pos, bool* loads, unsigned int num_objects) const;
 	unsigned int GetNodeSize(const aiNode* node, bool* mesh_loads) const;
 	void ImportNode(const aiNode* child, char** iterator, const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const PrefabImportConfiguration* config);
-	void LoadNode(PrefabNode* node, char** iterator);
+	GameObject* LoadChild(char** iterator);
 
 public:
 	//TODO change for config

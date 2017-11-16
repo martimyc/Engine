@@ -1,6 +1,7 @@
 #ifndef MESH_FILTER
 #define MESH_FILTER
 
+#include <string>
 #include "Component.h"
 
 class Mesh;
@@ -13,9 +14,7 @@ private:
 	bool draw_kdt;
 
 public:
-	MeshFilter(const char* name, Mesh* mesh, bool enabled = true);
-	MeshFilter(Mesh* mesh, const char* name, bool enabled = true);
-	MeshFilter(Mesh* mesh, const std::string& name, bool enabled = true);
+	MeshFilter(Mesh* mesh, bool enabled = true);
 	~MeshFilter();
 
 	void Draw(const AppliedMaterial* material = nullptr) const;
@@ -28,6 +27,8 @@ public:
 	void DrawKDT() const;
 
 	void Inspector();
+
+	const std::string& GetName() const;
 };
 
 #endif // !MESH_FILTER

@@ -5,23 +5,11 @@
 #include <string>
 #include "Resource.h"
 
-struct PrefabNode
-{
-	std::vector<PrefabNode*> childs;
-	float transform [16];
-	UID mesh;
-	UID material;
-	std::string name;
-
-	PrefabNode();
-	~PrefabNode();
-
-	void AddChild(const std::string& name, char** iterator);
-};
+class GameObject;
 
 struct PrefabSource
 {
-	PrefabNode* parent;
+	GameObject* root;
 };
 
 class Prefab: public Resource
@@ -34,6 +22,7 @@ public:
 	Prefab(const std::string& name, PrefabSource* source);
 	~Prefab();
 
+	GameObject* GetRoot() const;
 
 	bool IsLoaded() const;
 

@@ -209,6 +209,7 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 		material_importer->Load(to_load->GetUID(), App->resource_manager->GetNumMaterials(), (MaterialLoadConfiguration*) load_config);
 		break;
 	case RT_PREFAB:
+		prefab_importer->Load(to_load->GetUID(), (PrefabLoadConfiguration*)load_config);
 		break;
 	default:
 		break;
@@ -267,7 +268,7 @@ bool ImportManager::MetaSave(const std::string & file, const UID & resource_id, 
 	memcpy(iterator, file.c_str(), file.length() + 1);
 	iterator += file.length() + 1;
 
-	memcpy(iterator, resource_id.uid, SIZE_OF_UID);
+	memcpy(iterator, &resource_id, SIZE_OF_UID);
 	iterator += SIZE_OF_UID;
 
 	memcpy(iterator, &type, sizeof(type));

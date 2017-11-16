@@ -57,6 +57,8 @@ private:
 
 	Texture* GetTexture(const UID& uid);
 
+	Resource* UseFirst(RESOURCE_TYPE type, const GameObject* go);
+
 public:
 	bool Init();
 

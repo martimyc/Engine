@@ -12,7 +12,6 @@ private:
 	unsigned int* uv_channels;
 
 public:
-	AppliedMaterial(const char* name, Material* material, bool enabled = true);
 	AppliedMaterial( Material* material, bool enabled = true);
 	~AppliedMaterial();
 
@@ -25,6 +24,8 @@ public:
 	void DisableDraw() const;
 
 	void Inspector();
+
+	const std::string& GetName() const;
 };
 
 #endif // !APPLIED_MATERIAL

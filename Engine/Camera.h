@@ -7,6 +7,7 @@
 class Camera :	public Component
 {
 private:
+	std::string name;
 	Frustum frustum;
 	bool frustum_culling = true;
 	std::vector<Plane> planes;
@@ -21,7 +22,7 @@ private:
 
 
 public:
-	Camera(const char* name, bool enabled = true);
+	Camera(const std::string& name, bool enabled = true);
 	~Camera();
 
 	bool Start();
@@ -34,6 +35,7 @@ public:
 	bool FrustumCulling(const GameObject* root);
 	void DrawFrustum();
 
+	const std::string& GetName() const;
 };
 
 #endif // !CAMERA

@@ -132,18 +132,14 @@ unsigned int FileSystem::LoadMetaFile(const std::string & file, char ** buffer)
 	return LoadFileBinary(path, buffer);
 }
 
-bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const char * name, const char * format)
+bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const std::string& name, const char * format)
 {
 	bool ret = true;
 
-	std::string full_path(working_directory);
-	full_path += relative_path;
-	full_path += "\\";
-	full_path += name;
-	full_path += ".";
-	full_path += format;
+	char full_path[512];
+	sprintf(full_path, "%s%s\\%s.%s", working_directory.c_str(), relative_path, name.c_str(), format);
 
-	std::ofstream outfile(full_path.c_str(), std::ofstream::binary);
+	std::ofstream outfile(full_path, std::ofstream::binary);
 
 	if (outfile.good())
 	{
@@ -153,7 +149,7 @@ bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * r
 	}
 	else
 	{
-		LOG("Couldn't save file %s.%s", name, format);
+		LOG("Couldn't save file %s.%s", name.c_str(), format);
 		ret = false;
 	}
 	return ret;

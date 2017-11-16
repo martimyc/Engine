@@ -20,13 +20,10 @@ private:
 	bool enabled;
 
 protected:
-	std::string name;
 	GameObject* game_object;
 
 public:	
-	Component(COMPONENT_TYPE type, const char* name, bool enabled = true): type(type), enabled(enabled), name(name)
-	{}
-	Component(COMPONENT_TYPE type, const std::string& name, bool enabled = true) : type(type), enabled(enabled), name(name)
+	Component(COMPONENT_TYPE type, bool enabled = true) : type(type), enabled(enabled)
 	{}
 	~Component()
 	{}
@@ -64,14 +61,9 @@ public:
 		return type;
 	}
 
-	const std::string& GetName() const
-	{
-		return name;
-	}
+	virtual const std::string& GetName() const = 0;
 
-	virtual void Inspector()
-	{}
-
+	virtual void Inspector() = 0;
 };
 
 #endif // !COMPONENT

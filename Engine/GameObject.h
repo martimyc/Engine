@@ -31,7 +31,7 @@ private:
 	std::string name;
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
-	GameObject* const parent;
+	GameObject* parent;
 	Transform* transform = nullptr;
 	Bounds bounds;
 	bool is_camera = false;
@@ -45,7 +45,7 @@ private:
 public:
 	bool transformed = false;
 
-	GameObject(GameObject* const parent, const char* name);
+	GameObject(GameObject* const parent, const std::string& name);
 	~GameObject();
 
 	bool Update();

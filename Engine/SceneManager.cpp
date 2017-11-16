@@ -253,6 +253,11 @@ const GameObject * SceneManager::GetFocused() const
 	return focused;
 }
 
+void SceneManager::AddPrefabToFocused(GameObject * root)
+{
+	focused->AddChild(root);
+}
+
 void SceneManager::EmptyScene()
 {
 	delete root;

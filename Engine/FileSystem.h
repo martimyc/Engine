@@ -20,7 +20,7 @@ public:
 	unsigned int LoadFileBinary(const std::string& path, char** buffer);
 	unsigned int LoadMetaFile(const std::string& file, char** buffer);
 
-	bool SaveFile(const char* buffer, unsigned int size, const char* relative_path, const char* name, const char* format);
+	bool SaveFile(const char* buffer, unsigned int size, const char* relative_path, const std::string& name, const char* format);
 	bool SaveMetaFile(const char* buffer, unsigned int size, const char* name);
 
 	bool CopyToAssets(const std::string& path);

@@ -110,7 +110,7 @@ TextureSource* TextureImporter::Load(const UID& uid, const TextureLoadConfigurat
 
 	std::string path(App->file_system->GetTextures());
 	path += "\\";
-	path += uid.uid;
+	path += uid.GetAsName();
 	path += ".dds";
 
 	ILuint imageID;				// Create an image ID as a ULuint

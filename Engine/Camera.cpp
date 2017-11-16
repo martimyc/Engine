@@ -65,13 +65,11 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 	}	
 }
 
-Camera::Camera(const char* name, bool enabled) : Component(CT_CAMERA, name, enabled), vertical_fov(90), far_plane_dist(15.0f), near_plane_dist(1.0f)
-{
-}
+Camera::Camera(const std::string& name, bool enabled) : Component(CT_CAMERA, enabled), vertical_fov(90), far_plane_dist(15.0f), near_plane_dist(1.0f), name(name)
+{}
 
 Camera::~Camera()
-{
-}
+{}
 
 bool Camera::Start()
 {
@@ -128,4 +126,9 @@ bool Camera::IsFrustumActive()
 void Camera::DrawFrustum()
 {
 	frustum.Draw(0.0f, 0.0f, 1.0f, 1.0f);
+}
+
+const std::string & Camera::GetName() const
+{
+	return name;
 }

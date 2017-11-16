@@ -193,7 +193,7 @@ MeshSource* MeshImporter::Load(const UID & id, const MeshLoadConfiguration* conf
 
 	std::string path(App->file_system->GetMeshes());
 	path += "\\";
-	path += id.uid;
+	path += id.GetAsName();
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 

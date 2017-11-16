@@ -137,7 +137,7 @@ MaterialSource* MaterialImporter::Load(const UID& id, unsigned int priority, con
 
 	std::string path(App->file_system->GetMaterials());
 	path += "\\";
-	path += id.uid;
+	path += id.GetAsName();
 	path += ".mm";
 	length = App->file_system->LoadFileBinary(path, &buffer);
 	
