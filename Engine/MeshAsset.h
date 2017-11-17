@@ -5,6 +5,8 @@
 
 struct MeshImportConfiguration : public ImportConfiguration
 {
+
+
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
 	virtual void MetaLoad(char* iterator);

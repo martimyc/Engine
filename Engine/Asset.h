@@ -58,6 +58,14 @@ public:
 
 struct SceneImportConfiguration : public ImportConfiguration
 {
+	MaterialImportConfiguration* material_import_config;
+	MeshImportConfiguration* mesh_import_config;
+	PrefabImportConfiguration* prefab_import_config;
+
+	MaterialLoadConfiguration* material_load_config;
+	MeshLoadConfiguration* material_load_config;
+	PrefabLoadConfiguration* material_load_config;
+
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
 	virtual void MetaLoad(char* iterator);

@@ -190,9 +190,6 @@ void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE
 		break;
 	}
 	assets.push_back(new_asset);
-
-	/*if (new_asset->GetType() == AT_TEXTURE)
-		//TODO import textures and generate images to display in assets menu (textures are loaded cus we use them as image)*/
 }
 
 void ResourceManager::DeleteAsset(Asset * to_delete)
