@@ -18,17 +18,6 @@ const Mesh * MeshFilter::GetMesh() const
 	return mesh;
 }
 
-void MeshFilter::RecalculateMeshKDT()
-{
-	mesh->RecalculateKDT();
-}
-
-void MeshFilter::DrawKDT() const
-{
-	if(draw_kdt)
-		mesh->DrawKDT();
-}
-
 void MeshFilter::Inspector()
 {
 	ImGui::Checkbox("Draw KDT", &draw_kdt);
@@ -36,7 +25,7 @@ void MeshFilter::Inspector()
 	ImGui::Text("Name: %s", mesh->GetName().c_str());
 
 	if (ImGui::Button("Recalculate KDT"))
-		RecalculateMeshKDT();
+		mesh->RecalculateKDT();
 	
 	mesh->Inspector();
 }

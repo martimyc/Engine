@@ -184,7 +184,7 @@ const UID MeshImporter::Import(const aiMesh * mesh)
 	return id;
 }
 
-void MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
+bool MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 {
 	char* buffer = nullptr;
 	char* iterator = nullptr;
@@ -227,7 +227,7 @@ void MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 		else
 		{
 			LOG("Mesh has no vertices");
-			return;
+			return false;
 		}
 
 		GLuint num_faces;
@@ -254,7 +254,7 @@ void MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 		else
 		{
 			LOG("Mesh has no faces");
-			return;
+			return false;
 		}
 
 		GLuint num_uv_channels;
@@ -328,7 +328,9 @@ void MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 			LOG("Mesh has no vertex colors");
 
 		to_load->SetSource(new_mesh);
+		return true;
 	}
+	return false;
 }
 
 

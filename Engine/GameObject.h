@@ -63,6 +63,7 @@ public:
 	void Delete(GameObject* to_delete);
 
 	void ChangeMaterial(Material* new_material);
+	void ChangeMesh(Mesh * new_mesh);
 
 	bool Hirarchy(GameObject*& selected);
 
@@ -75,6 +76,8 @@ public:
 	//Gets
 	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
+	const Mesh* GetMesh() const;
+	const Material* GetMaterial() const;
 	math::float4x4 GetLocalTransform()const;
 	const float* GetLocalGLTransform()const;
 	math::float4x4 GetWorldTransform()const;

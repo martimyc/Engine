@@ -3,18 +3,13 @@
 
 AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(CT_APPLIED_MATERIAL, enabled), material(material)
 {
-	uv_channels = new unsigned int[material->GetNumTextures()];
-	memset(uv_channels, 0, material->GetNumTextures() * sizeof(unsigned int));
+	uv_channels = new unsigned int[material->GetNumAllTextures()];
+	memset(uv_channels, 0, material->GetNumAllTextures() * sizeof(unsigned int));
 }
 
 AppliedMaterial::~AppliedMaterial()
 {
 	delete[] uv_channels;
-}
-
-const unsigned int & AppliedMaterial::GetNumTextures() const
-{
-	return material->GetNumTextures();
 }
 
 const unsigned int AppliedMaterial::GetUVChannel(const unsigned int num_texture) const
@@ -25,16 +20,6 @@ const unsigned int AppliedMaterial::GetUVChannel(const unsigned int num_texture)
 const Material * AppliedMaterial::GetMaterial() const
 {
 	return material;
-}
-
-void AppliedMaterial::EnableDraw() const
-{
-	material->EnableDraw();
-}
-
-void AppliedMaterial::DisableDraw() const
-{
-	material->DisableDraw();
 }
 
 void AppliedMaterial::Inspector()

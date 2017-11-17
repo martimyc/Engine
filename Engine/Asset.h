@@ -5,6 +5,15 @@
 #include <string>
 
 struct UID;
+
+class MaterialImportConfiguration;
+class MeshImportConfiguration;
+class PrefabImportConfiguration;
+
+class MaterialLoadConfiguration;
+class MeshLoadConfiguration;
+class PrefabLoadConfiguration;
+
 class GameObject;
 class Resource;
 
@@ -35,13 +44,11 @@ protected:
 	Resource* resource;
 	const ImportConfiguration* import_config;
 	const LoadConfiguration* load_config;
-	std::vector<const GameObject*> instances;
 	
-public:
-
 	Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config);
 	Asset(RESOURCE_TYPE type, Resource* resource);
 
+public:
 	~Asset();
 
 	RESOURCE_TYPE GetType() const;
@@ -55,15 +62,19 @@ public:
 
 	Resource* GetResource() const;
 
-	unsigned int GetNumInsatances() const;
-
 	const std::string& GetName() const;
-
-	void AddInstance(const GameObject* go);
 };
 
 struct SceneImportConfiguration : public ImportConfiguration
 {
+	MaterialImportConfiguration* material_import_config;
+	MeshImportConfiguration* mesh_import_config;
+	PrefabImportConfiguration* prefab_import_config;
+
+	MaterialLoadConfiguration* material_load_config;
+	MeshLoadConfiguration* mesh_load_config;
+	PrefabLoadConfiguration* prefab_load_config;
+
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
 	virtual void MetaLoad(char* iterator);

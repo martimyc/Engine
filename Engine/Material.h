@@ -8,46 +8,70 @@
 
 class GameObject;
 class Texture;
-enum TEXTURE_TYPES;
+
+enum TEXTURE_TYPE
+{
+	TT_NO_TYPE = 0,
+	TT_DIFFUSE,
+	TT_SPECULAR,
+	TT_AMBIENT,
+	TT_EMISSIVE,
+	TT_HEIGHT,
+	TT_NORMALS,
+	TT_SHININESS,
+	TT_OPACITY,
+	TT_DISPLACEMENT,
+	TT_LIGHTMAP,
+	TT_REFLECTION
+};
 
 struct MaterialSource
 {
-	std::vector<Texture*> textures;
-	GLuint num_difusse_textures = 0;
-
-	//TODO load all other texture types
-	/*GLuint num_specular_textures = 0;
-	GLuint num_ambient_textures = 0;
-	GLuint num_emissive_textures = 0;
-	GLuint num_height_textures = 0;
-	GLuint num_normals_textures = 0;
-	GLuint num_shininess_textures = 0;
-	GLuint num_opacity_textures = 0;
-	GLuint num_displacement_textures = 0;
-	GLuint num_lightmap_textures = 0;
-	GLuint num_reflection_textures = 0;
-	GLuint num_unknown_textures = 0;*/
+	std::vector<Texture*> diffuse_textures;
+	std::vector<Texture*> specular_textures;
+	std::vector<Texture*> ambient_textures;
+	std::vector<Texture*> emissive_textures;
+	std::vector<Texture*> height_textures;
+	std::vector<Texture*> normals_textures;
+	std::vector<Texture*> shininess_textures;
+	std::vector<Texture*> opacity_textures;
+	std::vector<Texture*> displacement_textures;
+	std::vector<Texture*> lightmap_textures;
+	std::vector<Texture*> reflection_textures;
 
 	bool edit_name = false;
 	unsigned int priority;
 
-	MaterialSource();
+	MaterialSource(unsigned int priority);
 	~MaterialSource();
 
 	void ChangePriority(unsigned int new_priority);
 
-	const int GetNumTextures() const;
+	unsigned int GetNumAllTextures() const;
+	unsigned int GetNumTextures(TEXTURE_TYPE type) const;
+
 	unsigned int GetPriority() const;
 
-	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
-	void Empty();
+	void AddTexture(Texture* new_text, TEXTURE_TYPE type);
+	void ReserveVec(unsigned int size, TEXTURE_TYPE type);
 
 	void EnableDraw() const;
 	void DisableDraw() const;
 
 	void Inspector();
 
-	void Use(const GameObject* go);
+	//Inspectors by textures
+	void InspectorDiffuse();
+	void InspectorSpecular();
+	void InspectorAmbient();
+	void InspectorEmissive();
+	void InspectorHeight();
+	void InspectorNormals();
+	void InspectorShininess();
+	void InspectorOpacity();
+	void InspectorDisplacement();
+	void InspectorLightMap();
+	void InspectorReflection();
 };
 
 class Material : public Resource
@@ -62,11 +86,13 @@ public:
 
 	void ChangePriority(unsigned int new_priority);
 
-	const int GetNumTextures() const;
+	unsigned int GetNumAllTextures() const;
+	unsigned int GetNumTextures(TEXTURE_TYPE type) const;
+
 	unsigned int GetPriority() const;
 
-	void AddTexture(Texture* new_text, const GLuint& uv_channel = 0);
-	void Empty();
+	void AddTexture(Texture* new_text, TEXTURE_TYPE type);
+	void ReserveVec(unsigned int size, TEXTURE_TYPE type);
 
 	void EnableDraw() const;
 	void DisableDraw() const;
@@ -74,8 +100,6 @@ public:
 	bool Inspector();
 
 	bool IsLoaded() const;
-
-	void Use(const GameObject* go);
 
 	void SetSource(MaterialSource* source);
 };

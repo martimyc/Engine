@@ -14,6 +14,7 @@
 //Assets
 #include "AppliedMaterial.h"
 #include "Mesh.h"
+#include "Material.h"
 
 MeshSource::MeshSource(): vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {}
@@ -91,7 +92,7 @@ void MeshSource::Draw(const AppliedMaterial* draw_material) const
 
 	//bind uvs channel 1 for now
 	if (has_uvs && draw_material != nullptr)
-		for (int i = 0; i < draw_material->GetNumTextures(); i++)
+		for (int i = 0; i < draw_material->GetMaterial()->GetNumTextures(TT_DIFFUSE); i++)
 		{
 			//UVs
 			GLuint uv_channel = draw_material->GetUVChannel(i);
@@ -106,7 +107,7 @@ void MeshSource::Draw(const AppliedMaterial* draw_material) const
 
 	//Disable texture 2D client state & unbind text buffer
 	if (draw_material != nullptr)
-		for (int i = 0; i < draw_material->GetNumTextures(); i++)
+		for (int i = 0; i < draw_material->GetMaterial()->GetNumTextures(TT_DIFFUSE); i++)
 		{
 			glClientActiveTexture(GL_TEXTURE0 + i);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -22,11 +22,12 @@ struct PrefabLoadConfiguration : public LoadConfiguration
 class PrefabAsset : public Asset
 {
 private:
-
+	std::vector<const GameObject*> instances;
 
 public:
 	PrefabAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~PrefabAsset();
 
+	void AddInstance(const GameObject* go);
 };
 #endif // !PREFAB_ASSET

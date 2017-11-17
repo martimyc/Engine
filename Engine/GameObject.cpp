@@ -184,6 +184,15 @@ void GameObject::ChangeMaterial(Material * new_material)
 	AddComponent(new AppliedMaterial(new_material));	
 }
 
+void GameObject::ChangeMesh(Mesh * new_mesh)
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_MESH_FILTER)
+			RemoveMeshFilter();
+
+	AddComponent(new MeshFilter(new_mesh));
+}
+
 bool GameObject::Hirarchy(GameObject*& selected)
 {
 	bool ret = false;
@@ -268,6 +277,22 @@ const unsigned int GameObject::GetNumComponents() const
 const std::string & GameObject::GetName() const
 {
 	return name;
+}
+
+const Mesh * GameObject::GetMesh() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_MESH_FILTER)
+			return ((MeshFilter*)(*it))->GetMesh();
+	return nullptr;
+}
+
+const Material * GameObject::GetMaterial() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+			return ((AppliedMaterial*)(*it))->GetMaterial();
+	return nullptr;
 }
 
 math::float4x4 GameObject::GetLocalTransform() const
@@ -649,6 +674,12 @@ void GameObject::UpdateBounds()
 
 void GameObject::UpdateBoundsUpwards()
 {
+	if (parent == nullptr)
+	{
+		LOG("Cant update bounds upard, no parent");
+		return;
+	}
+
 	GameObject* next_parent = parent;
 	while (next_parent->parent != nullptr)
 	{

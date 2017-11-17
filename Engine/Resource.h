@@ -24,7 +24,9 @@ protected:
 	std::string name;
 
 	Resource(RESOURCE_TYPE type, const std::string& name) : type(type), name(name)
-	{}
+	{
+		uid = UID(name.c_str(), name.size());
+	}
 
 public:
 	Resource(RESOURCE_TYPE type, const std::string& name, const UID& uid): type(type), name(name), uid(uid)

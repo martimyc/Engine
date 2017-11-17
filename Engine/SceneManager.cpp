@@ -248,7 +248,7 @@ void SceneManager::SetFocused(GameObject* game_obj)
 	focused = game_obj;
 }
 
-const GameObject * SceneManager::GetFocused() const
+GameObject * SceneManager::GetFocused() const
 {
 	return focused;
 }

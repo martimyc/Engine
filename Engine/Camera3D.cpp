@@ -334,12 +334,9 @@ const float * Camera3D::GetViewProjMatrixTransposed() const
 	return editor_camera_frustum.ViewProjMatrix().Transposed().ptr();
 }
 
-const float * Camera3D::GetViewMatrix() const
+const math::float4x4 Camera3D::GetViewMatrix() const
 {
-	float4x4 matrix;
-	matrix = editor_camera_frustum.ViewMatrix();
-	matrix.Transpose();
-	return (float*)matrix.ptr();
+	return math::float4x4(editor_camera_frustum.ViewMatrix()).Transposed();
 }
 
 const float * Camera3D::GetWorldMatrix() const

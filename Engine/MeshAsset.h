@@ -5,6 +5,8 @@
 
 struct MeshImportConfiguration : public ImportConfiguration
 {
+
+
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
 	virtual void MetaLoad(char* iterator);
@@ -22,11 +24,13 @@ struct MeshLoadConfiguration : public LoadConfiguration
 class MeshAsset : public Asset
 {
 private:
-
+	std::vector<const GameObject*> instances;
 
 public:
 	MeshAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~MeshAsset();
+
+	void AddInstance(const GameObject* go);
 
 };
 #endif // !MESH_ASSET

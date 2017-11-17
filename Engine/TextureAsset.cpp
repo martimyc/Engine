@@ -370,3 +370,8 @@ TextureAsset::TextureAsset(Resource* resource, const ImportConfiguration* import
 
 TextureAsset::~TextureAsset()
 {}
+
+void TextureAsset::AddInstance(const Material * material)
+{
+	instances.push_back(material);
+}

@@ -7,6 +7,11 @@ PrefabAsset::PrefabAsset(Resource * resource, const ImportConfiguration * import
 PrefabAsset::~PrefabAsset()
 {}
 
+void PrefabAsset::AddInstance(const GameObject * go)
+{
+	instances.push_back(go);
+}
+
 bool PrefabImportConfiguration::Config()
 {
 	return false;

@@ -21,6 +21,8 @@ struct LoadConfiguration;
 struct TextureLoadConfiguration;
 struct MaterialLoadConfiguration;
 struct MeshLoadConfiguration;
+struct PrefabImportConfiguration;
+struct PrefabLoadConfiguration;
 struct SceneImportConfiguration;
 struct SceneLoadConfiguration;
 
@@ -28,12 +30,10 @@ struct UID;
 
 class Material;
 class Mesh;
+class Texture;
+class Prefab;
 
-class Resource;
 enum RESOURCE_TYPE;
-struct TextureSource;
-struct MaterialSource;
-struct MeshSource;
 class Asset;
 
 class ImportManager : public Module
@@ -61,7 +61,7 @@ public:
 	class ImportClient
 	{
 	private:
-		static const UID Import(const ImportManager* importer, const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config);
+		static const UID Import(const ImportManager* importer, const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 
 		friend class MaterialImporter;
 	};
@@ -70,7 +70,7 @@ public:
 	~ImportManager();
 
 private:
-	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const; //should return uid / 0 if it fails
+	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
 
 	//Meta files
 	bool MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
@@ -78,9 +78,6 @@ private:
 
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
-
-	//Objects
-	bool ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads) const;
 
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;
@@ -93,7 +90,10 @@ public:
 
 	void SentToImport(const std::string& path, RESOURCE_TYPE type);
 
-	bool Load(Resource* to_load, const LoadConfiguration* load_config);
+	bool LoadMaterial(Material * to_load, const MaterialLoadConfiguration * load_config);
+	bool LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config);
+	bool LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_config);
+	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config);
 };
 
 

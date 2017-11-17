@@ -30,7 +30,7 @@ private:
 public:
 	//TODO change for config
 	const UID Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const PrefabImportConfiguration* config);
-	void Load(Prefab* to_load, const PrefabLoadConfiguration* config);
+	bool Load(Prefab* to_load, const PrefabLoadConfiguration* config);
 };
 
 #endif //!PREFAB_IMPORTER
