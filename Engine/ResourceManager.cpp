@@ -147,6 +147,7 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 			{
 				std::string uid((*it)->GetUID().GetAsName());
 				ImGui::Text("UID: %s", uid.c_str());
+				ImGui::TreePop();
 			}
 		}
 

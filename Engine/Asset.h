@@ -5,6 +5,15 @@
 #include <string>
 
 struct UID;
+
+class MaterialImportConfiguration;
+class MeshImportConfiguration;
+class PrefabImportConfiguration;
+
+class MaterialLoadConfiguration;
+class MeshLoadConfiguration;
+class PrefabLoadConfiguration;
+
 class GameObject;
 class Resource;
 
@@ -63,8 +72,8 @@ struct SceneImportConfiguration : public ImportConfiguration
 	PrefabImportConfiguration* prefab_import_config;
 
 	MaterialLoadConfiguration* material_load_config;
-	MeshLoadConfiguration* material_load_config;
-	PrefabLoadConfiguration* material_load_config;
+	MeshLoadConfiguration* mesh_load_config;
+	PrefabLoadConfiguration* prefab_load_config;
 
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
