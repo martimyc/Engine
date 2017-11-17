@@ -15,13 +15,9 @@ public:
 	AppliedMaterial( Material* material, bool enabled = true);
 	~AppliedMaterial();
 
-	//Gets
-	const unsigned int& GetNumTextures() const;
 	const unsigned int GetUVChannel(const unsigned int num_texture) const;
-	const Material* GetMaterial() const;
 
-	void EnableDraw() const;
-	void DisableDraw() const;
+	const Material* GetMaterial() const;
 
 	void Inspector();
 

@@ -26,7 +26,7 @@ private:
 public:
 	//TODO change for config
 	const UID Import(const aiMesh* mesh);
-	void Load(Mesh* to_load, const MeshLoadConfiguration* config);
+	bool Load(Mesh* to_load, const MeshLoadConfiguration* config);
 };
 
 #endif // !MESH_IMPORTER

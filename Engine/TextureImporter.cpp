@@ -104,7 +104,7 @@ const UID TextureImporter::Import(const std::string& file, const TextureImportCo
 	return uid;
 }
 
-void TextureImporter::Load(Texture* to_load, const TextureLoadConfiguration* config)
+bool TextureImporter::Load(Texture* to_load, const TextureLoadConfiguration* config)
 {
 	std::string path(App->file_system->GetTextures());
 	path += "\\";
@@ -236,11 +236,13 @@ void TextureImporter::Load(Texture* to_load, const TextureLoadConfiguration* con
 		ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
 
 		to_load->SetSource(new_texture);
+		return true;
 	}
 	else // If we failed to open the image file in the first place...
 	{
 		error = ilGetError();
 		LOG("Image load failed - IL reports error:%i - %s", error, iluErrorString(error));
+		return false;
 	}
 }
 

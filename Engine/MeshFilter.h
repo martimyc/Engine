@@ -19,12 +19,7 @@ public:
 
 	void Draw(const AppliedMaterial* material = nullptr) const;
 
-	//Gets
 	const Mesh* GetMesh() const;
-
-	void RecalculateMeshKDT();
-
-	void DrawKDT() const;
 
 	void Inspector();
 

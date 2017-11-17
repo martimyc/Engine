@@ -3,7 +3,7 @@
 #include "Texture.h"
 
 //TextureSource
-TextureSource::TextureSource(const TEXTURE_TYPE texture_type, const GLenum gl_texure_type, const GLuint & texture_id) : texture_type(texture_type), gl_texure_type(gl_texure_type), texture_id(texture_id)
+TextureSource::TextureSource(const GLenum gl_texure_type, const GLuint & texture_id) : gl_texure_type(gl_texure_type), texture_id(texture_id)
 {}
 
 TextureSource::~TextureSource()
@@ -16,11 +16,6 @@ void TextureSource::SetDimensions(const unsigned int & width, const unsigned int
 {
 	this->width = width;
 	this->height = height;
-}
-
-void TextureSource::SetTextureType(const TEXTURE_TYPE & new_texture_type)
-{
-	texture_type = new_texture_type;
 }
 
 void TextureSource::SetGLTextureType(const GLenum & new_gl_texure_type)
@@ -57,14 +52,6 @@ const unsigned int & Texture::GetWidth() const
 {
 	if (source != nullptr)
 		return source->width;
-	else
-		LOG("Asking for unloaded texture information");
-}
-
-const TEXTURE_TYPE & Texture::GetTextureType() const
-{
-	if (source != nullptr)
-		return source->texture_type;
 	else
 		LOG("Asking for unloaded texture information");
 }

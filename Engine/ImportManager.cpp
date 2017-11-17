@@ -103,7 +103,7 @@ UPDATE_STATUS ImportManager::Update(float dt)
 
 			if (ImGui::Button("Import"))
 			{
-				UID uid(Import(import_path, import_type, import_config));
+				UID uid(Import(import_path, import_type, import_config, load_config));
 				if (uid.IsNull())
 					LOG("Could not import %s correctly", import_path.c_str());
 
@@ -189,7 +189,7 @@ void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 	texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
 }
 
-bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_config)
+bool ImportManager::LoadMaterial(Material * to_load, const MaterialLoadConfiguration * load_config)
 {
 	if (to_load->IsLoaded() == true)
 	{
@@ -197,26 +197,42 @@ bool ImportManager::Load(Resource * to_load, const LoadConfiguration* load_confi
 		return false;
 	}
 
-	switch (to_load->GetType())
-	{
-	case RT_TEXTURE:
-		texture_importer->Load((Texture*)to_load, (TextureLoadConfiguration*)load_config);
-		break;
-	case RT_MESH:
-		mesh_importer->Load((Mesh*)to_load, (MeshLoadConfiguration*)load_config);
-		break;
-	case RT_MATERIAL:
-		material_importer->Load((Material*)to_load, App->resource_manager->GetNumMaterials(), (MaterialLoadConfiguration*) load_config);
-		break;
-	case RT_PREFAB:
-		prefab_importer->Load((Prefab*)to_load, (PrefabLoadConfiguration*)load_config);
-		break;
-	default:
-		break;
-	}
+	return material_importer->Load(to_load, App->resource_manager->GetNumMaterials(), load_config);
 }
 
-const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config) const
+bool ImportManager::LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config)
+{
+	if (to_load->IsLoaded() == true)
+	{
+		LOG("Allready loaded this resource");
+		return false;
+	}
+
+	return texture_importer->Load(to_load, load_config);
+}
+
+bool ImportManager::LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_config)
+{
+	if (to_load->IsLoaded() == true)
+	{
+		LOG("Allready loaded this resource");
+		return false;
+	}
+
+	return mesh_importer->Load(to_load, load_config);
+}
+
+bool ImportManager::LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config)
+{
+	if (to_load->IsLoaded() == true)
+	{
+		LOG("Allready loaded this resource");
+		return false;
+	}
+	return prefab_importer->Load(to_load, load_config);
+}
+
+const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const
 {
 	if (!App->file_system->CopyToAssets(import_path))
 	{
@@ -457,79 +473,6 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 	return prefab_uid;
 }
 
-bool ImportManager::ImportHirarchy(const aiNode & source, const aiScene& scene, GameObject & destination, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads) const
-{
-	bool ret = true;
-
-	math::float4x4 new_transform;
-	
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			new_transform[i][j] = source.mTransformation[i][j];
-		}
-	}
-
-	destination.SetTransform(new_transform);
-
-	if (source.mMeshes != NULL)
-		if (source.mNumMeshes > 1)
-		{
-			for (unsigned int i = 0; i < source.mNumMeshes; i++)
-			{
-				GameObject* child = App->scene_manager->CreateGameObject(&destination);
-
-				if (child == nullptr)
-					return false;
-
-				unsigned int mesh_num = source.mMeshes[i];
-
-				if (mesh_loads[mesh_num] == true)
-					child->AddComponent(new MeshFilter((Mesh*)App->resource_manager->Use(meshes[mesh_num], child), "AluAcbar"));
-				else
-					LOG("Can not add mesh to game object, mesh didn't load correctly");
-
-				/*if (material_loads[scene.mMeshes[mesh_num]->mMaterialIndex] == true && materials.size() > scene.mMeshes[mesh_num]->mMaterialIndex)
-					child->AddComponent(new AppliedMaterial(materials[scene.mMeshes[mesh_num]->mMaterialIndex]));*/
-			}
-		}
-		else
-		{
-			unsigned int mesh_num = source.mMeshes[0];
-			destination.AddComponent(new MeshFilter((Mesh*)App->resource_manager->Use(meshes[mesh_num], &destination), "AluAcbar"));
-
-			/*if (mesh_loads[mesh_num] == true)
-				destination.AddComponent(new MeshFilter(meshes[mesh_num]));
-
-			if (material_loads[scene.mMeshes[mesh_num]->mMaterialIndex] == true && materials.size() > scene.mMeshes[mesh_num]->mMaterialIndex)
-				destination.AddComponent(new AppliedMaterial(materials[scene.mMeshes[mesh_num]->mMaterialIndex]));*/
-		}
-
-	if (source.mChildren != NULL)
-	{
-		for (unsigned int i = 0; i < source.mNumChildren; i++)
-		{
-			GameObject* child;
-
-			if (source.mChildren[i]->mName.length != 0)
-			{
-				std::string name(source.mChildren[i]->mName.C_Str());
-				child = App->scene_manager->CreateGameObject( &destination, name.c_str());
-			}
-			else
-				child = App->scene_manager->CreateGameObject(&destination);
-
-			if (child == nullptr)
-				return false;
-			if (ImportHirarchy(*source.mChildren[i], scene, *child, materials, material_loads, meshes, mesh_loads) == false)
-				return false;
-		}
-	}
-
-	return ret;
-}
-
 const std::string ImportManager::GetImportFileNameNoExtension() const
 {
 	size_t start = import_path.find_last_of("\\");
@@ -543,7 +486,7 @@ const std::string ImportManager::GetImportFileNameWithExtension() const
 	return import_path.substr(start + 1);
 }
 
-const UID ImportManager::ImportClient::Import(const ImportManager * importer, const std::string & path, RESOURCE_TYPE type, const ImportConfiguration * import_config)
+const UID ImportManager::ImportClient::Import(const ImportManager * importer, const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
 {
-	return importer->Import(path, type, import_config);
+	return importer->Import(path, type, import_config, load_config);
 }

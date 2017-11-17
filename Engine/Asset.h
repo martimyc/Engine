@@ -35,7 +35,6 @@ protected:
 	Resource* resource;
 	const ImportConfiguration* import_config;
 	const LoadConfiguration* load_config;
-	std::vector<const GameObject*> instances;
 	
 public:
 
@@ -55,11 +54,7 @@ public:
 
 	Resource* GetResource() const;
 
-	unsigned int GetNumInsatances() const;
-
 	const std::string& GetName() const;
-
-	void AddInstance(const GameObject* go);
 };
 
 struct SceneImportConfiguration : public ImportConfiguration

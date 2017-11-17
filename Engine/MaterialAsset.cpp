@@ -13,6 +13,14 @@ bool MaterialImportConfiguration::Config()
 			ret = true;
 		ImGui::TreePop();
 	}
+
+	if (ImGui::TreeNodeEx("Textures' Load Settings"))
+	{
+		if (texture_load_config->Config())
+			ret = true;
+		ImGui::TreePop();
+	}
+
 	return ret;
 }
 
@@ -34,29 +42,18 @@ unsigned int MaterialImportConfiguration::GetMetaSize() const
 bool MaterialLoadConfiguration::Config()
 {
 	bool ret = false;
-
-	if (ImGui::TreeNodeEx("Textures' Load Settings"))
-	{
-		if (texture_load_config->Config())
-			ret = true;
-		ImGui::TreePop();
-	}
 	return ret;
 }
 
 void MaterialLoadConfiguration::MetaSave(char * iterator) const
-{
-	texture_load_config->MetaSave(iterator);
-}
+{}
 
 void MaterialLoadConfiguration::MetaLoad(char * iterator)
-{
-	texture_load_config->MetaLoad(iterator);
-}
+{}
 
 unsigned int MaterialLoadConfiguration::GetMetaSize() const
 {
-	return texture_load_config->GetMetaSize();
+	return 0;
 }
 
 MaterialAsset::MaterialAsset(Resource * resource, const ImportConfiguration * import_config, const LoadConfiguration * load_config) : Asset(RT_MATERIAL, resource, import_config, load_config)
@@ -64,3 +61,8 @@ MaterialAsset::MaterialAsset(Resource * resource, const ImportConfiguration * im
 
 MaterialAsset::~MaterialAsset()
 {}
+
+void MaterialAsset::AddInstance(const GameObject * go)
+{
+	instances.push_back(go);
+}

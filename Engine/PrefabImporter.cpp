@@ -123,7 +123,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 		UID mesh_uid;
 		memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
 		*iterator += SIZE_OF_UID;
-		Mesh* mesh = (Mesh*)App->resource_manager->Use(mesh_uid, new_game_object);
+		Mesh* mesh = App->resource_manager->UseMesh(mesh_uid, new_game_object);
 		new_game_object->AddComponent(new MeshFilter(mesh));
 
 		bool has_material = **iterator;
@@ -134,7 +134,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 			UID material_uid;
 			memcpy(&material_uid, *iterator, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
-			Material* material = (Material*)App->resource_manager->Use(mesh_uid, new_game_object);
+			Material* material = App->resource_manager->UseMaterial(mesh_uid, new_game_object);
 			new_game_object->AddComponent(new AppliedMaterial(material));
 		}
 	}
@@ -150,7 +150,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 			UID mesh_uid;
 			memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
-			Mesh* mesh = (Mesh*)App->resource_manager->Use(mesh_uid, new_child);
+			Mesh* mesh = App->resource_manager->UseMesh(mesh_uid, new_child);
 			new_child->AddComponent(new MeshFilter(mesh));
 
 			bool has_material = **iterator;
@@ -161,7 +161,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 				UID material_uid;
 				memcpy(&material_uid, *iterator, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
-				Material* material = (Material*)App->resource_manager->Use(mesh_uid, new_child);
+				Material* material = App->resource_manager->UseMaterial(mesh_uid, new_child);
 				new_child->AddComponent(new AppliedMaterial(material));
 			}
 			
@@ -208,7 +208,7 @@ const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& m
 	return uid;
 }
 
-void PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration * config)
+bool PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration * config)
 {
 	char* buffer = nullptr;
 	char* iterator = nullptr;
@@ -226,5 +226,7 @@ void PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration * confi
 		iterator += FORMAT_SIZE;
 
 		to_load->SetSource(new PrefabSource(LoadChild(&iterator, nullptr)));
+		return true;
 	}
+	return false;
 }

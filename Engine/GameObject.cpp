@@ -270,6 +270,22 @@ const std::string & GameObject::GetName() const
 	return name;
 }
 
+const Mesh * GameObject::GetMesh() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_MESH_FILTER)
+			return ((MeshFilter*)(*it))->GetMesh();
+	return nullptr;
+}
+
+const Material * GameObject::GetMaterial() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+			return ((AppliedMaterial*)(*it))->GetMaterial();
+	return nullptr;
+}
+
 math::float4x4 GameObject::GetLocalTransform() const
 {
 	return transform->GetTransformMatrix();

@@ -4,6 +4,8 @@
 #include "glew\include\GL\glew.h"
 #include "Asset.h"
 
+class Material;
+
 struct TextureImportConfiguration : public ImportConfiguration
 {
 	enum TEXTURE_FORMATS
@@ -108,10 +110,13 @@ struct TextureLoadConfiguration : public LoadConfiguration
 class TextureAsset : public Asset
 {
 private:
+	std::vector<const Material*> instances;
 
 public:
 	TextureAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~TextureAsset();
+
+	void AddInstance(const Material* material);
 };
 
 

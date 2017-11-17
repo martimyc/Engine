@@ -9,6 +9,7 @@ struct TextureLoadConfiguration;
 struct MaterialImportConfiguration : public ImportConfiguration
 {
 	TextureImportConfiguration* texture_import_config;
+	TextureLoadConfiguration* texture_load_config; //this is in import to create all texture assets
 
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
@@ -18,8 +19,6 @@ struct MaterialImportConfiguration : public ImportConfiguration
 
 struct MaterialLoadConfiguration : public LoadConfiguration
 {
-	TextureLoadConfiguration* texture_load_config;
-
 	virtual bool Config();
 	virtual void MetaSave(char* iterator) const;
 	virtual void MetaLoad(char* iterator);
@@ -29,11 +28,13 @@ struct MaterialLoadConfiguration : public LoadConfiguration
 class MaterialAsset: public Asset
 {
 private:
-
+	std::vector<const GameObject*> instances;
 
 public:
 	MaterialAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~MaterialAsset();
+
+	void AddInstance(const GameObject* go);
 };
 
 #endif // !MATERIAL_ASSET

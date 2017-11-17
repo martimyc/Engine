@@ -5,15 +5,22 @@
 
 //Resources
 #include "Resource.h"
-#include "Asset.h"
 #include "Texture.h"
-#include "TextureAsset.h"
 #include "Material.h"
-#include "MaterialAsset.h"
 #include "Mesh.h"
-#include "MeshAsset.h"
 #include "PreFab.h"
+
+//Assets
+#include "Asset.h"
+#include "TextureAsset.h"
+#include "MaterialAsset.h"
+#include "MeshAsset.h"
 #include "PrefabAsset.h"
+
+#include "GameObject.h"
+
+//Components
+#include "AppliedMaterial.h"
 
 //Modules
 #include "ImportManager.h"
@@ -26,21 +33,6 @@ ResourceManager::ResourceManager(const char * name, bool start_enabled) : Module
 
 ResourceManager::~ResourceManager()
 {}
-
-Texture * ResourceManager::GetTexture(const UID & uid)
-{
-	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->GetType() == RT_TEXTURE && uid == (*it)->GetUID())
-			return (Texture*)(*it)->GetResource();
-	return nullptr;
-}
-
-Resource* ResourceManager::UseFirst(RESOURCE_TYPE type, const GameObject* go)
-{
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->GetType() == type)
-			return Use((*it)->GetUID(), go);
-}
 
 bool ResourceManager::Init()
 {
@@ -56,17 +48,18 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 		for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
 		{
 			std::string uid((*it)->GetUID().GetAsName());
-			ImGui::Text("Name: %s\nUID: %s\nNum Instances: %i", (*it)->GetName().c_str(), uid.c_str(), (*it)->GetNumInsatances());
-		}
+			ImGui::Text("Name: %s\nUID: %s\n", (*it)->GetName().c_str(), uid.c_str());
 
-		if (ImGui::Button("Add Prefab to focused"))
-		{
-			for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-				if ((*it)->GetType() == RT_PREFAB)
+			if (ImGui::Button("Use"))
+			{
+				switch ((*it)->GetType())
 				{
-					Prefab* prefab = (Prefab*) UseFirst(RT_PREFAB, App->scene_manager->GetFocused());
-					App->scene_manager->AddPrefabToFocused(prefab->GetRoot());
+				case RT_TEXTURE: UseTexture((*it)->GetUID(), App->scene_manager->GetFocused()->GetAppliedMaterial()->GetMaterial()); break;
+				case RT_PREFAB: UsePrefab((*it)->GetUID(), App->scene_manager->GetFocused()); break;
+				case RT_MESH: UseMesh((*it)->GetUID(), App->scene_manager->GetFocused()); break;
+				case RT_MATERIAL: UseMaterial((*it)->GetUID(), App->scene_manager->GetFocused()); break;
 				}
+			}
 		}
 	}
 	ImGui::End();
@@ -95,6 +88,7 @@ void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE
 	case RT_MATERIAL:
 		new_resource = new Material(name, uid);
 		new_asset = new MaterialAsset(new_resource, import_config, load_config);
+		break;
 	default:
 		LOG("Non standard import type");
 		break;
@@ -120,23 +114,68 @@ bool ResourceManager::Exsists(const UID & id) const
 	return false;
 }
 
-Resource * ResourceManager::Use(const UID & id, const GameObject * go) const
+Material * ResourceManager::UseMaterial(const UID & id, const GameObject * go) const
 {
-	//TODO will probablly work diferently
 	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
 		if (id == (*it)->GetUID())
 		{
-			Resource* resource = (*it)->GetResource();
+			Material* material = (Material*)(*it)->GetResource();
 
-			if (resource->IsLoaded() == false)
-				if (App->import_manager->Load(resource, (*it)->GetLoadConfig()) == false)
-					LOG("Could not load source for resource %s correctly", (*it)->GetName().c_str());
+			if (material->IsLoaded() == false)
+				if (App->import_manager->LoadMaterial(material, (MaterialLoadConfiguration*)(*it)->GetLoadConfig()) == false)
+					LOG("Could not load source for material %s correctly", (*it)->GetName().c_str());
 
-			if ((*it)->GetType() == RT_MATERIAL)
-				((Material*)(*it))->Use(go);
+			((MaterialAsset*)(*it))->AddInstance(go);
 
-			(*it)->AddInstance(go);
-			return resource;
+			return material;
+		}
+	return nullptr;
+}
+
+Texture * ResourceManager::UseTexture(const UID & id, const Material * material) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->GetUID())
+		{
+			Texture* texture = (Texture*) (*it)->GetResource();
+
+			((TextureAsset*)(*it))->AddInstance(material);
+
+			return texture;
+		}
+	return nullptr;
+}
+
+Mesh * ResourceManager::UseMesh(const UID & id, const GameObject * go) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->GetUID())
+		{
+			Mesh* mesh = (Mesh*)(*it)->GetResource();
+
+			if (mesh->IsLoaded() == false)
+				if (App->import_manager->LoadMesh(mesh, (MeshLoadConfiguration*)(*it)->GetLoadConfig()) == false)
+					LOG("Could not load source for mesh %s correctly", (*it)->GetName().c_str());
+
+			((MeshAsset*)(*it))->AddInstance(go);
+			return mesh;
+		}
+	return nullptr;
+}
+
+Prefab * ResourceManager::UsePrefab(const UID & id, const GameObject * go) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->GetUID())
+		{
+			Prefab* prefab = (Prefab*)(*it)->GetResource();
+
+			if (prefab->IsLoaded() == false)
+				if (App->import_manager->LoadPrefab(prefab, (PrefabLoadConfiguration*)(*it)->GetLoadConfig()) == false)
+					LOG("Could not load source for prefab %s correctly", (*it)->GetName().c_str());
+
+			((PrefabAsset*)(*it))->AddInstance(go);
+			return prefab;
 		}
 	return nullptr;
 }

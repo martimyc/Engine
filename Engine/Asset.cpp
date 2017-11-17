@@ -4,7 +4,6 @@
 #include "Asset.h"
 #include "TextureAsset.h"
 
-
 Asset::Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config) : resource(resource), type(type), import_config(import_config), load_config(load_config)
 {}
 
@@ -49,19 +48,9 @@ Resource* Asset::GetResource() const
 	return resource;
 }
 
-unsigned int Asset::GetNumInsatances() const
-{
-	return instances.size();
-}
-
 const std::string & Asset::GetName() const
 {
 	return resource->GetName();
-}
-
-void Asset::AddInstance(const GameObject * go)
-{
-	instances.push_back(go);
 }
 
 bool SceneImportConfiguration::Config()

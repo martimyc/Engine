@@ -41,3 +41,8 @@ MeshAsset::MeshAsset(Resource * resource, const ImportConfiguration * import_con
 
 MeshAsset::~MeshAsset()
 {}
+
+void MeshAsset::AddInstance(const GameObject * go)
+{
+	instances.push_back(go);
+}
