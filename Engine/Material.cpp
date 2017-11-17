@@ -6,7 +6,7 @@
 #include "Application.h"
 #include "Texture.h"
 
-MaterialSource::MaterialSource()
+MaterialSource::MaterialSource(unsigned int priority): priority(priority)
 {}
 
 MaterialSource::~MaterialSource()

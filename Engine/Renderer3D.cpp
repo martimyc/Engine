@@ -157,7 +157,10 @@ UPDATE_STATUS Renderer3D::PreUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+
+	math::float4x4 view_matrix = App->camera->GetViewMatrix();
+	const GLfloat* opengl_view_matrix = (GLfloat*)view_matrix.ptr();
+	glLoadMatrixf(opengl_view_matrix);
 
 	if (draw_queue.size() != 0)
 		LOG("Draw vector is not empty at frame start");
@@ -170,7 +173,11 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("Renderer PostUpdate", Profiler::Color::AntiqueWhite)
 
-		render_to_texture->BindFrameBuffer();
+	//Get matrix for all camera uses
+	math::float4x4 view_matrix = App->camera->GetViewMatrix();
+	const GLfloat* opengl_view_matrix = (GLfloat*)view_matrix.ptr();
+
+	render_to_texture->BindFrameBuffer();
 
 	ImVec4 clear_color = ImColor(25, 25, 25);
 	ImGuiIO io = ImGui::GetIO();
@@ -181,7 +188,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//first geometry, then debug and then UI
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+	glLoadMatrixf(opengl_view_matrix);
 
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
@@ -196,17 +203,17 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glPopMatrix();
 
 	//meshes
-	const Material* material_in_use;
+	const Material* material_in_use = nullptr;
 	while (draw_queue.size() > 0)
 	{
-		material_in_use = draw_queue.top()->GetAppliedMaterial()->GetMaterial();
+		material_in_use = draw_queue.top()->GetMaterial();
 		if (material_in_use != nullptr)
 			material_in_use->EnableDraw();
 
 		while (draw_queue.top()->GetMaterial() == material_in_use)
 		{
 			glPushMatrix();
-			glLoadMatrixf(App->camera->GetViewMatrix());
+			glLoadMatrixf(opengl_view_matrix);
 
 			if (App->camera->DoFrustumCulling(draw_queue.top()))
 			{
@@ -228,7 +235,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 			material_in_use->DisableDraw();
 	}
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+	glLoadMatrixf(opengl_view_matrix);
 
 	//DebugTextures
 	//App->resource_manager->DebugTextures();

@@ -42,7 +42,7 @@ struct MaterialSource
 	bool edit_name = false;
 	unsigned int priority;
 
-	MaterialSource();
+	MaterialSource(unsigned int priority);
 	~MaterialSource();
 
 	void ChangePriority(unsigned int new_priority);

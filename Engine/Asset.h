@@ -36,11 +36,10 @@ protected:
 	const ImportConfiguration* import_config;
 	const LoadConfiguration* load_config;
 	
-public:
-
 	Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config);
 	Asset(RESOURCE_TYPE type, Resource* resource);
 
+public:
 	~Asset();
 
 	RESOURCE_TYPE GetType() const;

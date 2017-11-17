@@ -625,7 +625,7 @@ bool MaterialImporter::Load(Material* to_load, unsigned int priority, const Mate
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
-		MaterialSource* new_material = new MaterialSource();
+		MaterialSource* new_material = new MaterialSource(priority);
 
 		LoadDiffuse( to_load, &iterator);
 		LoadSpecular( to_load, &iterator);

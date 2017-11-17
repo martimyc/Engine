@@ -197,7 +197,7 @@ bool ImportManager::LoadMaterial(Material * to_load, const MaterialLoadConfigura
 		return false;
 	}
 
-	return material_importer->Load(to_load, App->resource_manager->GetNumMaterials(), load_config);
+	return material_importer->Load(to_load, App->resource_manager->GetNewMaterialPriority(), load_config);
 }
 
 bool ImportManager::LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config)
@@ -248,7 +248,7 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 	switch (type)
 	{
 	case RT_TEXTURE:
-		uid = texture_importer->Import(file_name_no_ext, (TextureImportConfiguration*)import_config);
+		uid = texture_importer->Import(file_name_ext, (TextureImportConfiguration*)import_config);
 		if (uid.IsNull())
 		{
 			LOG("Could not import texture from %s corectlly", path.c_str());
@@ -335,7 +335,7 @@ Asset* ImportManager::MetaLoad(const std::string & file) const
 			import_config->MetaLoad(iterator);
 			load_config = new TextureLoadConfiguration;
 			load_config->MetaLoad(iterator);
-			new_asset = new Asset(RT_TEXTURE, new_resource, import_config, load_config);
+			new_asset = new TextureAsset(new_resource, import_config, load_config);
 			return new_asset;
 		case RT_PREFAB:
 			//new_resource = new Scene(name, uid);

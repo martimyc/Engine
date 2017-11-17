@@ -63,6 +63,7 @@ public:
 	void Delete(GameObject* to_delete);
 
 	void ChangeMaterial(Material* new_material);
+	void ChangeMesh(Mesh * new_mesh);
 
 	bool Hirarchy(GameObject*& selected);
 

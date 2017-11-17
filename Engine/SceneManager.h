@@ -76,7 +76,7 @@ public:
 	void SetCameraFocused(Camera* camera);
 
 	void SetFocused(GameObject* game_obj);
-	const GameObject* GetFocused() const;
+	GameObject* GetFocused() const;
 
 	void AddPrefabToFocused(GameObject* root);
 };

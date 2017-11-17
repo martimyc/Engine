@@ -30,6 +30,8 @@ private :
 
 	bool show_matrix_debug = false;
 
+	math::float4x4 view_matrix;
+
 public:
 	Camera3D(const char* name, bool start_enabled = true);
 	~Camera3D();
@@ -55,7 +57,7 @@ public:
 	const float* GetProjMatrixTransposed()const;
 	const float* GetViewProjMatrix()const;
 	const float * GetViewProjMatrixTransposed() const; 
-	const float* GetViewMatrix()const;
+	const float4x4 GetViewMatrix()const;
 	const float* GetWorldMatrix()const;
 		
 	

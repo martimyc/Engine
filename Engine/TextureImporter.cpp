@@ -89,15 +89,16 @@ const UID TextureImporter::Import(const std::string& file, const TextureImportCo
 			data = new ILubyte[size]; // allocate data buffer
 			if (ilSaveL(IL_DDS, data, size) > 0) // Save to buffer with the ilSaveIL function
 			{
-				if (App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, uid.GetAsName(), "dds") == false)
+				uid.Generate((char*)data, size);
+
+				if (App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, uid.GetAsName().c_str(), "dds") == false)
 				{
 					LOG("Could not save %s correctlly", file.c_str());
 					return UID();
 				}
 				else
 					LOG("Saved %s succesfully", file.c_str());
-			}
-			uid.Generate((char*)data, size);
+			}		
 			DELETE_ARRAY(data);
 		}
 	}

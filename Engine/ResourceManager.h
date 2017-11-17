@@ -25,6 +25,7 @@ class ResourceManager: public Module
 {
 private:
 	std::vector<Asset*> assets;
+	Asset* selected_asset;
 
 	//Materials
 	unsigned int num_materials = 0;
@@ -38,14 +39,24 @@ private:
 	const Texture* debug_texture;
 	bool debug_textures = false;
 
-	friend class Client;
+	//Prefabs
+	unsigned int num_prefabs = 0;
 
 public:
 	ResourceManager(const char * name, bool start_enabled = true);
 	~ResourceManager();
 
 private:
-	void ApplyToMaterial(Texture * new_text, unsigned int num_material);
+	Texture* GetTexture(const UID& uid);
+	Material* GetMaterial(const UID& uid);
+	Mesh* GetMesh(const UID& uid);
+	Prefab* GetPrefab(const UID& uid);
+	Material* CreateEmptyMaterial(const char* name = nullptr);
+
+	void LoadToScene();
+
+	//Textures
+	Texture* LoadCheckers();
 
 public:
 	bool Init();
@@ -60,11 +71,8 @@ public:
 	Mesh* UseMesh(const UID& id, const GameObject* go) const;
 	Prefab* UsePrefab(const UID& id, const GameObject* go) const;
 
-	//Textures
-	Texture* LoadCheckers();
-
 	//Materials
-	unsigned int GetNumMaterials();
+	unsigned int GetNewMaterialPriority();
 
 	void DebugTextures() const;
 };
