@@ -182,6 +182,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
+	App->camera->DrawPickingRay();
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
 

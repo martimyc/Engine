@@ -5,6 +5,7 @@
 #include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Geometry\Frustum.h"
 #include "MathGeoLib\src\Geometry\Plane.h"
+#include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "Module.h"
 #include "Globals.h"
 #include "glmath.h"
@@ -63,6 +64,8 @@ public:
 	void OpenCloseMatricesDebugWindow();
 
 	bool DoFrustumCulling(const GameObject* game_obj);
+	LineSegment picking_ray;
+	void DrawPickingRay();
 };
 
 #endif //_MODULE_CAMERA

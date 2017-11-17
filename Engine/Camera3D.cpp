@@ -206,7 +206,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 			//Transform position to range [-1,1] for UnProjectLineSegment
 			float raycast_x = (float)(((float)(App->input->GetMouseX() - App->renderer_3d->GetScenePosX()) / (float)App->renderer_3d->GetSceneWidth()) * 2.0f) - 1;
 			float raycast_y = (float)(((float)(App->input->GetMouseY() - App->renderer_3d->GetScenePosY()) / (float)(App->renderer_3d->GetSceneHeight())) * 2.0f) - 1;
-			LineSegment picking_ray = editor_camera_frustum.UnProjectLineSegment(raycast_x, raycast_y);
+			picking_ray = editor_camera_frustum.UnProjectLineSegment(raycast_x, -raycast_y);
 			App->scene_manager->GetRoot()->PickGameObject(&picking_ray, editor_camera_frustum.FarPlaneDistance());
 		}
 	}
@@ -336,7 +336,7 @@ const float * Camera3D::GetViewProjMatrixTransposed() const
 
 const float * Camera3D::GetViewMatrix() const
 {
-	static float4x4 matrix;
+	float4x4 matrix;
 	matrix = editor_camera_frustum.ViewMatrix();
 	matrix.Transpose();
 	return (float*)matrix.ptr();
@@ -391,4 +391,19 @@ bool Camera3D::DoFrustumCulling(const GameObject * game_obj)
 		}
 		return true;
 	}
+}
+
+void Camera3D::DrawPickingRay()
+{
+	glLineWidth(3.0f);
+	glColor4f(1, 0, 0, 1);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(picking_ray.a.x, picking_ray.a.y, picking_ray.a.z);
+	glVertex3f(picking_ray.b.x, picking_ray.b.y, picking_ray.b.z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }

@@ -560,44 +560,54 @@ void GameObject::RemoveAppliedMaterial()
 void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) const
 {
 	std::map<float, GameObject*> aabb_collisions;
+	LineSegment ray_local_space(*ray);
+	App->console->Log("rayhit created");
 
 	//Check AABBs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 	{
-		if (ray->Intersects((*it)->bounds.aabb_bounding_box))
+		ray_local_space.Transform((*it)->GetLocalTransform());
+
+		if (ray_local_space.Intersects((*it)->bounds.aabb_bounding_box))
 		{
 			float d = (*it)->bounds.aabb_bounding_box.Distance(ray->GetPoint(0));
 			aabb_collisions.insert(std::pair<float, GameObject*>(d, *it));
+			App->console->Log("hit");
 		}
+
+		(*it)->PickGameObject(ray, ray_distance);
 	}
 
-	float triangle_distance = 0.0f;
-	float closest_triangle_distance = ray_distance;
-
-	//Check triangles
-	for (std::map<float, GameObject*>::iterator it = aabb_collisions.begin(); it != aabb_collisions.end(); ++it)
+	if (aabb_collisions.size() == 0)
+		App->scene_manager->SetFocused(App->scene_manager->GetRoot());
+	else
 	{
-		LineSegment ray_local_space(*ray);
-		ray_local_space.Transform(it->second->GetLocalTransform());
+		float triangle_distance = 0.0f;
+		float closest_triangle_distance = ray_distance;
 
-		const Mesh* tmp_mesh = nullptr;
-		for (std::vector<Component*>::const_iterator it_component = it->second->components.begin(); it_component != it->second->components.end(); ++it_component)
+		//Check triangles
+		for (std::map<float, GameObject*>::iterator it = aabb_collisions.begin(); it != aabb_collisions.end(); ++it)
 		{
-			if ((*it_component)->GetType() == CT_MESH_FILTER)
-				tmp_mesh = ((MeshFilter*)(*it_component))->GetMesh();
-		}
-
-		if (tmp_mesh)
-		{
-			if (tmp_mesh->CheckTriangleCollision(ray, &triangle_distance))
+			const Mesh* tmp_mesh = nullptr;
+			for (std::vector<Component*>::const_iterator it_component = it->second->components.begin(); it_component != it->second->components.end(); ++it_component)
 			{
-				 //Check triangle distance
-				if (closest_triangle_distance > triangle_distance && triangle_distance != 0)
+				if ((*it_component)->GetType() == CT_MESH_FILTER)
+					tmp_mesh = ((MeshFilter*)(*it_component))->GetMesh();
+			}
+
+			if (tmp_mesh)
+			{
+				if (tmp_mesh->CheckTriangleCollision(ray, &triangle_distance))
 				{
-					App->scene_manager->SetFocused(it->second);
-					closest_triangle_distance = triangle_distance;
+					//Check triangle distance
+					if (closest_triangle_distance > triangle_distance && triangle_distance != 0)
+					{
+						App->console->Log("focused");
+						App->scene_manager->SetFocused(it->second);
+						closest_triangle_distance = triangle_distance;
+					}
+					break;
 				}
-				break;
 			}
 		}
 	}
