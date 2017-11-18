@@ -49,11 +49,9 @@ bool ImportManager::Init()
 	material_importer = new MaterialImporter();
 	mesh_importer = new MeshImporter();
 	prefab_importer = new PrefabImporter();
-
-	// Stream log messages to Debug window
-	struct aiLogStream stream;
-	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
-	aiAttachLogStream(&stream);
+	
+	Assimp::DefaultLogger* logger = (Assimp::DefaultLogger*)Assimp::DefaultLogger::get();
+	logger->create();
 
 	return true;
 }
@@ -65,8 +63,6 @@ bool ImportManager::CleanUp()
 	delete mesh_importer;
 	delete prefab_importer;
 
-	// detach log stream
-	aiDetachAllLogStreams();
 	return true;
 }
 
@@ -369,10 +365,90 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 
 	std::string scene_name(GetImportFileNameNoExtension());
 
-	const aiScene* scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
+	Assimp::Importer* importer = new Assimp::Importer;
+
+	//Config
+	unsigned int flags =  aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_FindInvalidData | aiProcess_FindInstances | aiProcess_OptimizeGraph;
+	//aiProcess_TransformUVCoords  as long as there are no uv transforms
+	//anim: aiProcess_LimitBoneWeights & aiProcess_SplitByBoneCount & aiProcess_Debone 
+	//aiProcess_FixInfacingNormals result might not always be correct
+
+	uint remove_components = 0;
+
+	if (import_config->mesh_import_config->load_colors == false)
+		remove_components |= aiComponent_COLORS;
+	if (import_config->mesh_import_config->load_tangents == false)
+		remove_components |= aiComponent_TANGENTS_AND_BITANGENTS;
+	if (import_config->mesh_import_config->load_normals == false)
+		remove_components |= aiComponent_NORMALS;
+	else
+		flags |= aiProcess_GenUVCoords | aiProcess_FixInfacingNormals;
+
+	if (import_config->mesh_import_config->load_uvs == false)
+		remove_components |= aiComponent_TEXCOORDS;
+	else
+		flags |= aiProcess_GenUVCoords | aiProcess_TransformUVCoords;
+
+	if (import_config->mesh_import_config->load_bone_weights == false)
+		remove_components |= aiComponent_BONEWEIGHTS;
+	if (import_config->include_animations == false)
+		remove_components |= aiComponent_ANIMATIONS;
+	if (import_config->material_import_config->include_textures == false)
+		remove_components |= aiComponent_TEXTURES;
+	if (import_config->include_lights == false)
+		remove_components |= aiComponent_LIGHTS;
+	if (import_config->include_cameras == false)
+		remove_components |= aiComponent_CAMERAS;
+
+	if (import_config->include_meshes == false)
+		remove_components |= aiComponent_MESHES;
+	else
+		flags |= aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_OptimizeMeshes;
+
+	if (import_config->include_materials == false)
+		remove_components |= aiComponent_MATERIALS;
+	else
+		flags |= aiProcess_RemoveRedundantMaterials;
+
+	if (remove_components != 0)
+	{
+		flags |= aiProcess_RemoveComponent;
+		importer->SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, remove_components);
+	}
+	if (import_config->mesh_import_config->gen_normals)
+		flags |= aiProcess_GenNormals;
+	if (import_config->mesh_import_config->gen_smooth_normals)
+		flags |= aiProcess_GenSmoothNormals;
+	if (import_config->prefab_import_config->split_large_meshes)
+		flags |= aiProcess_SplitLargeMeshes;
+	if (import_config->prefab_import_config->pre_transform)
+		flags |= aiProcess_PreTransformVertices;
+	if (import_config->prefab_import_config->split_large_meshes)
+		flags |= aiProcess_SplitLargeMeshes;
+	if (import_config->prefab_import_config->sort_by_type)
+	{
+		flags |= aiProcess_SortByPType;
+		importer->SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
+	}
+	else
+		importer->SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, 1);
+	//---
+
+	const aiScene* scene = importer->ReadFile(path.c_str(), flags);
 
 	if (scene != nullptr)
 	{
+		//warnings
+		if (scene->mFlags && AI_SCENE_FLAGS_INCOMPLETE)
+			LOG("Scene is incomplete");
+		if (scene->mFlags && AI_SCENE_FLAGS_VALIDATED)
+			LOG("Scene validated without warnings");
+		if (scene->mFlags && AI_SCENE_FLAGS_VALIDATION_WARNING)
+			LOG("Scene validated with warnings");
+		if (scene->mFlags && AI_SCENE_FLAGS_VALIDATION_WARNING)
+			LOG("Scene validated with warnings");
+
+
 		bool* material_loads = nullptr;
 		bool* mesh_loads = nullptr;
 
@@ -432,7 +508,7 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 				sprintf(ptr, "%s_Mesh_%i", scene_name.c_str(), i);
 				std::string mesh_name(ptr);
 
-				UID uid(mesh_importer->Import(scene->mMeshes[i])); //TODO import should take import config
+				UID uid(mesh_importer->Import(scene->mMeshes[i]));
 
 				mesh_loads[i] = true;
 				scene_meshes.push_back(uid);
@@ -465,13 +541,10 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 				prefab_uid = UID();
 			}
 		}
-
-		aiReleaseImport(scene);
+		delete importer;
 	}
-	else
-	{
-		LOG("Error loading scene %s", path.c_str());
-	}
+	else	
+		LOG("Error %s loading scene %s", aiGetErrorString(), path.c_str());
 		
 	return prefab_uid;
 }

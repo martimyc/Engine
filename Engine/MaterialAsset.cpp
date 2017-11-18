@@ -3,7 +3,7 @@
 #include "TextureAsset.h"
 #include "MaterialAsset.h"
 
-MaterialImportConfiguration::MaterialImportConfiguration()
+MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(true)
 {
 	texture_import_config = new TextureImportConfiguration;
 	texture_load_config = new TextureLoadConfiguration;
@@ -19,18 +19,24 @@ bool MaterialImportConfiguration::Config()
 {
 	bool ret = false;
 
-	if (ImGui::TreeNodeEx("Textures' Import Settings"))
-	{
-		if (texture_import_config->Config())
-			ret = true;
-		ImGui::TreePop();
-	}
+	if (ImGui::Checkbox("Generate Normals", &include_textures))
+		ret = true;
 
-	if (ImGui::TreeNodeEx("Textures' Load Settings"))
+	if (include_textures)
 	{
-		if (texture_load_config->Config())
-			ret = true;
-		ImGui::TreePop();
+		if (ImGui::TreeNodeEx("Textures' Import Settings", ImGuiTreeNodeFlags_Framed))
+		{
+			if (texture_import_config->Config())
+				ret = true;
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNodeEx("Textures' Load Settings", ImGuiTreeNodeFlags_Framed))
+		{
+			if (texture_load_config->Config())
+				ret = true;
+			ImGui::TreePop();
+		}
 	}
 
 	return ret;

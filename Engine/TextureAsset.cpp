@@ -313,17 +313,24 @@ bool TextureLoadConfiguration::Config()
 
 	if (scaling)
 	{
-		ImGui::Text("Width:");
-		if(ImGui::InputInt("Width", &scale_width))
+		ImGui::Columns(3);
+
+		if(ImGui::InputInt("Width", &scale_width, 1, 100, ImGuiInputTextFlags_LabelTop))
 			changed = true;
 
-		ImGui::Text("Height:");
-		if(ImGui::InputInt("Height", &scale_height))
+		ImGui::NextColumn();
+
+		if(ImGui::InputInt("Height", &scale_height, 1, 100, ImGuiInputTextFlags_LabelTop))
 			changed = true;
 
-		ImGui::Text("Depth:");
-		if(ImGui::InputInt("Depth", &scale_depth))
+		ImGui::NextColumn();
+
+		if(ImGui::InputInt("Depth", &scale_depth, 1, 100, ImGuiInputTextFlags_LabelTop))
 			changed = true;
+
+		ImGui::Columns(1);
+
+		ImGui::Text("Scaling Filter:");
 
 		const char* items[] = { "Nearest", "Linear", "Bilinear", "Scale Box", "Scale Triangle", "Scale Bell", "Scale B Spline", "Scale Lanczos", "Scale Mitchell"};
 		if (ImGui::Combo("", &selected_filter, items, IM_ARRAYSIZE(items)))

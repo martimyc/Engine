@@ -56,7 +56,7 @@ const std::string & Asset::GetName() const
 	return resource->GetName();
 }
 
-SceneImportConfiguration::SceneImportConfiguration()
+SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false)
 {
 	material_import_config = new MaterialImportConfiguration;
 	mesh_import_config = new MeshImportConfiguration;
@@ -89,9 +89,24 @@ bool SceneImportConfiguration::Config()
 	if (ImGui::Checkbox("Include Prefabs", &include_prefabs))
 		ret = true;
 
+	if (ImGui::Checkbox("Include Animations", &include_animations))
+		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("Not suported yet");
+
+	if (ImGui::Checkbox("Include Lights", &include_lights))
+		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("Not working yet");
+
+	if (ImGui::Checkbox("Include Cameras", &include_cameras))
+		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("Not working yet");
+
 	if (include_meshes)
 	{
-		if (ImGui::TreeNodeEx("Meshes' Configuration"))
+		if (ImGui::TreeNodeEx("Meshes' Configuration", ImGuiTreeNodeFlags_Framed))
 		{
 			if (mesh_import_config->Config())
 				ret = true;
@@ -104,7 +119,7 @@ bool SceneImportConfiguration::Config()
 		
 	if (include_materials)
 	{
-		if (ImGui::TreeNodeEx("Materials' Configuration"))
+		if (ImGui::TreeNodeEx("Materials' Configuration", ImGuiTreeNodeFlags_Framed))
 		{
 			if (material_import_config->Config())
 				ret = true;
@@ -117,7 +132,7 @@ bool SceneImportConfiguration::Config()
 
 	if (include_prefabs)
 	{
-		if (ImGui::TreeNodeEx("Prefabs' Configuration"))
+		if (ImGui::TreeNodeEx("Prefabs' Configuration", ImGuiTreeNodeFlags_Framed))
 		{
 			if (prefab_import_config->Config())
 				ret = true;

@@ -9,6 +9,8 @@ struct PrefabImportConfiguration : public ImportConfiguration
 	bool split_large_meshes;
 	bool sort_by_type;
 
+	PrefabImportConfiguration();
+
 	virtual bool Config();
 	virtual void MetaSave(char** iterator) const;
 	virtual void MetaLoad(char** iterator);

@@ -13,6 +13,9 @@ void PrefabAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
+PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(true), split_large_meshes(true), sort_by_type(false)
+{}
+
 bool PrefabImportConfiguration::Config()
 {
 	bool ret = false;
@@ -22,12 +25,15 @@ bool PrefabImportConfiguration::Config()
 	ImGui::SameLine();
 	ImGui::HelpMarker("Removes the node graph and pre-transforms all vertices with the local transformation matrices of their nodes.\nThe output scene still contains nodes, however there is only a root node with children, each one referencing only one mesh, and each mesh referencing one material.\nAnimations are removed during this step.");
 
-
 	if (ImGui::Checkbox("Split Large Meshes", &split_large_meshes))
 		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("Splits large meshes into smaller sub-meshes.");
 
 	if (ImGui::Checkbox("Sort By Type", &sort_by_type))
 		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("This step splits meshes with more than one primitive type in homogeneous sub-meshes.");
 
 	return ret;
 }

@@ -1,0 +1,15 @@
+Info,  T9720: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\BakerHouse.fbx
+Info,  T9720: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T9720: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
+Warn,  T9720: FBX-DOM (TOK_KEY, offset 0xd7b7) shading mode not recognized: Phong
+Info,  T9720: Entering post processing pipeline
+Info,  T9720: RemoveVCProcess finished. Data structure cleanup has been done.
+Info,  T9720: OptimizeGraphProcess finished; Input nodes: 3, Output nodes: 1
+Info,  T9720: Removed 1 nodes and 0 animation channels (1 output nodes)
+Info,  T9720: Kept 0 lights and 0 cameras
+Info,  T9720: Moved 2 meshes to WCS (number of output meshes: 1)
+Info,  T9720: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Info,  T9720: CalcTangentsProcess finished. Tangents have been calculated
+Info,  T9720: JoinVerticesProcess finished | Verts in: 3075 out: 1532 | ~50.2%
+Info,  T9720: Cache relevant are 1 meshes (1025 faces). Average output ACMR is 1.522927
+Info,  T9720: Leaving post processing pipeline
