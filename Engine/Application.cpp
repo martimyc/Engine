@@ -22,6 +22,7 @@
 #include "FileSystem.h"
 #include "ImportManager.h"
 #include "ResourceManager.h"
+#include "TimeManager.h"
 #include "Application.h"
 
 Application::Application()
@@ -39,6 +40,7 @@ Application::Application()
 	file_system = new FileSystem("File System");
 	import_manager = new ImportManager("Import Manager");
 	resource_manager = new ResourceManager("Resource Manager");
+	time_manager = new TimeManager("Time Manager");
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -57,7 +59,8 @@ Application::Application()
 	AddModule(file_system);
 	AddModule(import_manager);
 	AddModule(resource_manager);
-	
+	AddModule(time_manager);
+
 	// Scenes
 
 	// Renderer last!

@@ -84,6 +84,7 @@
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MD5.h" />
     <ClInclude Include="MeshAsset.h" />
+    <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="PreFab.h" />
     <ClInclude Include="PrefabAsset.h" />
     <ClInclude Include="Resource.h" />
@@ -242,6 +243,8 @@
     <ClInclude Include="TextureAsset.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureImporter.h" />
+    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UID.h" />
     <ClInclude Include="Window.h" />
@@ -322,6 +325,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="PreFab.cpp" />
     <ClCompile Include="PrefabAsset.cpp" />
     <ClCompile Include="PrefabImporter.cpp" />
@@ -333,6 +337,8 @@
     <ClCompile Include="TextureAsset.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureImporter.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UID.cpp" />
     <ClCompile Include="Window.cpp" />
