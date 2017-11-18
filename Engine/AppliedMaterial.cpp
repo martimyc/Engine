@@ -5,6 +5,7 @@ AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(
 {
 	unsigned int buff_size = material->GetNumAllTextures();
 	uv_channels = new unsigned int[buff_size];
+	memset(uv_channels, 0, buff_size * sizeof(unsigned int));
 }
 
 AppliedMaterial::~AppliedMaterial()
