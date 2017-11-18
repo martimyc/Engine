@@ -15,6 +15,10 @@ class MeshFilter;
 class Material;
 class Mesh;
 class Camera;
+namespace math
+{
+	class LineSegment;
+}
 
 struct Bounds
 {

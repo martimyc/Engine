@@ -9,35 +9,24 @@
 class GameObject;
 class AppliedMaterial;
 class KDTreeVertex;
+namespace math
+{
+	class Triangle;
+	class LineSegment;
+}
 
 namespace Geo
 {
-	struct Vertex;
-
-	struct Triangle
-	{
-		const Vertex& first;
-		const Vertex& second;
-		const Vertex& third;
-
-		Triangle(const Vertex& first, const Vertex& second, const Vertex& third) : first(first), second(second), third(third)
-		{}
-		~Triangle()
-		{}
-	};
-
 	struct Vertex
 	{
-		float x;
-		float y;
-		float z;
+		math::vec vertex;
 
-		std::vector<const Triangle*> triangles;
+		std::vector<const math::Triangle*> triangles;
 
-		Vertex(const GLfloat* ptr) : x(ptr[0]), y(ptr[1]), z(ptr[2])
+		Vertex(const GLfloat* ptr) : vertex(ptr[0], ptr[1], ptr[2])
 		{}
 
-		Vertex(float x, float y, float z): x(x), y(y), z(z)
+		Vertex(float x, float y, float z): vertex(x, y, z)
 		{}
 
 		~Vertex()
@@ -51,32 +40,29 @@ namespace Geo
 		float operator [] (int i)
 		{
 			if (i == 0)
-				return x;
+				return vertex.x;
 			if (i == 1)
-				return y;
+				return vertex.y;
 			if (i == 2)
-				return z;
+				return vertex.z;
 		}
 
 		float operator [] (int i) const
 		{
 			if (i == 0)
-				return x;
+				return vertex.x;
 			if (i == 1)
-				return y;
+				return vertex.y;
 			if (i == 2)
-				return z;
+				return vertex.z;
 		}
 
-		math::vec MGLVec() const
-		{
-			return math::vec(x,y,z);
-		}
-
-		void AddTriangle(const Triangle* new_triangle)
+		void AddTriangle(const math::Triangle* new_triangle)
 		{
 			triangles.push_back(new_triangle);
 		}
+
+		bool CheckCollision(const LineSegment* ray, math::Triangle& triangle) const;
 	};
 }
 
@@ -148,6 +134,7 @@ struct MeshSource
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
+	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle)const;
 
 	//Max & Min
 	float GetMinX() const;
@@ -216,6 +203,7 @@ public:
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
+	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
 
 	//Max & Min
 	float GetMinX() const;
@@ -234,7 +222,7 @@ public:
 	Geo::Vertex GetMaxYVertex() const;
 	Geo::Vertex GetMaxZVertex() const;
 
-	bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
+	//bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
 
 	void SetSource(MeshSource* source);
 };

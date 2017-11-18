@@ -1,9 +1,8 @@
-
 #ifndef _LIGHT
 #define _LIGHT
 
 #include "Color.h"
-#include "glmath.h"
+#include "MathGeoLib\src\Math\float3.h"
 
 struct Light
 {
@@ -16,7 +15,7 @@ struct Light
 
 	Color ambient;
 	Color diffuse;
-	vec3 position;
+	math::vec position;
 
 	int ref;
 	bool on;

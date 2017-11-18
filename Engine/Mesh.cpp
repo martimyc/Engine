@@ -311,12 +311,19 @@ void MeshSource::RecalculateKDT()
 	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
 }
 
+bool MeshSource::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+{
+	if (vertex_kdt != nullptr)
+		return vertex_kdt->RayCollisionKDT(ray, triangle);
+	return false;
+}
+
 float MeshSource::GetMinX() const
 {
 	float min = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (min < vertices[i * 3])
+		if (min > vertices[i * 3])
 			min = vertices[i * 3];
 
 	return min;
@@ -327,7 +334,7 @@ float MeshSource::GetMinY() const
 	float min = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (min < vertices[i * 3 + 1])
+		if (min > vertices[i * 3 + 1])
 			min = vertices[i * 3 + 1];
 
 	return min;
@@ -338,7 +345,7 @@ float MeshSource::GetMinZ() const
 	float min = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (min < vertices[i * 3 + 2])
+		if (min > vertices[i * 3 + 2])
 			min = vertices[i * 3 + 2];
 
 	return min;
@@ -349,7 +356,7 @@ float MeshSource::GetMaxX() const
 	float max = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (max > vertices[i * 3])
+		if (max < vertices[i * 3])
 			max = vertices[i * 3];
 
 	return max;
@@ -360,10 +367,10 @@ float MeshSource::GetMaxY() const
 	float max = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (max > vertices[i * 3 + 1])
+		if (max < vertices[i * 3 + 1])
 			max = vertices[i * 3 + 1];
 
-	return max;
+	return max; 
 }
 
 float MeshSource::GetMaxZ() const
@@ -371,7 +378,7 @@ float MeshSource::GetMaxZ() const
 	float max = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (max > vertices[i * 3 + 2])
+		if (max < vertices[i * 3 + 2])
 			max = vertices[i * 3 + 2];
 
 	return max;
@@ -443,7 +450,7 @@ Geo::Vertex MeshSource::GetMaxZVertex() const
 	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
+/*bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
 {
 	Triangle triangle_to_test;
 	//float original_dist = *distance;
@@ -468,7 +475,7 @@ bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distanc
 	//	distance = &original_dist;
 
 	return false;
-}
+}*/
 
 //Mesh
 Mesh::Mesh(const std::string name, const UID& uid):Resource(RT_MESH, name, uid), source(nullptr)
@@ -687,10 +694,19 @@ void Mesh::RecalculateKDT()
 		LOG("Trying to acces non loaded mesh");
 }
 
+bool Mesh::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+{
+	if (source != nullptr)
+		return source->RayCollisionKDT(ray, triangle);
+
+	LOG("Trying to acces non loaded mesh");
+	return false;
+}
+
 float Mesh::GetMinX() const
 {
 	if (source != nullptr)
-		source->GetMinX();
+		return source->GetMinX();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
@@ -698,7 +714,7 @@ float Mesh::GetMinX() const
 float Mesh::GetMinY() const
 {
 	if (source != nullptr)
-		source->GetMinY();
+		return source->GetMinY();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
@@ -706,7 +722,7 @@ float Mesh::GetMinY() const
 float Mesh::GetMinZ() const
 {
 	if (source != nullptr)
-		source->GetMinZ();
+		return source->GetMinZ();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
@@ -714,7 +730,7 @@ float Mesh::GetMinZ() const
 float Mesh::GetMaxX() const
 {
 	if (source != nullptr)
-		source->GetMaxX();
+		return source->GetMaxX();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
@@ -722,7 +738,7 @@ float Mesh::GetMaxX() const
 float Mesh::GetMaxY() const
 {
 	if (source != nullptr)
-		source->GetMaxY();
+		return source->GetMaxY();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
@@ -730,7 +746,7 @@ float Mesh::GetMaxY() const
 float Mesh::GetMaxZ() const
 {
 	if (source != nullptr)
-		source->GetMaxZ();
+		return source->GetMaxZ();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
@@ -783,15 +799,42 @@ Geo::Vertex Mesh::GetMaxZVertex() const
 	return Geo::Vertex(0.0f, 0.0f, 0.0f);
 }
 
-bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
+/*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
 {
 	if (source != nullptr)
 		return source->CheckTriangleCollision(ray, distance);
 	LOG("Trying to acces non loaded mesh");
 	return false;
-}
+}*/
 
 void Mesh::SetSource(MeshSource * source)
 {
 	this->source = source;
+}
+
+bool Geo::Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle & triangle) const
+{
+	float shortest_dist = ray->Length();
+	float distance = 0.0f;
+
+	bool hit = false;
+
+	//Check all mesh triangles
+	for (int i = 0; i < triangles.size(); i++)
+	{
+		if (ray->Intersects(*triangles[i], &distance, nullptr))
+		{
+			if (shortest_dist > distance)
+			{
+				hit = true;
+				shortest_dist = distance;
+				triangle = *triangles[i];				
+			}
+		}
+	}
+
+	if (hit)
+		return true;
+
+	return false;
 }

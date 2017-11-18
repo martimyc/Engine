@@ -3,6 +3,8 @@
 #include "MathGeoLib\src\Math\float3x3.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
 
+#include "MathGeoLib\src\Geometry\Triangle.h"
+
 //components
 #include "Component.h"
 #include "MeshFilter.h"
@@ -584,9 +586,10 @@ void GameObject::RemoveAppliedMaterial()
 
 void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) const
 {
+	//if(this->HasMeshFilter())
+
 	std::map<float, GameObject*> aabb_collisions;
 	LineSegment ray_local_space(*ray);
-	App->console->Log("rayhit created");
 
 	//Check AABBs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
@@ -597,7 +600,6 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 		{
 			float d = (*it)->bounds.aabb_bounding_box.Distance(ray->GetPoint(0));
 			aabb_collisions.insert(std::pair<float, GameObject*>(d, *it));
-			App->console->Log("hit");
 		}
 
 		(*it)->PickGameObject(ray, ray_distance);
@@ -607,53 +609,45 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 		App->scene_manager->SetFocused(App->scene_manager->GetRoot());
 	else
 	{
-		float triangle_distance = 0.0f;
-		float closest_triangle_distance = ray_distance;
-
 		//Check triangles
+		GameObject* go = nullptr;
+		math::Triangle tri;
+		math::Triangle triangle_to_test;
+
 		for (std::map<float, GameObject*>::iterator it = aabb_collisions.begin(); it != aabb_collisions.end(); ++it)
 		{
-			const Mesh* tmp_mesh = nullptr;
-			for (std::vector<Component*>::const_iterator it_component = it->second->components.begin(); it_component != it->second->components.end(); ++it_component)
+			if ((*it).second->HasMeshFilter())
 			{
-				if ((*it_component)->GetType() == CT_MESH_FILTER)
-					tmp_mesh = ((MeshFilter*)(*it_component))->GetMesh();
-			}
-
-			if (tmp_mesh)
-			{
-				if (tmp_mesh->CheckTriangleCollision(ray, &triangle_distance))
+				if ((*it).second->GetMesh()->RayCollisionKDT(ray, triangle_to_test))
 				{
-					//Check triangle distance
-					if (closest_triangle_distance > triangle_distance && triangle_distance != 0)
+					if (go != nullptr)
 					{
-						App->console->Log("focused");
-						App->scene_manager->SetFocused(it->second);
-						closest_triangle_distance = triangle_distance;
+						if (triangle_to_test.Distance(ray->a) < tri.Distance(ray->a))
+						{
+							tri = triangle_to_test;
+							go = (*it).second;
+						}
 					}
-					break;
+					else
+					{
+						tri = triangle_to_test;
+						go = (*it).second;
+					}
 				}
 			}
 		}
+		if (go != nullptr)
+			App->scene_manager->SetFocused(go);
 	}
 }
 
 void GameObject::CreateBounds(const Mesh* mesh)
 {
-	uint num_vertices = mesh->GetNumVertices();
-	const GLfloat* all_vertices = mesh->GetVertices();
-
-	math::vec* vec_vertices = new math::vec[num_vertices];
-	memcpy(vec_vertices, all_vertices, num_vertices * sizeof(GLfloat) * 3);
-
-	bounds.aabb_bounding_box.Enclose(vec_vertices, num_vertices);
-	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint;
-	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint;
+	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint = (math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
+	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
 
 	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
 	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
-
-	DELETE_ARRAY(vec_vertices);
 }
 
 void GameObject::UpdateBounds()

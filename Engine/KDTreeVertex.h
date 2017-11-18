@@ -5,7 +5,13 @@
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\MathGeoLibFwd.h"
 
-#define MAX_NUM_OBJECTS 4
+#define MAX_NUM_OBJECTS 3
+
+namespace math
+{
+	class Triangle;
+	class LineSegment;
+}
 
 namespace Geo
 {
@@ -61,6 +67,8 @@ public:
 	void Draw() const;
 
 	bool AllSamePos(const Geo::Vertex* new_vertex) const;
+
+	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
 };
 
 class KDTreeVertex
@@ -78,6 +86,7 @@ public:
 	bool AddVertices(const GLfloat*const new_vertices, int num_vertices, const GLuint*const new_indices, int num_indices);
 
 	void Draw() const;
+	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
 };
 
 #endif // !KDTREE_VERTEX

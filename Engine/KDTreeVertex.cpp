@@ -3,6 +3,8 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\Triangle.h"
+#include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Mesh.h"
@@ -331,13 +333,12 @@ void KDTNodeVertex::GetVertices(std::vector<const Geo::Vertex*>& vec) const
 
 bool KDTNodeVertex::IsIn(const Geo::Vertex * new_vertex) const
 {
-	math::vec position(new_vertex->MGLVec());
 
-	if (position.x < limits->minPoint.x || position.x > limits->maxPoint.x)
+	if (new_vertex->vertex.x < limits->minPoint.x || new_vertex->vertex.x > limits->maxPoint.x)
 		return false;
-	if (position.y < limits->minPoint.y || position.y > limits->maxPoint.y)
+	if (new_vertex->vertex.y < limits->minPoint.y || new_vertex->vertex.y > limits->maxPoint.y)
 		return false;
-	if (position.z < limits->minPoint.z || position.z > limits->maxPoint.z)
+	if (new_vertex->vertex.z < limits->minPoint.z || new_vertex->vertex.z > limits->maxPoint.z)
 		return false;
 
 	return true;
@@ -422,7 +423,7 @@ void KDTNodeVertex::Draw() const
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
 			if (vertices[i] != nullptr)
-				glVertex3f(vertices[i]->x, vertices[i]->y, vertices[i]->z);
+				glVertex3f(vertices[i]->vertex.x, vertices[i]->vertex.y, vertices[i]->vertex.z);
 			else
 				break;
 		}
@@ -443,9 +444,44 @@ void KDTNodeVertex::Draw() const
 bool KDTNodeVertex::AllSamePos(const Geo::Vertex * new_vertex) const
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (new_vertex->x != vertices[i]->x || new_vertex->y != vertices[i]->y || new_vertex->z != vertices[i]->z)
+		if (new_vertex->vertex.x != vertices[i]->vertex.x || new_vertex->vertex.y != vertices[i]->vertex.y || new_vertex->vertex.z != vertices[i]->vertex.z)
 			return false;
 	return true;
+}
+
+bool KDTNodeVertex::RayCollisionKDT(const LineSegment * ray, Triangle& triangle) const
+{
+	bool ret = false;
+	if (partition_axis == NO_PARTITION)
+	{
+		if (vertices[0] == nullptr)
+			return false;
+		else
+		{
+			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+			{
+				if (vertices[i] != nullptr)
+				{
+					if (vertices[i]->CheckCollision(ray, triangle))
+						ret = true;
+				}
+				else
+					return false;
+			}
+		}
+	}
+	else
+	{
+		if (childs[0] != nullptr)
+		{
+			if (childs[0]->RayCollisionKDT(ray, triangle))
+				ret = true;
+			if(childs[1]->RayCollisionKDT(ray, triangle))
+				ret = true;
+		}
+	}
+
+	return ret;
 }
 
 KDTreeVertex::KDTreeVertex()
@@ -469,19 +505,19 @@ bool KDTreeVertex::ReCalculate(Geo::Vertex* new_vertex)
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	limits.Enclose(&new_vertex->MGLVec(), 1);
+	limits.Enclose(new_vertex->vertex);
 
 	if (all_vertices.size() > 0)
 	{
 		for (std::vector<const Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
-			limits.Enclose(&(*it)->MGLVec(), 1);
+			limits.Enclose(&(*it)->vertex, 1);
 	}
 
 	root = new KDTNodeVertex(limits);
 
 	if (root->AddVertex(new_vertex) == false)
 	{
-		LOG("New Vertex: '%f, %f, %f' could not be added to KDT after recalculating", new_vertex->x, new_vertex->y, new_vertex->z);
+		LOG("New Vertex: '%f, %f, %f' could not be added to KDT after recalculating", new_vertex->vertex.x, new_vertex->vertex.y, new_vertex->vertex.z);
 		return false;
 	}
 
@@ -490,7 +526,7 @@ bool KDTreeVertex::ReCalculate(Geo::Vertex* new_vertex)
 		for (std::vector<const Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
 			if (root->AddVertex(*it) == false)
 			{
-				LOG("Vertex: '%f, %f, %f' could not be re-added to KDT after recalculating", (*it)->x, (*it)->y, (*it)->z);
+				LOG("Vertex: '%f, %f, %f' could not be re-added to KDT after recalculating", (*it)->vertex.x, (*it)->vertex.y, (*it)->vertex.z);
 				return false;
 			}
 	}
@@ -523,7 +559,7 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 	{
 		Geo::Vertex* vertex = new Geo::Vertex(&new_vertices[i * 3]);
 		all_vertices.push_back(vertex);
-		limits.Enclose(vertex->MGLVec());
+		limits.Enclose(vertex->vertex);
 	}
 
 	int num_triangles = num_indices / 3;
@@ -534,7 +570,7 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 		Geo::Vertex* v2 = all_vertices[new_indices[i * 3 + 1]];
 		Geo::Vertex* v3 = all_vertices[new_indices[i * 3 + 2]];
 
-		Geo::Triangle* triangle = new Geo::Triangle(*v1, *v2, *v3);
+		math::Triangle* triangle = new math::Triangle(v1->vertex, v2->vertex, v3->vertex);
 
 		v1->AddTriangle(triangle);
 		v2->AddTriangle(triangle);
@@ -548,7 +584,7 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 		for (std::vector<Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
 			if (root->AddVertex(*it) == false)
 			{
-				LOG("Vertex: '%f, %f, %f' could not be added to KDT", (*it)->x, (*it)->y, (*it)->z);
+				LOG("Vertex: '%f, %f, %f' could not be added to KDT", (*it)->vertex.x, (*it)->vertex.y, (*it)->vertex.z);
 				return false;
 			}
 	}
@@ -559,4 +595,9 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 void KDTreeVertex::Draw() const
 {
 	root->Draw();
+}
+
+bool KDTreeVertex::RayCollisionKDT(const LineSegment * ray, Triangle& triangle) const
+{
+	return root->RayCollisionKDT(ray, triangle);
 }
