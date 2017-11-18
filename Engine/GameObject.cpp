@@ -643,20 +643,11 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 
 void GameObject::CreateBounds(const Mesh* mesh)
 {
-	uint num_vertices = mesh->GetNumVertices();
-	const GLfloat* all_vertices = mesh->GetVertices();
-
-	math::vec* vec_vertices = new math::vec[num_vertices];
-	memcpy(vec_vertices, all_vertices, num_vertices * sizeof(GLfloat) * 3);
-
-	bounds.aabb_bounding_box.Enclose(vec_vertices, num_vertices);
-	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint;
-	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint;
+	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint = (math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
+	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
 
 	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
 	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
-
-	DELETE_ARRAY(vec_vertices);
 }
 
 void GameObject::UpdateBounds()
