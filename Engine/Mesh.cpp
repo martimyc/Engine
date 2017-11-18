@@ -311,6 +311,13 @@ void MeshSource::RecalculateKDT()
 	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
 }
 
+bool MeshSource::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+{
+	if (vertex_kdt != nullptr)
+		return vertex_kdt->RayCollisionKDT(ray, triangle);
+	return false;
+}
+
 float MeshSource::GetMinX() const
 {
 	float min = 0.0f;
@@ -443,7 +450,7 @@ Geo::Vertex MeshSource::GetMaxZVertex() const
 	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
+/*bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
 {
 	Triangle triangle_to_test;
 	//float original_dist = *distance;
@@ -468,7 +475,7 @@ bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distanc
 	//	distance = &original_dist;
 
 	return false;
-}
+}*/
 
 //Mesh
 Mesh::Mesh(const std::string name, const UID& uid):Resource(RT_MESH, name, uid), source(nullptr)
@@ -687,6 +694,15 @@ void Mesh::RecalculateKDT()
 		LOG("Trying to acces non loaded mesh");
 }
 
+bool Mesh::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+{
+	if (source != nullptr)
+		return source->RayCollisionKDT(ray, triangle);
+
+	LOG("Trying to acces non loaded mesh");
+	return false;
+}
+
 float Mesh::GetMinX() const
 {
 	if (source != nullptr)
@@ -783,15 +799,42 @@ Geo::Vertex Mesh::GetMaxZVertex() const
 	return Geo::Vertex(0.0f, 0.0f, 0.0f);
 }
 
-bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
+/*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
 {
 	if (source != nullptr)
 		return source->CheckTriangleCollision(ray, distance);
 	LOG("Trying to acces non loaded mesh");
 	return false;
-}
+}*/
 
 void Mesh::SetSource(MeshSource * source)
 {
 	this->source = source;
+}
+
+bool Geo::Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle & triangle) const
+{
+	float shortest_dist = ray->Length();
+	float distance = 0.0f;
+
+	bool hit = false;
+
+	//Check all mesh triangles
+	for (int i = 0; i < triangles.size(); i++)
+	{
+		if (ray->Intersects(*triangles[i], &distance, nullptr))
+		{
+			if (shortest_dist > distance)
+			{
+				hit = true;
+				shortest_dist = distance;
+				triangle = *triangles[i];				
+			}
+		}
+	}
+
+	if (hit)
+		return true;
+
+	return false;
 }
