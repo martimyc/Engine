@@ -5,7 +5,6 @@
 #include <queue>
 #include <vector>
 #include "Light.h"
-#include "glmath.h"
 #include "glew\include\GL\glew.h"
 #include "Globals.h"
 #include "Module.h"
