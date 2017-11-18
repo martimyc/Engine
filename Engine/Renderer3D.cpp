@@ -126,6 +126,9 @@ bool Renderer3D::Init()
 	render_to_texture = new FrameBuffer();
 	render_to_texture->CreateFrameBuffer(App->window->GetWidth(), App->window->GetHeight());
 
+	play_buttons_size_x = 205;
+	play_buttons_size_y = 75;
+
 	return ret;
 }
 
@@ -137,6 +140,7 @@ UPDATE_STATUS Renderer3D::Configuration(float dt)
 
 	if (App->BeginDockWindow("Renderer 3D", &config_renderer))
 	{
+		ImGui::Checkbox("Draw Mouse Picking", &show_ray_picking);
 		ImGui::Checkbox("Draw World Axis", &world_axis);
 		ImGui::Checkbox("Draw Grid", &show_grid);
 		ImGui::ColorEdit3("Grid Color", grid_color); 
@@ -190,13 +194,14 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(opengl_view_matrix);
 
-	App->camera->DrawPickingRay();
 	//Set drawing mode if changed
 	App->scene_manager->DrawMode();
 
 	//Camera
 	App->scene_manager->DrawCamera();
 
+	if (show_ray_picking)
+		App->camera->DrawPickingRay();
 	if (show_grid)
 		DrawGrid();
 	if (world_axis)
@@ -250,14 +255,22 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	render_to_texture->UnBindFrameBuffer();
 
 
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
-	App->BeginDockWindow("Scene", nullptr, flags);
-
+	ImGuiWindowFlags flags_scene = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	App->BeginDockWindow("Scene", nullptr, flags_scene);
+	
 	mouse_on_scene_window = ImGui::IsWindowHovered();
 	render_to_texture->SetPosX(ImGui::GetWindowPos().x);
 	render_to_texture->SetPosY(ImGui::GetWindowPos().y);
 	render_to_texture->SetWidth(ImGui::GetWindowWidth());
 	render_to_texture->SetHeight(ImGui::GetWindowHeight());
+
+	//Create Play/Pause/Play1Frame buttons
+	ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY() + (play_buttons_size_y / 2)), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(play_buttons_size_x, play_buttons_size_y), ImGuiCond_Always);
+	ImGuiWindowFlags flags_buttons = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	ImGui::Begin("", nullptr, flags_buttons);
+	App->resource_manager->CreateButtons();
+	ImGui::End();
 
 	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth(), render_to_texture->GetHeight()), ImVec2(0, 1), ImVec2(1, 0));
 

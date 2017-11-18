@@ -18,9 +18,24 @@ private:
 	Timer real_time_clock;
 	Timer game_clock;
 
+	uint64 frame_count = 0;
+
+	float game_time_since_start = 0;
+	float game_time_scale = 0;
+	float game_dt = 0;
+
+	float real_time_since_start = 0;
+	float real_time_dt = 0;
+
 public:
 	TimeManager(const char* name, bool start_enabled = true);
 	~TimeManager();
+
+	bool Start();
+
+	void PlayGame();
+	void PauseGame();
+	void DoOneUpdate();
 };
 
 #endif // !TIME_MANAGER

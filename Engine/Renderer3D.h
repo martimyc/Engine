@@ -58,12 +58,17 @@ private:
 
 	bool debug_draw;
 	//TODO DebugDraw
+	bool show_ray_picking = false;
 	bool world_axis = true;
 	bool show_grid = true;
 	int grid_divisions = 10;
 	float grid_line_width = 2.0f;
 	float grid_size = 0.5f;
 	float grid_color[3] = { 0.62745f, 0.62745f, 0.62745f };	//Grey
+
+	int play_buttons_size_x;
+	int play_buttons_size_y;
+
 	GLuint cube_id;
 
 	bool config_renderer = true;
