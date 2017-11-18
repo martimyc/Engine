@@ -179,18 +179,20 @@ void GameObject::Delete(GameObject * to_delete)
 
 void GameObject::ChangeMaterial(Material * new_material)
 {
-	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
-			RemoveAppliedMaterial();
+	const Component* applied_material = GetAppliedMaterial();
+
+	if (applied_material != nullptr)
+		RemoveAppliedMaterial();
 	
 	AddComponent(new AppliedMaterial(new_material));	
 }
 
 void GameObject::ChangeMesh(Mesh * new_mesh)
 {
-	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
-		if ((*it)->GetType() == CT_MESH_FILTER)
-			RemoveMeshFilter();
+	const Component* mesh_filter = GetMeshFilter();
+
+	if(mesh_filter != nullptr)
+		RemoveMeshFilter();
 
 	AddComponent(new MeshFilter(new_mesh));
 }
@@ -569,7 +571,7 @@ void GameObject::RemoveMeshFilter()
 		{
 			delete *it;
 			components.erase(it);
-			break;
+			return;
 		}
 }
 
@@ -580,7 +582,7 @@ void GameObject::RemoveAppliedMaterial()
 		{
 			delete *it;
 			components.erase(it);
-			break;
+			return;
 		}
 }
 
