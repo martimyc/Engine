@@ -18,12 +18,6 @@ bool MeshImportConfiguration::Config()
 
 	ImGui::Columns(1);
 
-	if(ImGui::Checkbox("Split Large Meshes", &split_large_meshes))
-		ret = true;
-
-	if(ImGui::Checkbox("Sort By Type", &sort_by_type))
-		ret = true;
-
 	return ret;
 }
 

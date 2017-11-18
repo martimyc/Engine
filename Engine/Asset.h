@@ -67,9 +67,8 @@ public:
 
 struct SceneImportConfiguration : public ImportConfiguration
 {
-	bool inlude_meshes;
+	bool include_meshes;
 	bool include_materials;
-	bool include_textures;
 	bool include_prefabs;
 
 	MaterialImportConfiguration* material_import_config;

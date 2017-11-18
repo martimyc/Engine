@@ -78,7 +78,57 @@ SceneImportConfiguration::~SceneImportConfiguration()
 
 bool SceneImportConfiguration::Config()
 {
-	return false;
+	bool ret = false;
+
+	if (ImGui::Checkbox("Include Meshes", &include_meshes))
+		ret = true;
+
+	if (ImGui::Checkbox("Include Materials", &include_materials))
+		ret = true;
+
+	if (ImGui::Checkbox("Include Prefabs", &include_prefabs))
+		ret = true;
+
+	if (include_meshes)
+	{
+		if (ImGui::TreeNodeEx("Meshes' Configuration"))
+		{
+			if (mesh_import_config->Config())
+				ret = true;
+			if (mesh_load_config->Config())
+				ret = true;
+
+			ImGui::TreePop();
+		}
+	}
+		
+	if (include_materials)
+	{
+		if (ImGui::TreeNodeEx("Materials' Configuration"))
+		{
+			if (material_import_config->Config())
+				ret = true;
+			if (material_load_config->Config())
+				ret = true;
+
+			ImGui::TreePop();
+		}
+	}
+
+	if (include_prefabs)
+	{
+		if (ImGui::TreeNodeEx("Prefabs' Configuration"))
+		{
+			if (prefab_import_config->Config())
+				ret = true;
+			if (prefab_load_config->Config())
+				ret = true;
+
+			ImGui::TreePop();
+		}
+	}
+
+	return ret;
 }
 
 void SceneImportConfiguration::MetaSave(char ** iterator) const

@@ -6,6 +6,8 @@
 struct PrefabImportConfiguration : public ImportConfiguration
 {
 	bool pre_transform; //make scene only have root with childs with one mesh
+	bool split_large_meshes;
+	bool sort_by_type;
 
 	virtual bool Config();
 	virtual void MetaSave(char** iterator) const;

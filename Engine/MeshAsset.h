@@ -7,8 +7,6 @@ struct MeshImportConfiguration : public ImportConfiguration
 {
 	bool gen_normals;
 	bool gen_smoth_normals;
-	bool split_large_meshes;
-	bool sort_by_type;
 
 	virtual bool Config();
 	virtual void MetaSave(char** iterator) const;
