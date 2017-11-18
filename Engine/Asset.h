@@ -20,16 +20,16 @@ class Resource;
 struct ImportConfiguration
 {
 	virtual bool Config() = 0;
-	virtual void MetaSave(char* iterator) const = 0;
-	virtual void MetaLoad(char* iterator) = 0;
+	virtual void MetaSave(char** iterator) const = 0;
+	virtual void MetaLoad(char** iterator) = 0;
 	virtual unsigned int GetMetaSize() const = 0;
 };
 
 struct LoadConfiguration
 {
 	virtual bool Config() = 0;
-	virtual void MetaSave(char* iterator) const = 0;
-	virtual void MetaLoad(char* iterator) = 0;
+	virtual void MetaSave(char** iterator) const = 0;
+	virtual void MetaLoad(char** iterator) = 0;
 	virtual unsigned int GetMetaSize() const = 0;
 };
 
@@ -67,6 +67,11 @@ public:
 
 struct SceneImportConfiguration : public ImportConfiguration
 {
+	bool inlude_meshes;
+	bool include_materials;
+	bool include_textures;
+	bool include_prefabs;
+
 	MaterialImportConfiguration* material_import_config;
 	MeshImportConfiguration* mesh_import_config;
 	PrefabImportConfiguration* prefab_import_config;
@@ -75,17 +80,12 @@ struct SceneImportConfiguration : public ImportConfiguration
 	MeshLoadConfiguration* mesh_load_config;
 	PrefabLoadConfiguration* prefab_load_config;
 
-	virtual bool Config();
-	virtual void MetaSave(char* iterator) const;
-	virtual void MetaLoad(char* iterator);
-	virtual unsigned int GetMetaSize() const;
-};
+	SceneImportConfiguration();
+	~SceneImportConfiguration();
 
-struct SceneLoadConfiguration : public LoadConfiguration
-{
 	virtual bool Config();
-	virtual void MetaSave(char* iterator) const;
-	virtual void MetaLoad(char* iterator);
+	virtual void MetaSave(char** iterator) const;
+	virtual void MetaLoad(char** iterator);
 	virtual unsigned int GetMetaSize() const;
 };
 

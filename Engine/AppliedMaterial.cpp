@@ -3,8 +3,8 @@
 
 AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(CT_APPLIED_MATERIAL, enabled), material(material)
 {
-	uv_channels = new unsigned int[material->GetNumAllTextures()];
-	memset(uv_channels, 0, material->GetNumAllTextures() * sizeof(unsigned int));
+	unsigned int buff_size = material->GetNumAllTextures();
+	uv_channels = new unsigned int[buff_size];
 }
 
 AppliedMaterial::~AppliedMaterial()

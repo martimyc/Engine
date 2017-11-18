@@ -18,19 +18,38 @@ unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material) const
 {
 	unsigned int total_size = FORMAT_SIZE;
 
-	for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
-	{
-		aiString Path;
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_DIFFUSE) * SIZE_OF_UID;
 
-		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
-		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
-			total_size += sizeof(uint);
-			total_size += count;
-		}
-	}
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_SPECULAR) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_AMBIENT) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_EMISSIVE) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_HEIGHT) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_NORMALS) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_SHININESS) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_OPACITY) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_DISPLACEMENT) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_LIGHTMAP) * SIZE_OF_UID;
+
+	total_size += sizeof(size_t);
+	total_size += material->GetTextureCount(aiTextureType_REFLECTION) * SIZE_OF_UID;
 
 	return total_size;
 }
@@ -45,9 +64,7 @@ void MaterialImporter::ImportDiffuse(const aiMaterial * material, char** iterato
 
 		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -62,8 +79,11 @@ void MaterialImporter::ImportDiffuse(const aiMaterial * material, char** iterato
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportSpecular(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -76,9 +96,7 @@ void MaterialImporter::ImportSpecular(const aiMaterial * material, char ** itera
 
 		if (material->GetTexture(aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -93,8 +111,11 @@ void MaterialImporter::ImportSpecular(const aiMaterial * material, char ** itera
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportAmbient(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -107,9 +128,7 @@ void MaterialImporter::ImportAmbient(const aiMaterial * material, char ** iterat
 
 		if (material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -124,8 +143,11 @@ void MaterialImporter::ImportAmbient(const aiMaterial * material, char ** iterat
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportEmissive(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -138,9 +160,7 @@ void MaterialImporter::ImportEmissive(const aiMaterial * material, char ** itera
 
 		if (material->GetTexture(aiTextureType_EMISSIVE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -155,8 +175,11 @@ void MaterialImporter::ImportEmissive(const aiMaterial * material, char ** itera
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportHeight(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -169,9 +192,7 @@ void MaterialImporter::ImportHeight(const aiMaterial * material, char ** iterato
 
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -186,8 +207,11 @@ void MaterialImporter::ImportHeight(const aiMaterial * material, char ** iterato
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportNormals(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -200,9 +224,7 @@ void MaterialImporter::ImportNormals(const aiMaterial * material, char ** iterat
 
 		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -217,8 +239,11 @@ void MaterialImporter::ImportNormals(const aiMaterial * material, char ** iterat
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportShininess(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -231,9 +256,7 @@ void MaterialImporter::ImportShininess(const aiMaterial * material, char ** iter
 
 		if (material->GetTexture(aiTextureType_SHININESS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -248,8 +271,11 @@ void MaterialImporter::ImportShininess(const aiMaterial * material, char ** iter
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportOpacity(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -262,9 +288,7 @@ void MaterialImporter::ImportOpacity(const aiMaterial * material, char ** iterat
 
 		if (material->GetTexture(aiTextureType_OPACITY, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -279,8 +303,11 @@ void MaterialImporter::ImportOpacity(const aiMaterial * material, char ** iterat
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportDisplacement(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -293,9 +320,7 @@ void MaterialImporter::ImportDisplacement(const aiMaterial * material, char ** i
 
 		if (material->GetTexture(aiTextureType_DISPLACEMENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -310,8 +335,11 @@ void MaterialImporter::ImportDisplacement(const aiMaterial * material, char ** i
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportLightMap(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -324,9 +352,7 @@ void MaterialImporter::ImportLightMap(const aiMaterial * material, char ** itera
 
 		if (material->GetTexture(aiTextureType_LIGHTMAP, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -341,8 +367,11 @@ void MaterialImporter::ImportLightMap(const aiMaterial * material, char ** itera
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportReflection(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -355,9 +384,7 @@ void MaterialImporter::ImportReflection(const aiMaterial * material, char ** ite
 
 		if (material->GetTexture(aiTextureType_REFLECTION, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -372,8 +399,11 @@ void MaterialImporter::ImportReflection(const aiMaterial * material, char ** ite
 	memcpy(*iterator, &size, sizeof(size_t));
 	*iterator += sizeof(size_t);
 
-	memcpy(*iterator, &uids, SIZE_OF_UID * uids.size());
-	*iterator += SIZE_OF_UID * uids.size();
+	if (uids.size() != 0)
+	{
+		memcpy(*iterator, &uids[0], SIZE_OF_UID * uids.size());
+		*iterator += SIZE_OF_UID * uids.size();
+	}
 }
 
 void MaterialImporter::ImportUnknown(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
@@ -386,9 +416,7 @@ void MaterialImporter::ImportUnknown(const aiMaterial * material, char ** iterat
 
 		if (material->GetTexture(aiTextureType_UNKNOWN, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + Path.data;
-			size_t start = full_path.find_last_of("\\");
-			size_t count = full_path.find_last_of(".") - start;
+			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -406,12 +434,18 @@ void MaterialImporter::LoadDiffuse(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_DIFFUSE);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_DIFFUSE);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if(new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_DIFFUSE);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadSpecular(Material * to_load, char ** iterator) const
@@ -420,12 +454,18 @@ void MaterialImporter::LoadSpecular(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_SPECULAR);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_SPECULAR);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_SPECULAR);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadAmbient(Material * to_load, char ** iterator) const
@@ -434,12 +474,18 @@ void MaterialImporter::LoadAmbient(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_AMBIENT);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_AMBIENT);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_AMBIENT);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadEmissive(Material * to_load, char ** iterator) const
@@ -448,12 +494,18 @@ void MaterialImporter::LoadEmissive(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_EMISSIVE);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_EMISSIVE);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_EMISSIVE);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadHeight(Material * to_load, char ** iterator) const
@@ -462,12 +514,18 @@ void MaterialImporter::LoadHeight(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_HEIGHT);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_HEIGHT);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_HEIGHT);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadNormals(Material * to_load, char ** iterator) const
@@ -476,12 +534,18 @@ void MaterialImporter::LoadNormals(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_NORMALS);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_NORMALS);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_NORMALS);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadShininess(Material * to_load, char ** iterator) const
@@ -490,12 +554,18 @@ void MaterialImporter::LoadShininess(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_SHININESS);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_SHININESS);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_SHININESS);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadOpacity(Material * to_load, char ** iterator) const
@@ -504,12 +574,18 @@ void MaterialImporter::LoadOpacity(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_OPACITY);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_OPACITY);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_OPACITY);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadDisplacement(Material * to_load, char ** iterator) const
@@ -518,12 +594,18 @@ void MaterialImporter::LoadDisplacement(Material * to_load, char ** iterator) co
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_DISPLACEMENT);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_DISPLACEMENT);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_DISPLACEMENT);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadLightMap(Material * to_load, char ** iterator) const
@@ -532,12 +614,18 @@ void MaterialImporter::LoadLightMap(Material * to_load, char ** iterator) const
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_LIGHTMAP);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_LIGHTMAP);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_LIGHTMAP);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 void MaterialImporter::LoadReflection(Material * to_load, char ** iterator) const
@@ -546,12 +634,18 @@ void MaterialImporter::LoadReflection(Material * to_load, char ** iterator) cons
 	*iterator += sizeof(size_t);
 
 	to_load->ReserveVec(size, TT_REFLECTION);
-	std::vector<UID> uids;
-	memcpy(&uids, *iterator, size * SIZE_OF_UID);
-	*iterator += size * SIZE_OF_UID;
 
-	for (std::vector<UID>::const_iterator it = uids.begin(); it != uids.end(); ++it)
-		to_load->AddTexture(App->resource_manager->UseTexture(*it, to_load), TT_REFLECTION);
+	for (int i = 0; i < size; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Texture * new_texture = App->resource_manager->UseTexture(uid, to_load);
+		if (new_texture != nullptr)
+			to_load->AddTexture(new_texture, TT_REFLECTION);
+		else
+			LOG("Could not load texture to material");
+	}
 }
 
 MaterialImporter::MaterialImporter()
@@ -571,7 +665,8 @@ const UID MaterialImporter::Import(const aiMaterial * material, const MaterialIm
 	}
 
 	char format[FORMAT_SIZE] = FORMAT_MATERIAL;
-	char* buffer = new char[GetTotalSize(material)];
+	unsigned int buff_size = GetTotalSize(material);
+	char* buffer = new char[buff_size];
 	char* iterator = buffer;
 
 	//First specify format
@@ -626,6 +721,7 @@ bool MaterialImporter::Load(Material* to_load, unsigned int priority, const Mate
 		iterator += FORMAT_SIZE;
 
 		MaterialSource* new_material = new MaterialSource(priority);
+		to_load->SetSource(new_material);
 
 		LoadDiffuse( to_load, &iterator);
 		LoadSpecular( to_load, &iterator);
@@ -639,7 +735,7 @@ bool MaterialImporter::Load(Material* to_load, unsigned int priority, const Mate
 		LoadLightMap( to_load, &iterator);
 		LoadReflection( to_load, &iterator);	
 
-		to_load->SetSource(new_material);
+
 		return true;
 	}
 	return false;

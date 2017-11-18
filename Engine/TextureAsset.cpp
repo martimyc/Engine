@@ -82,16 +82,16 @@ bool TextureImportConfiguration::Config()
 	return changed;
 }
 
-void TextureImportConfiguration::MetaSave(char* iterator) const
+void TextureImportConfiguration::MetaSave(char** iterator) const
 {
-	memcpy(iterator, this, GetMetaSize());
-	iterator += GetMetaSize();
+	memcpy(*iterator, this, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
-void TextureImportConfiguration::MetaLoad(char* iterator)
+void TextureImportConfiguration::MetaLoad(char** iterator)
 {
-	memcpy(this, iterator, GetMetaSize());
-	iterator += GetMetaSize();
+	memcpy(this, *iterator, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
 unsigned int TextureImportConfiguration::GetMetaSize() const
@@ -348,16 +348,16 @@ bool TextureLoadConfiguration::Config()
 	return changed;
 }
 
-void TextureLoadConfiguration::MetaSave(char* iterator) const
+void TextureLoadConfiguration::MetaSave(char** iterator) const
 {
-	memcpy(iterator, this, GetMetaSize());
-	iterator += GetMetaSize();
+	memcpy(*iterator, this, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
-void TextureLoadConfiguration::MetaLoad(char* iterator)
+void TextureLoadConfiguration::MetaLoad(char** iterator)
 {
-	memcpy(this, iterator, GetMetaSize());
-	iterator += GetMetaSize();
+	memcpy(this, *iterator, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
 unsigned int TextureLoadConfiguration::GetMetaSize() const

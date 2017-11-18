@@ -47,8 +47,8 @@ struct TextureImportConfiguration : public ImportConfiguration
 	TextureImportConfiguration(const std::string& format);
 
 	bool Config();
-	void MetaSave(char* iterator) const;
-	void MetaLoad(char* iterator);
+	void MetaSave(char** iterator) const;
+	void MetaLoad(char** iterator);
 	virtual unsigned int GetMetaSize() const;
 	const char* GetCompresionCString() const;
 };
@@ -102,8 +102,8 @@ struct TextureLoadConfiguration : public LoadConfiguration
 	TextureLoadConfiguration();
 
 	bool Config();
-	void MetaSave(char* iterator) const;
-	void MetaLoad(char* iterator);
+	void MetaSave(char** iterator) const;
+	void MetaLoad(char** iterator);
 	virtual unsigned int GetMetaSize() const;
 };
 

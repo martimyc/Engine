@@ -106,6 +106,24 @@ void MaterialSource::ReserveVec(unsigned int size, TEXTURE_TYPE type)
 	}
 }
 
+void MaterialSource::ResizeVec(unsigned int size, TEXTURE_TYPE type)
+{
+	switch (type)
+	{
+	case TT_DIFFUSE: diffuse_textures.resize(size); break;
+	case TT_SPECULAR: specular_textures.resize(size); break;
+	case TT_AMBIENT: ambient_textures.resize(size); break;
+	case TT_EMISSIVE: emissive_textures.resize(size); break;
+	case TT_HEIGHT: height_textures.resize(size); break;
+	case TT_NORMALS: normals_textures.resize(size); break;
+	case TT_SHININESS: shininess_textures.resize(size); break;
+	case TT_OPACITY: opacity_textures.resize(size); break;
+	case TT_DISPLACEMENT: displacement_textures.resize(size); break;
+	case TT_LIGHTMAP: lightmap_textures.resize(size); break;
+	case TT_REFLECTION: reflection_textures.resize(size); break;
+	}
+}
+
 void MaterialSource::EnableDraw() const
 {
 	GLint max_texture_units = 0;
@@ -611,6 +629,14 @@ void Material::ReserveVec(unsigned int size, TEXTURE_TYPE type)
 {
 	if (source != nullptr)
 		source->ReserveVec(size, type);
+	else
+		LOG("Trying to acces non loaded material");
+}
+
+void Material::ResizeVec(unsigned int size, TEXTURE_TYPE type)
+{
+	if (source != nullptr)
+		source->ResizeVec(size, type);
 	else
 		LOG("Trying to acces non loaded material");
 }

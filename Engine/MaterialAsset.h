@@ -11,17 +11,20 @@ struct MaterialImportConfiguration : public ImportConfiguration
 	TextureImportConfiguration* texture_import_config;
 	TextureLoadConfiguration* texture_load_config; //this is in import to create all texture assets
 
+	MaterialImportConfiguration();
+	~MaterialImportConfiguration();
+
 	virtual bool Config();
-	virtual void MetaSave(char* iterator) const;
-	virtual void MetaLoad(char* iterator);
+	virtual void MetaSave(char** iterator) const;
+	virtual void MetaLoad(char** iterator);
 	virtual unsigned int GetMetaSize() const;
 };
 
 struct MaterialLoadConfiguration : public LoadConfiguration
 {
 	virtual bool Config();
-	virtual void MetaSave(char* iterator) const;
-	virtual void MetaLoad(char* iterator);
+	virtual void MetaSave(char** iterator) const;
+	virtual void MetaLoad(char** iterator);
 	virtual unsigned int GetMetaSize() const;
 };
 

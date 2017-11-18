@@ -50,6 +50,11 @@ public:
 	{
 		return name;
 	}
+
+	void SetName(const std::string& name)
+	{
+		this->name = name;
+	}
 };
 
 #endif // !RESOURCE

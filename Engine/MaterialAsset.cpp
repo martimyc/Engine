@@ -3,6 +3,18 @@
 #include "TextureAsset.h"
 #include "MaterialAsset.h"
 
+MaterialImportConfiguration::MaterialImportConfiguration()
+{
+	texture_import_config = new TextureImportConfiguration;
+	texture_load_config = new TextureLoadConfiguration;
+}
+
+MaterialImportConfiguration::~MaterialImportConfiguration()
+{
+	delete texture_import_config;
+	delete texture_load_config;
+}
+
 bool MaterialImportConfiguration::Config()
 {
 	bool ret = false;
@@ -24,19 +36,21 @@ bool MaterialImportConfiguration::Config()
 	return ret;
 }
 
-void MaterialImportConfiguration::MetaSave(char * iterator) const
+void MaterialImportConfiguration::MetaSave(char ** iterator) const
 {
 	texture_import_config->MetaSave(iterator);
+	texture_load_config->MetaSave(iterator);
 }
 
-void MaterialImportConfiguration::MetaLoad(char * iterator)
+void MaterialImportConfiguration::MetaLoad(char ** iterator)
 {
 	texture_import_config->MetaLoad(iterator);
+	texture_load_config->MetaLoad(iterator);
 }
 
 unsigned int MaterialImportConfiguration::GetMetaSize() const
 {
-	return texture_import_config->GetMetaSize();
+	return texture_import_config->GetMetaSize() + texture_load_config->GetMetaSize();
 }
 
 bool MaterialLoadConfiguration::Config()
@@ -45,15 +59,21 @@ bool MaterialLoadConfiguration::Config()
 	return ret;
 }
 
-void MaterialLoadConfiguration::MetaSave(char * iterator) const
-{}
+void MaterialLoadConfiguration::MetaSave(char ** iterator) const
+{
+	memcpy(*iterator, this, GetMetaSize());
+	*iterator += GetMetaSize();
+}
 
-void MaterialLoadConfiguration::MetaLoad(char * iterator)
-{}
+void MaterialLoadConfiguration::MetaLoad(char ** iterator)
+{
+	memcpy(this, *iterator, GetMetaSize());
+	*iterator += GetMetaSize();
+}
 
 unsigned int MaterialLoadConfiguration::GetMetaSize() const
 {
-	return 0;
+	return sizeof(MaterialLoadConfiguration);
 }
 
 MaterialAsset::MaterialAsset(Resource * resource, const ImportConfiguration * import_config, const LoadConfiguration * load_config) : Asset(RT_MATERIAL, resource, import_config, load_config)

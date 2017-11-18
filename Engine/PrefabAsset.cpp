@@ -1,3 +1,4 @@
+#include "imgui\imgui.h"
 #include "Resource.h"
 #include "PrefabAsset.h"
 
@@ -14,15 +15,22 @@ void PrefabAsset::AddInstance(const GameObject * go)
 
 bool PrefabImportConfiguration::Config()
 {
+	if (ImGui::Checkbox("Pre-Transform", &pre_transform))
+		return true;
+
 	return false;
 }
 
-void PrefabImportConfiguration::MetaSave(char * iterator) const
+void PrefabImportConfiguration::MetaSave(char ** iterator) const
 {
+	memcpy(*iterator, this, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
-void PrefabImportConfiguration::MetaLoad(char * iterator)
+void PrefabImportConfiguration::MetaLoad(char ** iterator)
 {
+	memcpy(this, *iterator, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
 unsigned int PrefabImportConfiguration::GetMetaSize() const
@@ -35,12 +43,16 @@ bool PrefabLoadConfiguration::Config()
 	return false;
 }
 
-void PrefabLoadConfiguration::MetaSave(char * iterator) const
+void PrefabLoadConfiguration::MetaSave(char ** iterator) const
 {
+	memcpy(*iterator, this, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
-void PrefabLoadConfiguration::MetaLoad(char * iterator)
+void PrefabLoadConfiguration::MetaLoad(char ** iterator)
 {
+	memcpy(this, *iterator, GetMetaSize());
+	*iterator += GetMetaSize();
 }
 
 unsigned int PrefabLoadConfiguration::GetMetaSize() const

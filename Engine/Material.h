@@ -54,6 +54,7 @@ struct MaterialSource
 
 	void AddTexture(Texture* new_text, TEXTURE_TYPE type);
 	void ReserveVec(unsigned int size, TEXTURE_TYPE type);
+	void ResizeVec(unsigned int size, TEXTURE_TYPE type);
 
 	void EnableDraw() const;
 	void DisableDraw() const;
@@ -93,6 +94,7 @@ public:
 
 	void AddTexture(Texture* new_text, TEXTURE_TYPE type);
 	void ReserveVec(unsigned int size, TEXTURE_TYPE type);
+	void ResizeVec(unsigned int size, TEXTURE_TYPE type);
 
 	void EnableDraw() const;
 	void DisableDraw() const;
