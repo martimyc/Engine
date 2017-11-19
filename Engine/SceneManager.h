@@ -29,6 +29,7 @@ private:
 	bool normals;
 	bool polygons;
 	bool debug = true;
+	bool draw_kdt = false;
 
 	//Game Objects
 	GameObject* root;
@@ -79,8 +80,11 @@ public:
 	GameObject* GetFocused() const;
 
 	void AddPrefabToFocused(GameObject* root);
+	void AddPrefabAsNewGameObjects(GameObject* root);
 
 	void UpdateAABBs(const GameObject* go) const;
+
+	void AddEmptyGO();
 };
 
 #endif // !_MODULE_SCENE_MANAGER

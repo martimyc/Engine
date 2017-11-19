@@ -17,9 +17,9 @@ class Component
 {
 private:
 	COMPONENT_TYPE type;
-	bool enabled;
 
 protected:
+	bool enabled;
 	GameObject* game_object;
 
 public:	

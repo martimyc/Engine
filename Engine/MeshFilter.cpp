@@ -5,6 +5,9 @@
 MeshFilter::MeshFilter(Mesh * mesh, bool enabled): Component(CT_MESH_FILTER, enabled), mesh(mesh), draw_kdt(false)
 {}
 
+MeshFilter::MeshFilter(const MeshFilter & copy): Component(CT_MESH_FILTER, copy.enabled), draw_kdt(copy.draw_kdt), mesh(copy.mesh)
+{}
+
 MeshFilter::~MeshFilter()
 {}
 

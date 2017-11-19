@@ -8,6 +8,13 @@ AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(
 	memset(uv_channels, 0, buff_size * sizeof(unsigned int));
 }
 
+AppliedMaterial::AppliedMaterial(const AppliedMaterial & copy): Component(CT_APPLIED_MATERIAL, copy.enabled), material(copy.material)
+{
+	unsigned int buff_size = material->GetNumAllTextures();
+	uv_channels = new unsigned int[buff_size];
+	memcpy(uv_channels, copy.uv_channels, buff_size * sizeof(unsigned int));
+}
+
 AppliedMaterial::~AppliedMaterial()
 {
 	delete[] uv_channels;

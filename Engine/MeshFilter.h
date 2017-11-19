@@ -15,6 +15,7 @@ private:
 
 public:
 	MeshFilter(Mesh* mesh, bool enabled = true);
+	MeshFilter(const MeshFilter& copy);
 	~MeshFilter();
 
 	void Draw(const AppliedMaterial* material = nullptr) const;

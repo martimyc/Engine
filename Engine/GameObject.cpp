@@ -23,7 +23,7 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const std::string& name): name(name)
+GameObject::GameObject(const std::string& name): name(name), draw(true)
 {
 	local_transform = new Transform("Local Transform");
 	world_transform = new Transform("World Transform");
@@ -33,6 +33,32 @@ GameObject::GameObject(const std::string& name): name(name)
 	//bounds.obb_bounding_box.pos = vec(0, 0, 0);
 	//bounds.original_obb_bounding_box.SetNegativeInfinity();
 	//bounds.original_obb_bounding_box.pos = vec(0, 0, 0);
+}
+
+GameObject::GameObject(const GameObject & copy): name(copy.name), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw)
+{
+	local_transform->SetTransform(copy.local_transform->GetTransformMatrix());
+	world_transform->SetTransform(copy.world_transform->GetTransformMatrix());
+
+	for (std::vector<Component*>::const_iterator it = copy.components.begin(); it != copy.components.end(); ++it)
+	{
+		switch ((*it)->GetType())
+		{
+		case CT_MESH_FILTER:
+			components.push_back(new MeshFilter(*((MeshFilter*)(*it))));
+			break;
+		case CT_APPLIED_MATERIAL:
+			components.push_back(new AppliedMaterial(*((AppliedMaterial*)(*it))));
+			break;
+		case CT_CAMERA:
+			break;
+		}
+	}
+
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		childs.push_back(new GameObject(*(*it)));
+	}
 }
 
 GameObject::~GameObject()
@@ -296,15 +322,29 @@ math::float4x4 GameObject::GetLocalTransform() const
 	return local_transform->GetTransformMatrix();
 }
 
-const float * GameObject::GetLocalGLTransform() const
-{
-	math::float4x4 ret = local_transform->GetTransformMatrix();
-	return &ret.At(0, 0);
-}
-
 math::float4x4 GameObject::GetWorldTransform() const
 {
 	return world_transform->GetTransformMatrix();
+}
+
+math::vec GameObject::GetMaxPos() const
+{
+	const Mesh* mesh = GetMesh();
+
+	if (mesh == nullptr)
+		return world_transform->GetTransformTranslation();
+
+	return math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ());
+}
+
+math::vec GameObject::GetMinPos() const
+{
+	const Mesh* mesh = GetMesh();
+
+	if (mesh == nullptr)
+		return world_transform->GetTransformTranslation();
+
+	return math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ());
 }
 
 void GameObject::GetLocalPosX(int & x) const

@@ -5,6 +5,7 @@
 #include "MathGeoLib\src\MathGeoLibFwd.h"
 
 #define MAX_NUM_OBJECTS 4
+#define MAX_SUBDIVISIONS 5
 
 class GameObject;
 
@@ -32,7 +33,7 @@ public:
 	KDTNodeGO(const AABB& limits);
 	~KDTNodeGO();
 
-	bool SubDivide3D(const GameObject* new_game_object);
+	bool SubDivide3D(const GameObject* new_game_object, unsigned int& num_subdivisions);
 
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
@@ -40,9 +41,9 @@ public:
 
 	float FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const;
 
-	bool AddGameObject(const GameObject* new_game_object);
+	bool AddGameObject(const GameObject* new_game_object, unsigned int& num_subdivisions);
 
-	bool AddToCorrectChild(const GameObject* new_game_object);
+	bool AddToCorrectChild(const GameObject* new_game_object, unsigned int& num_subdivisions);
 
 	bool RemoveGameObject(const GameObject* new_game_object);
 

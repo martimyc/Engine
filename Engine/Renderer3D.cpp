@@ -230,36 +230,41 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	//meshes
 	const Material* material_in_use = nullptr;
-	while (draw_queue.size() > 0)
+	if (draw_queue.size() > 0)
 	{
-		material_in_use = draw_queue.top()->GetMaterial();
-		if (material_in_use != nullptr)
-			material_in_use->EnableDraw();
-
-		while (draw_queue.top()->GetMaterial() == material_in_use)
+		const GameObject* to_draw = draw_queue.top();
+		while (draw_queue.size() > 0)
 		{
-			glPushMatrix();
-			glLoadMatrixf(opengl_view_matrix);
+			material_in_use = to_draw->GetMaterial();
+			if (material_in_use != nullptr)
+				material_in_use->EnableDraw();
 
-			if (App->camera->DoFrustumCulling(draw_queue.top()))
+			while (to_draw->GetMaterial() == material_in_use)
 			{
-				draw_queue.top()->DrawBoundingBoxes();	//First bounding boxes, which don't need the transform to be applied
-				math::float4x4 transform(draw_queue.top()->GetWorldTransform());
-				glMultMatrixf(&transform.At(0,0));
+				glPushMatrix();
+				glLoadMatrixf(opengl_view_matrix);
 
-				draw_queue.top()->GetMesh()->Draw(draw_queue.top()->GetAppliedMaterial());
-				draw_queue.top()->GetMesh()->DrawKDT();
+				if (App->camera->DoFrustumCulling(draw_queue.top()))
+				{
+					to_draw->DrawBoundingBoxes();	//First bounding boxes, which don't need the transform to be applied
+					math::float4x4 transform(draw_queue.top()->GetWorldTransform());
+					glMultMatrixf(&transform.At(0, 0));
+
+					to_draw->GetMesh()->Draw(draw_queue.top()->GetAppliedMaterial());
+					to_draw->GetMesh()->DrawKDT();
+				}
+				draw_queue.pop();
+				glPopMatrix();
+
+				if (draw_queue.size() == 0)
+					break;
+				else
+					to_draw = draw_queue.top();
 			}
-			draw_queue.pop();
 
-			glPopMatrix();
-
-			if (draw_queue.size() == 0)
-				break;
+			if (material_in_use != nullptr)
+				material_in_use->DisableDraw();
 		}
-
-		if (material_in_use != nullptr)
-			material_in_use->DisableDraw();
 	}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(opengl_view_matrix);

@@ -111,7 +111,7 @@ void ResourceManager::LoadToScene()
 		}
 		break;
 	case RT_PREFAB:
-		App->scene_manager->GetFocused()->AddChild(UsePrefab(selected_asset->GetUID(), App->scene_manager->GetFocused())->GetRoot());
+		App->scene_manager->AddPrefabAsNewGameObjects(UsePrefab(selected_asset->GetUID(), App->scene_manager->GetFocused())->GetRoot());
 		break;
 	case RT_MESH:
 		App->scene_manager->GetFocused()->ChangeMesh(UseMesh(selected_asset->GetUID(), App->scene_manager->GetFocused()));

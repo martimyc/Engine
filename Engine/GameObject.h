@@ -44,13 +44,13 @@ private:
 public:
 
 	GameObject(const std::string& name);
+	GameObject(const GameObject& copy);
 	~GameObject();
 
 private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
-	void UpdateBoundsUpwards();
 
 	bool IsChild(const GameObject* go)const;
 	void UpdateWorldTransform(const math::float4x4& parent_world_transform);
@@ -89,9 +89,9 @@ public:
 	const Mesh* GetMesh() const;
 	const Material* GetMaterial() const;
 	math::float4x4 GetLocalTransform()const;
-	const float* GetLocalGLTransform()const;
 	math::float4x4 GetWorldTransform()const;
-	const float* GetWorldGLTransform()const;
+	math::vec GetMaxPos() const;
+	math::vec GetMinPos() const;
 		//Position
 	void GetLocalPosX(int& x) const;
 	void GetLocalPosY(int& y) const;

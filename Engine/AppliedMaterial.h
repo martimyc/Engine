@@ -13,6 +13,7 @@ private:
 
 public:
 	AppliedMaterial( Material* material, bool enabled = true);
+	AppliedMaterial(const AppliedMaterial& copy);
 	~AppliedMaterial();
 
 	const unsigned int GetUVChannel(const unsigned int num_texture) const;
