@@ -27,11 +27,18 @@ private:
 	float real_time_since_start = 0;
 	float real_time_dt = 0;
 
+	bool game_clock_paused = true;
+	bool can_pause = false;
+	bool show_timers;
+
+
 public:
 	TimeManager(const char* name, bool start_enabled = true);
 	~TimeManager();
 
 	bool Start();
+
+	UPDATE_STATUS Update(float dt);
 
 	void PlayGame();
 	void PauseGame();
