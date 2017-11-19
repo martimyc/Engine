@@ -320,7 +320,7 @@ bool MeshSource::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) con
 
 float MeshSource::GetMinX() const
 {
-	float min = 0.0f;
+	float min = inf;
 
 	for (int i = 0; i < num_vertices; i++)
 		if (min > vertices[i * 3])
@@ -331,7 +331,7 @@ float MeshSource::GetMinX() const
 
 float MeshSource::GetMinY() const
 {
-	float min = 0.0f;
+	float min = inf;
 
 	for (int i = 0; i < num_vertices; i++)
 		if (min > vertices[i * 3 + 1])
@@ -342,7 +342,7 @@ float MeshSource::GetMinY() const
 
 float MeshSource::GetMinZ() const
 {
-	float min = 0.0f;
+	float min = inf;
 
 	for (int i = 0; i < num_vertices; i++)
 		if (min > vertices[i * 3 + 2])
@@ -353,7 +353,7 @@ float MeshSource::GetMinZ() const
 
 float MeshSource::GetMaxX() const
 {
-	float max = 0.0f;
+	float max = -inf;
 
 	for (int i = 0; i < num_vertices; i++)
 		if (max < vertices[i * 3])
@@ -364,7 +364,7 @@ float MeshSource::GetMaxX() const
 
 float MeshSource::GetMaxY() const
 {
-	float max = 0.0f;
+	float max = -inf;
 
 	for (int i = 0; i < num_vertices; i++)
 		if (max < vertices[i * 3 + 1])
@@ -375,7 +375,7 @@ float MeshSource::GetMaxY() const
 
 float MeshSource::GetMaxZ() const
 {
-	float max = 0.0f;
+	float max = -inf;
 
 	for (int i = 0; i < num_vertices; i++)
 		if (max < vertices[i * 3 + 2])

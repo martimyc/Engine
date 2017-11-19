@@ -22,11 +22,11 @@ namespace math
 
 struct Bounds
 {
-	Sphere sphere_bounding_box;
+//	Sphere sphere_bounding_box;
 	AABB aabb_bounding_box;
 	math::vec original_aabb_bb_points[2];
-	OBB obb_bounding_box;
-	OBB original_obb_bounding_box;
+//	OBB obb_bounding_box;
+//	OBB original_obb_bounding_box;
 };
 
 class GameObject
@@ -129,6 +129,8 @@ public:
 	void RemoveAppliedMaterial();
 
 	void PickGameObject(const LineSegment* ray, float ray_distance) const;
+
+	AABB* UpdateAABBs(const math::AABB& aabb, const math::float4x4& parent_matrix);
 };
 
 #endif // !_GAME_OBJECT

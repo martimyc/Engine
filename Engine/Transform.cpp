@@ -99,8 +99,10 @@ bool Transform::Update()
 		float3x3 rotation_matrix(rotation);
 		transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
 		transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;	//Scalate
+		transform = false;
+		return true;
 	}
-	return transform;
+	return false;
 }
 
 void Transform::Inspector()

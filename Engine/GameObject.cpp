@@ -26,12 +26,12 @@
 GameObject::GameObject(GameObject* const parent, const std::string& name): parent(parent), name(name)
 {
 	transform = new Transform("Transform");
-	bounds.sphere_bounding_box.SetNegativeInfinity();
+	//bounds.sphere_bounding_box.SetNegativeInfinity();
 	bounds.aabb_bounding_box.SetNegativeInfinity();
-	bounds.obb_bounding_box.SetNegativeInfinity();
-	bounds.obb_bounding_box.pos = vec(0, 0, 0);
-	bounds.original_obb_bounding_box.SetNegativeInfinity();
-	bounds.original_obb_bounding_box.pos = vec(0, 0, 0);
+	//bounds.obb_bounding_box.SetNegativeInfinity();
+	//bounds.obb_bounding_box.pos = vec(0, 0, 0);
+	//bounds.original_obb_bounding_box.SetNegativeInfinity();
+	//bounds.original_obb_bounding_box.pos = vec(0, 0, 0);
 }
 
 GameObject::~GameObject()
@@ -113,7 +113,6 @@ void GameObject::AddComponent(Component * component)
 			draw = true;
 
 		CreateBounds(((MeshFilter*)component)->GetMesh());
-		UpdateBoundsUpwards();
 
 		break;
 
@@ -554,14 +553,10 @@ const MeshFilter * GameObject::GetMeshFilter() const
 void GameObject::DrawBoundingBoxes() const
 {
 	bounds.aabb_bounding_box.Draw(0.7f, 0.7f, 0.0f, 1.0f);
-	bounds.obb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
-	const GameObject* next_parent = parent;
-	while (next_parent)
-	{
-		next_parent->bounds.aabb_bounding_box.Draw(0.7f, 0.7f, 0.0f, 1.0f);
-		next_parent->bounds.obb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
-		next_parent = next_parent->parent;
-	}
+//	bounds.obb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
+
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->DrawBoundingBoxes();
 }
 
 void GameObject::RemoveMeshFilter()
@@ -643,31 +638,45 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 	}
 }
 
+AABB* GameObject::UpdateAABBs(const math::AABB & aabb, const math::float4x4& parent_matrix)
+{
+	std::vector<AABB*> aabbs;
+	math::float4x4 world_transform = parent_matrix * GetLocalTransform();
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		aabbs.push_back((*it)->UpdateAABBs(aabb, world_transform));
+	}
+	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
+	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
+	bounds.aabb_bounding_box.TransformAsAABB(world_transform);
+
+	//bounds.aabb_bounding_box.SetNegativeInfinity();
+	for (std::vector<AABB*>::const_iterator it = aabbs.begin(); it != aabbs.end(); ++it)
+	{
+		bounds.aabb_bounding_box.Enclose(*(*it));
+	}
+	return &bounds.aabb_bounding_box;
+}
+
 void GameObject::CreateBounds(const Mesh* mesh)
 {
 	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint = (math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
 	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
 
-	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
-	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
+//	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
+//	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
 }
 
 void GameObject::UpdateBounds()
 {
-	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
-	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
-	bounds.aabb_bounding_box.TransformAsAABB(GetWorldTransform().Transposed());
 
-	bounds.obb_bounding_box = bounds.original_obb_bounding_box;
-	bounds.obb_bounding_box.Transform(GetWorldTransform().Transposed());
 
-	//Update Childs
-	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
-		(*it)->UpdateBounds();
+//	bounds.obb_bounding_box = bounds.original_obb_bounding_box;
+//	bounds.obb_bounding_box.Transform(GetWorldTransform().Transposed());
 
-	UpdateBoundsUpwards();
+	App->scene_manager->UpdateAABBs(bounds.aabb_bounding_box, GetLocalTransform());
 }
-
+/*
 void GameObject::UpdateBoundsUpwards()
 {
 	if (parent == nullptr)
@@ -684,13 +693,13 @@ void GameObject::UpdateBoundsUpwards()
 		for (std::vector<GameObject*>::const_iterator it = next_parent->childs.begin(); it != next_parent->childs.end(); ++it)
 		{
 			next_parent->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
-			/*
-			vec obb_corner_points[8];
-			(*it)->bounds.obb_bounding_box.GetCornerPoints(obb_corner_points);
-			for (int i = 0; i < 8; i++)
-				next_parent->bounds.obb_bounding_box.Enclose(obb_corner_points[i]);
-			*/
+			
+			//vec obb_corner_points[8];
+			//(*it)->bounds.obb_bounding_box.GetCornerPoints(obb_corner_points);
+			//for (int i = 0; i < 8; i++)
+			//	next_parent->bounds.obb_bounding_box.Enclose(obb_corner_points[i]);			
 		}
 		next_parent = next_parent->parent;
 	}
 }
+*/
