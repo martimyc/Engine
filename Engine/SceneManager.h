@@ -80,7 +80,7 @@ public:
 
 	void AddPrefabToFocused(GameObject* root);
 
-	void UpdateAABBs(const math::AABB& aabb, const math::float4x4& parent_matrix) const;
+	void UpdateAABBs(const GameObject* go) const;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

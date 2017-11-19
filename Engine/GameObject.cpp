@@ -25,7 +25,8 @@
 
 GameObject::GameObject(GameObject* const parent, const std::string& name): parent(parent), name(name)
 {
-	transform = new Transform("Transform");
+	local_transform = new Transform("Local Transform");
+	world_transform = new Transform("World Transform");
 	//bounds.sphere_bounding_box.SetNegativeInfinity();
 	bounds.aabb_bounding_box.SetNegativeInfinity();
 	//bounds.obb_bounding_box.SetNegativeInfinity();
@@ -44,19 +45,13 @@ GameObject::~GameObject()
 		delete *it;
 	childs.clear();
 
-	DELETE_PTR(transform);
+	DELETE_PTR(local_transform);
+	DELETE_PTR(world_transform);
 }
 
 bool GameObject::Update()
 {
 	bool ret = true;
-
-	//Update Transformation
-	if (transform->Update())
-	{
-		transformed = true;
-		UpdateBounds();
-	}
 
 	//Update components
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
@@ -68,8 +63,6 @@ bool GameObject::Update()
 			break;
 		}
 	}
-
-	transformed = false;
 
 	//Update childs
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
@@ -134,11 +127,14 @@ void GameObject::AddComponent(Component * component)
 		components.push_back(component);
 }
 
-void GameObject::Inspector() const
+void GameObject::Inspector()
 {
 	ImGui::Begin("Inspector");
 	//Transform
-	transform->Inspector();
+	if (local_transform->Inspector())
+	{
+		UpdateTransforms();
+	}
 
 	//Other components
 	if (components.size() > 0)
@@ -300,22 +296,22 @@ const Material * GameObject::GetMaterial() const
 
 math::float4x4 GameObject::GetLocalTransform() const
 {
-	return transform->GetTransformMatrix();
+	return local_transform->GetTransformMatrix();
 }
 
 const float * GameObject::GetLocalGLTransform() const
 {
-	math::float4x4 ret = transform->GetTransformMatrix();
+	math::float4x4 ret = local_transform->GetTransformMatrix();
 	return &ret.At(0, 0);
 }
 
 math::float4x4 GameObject::GetWorldTransform() const
 {
 	const GameObject* next_parent = parent;
-	math::float4x4 ret = transform->GetTransformMatrix();
+	math::float4x4 ret = world_transform->GetTransformMatrix();
 	while (next_parent != nullptr)
 	{
-		ret = ret * next_parent->transform->GetTransformMatrix();
+		ret = ret * next_parent->world_transform->GetTransformMatrix();
 		next_parent = next_parent->parent;
 	}
 	return ret;
@@ -324,10 +320,10 @@ math::float4x4 GameObject::GetWorldTransform() const
 const float * GameObject::GetWorldGLTransform() const
 {
 	const GameObject* next_parent = parent;
-	math::float4x4 ret = transform->GetTransformMatrix();
+	math::float4x4 ret = world_transform->GetTransformMatrix();
 	while (next_parent != nullptr)
 	{
-		ret = ret * next_parent->transform->GetTransformMatrix();
+		ret = ret * next_parent->world_transform->GetTransformMatrix();
 		next_parent = next_parent->parent;
 	}
 
@@ -336,31 +332,31 @@ const float * GameObject::GetWorldGLTransform() const
 
 void GameObject::GetLocalPosX(int & x) const
 {
-	x = transform->GetTransformTranslation().x;
+	x = local_transform->GetTransformTranslation().x;
 }
 
 void GameObject::GetLocalPosY(int & y) const
 {
-	y = transform->GetTransformTranslation().y;
+	y = local_transform->GetTransformTranslation().y;
 }
 
 void GameObject::GetLocalPosZ(int & z) const
 {
-	z = transform->GetTransformTranslation().z;
+	z = local_transform->GetTransformTranslation().z;
 }
 
 math::vec GameObject::GetLocalPosition() const
 {
-	return transform->GetTransformTranslation();
+	return local_transform->GetTransformTranslation();
 }
 
 void GameObject::GetWorldPosX(int & x) const
 {
 	const GameObject* next_parent = parent;
-	x = transform->GetTransformTranslation().x;
+	x = world_transform->GetTransformTranslation().x;
 	while (next_parent)
 	{
-		x += next_parent->transform->GetTransformTranslation().x;
+		x += next_parent->world_transform->GetTransformTranslation().x;
 		next_parent = next_parent->parent;
 	}
 }
@@ -368,10 +364,10 @@ void GameObject::GetWorldPosX(int & x) const
 void GameObject::GetWorldPosY(int & y) const
 {
 	const GameObject* next_parent = parent;
-	y = transform->GetTransformTranslation().y;
+	y = world_transform->GetTransformTranslation().y;
 	while (next_parent)
 	{
-		y += next_parent->transform->GetTransformTranslation().y;
+		y += next_parent->world_transform->GetTransformTranslation().y;
 		next_parent = next_parent->parent;
 	}
 }
@@ -379,10 +375,10 @@ void GameObject::GetWorldPosY(int & y) const
 void GameObject::GetWorldPosZ(int & z) const
 {
 	const GameObject* next_parent = parent;
-	z = transform->GetTransformTranslation().z;
+	z = world_transform->GetTransformTranslation().z;
 	while (next_parent)
 	{
-		z += next_parent->transform->GetTransformTranslation().z;
+		z += next_parent->world_transform->GetTransformTranslation().z;
 		next_parent = next_parent->parent;
 	}
 }
@@ -390,10 +386,10 @@ void GameObject::GetWorldPosZ(int & z) const
 math::vec GameObject::GetWorldPosition() const
 {
 	const GameObject* next_parent = parent;
-	math::float3 pos = transform->GetTransformTranslation();
+	math::float3 pos = world_transform->GetTransformTranslation();
 	while (next_parent)
 	{
-		pos += next_parent->transform->GetTransformTranslation();
+		pos += next_parent->world_transform->GetTransformTranslation();
 		next_parent = next_parent->parent;
 	}
 	return pos;
@@ -401,16 +397,16 @@ math::vec GameObject::GetWorldPosition() const
 
 const math::vec& GameObject::GetLocalRotationEuler() const
 {
-	return transform->GetTransformRotationAngles();
+	return local_transform->GetTransformRotationAngles();
 }
 
 math::vec GameObject::GetWorldRotationEuler() const
 {
 	const GameObject* next_parent = parent;
-	math::vec rotation_euler = transform->GetTransformRotationAngles();
+	math::vec rotation_euler = world_transform->GetTransformRotationAngles();
 	while (next_parent)
 	{
-		rotation_euler += next_parent->transform->GetTransformRotationAngles();
+		rotation_euler += next_parent->world_transform->GetTransformRotationAngles();
 		next_parent = next_parent->parent;
 	}
 	return rotation_euler;
@@ -418,48 +414,48 @@ math::vec GameObject::GetWorldRotationEuler() const
 
 const math::Quat& GameObject::GetLocalRotationQuat() const
 {
-	return transform->GetTransformRotation();
+	return local_transform->GetTransformRotation();
 }
 
 math::Quat GameObject::GetWorldRotationQuat() const
 {
 	const GameObject* next_parent = parent;
-	math::vec rotation_euler = transform->GetTransformRotationAngles();
+	math::vec rotation_euler = world_transform->GetTransformRotationAngles();
 	while (next_parent)
 	{
-		rotation_euler += next_parent->transform->GetTransformRotationAngles();
+		rotation_euler += next_parent->world_transform->GetTransformRotationAngles();
 		next_parent = next_parent->parent;
 	}
-	return transform->TransformEuler2Quat(rotation_euler);
+	return world_transform->TransformEuler2Quat(rotation_euler);
 }
 
 void GameObject::GetLocalScaleX(int & x) const
 {
-	x = transform->GetTransformScale().x;
+	x = local_transform->GetTransformScale().x;
 }
 
 void GameObject::GetLocalScaleY(int & y) const
 {
-	y = transform->GetTransformScale().y;
+	y = local_transform->GetTransformScale().y;
 }
 
 void GameObject::GetLocalScaleZ(int & z) const
 {
-	z = transform->GetTransformScale().z;
+	z = local_transform->GetTransformScale().z;
 }
 
 const math::vec&  GameObject::GetLocalScale(int & x, int & y, int & z) const
 {
-	return transform->GetTransformScale();
+	return local_transform->GetTransformScale();
 }
 
 void GameObject::GetWorldScaleX(int & x) const
 {
 	const GameObject* next_parent = parent;
-	x = transform->GetTransformTranslation().x;
+	x = world_transform->GetTransformTranslation().x;
 	while (next_parent)
 	{
-		x *= next_parent->transform->GetTransformScale().x;
+		x *= next_parent->world_transform->GetTransformScale().x;
 		next_parent = next_parent->parent;
 	}
 }
@@ -467,10 +463,10 @@ void GameObject::GetWorldScaleX(int & x) const
 void GameObject::GetWorldScaleY(int & y) const
 {
 	const GameObject* next_parent = parent;
-	y = transform->GetTransformTranslation().y;
+	y = world_transform->GetTransformTranslation().y;
 	while (next_parent)
 	{
-		y *= next_parent->transform->GetTransformScale().y;
+		y *= next_parent->world_transform->GetTransformScale().y;
 		next_parent = next_parent->parent;
 	}
 }
@@ -478,10 +474,10 @@ void GameObject::GetWorldScaleY(int & y) const
 void GameObject::GetWorldScaleZ(int & z) const
 {
 	const GameObject* next_parent = parent;
-	z = transform->GetTransformTranslation().z;
+	z = world_transform->GetTransformTranslation().z;
 	while (next_parent)
 	{
-		z *= next_parent->transform->GetTransformScale().z;
+		z *= next_parent->world_transform->GetTransformScale().z;
 		next_parent = next_parent->parent;
 	}
 }
@@ -489,10 +485,10 @@ void GameObject::GetWorldScaleZ(int & z) const
 const math::vec&  GameObject::GetWorldScale(int & x, int & y, int & z) const
 {
 	const GameObject* next_parent = parent;
-	math::float3 scale = transform->GetTransformTranslation();
+	math::float3 scale = world_transform->GetTransformTranslation();
 	while (next_parent)
 	{
-		scale.Mul(next_parent->transform->GetTransformScale());
+		scale.Mul(next_parent->world_transform->GetTransformScale());
 		next_parent = next_parent->parent;
 	}
 	return scale;
@@ -506,11 +502,6 @@ const AABB * GameObject::GetAABB() const
 bool GameObject::IsCamera() const
 {
 	return is_camera;
-}
-
-void GameObject::SetTransform(const math::float4x4& new_transform)
-{
-	transform->SetTransform(new_transform);
 }
 
 void GameObject::SetDraw(bool draw_)
@@ -638,24 +629,57 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 	}
 }
 
-AABB* GameObject::UpdateAABBs(const math::AABB & aabb, const math::float4x4& parent_matrix)
+AABB* GameObject::UpdateAABBs(const GameObject* go)
 {
 	std::vector<AABB*> aabbs;
-	math::float4x4 world_transform = parent_matrix * GetLocalTransform();
+
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 	{
-		aabbs.push_back((*it)->UpdateAABBs(aabb, world_transform));
+		if ((*it)->IsChild(go))
+		{
+			aabbs.push_back((*it)->UpdateAABBs(go));
+		}
 	}
+
 	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
 	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
-	bounds.aabb_bounding_box.TransformAsAABB(world_transform);
+	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
 
-	//bounds.aabb_bounding_box.SetNegativeInfinity();
 	for (std::vector<AABB*>::const_iterator it = aabbs.begin(); it != aabbs.end(); ++it)
 	{
 		bounds.aabb_bounding_box.Enclose(*(*it));
 	}
+
 	return &bounds.aabb_bounding_box;
+}
+
+void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)
+{
+	math::float4x4 old_local = GetLocalTransform();
+	math::float4x4 parent_world = world_transform->GetTransformMatrix() * old_local.Inverted();
+	local_transform->SetTransform(new_local_transform);
+	UpdateWorldTransform(parent_world);
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_CAMERA)
+			((Camera*)(*it))->TransformCamera();
+
+	UpdateBounds();
+}
+
+void GameObject::SetWorldTransform(const math::float4x4 & new_world_transform)
+{
+	math::float4x4 old_world = GetWorldTransform();
+	math::float4x4 parent_world = old_world * GetLocalTransform().Inverted();
+	world_transform->SetTransform(new_world_transform);
+	local_transform->SetTransform(parent_world.Inverted() * new_world_transform);
+	UpdateWorldTransform(world_transform->GetTransformMatrix());
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_CAMERA)
+			((Camera*)(*it))->TransformCamera();
+
+	UpdateBounds();
 }
 
 void GameObject::CreateBounds(const Mesh* mesh)
@@ -669,13 +693,56 @@ void GameObject::CreateBounds(const Mesh* mesh)
 
 void GameObject::UpdateBounds()
 {
-
-
 //	bounds.obb_bounding_box = bounds.original_obb_bounding_box;
 //	bounds.obb_bounding_box.Transform(GetWorldTransform().Transposed());
 
-	App->scene_manager->UpdateAABBs(bounds.aabb_bounding_box, GetLocalTransform());
+//	App->scene_manager->UpdateAABBs(bounds.aabb_bounding_box);
+	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
+	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
+	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
+
+	App->scene_manager->UpdateAABBs(this);
+
 }
+bool GameObject::IsChild(const GameObject* go) const
+{
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		if (go == (*it))
+			return true;
+	}
+
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		if ((*it)->IsChild(go))
+			return true;
+	}
+
+	return false;
+}
+void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transform)
+{
+	world_transform->SetTransform(parent_world_transform * local_transform->GetTransformMatrix());
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		(*it)->UpdateWorldTransform(world_transform->GetTransformMatrix());
+	}
+}
+
+void GameObject::UpdateTransforms()
+{
+	math::float4x4 old_local = GetLocalTransform();
+	math::float4x4 parent_world = world_transform->GetTransformMatrix() * old_local.Inverted();
+	local_transform->Update();
+	UpdateWorldTransform(parent_world);
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_CAMERA)
+			((Camera*)(*it))->TransformCamera();
+
+	UpdateBounds();
+}
+
 /*
 void GameObject::UpdateBoundsUpwards()
 {

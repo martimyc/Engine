@@ -36,21 +36,28 @@ private:
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
 	GameObject* parent;
-	Transform* transform = nullptr;
+	Transform* local_transform = nullptr;
+	Transform* world_transform = nullptr;
 	Bounds bounds;
 	bool is_camera = false;
 	bool draw = false;
 
+public:
+
+	GameObject(GameObject* const parent, const std::string& name);
+	~GameObject();
+
+private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
 	void UpdateBoundsUpwards();
-	
-public:
-	bool transformed = false;
 
-	GameObject(GameObject* const parent, const std::string& name);
-	~GameObject();
+	bool IsChild(const GameObject* go)const;
+	void UpdateWorldTransform(const math::float4x4& parent_world_transform);
+	void UpdateTransforms();
+
+public:
 
 	bool Update();
 
@@ -58,7 +65,7 @@ public:
 
 	void AddComponent(Component* component);
 
-	void Inspector() const;
+	void Inspector();
 
 	void Reset();
 
@@ -115,7 +122,8 @@ public:
 	//-----
 
 	//Sets
-	void SetTransform(const math::float4x4& new_transform);
+	void SetLocalTransform(const math::float4x4& new_local_transform);
+	void SetWorldTransform(const math::float4x4& new_world_transform);
 	void SetDraw(bool draw_);
 
 	bool HasMeshFilter() const;
@@ -130,7 +138,7 @@ public:
 
 	void PickGameObject(const LineSegment* ray, float ray_distance) const;
 
-	AABB* UpdateAABBs(const math::AABB& aabb, const math::float4x4& parent_matrix);
+	AABB* UpdateAABBs(const GameObject* go);
 };
 
 #endif // !_GAME_OBJECT

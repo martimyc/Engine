@@ -115,7 +115,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 	math::float4x4 transform;
 	memcpy(&transform, *iterator, sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
-	new_game_object->SetTransform(transform);
+	new_game_object->SetLocalTransform(transform);
 
 	uint num_meshes = **iterator;
 	*iterator += sizeof(uint);

@@ -16,7 +16,6 @@ private:
 	float roll, pitch, yaw;	// roll (x-axis rotation)	// pitch (y-axis rotation)	// yaw (z-axis rotation)
 	
 	float4x4 transform_matrix;
-	bool transform = false;
 
 	void Quat2Euler(const Quat q, float &roll, float &pitch, float &yaw);
 	void Euler2Quat(const float roll, const float pitch, const float yaw, Quat& q);
@@ -34,8 +33,8 @@ public:
 	const vec& GetTransformRotationAngles();
 	Quat TransformEuler2Quat(const vec euler);
 
-	bool Update();
-	void Inspector();
+	void Update();
+	bool Inspector();
 };
 
 #endif // !_TRANSFORM

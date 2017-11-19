@@ -22,8 +22,6 @@ void Transform::SetTransform(const math::float4x4& new_transform)
 	rotation_matrix.Orthonormalize(0, 1, 2);
 	rotation = rotation_matrix.ToQuat();
 	scaling = transform_matrix.GetScale();	
-
-	transform = true;
 }
 
 void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)
@@ -91,29 +89,22 @@ Quat Transform::TransformEuler2Quat(const vec euler)
 	return ret;
 }
 
-bool Transform::Update()
+void Transform::Update()
 {
-	if (transform)
-	{
-		transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
-		float3x3 rotation_matrix(rotation);
-		transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
-		transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;	//Scalate
-		transform = false;
-		return true;
-	}
-	return false;
+	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
+	float3x3 rotation_matrix(rotation);
+	transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
+	transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;	//Scalate
 }
 
-void Transform::Inspector()
+bool Transform::Inspector()
 {
+	bool ret = false;
 	if (ImGui::TreeNode("Transform"))
 	{
-		transform = false;
-		
-		if (ImGui::DragFloat("Pos x", &translation.x))	transform = true;
-		if (ImGui::DragFloat("Pos y", &translation.y))	transform = true;
-		if (ImGui::DragFloat("Pos z", &translation.z))	transform = true;
+		if (ImGui::DragFloat("Pos x", &translation.x))	ret = true;
+		if (ImGui::DragFloat("Pos y", &translation.y))	ret = true;
+		if (ImGui::DragFloat("Pos z", &translation.z))	ret = true;
 
 		ImGui::Separator();
 
@@ -128,9 +119,9 @@ void Transform::Inspector()
 		if (pitch == -180)	pitch = 180;
 		if (yaw == -180)	yaw = 180;
 
-		if (ImGui::DragFloat("Rotation x", &yaw))	transform = true;
-		if (ImGui::DragFloat("Rotation y", &pitch))	transform = true;
-		if (ImGui::DragFloat("Rotation z", &roll))	transform = true;
+		if (ImGui::DragFloat("Rotation x", &yaw))	ret = true;
+		if (ImGui::DragFloat("Rotation y", &pitch))	ret = true;
+		if (ImGui::DragFloat("Rotation z", &roll))	ret = true;
 		
 		roll *= DEGTORAD;
 		pitch *= DEGTORAD;
@@ -140,10 +131,11 @@ void Transform::Inspector()
 
 		ImGui::Separator();
 
-		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f))	transform = true;
-		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f))	transform = true;
-		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f))	transform = true;
+		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f))	ret = true;
+		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f))	ret = true;
+		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f))	ret = true;
 		
 		ImGui::TreePop();
 	}
+	return ret;
 }

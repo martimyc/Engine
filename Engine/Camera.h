@@ -17,7 +17,6 @@ private:
 	float far_plane_dist = 500.0f;
 
 	void RecalculateFOV();
-	void TransformCamera();
 	void ResetFrustumPlanes();
 
 public:
@@ -30,6 +29,7 @@ public:
 
 	void Inspector();
 
+	void TransformCamera();
 	bool IsFrustumActive();
 	bool FrustumCulling(const GameObject* root);
 	void DrawFrustum();

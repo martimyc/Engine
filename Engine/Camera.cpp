@@ -84,9 +84,6 @@ bool Camera::Start()
 
 bool Camera::Update()
 {
-	if (game_object->transformed)
-		TransformCamera();	
-
 	if (frustum_culling)
 		FrustumCulling(App->scene_manager->GetRoot());
 

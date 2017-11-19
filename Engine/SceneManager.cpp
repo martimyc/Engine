@@ -258,9 +258,9 @@ void SceneManager::AddPrefabToFocused(GameObject * root)
 	focused->AddChild(root);
 }
 
-void SceneManager::UpdateAABBs(const math::AABB& aabb, const math::float4x4& parent_matrix) const
+void SceneManager::UpdateAABBs(const GameObject* go) const
 {
-	root->UpdateAABBs(aabb, parent_matrix);
+	root->UpdateAABBs(go);
 }
 
 void SceneManager::EmptyScene()
