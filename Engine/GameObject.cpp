@@ -99,7 +99,7 @@ bool GameObject::Update()
 
 void GameObject::SentToDraw(Camera* camera) const
 {
-	if (draw)
+	if (draw && GetMesh() != nullptr)
 	{
 		if (camera != nullptr)
 		{

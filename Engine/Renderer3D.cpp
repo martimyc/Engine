@@ -244,13 +244,13 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 				glPushMatrix();
 				glLoadMatrixf(opengl_view_matrix);
 
-				if (App->camera->DoFrustumCulling(draw_queue.top()))
+				if (App->camera->DoFrustumCulling(to_draw))
 				{
 					to_draw->DrawBoundingBoxes();	//First bounding boxes, which don't need the transform to be applied
-					math::float4x4 transform(draw_queue.top()->GetWorldTransform());
+					math::float4x4 transform(to_draw->GetWorldTransform());
 					glMultMatrixf(&transform.At(0, 0));
 
-					to_draw->GetMesh()->Draw(draw_queue.top()->GetAppliedMaterial());
+					to_draw->GetMesh()->Draw(to_draw->GetAppliedMaterial());
 					to_draw->GetMesh()->DrawKDT();
 				}
 				draw_queue.pop();
