@@ -160,6 +160,11 @@ void SceneManager::AddEmptyGO()
 		delete new_go;
 }
 
+void SceneManager::UpdateKDT(const GameObject * go)
+{
+	go_kdtree->UpdateGO(go);
+}
+
 void SceneManager::EmptyScene()
 {
 	delete root;

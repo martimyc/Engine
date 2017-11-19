@@ -55,7 +55,7 @@ GameObject::GameObject(const GameObject & copy): name(copy.name), local_transfor
 		}
 	}
 
-	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	for (std::vector<GameObject*>::const_iterator it = copy.childs.begin(); it != copy.childs.end(); ++it)
 	{
 		childs.push_back(new GameObject(*(*it)));
 	}
@@ -160,6 +160,7 @@ void GameObject::Inspector()
 	if (local_transform->Inspector())
 	{
 		UpdateTransforms();
+		App->scene_manager->UpdateKDT(this);
 	}
 
 	//Other components
