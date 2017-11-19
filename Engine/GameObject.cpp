@@ -527,8 +527,6 @@ void GameObject::RemoveAppliedMaterial()
 
 void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) const
 {
-	//if(this->HasMeshFilter())
-
 	std::map<float, GameObject*> aabb_collisions;
 	LineSegment ray_local_space(*ray);
 
@@ -594,14 +592,14 @@ AABB* GameObject::UpdateAABBs(const GameObject* go)
 		}
 	}
 
-	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
-	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
-	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
-
 	for (std::vector<AABB*>::const_iterator it = aabbs.begin(); it != aabbs.end(); ++it)
 	{
 		bounds.aabb_bounding_box.Enclose(*(*it));
 	}
+
+	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
+	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
+	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
 
 	return &bounds.aabb_bounding_box;
 }
@@ -642,6 +640,7 @@ void GameObject::CreateBounds(const Mesh* mesh)
 
 //	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
 //	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
+	App->scene_manager->GetRoot()->bounds.aabb_bounding_box.Enclose(bounds.aabb_bounding_box);
 }
 
 void GameObject::UpdateBounds()
@@ -650,15 +649,25 @@ void GameObject::UpdateBounds()
 //	bounds.obb_bounding_box.Transform(GetWorldTransform().Transposed());
 
 //	App->scene_manager->UpdateAABBs(bounds.aabb_bounding_box);
-	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
+//	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+//		bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
+
 	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
 	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
+	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
 
 	App->scene_manager->UpdateAABBs(this);
 
+	GameObject* root = App->scene_manager->GetRoot();
+	root->bounds.aabb_bounding_box.SetNegativeInfinity();
+	for (std::vector<GameObject*>::const_iterator it = root->childs.begin(); it != root->childs.end(); ++it)
+		root->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
 }
 bool GameObject::IsChild(const GameObject* go) const
 {
+	if (go == this)
+		return true; 
+	
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 	{
 		if (go == (*it))
