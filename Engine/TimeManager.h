@@ -43,6 +43,10 @@ public:
 	void PlayGame();
 	void PauseGame();
 	void DoOneUpdate();
+
+	//Getters
+	const float GetRealTimeSinceStart() const;
+	const float GetGameTimeSinceStart() const;
 };
 
 #endif // !TIME_MANAGER
