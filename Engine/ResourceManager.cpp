@@ -16,7 +16,6 @@
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
-
 #include "GameObject.h"
 
 //Components
@@ -25,6 +24,7 @@
 //Modules
 #include "ImportManager.h"
 #include "SceneManager.h"
+#include "TimeManager.h"
 #include "Application.h"
 #include "ResourceManager.h"
 
@@ -126,6 +126,7 @@ bool ResourceManager::Init()
 {
 	debug_textures = LoadCheckers();
 	selected_asset = assets[0];
+	LoadButtons();
 
 	return true;
 }
@@ -156,6 +157,19 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 	}
 	ImGui::End();
 	return UPDATE_CONTINUE;
+}
+
+bool ResourceManager::CleanUp()
+{
+
+	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); ++it)
+		DELETE_PTR(*it);
+	buttons.clear();
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		DELETE_PTR(*it);
+	assets.clear();
+
+	return true;
 }
 
 void ResourceManager::AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
@@ -325,6 +339,13 @@ Texture* ResourceManager::LoadCheckers()
 	return new_texture;
 }
 
+void ResourceManager::LoadButtons()
+{
+	buttons.push_back(new Button(BT_PLAY, App->import_manager->GenerateButtonImage("Buttons\\PlayButton.png"), 25, 25));
+	buttons.push_back(new Button(BT_PAUSE, App->import_manager->GenerateButtonImage("Buttons\\PauseButton.png"), 25, 25));
+	buttons.push_back(new Button(BT_PLAY_ONE_FRAME, App->import_manager->GenerateButtonImage("Buttons\\PlayOneFrameButton.png"), 25, 25));
+}
+
 unsigned int ResourceManager::GetNewMaterialPriority()
 {
 	return num_materials + 1; //meshes without material have priority 0
@@ -362,5 +383,33 @@ void ResourceManager::DebugTextures() const
 
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
+	}
+}
+
+void ResourceManager::CreateButtons() const
+{
+	for (std::vector<Button*>::const_iterator it = buttons.begin(); it != buttons.end(); ++it)
+	{
+		if (ImGui::ImageButton((void*)(*it)->id, ImVec2((*it)->width, (*it)->height)))
+		{
+			switch ((*it)->type)
+			{
+			case BT_PLAY:
+				App->time_manager->PlayGame();
+				break;
+
+			case BT_PAUSE:
+				App->time_manager->PauseGame();
+				break;
+
+			case BT_PLAY_ONE_FRAME:
+				App->time_manager->DoOneUpdate();
+				break;
+
+			default:
+				break;
+			}
+		}
+		ImGui::SameLine();
 	}
 }

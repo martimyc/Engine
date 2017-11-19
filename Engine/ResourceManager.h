@@ -21,9 +21,29 @@ enum RESOURCE_TYPE;
 struct ImportConfiguration;
 struct LoadConfiguration;
 
+enum BUTTON_TYPE
+{
+	BT_UNKNOWN = 0,
+	BT_PLAY,
+	BT_PAUSE,
+	BT_PLAY_ONE_FRAME
+};
+
+struct Button
+{
+	GLuint id;
+	BUTTON_TYPE type = BT_UNKNOWN;
+	uint width;
+	uint height;
+
+	Button(const BUTTON_TYPE type, GLuint id, uint width, uint height) : type(type), id(id), width(width), height(height) {}
+	~Button() { glDeleteTextures(1, &id); }
+};
+
 class ResourceManager: public Module
 {
 private:
+	std::vector<Button*> buttons;
 	std::vector<Asset*> assets;
 	Asset* selected_asset;
 
@@ -58,10 +78,14 @@ private:
 	//Textures
 	Texture* LoadCheckers();
 
+	void LoadButtons();
+
 public:
 	bool Init();
 
 	UPDATE_STATUS Update(float dt);
+
+	bool CleanUp();
 
 	void AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	void DeleteAsset(Asset* to_delete);
@@ -75,6 +99,8 @@ public:
 	unsigned int GetNewMaterialPriority();
 
 	void DebugTextures() const;
+
+	void CreateButtons() const;
 };
 
 #endif // !RESOURCE_MANAGER

@@ -21,6 +21,7 @@ class SceneManager;
 class FileSystem;
 class ImportManager;
 class ResourceManager;
+class TimeManager;
 
 namespace ImGui
 {
@@ -32,20 +33,21 @@ typedef int ImGuiWindowFlags;
 class Application
 {
 public:
-	Window* window;
-	Input* input;
-	Audio* audio;
-	Renderer3D* renderer_3d;
-	Camera3D* camera;
-	Console* console;
-	Hardware* hardware;
-	MainMenuBar* main_menu_bar;
-	HardwareSoftwareInfo* hardware_software_info;
-	BasicGeometry* primitives;
-	SceneManager* scene_manager;
-	FileSystem* file_system;
-	ImportManager* import_manager;
-	ResourceManager* resource_manager;
+	Window*					window = nullptr;
+	Input*					input = nullptr;
+	Audio*					audio = nullptr;
+	Renderer3D*				renderer_3d = nullptr;
+	Camera3D*				camera = nullptr;
+	Console*				console = nullptr;
+	Hardware*				hardware = nullptr;
+	MainMenuBar*			main_menu_bar = nullptr;
+	HardwareSoftwareInfo*	hardware_software_info = nullptr;
+	BasicGeometry*			primitives = nullptr;
+	SceneManager*			scene_manager = nullptr;
+	FileSystem*				file_system = nullptr;
+	ImportManager*			import_manager = nullptr;
+	ResourceManager*		resource_manager = nullptr;
+	TimeManager*			time_manager = nullptr;
 
 private:
 	std::string title;

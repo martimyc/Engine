@@ -231,6 +231,21 @@ bool ImportManager::LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration *
 	return prefab_importer->Load(to_load, load_config);
 }
 
+GLuint ImportManager::GenerateButtonImage(const std::string & relative_path)
+{
+	std::string path(App->file_system->GetAssets());
+	path += "\\";
+	path += relative_path;
+	GLuint ret = 0;
+	TextureLoadConfiguration l_config;
+	TextureImportConfiguration i_config;
+	l_config.anysotropy = false;
+	uint width = 0;
+	uint height = 0;
+	texture_importer->GenerateImage(path, &i_config, &l_config, ret, width, height);
+	return ret;
+}
+
 const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const
 {
 	if (!App->file_system->CopyToAssets(path))

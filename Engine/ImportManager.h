@@ -98,6 +98,7 @@ public:
 	bool LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config);
 	bool LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_config);
 	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config);
+	GLuint GenerateButtonImage(const std::string &relative_path);
 };
 
 
