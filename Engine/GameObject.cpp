@@ -35,7 +35,7 @@ GameObject::GameObject(const std::string& name, bool draw): name(name), draw(dra
 	//bounds.original_obb_bounding_box.pos = vec(0, 0, 0);
 }
 
-GameObject::GameObject(const GameObject & copy): name(copy.name), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw)
+GameObject::GameObject(const GameObject & copy): name(copy.name), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds)
 {
 	local_transform->SetTransform(copy.local_transform->GetTransformMatrix());
 	world_transform->SetTransform(copy.world_transform->GetTransformMatrix());

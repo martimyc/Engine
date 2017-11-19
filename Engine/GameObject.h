@@ -27,6 +27,20 @@ struct Bounds
 	math::vec original_aabb_bb_points[2];
 //	OBB obb_bounding_box;
 //	OBB original_obb_bounding_box;
+
+
+	Bounds()
+	{
+		aabb_bounding_box.SetNegativeInfinity();
+		original_aabb_bb_points[0].zero;
+		original_aabb_bb_points[1].zero;
+	}
+
+	Bounds(const Bounds& copy): aabb_bounding_box(copy.aabb_bounding_box)
+	{
+		original_aabb_bb_points[0] = copy.original_aabb_bb_points[0];
+		original_aabb_bb_points[1] = copy.original_aabb_bb_points[1];
+	}
 };
 
 class GameObject
@@ -44,7 +58,6 @@ private:
 public:
 	GameObject(const std::string& name, bool draw = true);
 	GameObject(const GameObject& copy);
-	GameObject(const GameObject* copy);
 	~GameObject();
 
 private:
