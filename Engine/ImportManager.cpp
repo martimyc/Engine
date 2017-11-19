@@ -117,7 +117,7 @@ UPDATE_STATUS ImportManager::Update(float dt)
 		}
 		ImGui::End();
 
-		if (importing)
+		if (importing && import_type == RT_TEXTURE)
 		{
 			if (image_changed)
 			{
