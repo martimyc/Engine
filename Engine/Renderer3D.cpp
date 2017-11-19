@@ -126,8 +126,28 @@ bool Renderer3D::Init()
 	render_to_texture = new FrameBuffer();
 	render_to_texture->CreateFrameBuffer(App->window->GetWidth(), App->window->GetHeight());
 
-	play_buttons_size_x = 205;
-	play_buttons_size_y = 75;
+	//ImGui Color Configuration
+	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, { 0.20f, 0.20f, 0.216f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.10f, 0.10f, 0.10f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, { 0.157f, 0.157f, 0.157f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, { 0.315f, 0.315f, 0.315f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_Header, { 0.09f, 0.09f, 0.09f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.15f, 0.15f, 0.15f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, { 0.25f, 0.25f, 0.25f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0.282f, 0.282f, 0.282f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.475f, 0.475f, 0.475f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.569f, 0.569f, 0.569f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, { 0.110f, 0.137f, 0.298f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, { 0.0f, 0.196f, 1.0f, 0.5f });
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.392f, 0.392f, 0.490f, 0.294f });
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 0.392f, 0.294f, 0.490f, 0.588f });
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 0.392f, 0.196f, 0.490f, 0.686f });
+	ImGui::PushStyleColor(ImGuiCol_CloseButton, { 0.0f, 0.0f, 0.0f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_CloseButtonHovered, { 0.5f, 0.5f, 0.5f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_CloseButtonActive, { 0.75f, 0.75f, 0.75f, 1.0f });
+
+	play_buttons_size_x = 132;
+	play_buttons_size_y = 47;
 
 	return ret;
 }
@@ -265,9 +285,12 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	render_to_texture->SetHeight(ImGui::GetWindowHeight());
 
 	//Create Play/Pause/Play1Frame buttons
-	ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY() + (play_buttons_size_y / 2)), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY()), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(play_buttons_size_x, play_buttons_size_y), ImGuiCond_Always);
-	ImGuiWindowFlags flags_buttons = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+	ImGuiWindowFlags flags_buttons = ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | 
+		ImGuiWindowFlags_ShowBorders;
 	ImGui::Begin("", nullptr, flags_buttons);
 	App->resource_manager->CreateButtons();
 	ImGui::End();
