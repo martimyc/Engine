@@ -23,7 +23,7 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(GameObject* const parent, const std::string& name): parent(parent), name(name)
+GameObject::GameObject(const std::string& name): name(name)
 {
 	local_transform = new Transform("Local Transform");
 	world_transform = new Transform("World Transform");
@@ -233,10 +233,10 @@ GameObject * GameObject::CreateChild(const char* const name)
 	{
 		char ptr[255];
 		sprintf(ptr, "Child %i", childs.size());
-		new_child = new GameObject(this, ptr);
+		new_child = new GameObject(ptr);
 	}
 	else
-		new_child = new GameObject(this, name);
+		new_child = new GameObject(name);
 
 	AddChild(new_child);
 
@@ -253,9 +253,6 @@ GameObject * GameObject::CreateChild(Component * component, const char* const na
 void GameObject::AddChild(GameObject* child)
 {
 	childs.push_back(child);
-	
-	if(child->parent != this)
-		child->parent = this;
 }
 
 GameObject* GameObject::CreateCamera()
@@ -307,27 +304,7 @@ const float * GameObject::GetLocalGLTransform() const
 
 math::float4x4 GameObject::GetWorldTransform() const
 {
-	const GameObject* next_parent = parent;
-	math::float4x4 ret = world_transform->GetTransformMatrix();
-	while (next_parent != nullptr)
-	{
-		ret = ret * next_parent->world_transform->GetTransformMatrix();
-		next_parent = next_parent->parent;
-	}
-	return ret;
-}
-
-const float * GameObject::GetWorldGLTransform() const
-{
-	const GameObject* next_parent = parent;
-	math::float4x4 ret = world_transform->GetTransformMatrix();
-	while (next_parent != nullptr)
-	{
-		ret = ret * next_parent->world_transform->GetTransformMatrix();
-		next_parent = next_parent->parent;
-	}
-
-	return &ret.At(0, 0);
+	return world_transform->GetTransformMatrix();
 }
 
 void GameObject::GetLocalPosX(int & x) const
@@ -352,47 +329,22 @@ math::vec GameObject::GetLocalPosition() const
 
 void GameObject::GetWorldPosX(int & x) const
 {
-	const GameObject* next_parent = parent;
-	x = world_transform->GetTransformTranslation().x;
-	while (next_parent)
-	{
-		x += next_parent->world_transform->GetTransformTranslation().x;
-		next_parent = next_parent->parent;
-	}
+	x = local_transform->GetTransformTranslation().x;
 }
 
 void GameObject::GetWorldPosY(int & y) const
 {
-	const GameObject* next_parent = parent;
-	y = world_transform->GetTransformTranslation().y;
-	while (next_parent)
-	{
-		y += next_parent->world_transform->GetTransformTranslation().y;
-		next_parent = next_parent->parent;
-	}
+	y = local_transform->GetTransformTranslation().y;
 }
 
 void GameObject::GetWorldPosZ(int & z) const
 {
-	const GameObject* next_parent = parent;
-	z = world_transform->GetTransformTranslation().z;
-	while (next_parent)
-	{
-		z += next_parent->world_transform->GetTransformTranslation().z;
-		next_parent = next_parent->parent;
-	}
+	z = local_transform->GetTransformTranslation().z;
 }
 
 math::vec GameObject::GetWorldPosition() const
 {
-	const GameObject* next_parent = parent;
-	math::float3 pos = world_transform->GetTransformTranslation();
-	while (next_parent)
-	{
-		pos += next_parent->world_transform->GetTransformTranslation();
-		next_parent = next_parent->parent;
-	}
-	return pos;
+	return world_transform->GetTransformTranslation();
 }
 
 const math::vec& GameObject::GetLocalRotationEuler() const
@@ -402,14 +354,7 @@ const math::vec& GameObject::GetLocalRotationEuler() const
 
 math::vec GameObject::GetWorldRotationEuler() const
 {
-	const GameObject* next_parent = parent;
-	math::vec rotation_euler = world_transform->GetTransformRotationAngles();
-	while (next_parent)
-	{
-		rotation_euler += next_parent->world_transform->GetTransformRotationAngles();
-		next_parent = next_parent->parent;
-	}
-	return rotation_euler;
+	return world_transform->GetTransformRotationAngles();
 }
 
 const math::Quat& GameObject::GetLocalRotationQuat() const
@@ -419,14 +364,7 @@ const math::Quat& GameObject::GetLocalRotationQuat() const
 
 math::Quat GameObject::GetWorldRotationQuat() const
 {
-	const GameObject* next_parent = parent;
-	math::vec rotation_euler = world_transform->GetTransformRotationAngles();
-	while (next_parent)
-	{
-		rotation_euler += next_parent->world_transform->GetTransformRotationAngles();
-		next_parent = next_parent->parent;
-	}
-	return world_transform->TransformEuler2Quat(rotation_euler);
+	return world_transform->GetTransformRotation();
 }
 
 void GameObject::GetLocalScaleX(int & x) const
@@ -451,47 +389,22 @@ const math::vec&  GameObject::GetLocalScale(int & x, int & y, int & z) const
 
 void GameObject::GetWorldScaleX(int & x) const
 {
-	const GameObject* next_parent = parent;
 	x = world_transform->GetTransformTranslation().x;
-	while (next_parent)
-	{
-		x *= next_parent->world_transform->GetTransformScale().x;
-		next_parent = next_parent->parent;
-	}
 }
 
 void GameObject::GetWorldScaleY(int & y) const
 {
-	const GameObject* next_parent = parent;
 	y = world_transform->GetTransformTranslation().y;
-	while (next_parent)
-	{
-		y *= next_parent->world_transform->GetTransformScale().y;
-		next_parent = next_parent->parent;
-	}
 }
 
 void GameObject::GetWorldScaleZ(int & z) const
 {
-	const GameObject* next_parent = parent;
 	z = world_transform->GetTransformTranslation().z;
-	while (next_parent)
-	{
-		z *= next_parent->world_transform->GetTransformScale().z;
-		next_parent = next_parent->parent;
-	}
 }
 
 const math::vec&  GameObject::GetWorldScale(int & x, int & y, int & z) const
 {
-	const GameObject* next_parent = parent;
-	math::float3 scale = world_transform->GetTransformTranslation();
-	while (next_parent)
-	{
-		scale.Mul(next_parent->world_transform->GetTransformScale());
-		next_parent = next_parent->parent;
-	}
-	return scale;
+	return world_transform->GetTransformScale();;
 }
 
 const AABB * GameObject::GetAABB() const

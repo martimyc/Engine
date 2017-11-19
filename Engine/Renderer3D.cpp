@@ -244,7 +244,8 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 			if (App->camera->DoFrustumCulling(draw_queue.top()))
 			{
 				draw_queue.top()->DrawBoundingBoxes();	//First bounding boxes, which don't need the transform to be applied
-				glMultMatrixf(draw_queue.top()->GetWorldGLTransform());
+				math::float4x4 transform(draw_queue.top()->GetWorldTransform());
+				glMultMatrixf(&transform.At(0,0));
 
 				draw_queue.top()->GetMesh()->Draw(draw_queue.top()->GetAppliedMaterial());
 				draw_queue.top()->GetMesh()->DrawKDT();

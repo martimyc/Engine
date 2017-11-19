@@ -35,7 +35,6 @@ private:
 	std::string name;
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
-	GameObject* parent;
 	Transform* local_transform = nullptr;
 	Transform* world_transform = nullptr;
 	Bounds bounds;
@@ -44,7 +43,7 @@ private:
 
 public:
 
-	GameObject(GameObject* const parent, const std::string& name);
+	GameObject(const std::string& name);
 	~GameObject();
 
 private:

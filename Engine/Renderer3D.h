@@ -80,7 +80,6 @@ public:
 	~Renderer3D();
 
 private:
-	void Anisotrophy();
 	void DrawWorldAxis();
 	void DrawGrid();
 

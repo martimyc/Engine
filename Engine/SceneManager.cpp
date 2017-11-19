@@ -28,7 +28,7 @@ bool SceneManager::Init()
 {
 	go_kdtree = new KDTreeGO();
 
-	root = new GameObject(nullptr, "Root");
+	root = new GameObject("Root");
 	focused = root;
 
 	go_kdtree->AddGameObject(root);
@@ -266,7 +266,7 @@ void SceneManager::UpdateAABBs(const GameObject* go) const
 void SceneManager::EmptyScene()
 {
 	delete root;
-	root = new GameObject(nullptr, "Root");
+	root = new GameObject("Root");
 	focused = root;
 }
 

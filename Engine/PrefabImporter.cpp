@@ -105,12 +105,12 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		ImportNode(child->mChildren[i], iterator, scene, materials, material_loads, meshes, mesh_loads);
 }
 
-GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
+GameObject* PrefabImporter::LoadChild(char ** iterator)
 {
 	std::string name (*iterator);
 	*iterator += name.length() + 1;
 
-	GameObject* new_game_object = new GameObject(parent, name);
+	GameObject* new_game_object = new GameObject(name);
 
 	math::float4x4 transform;
 	memcpy(&transform, *iterator, sizeof(float) * 16);
@@ -147,7 +147,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 			char child_name[255];
 			sprintf(child_name, "%s_child_%i", name.c_str(), i);
 
-			GameObject* new_child = new GameObject(new_game_object, child_name);
+			GameObject* new_child = new GameObject(child_name);
 
 			UID mesh_uid;
 			memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
@@ -177,7 +177,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 
 	for (int i = 0; i < num_childs; i++)
 	{
-		new_game_object->AddChild(LoadChild(iterator, new_game_object));
+		new_game_object->AddChild(LoadChild(iterator));
 	}
 
 	return new_game_object;
@@ -228,7 +228,7 @@ bool PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration * confi
 		iterator = buffer;
 		iterator += FORMAT_SIZE;
 
-		to_load->SetSource(new PrefabSource(LoadChild(&iterator, nullptr)));
+		to_load->SetSource(new PrefabSource(LoadChild(&iterator)));
 		return true;
 	}
 	return false;
