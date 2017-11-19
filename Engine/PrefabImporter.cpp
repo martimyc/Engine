@@ -27,11 +27,11 @@ PrefabImporter::PrefabImporter()
 PrefabImporter::~PrefabImporter()
 {}
 
-unsigned int PrefabImporter::GetFailedBefore(unsigned int pos, bool* loads, unsigned int num_objects) const
+unsigned int PrefabImporter::GetFailedBefore(unsigned int pos, bool* loads) const
 {
 	uint ret = 0;
-	for (int i = 0; i < num_objects; i++)
-		if (!loads[i])
+	for (int i = 0; i < pos; i++)
+		if (loads[i] == false)
 			ret++;
 	return ret;
 }
@@ -71,7 +71,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 	memcpy(*iterator, &child->mTransformation, sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
 
-	uint num_meshes = child->mNumMeshes - GetFailedBefore(child->mNumMeshes, mesh_loads, child->mNumMeshes);
+	uint num_meshes = child->mNumMeshes - GetFailedBefore(child->mNumMeshes, mesh_loads);
 	memcpy(*iterator, &num_meshes, sizeof(uint));
 	*iterator += sizeof(uint);
 
@@ -79,7 +79,8 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 	{
 		if (mesh_loads[child->mMeshes[i]])
 		{
-			UID id(meshes[child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], mesh_loads, scene->mNumMeshes)]);
+			unsigned int num_mesh = child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], mesh_loads);
+			UID id(meshes[num_mesh]);
 			memcpy(*iterator, &id, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 
@@ -89,7 +90,8 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 
 			if (has_material)
 			{
-				UID id(materials[scene->mMeshes[child->mMeshes[i]]->mMaterialIndex - GetFailedBefore(scene->mMeshes[child->mMeshes[i]]->mMaterialIndex, material_loads, scene->mNumMaterials)]);
+				unsigned int material_index = scene->mMeshes[num_mesh]->mMaterialIndex - GetFailedBefore(scene->mMeshes[num_mesh]->mMaterialIndex, material_loads);
+				UID id(materials[material_index]);
 				memcpy(*iterator, &id, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
 			}

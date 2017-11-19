@@ -91,9 +91,10 @@ bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relat
 unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 {
 	unsigned int size = 0;
-	std::ifstream ifs(path, std::ifstream::binary);
+	std::ifstream ifs(path, std::ios::binary);
 
 	if (ifs.good())
+	{
 		if (ifs.is_open() == true)
 		{
 			// get length of file:
@@ -107,8 +108,6 @@ unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 			// read data as a block:
 			ifs.read(*buffer, length);
 
-			LOG("Copied file %s to Assets", path.c_str());
-
 			if (ifs)
 			{
 				LOG("Succesfully read %s", path.c_str());
@@ -119,6 +118,9 @@ unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 
 			ifs.close();
 		}
+	}
+	else
+		LOG("Could not load %s, error: %s", path.c_str(), strerror(errno));
 
 	return size;
 }

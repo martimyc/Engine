@@ -255,7 +255,7 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 		}
 		break;
 	case RT_PREFAB:
-		uid = ImportScene(file_name_ext, (SceneImportConfiguration*)import_config);
+		uid = ImportScene(path, (SceneImportConfiguration*)import_config);
 		if (uid.IsNull())
 		{
 			LOG("Could not import scene from %s corectlly", path.c_str());
@@ -355,15 +355,16 @@ Asset* ImportManager::MetaLoad(const std::string & file) const
 	return nullptr;
 }
 
-const UID ImportManager::ImportScene(const std::string & file, const SceneImportConfiguration* import_config) const
+const UID ImportManager::ImportScene(const std::string & path, const SceneImportConfiguration* import_config) const
 {
 	UID prefab_uid;
 
-	std::string path(App->file_system->GetAssets());
+	/*std::string assets_path(App->file_system->GetAssets());
 	path += "\\";
-	path += file;
+	path += file;*/
 
 	std::string scene_name(GetImportFileNameNoExtension());
+	std::string scene_dir(path.substr(0, path.find_last_of("\\") + 1)); // +1 to include \\
 
 	Assimp::Importer* importer = new Assimp::Importer;
 
@@ -439,15 +440,14 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 	if (scene != nullptr)
 	{
 		//warnings
-		if (scene->mFlags && AI_SCENE_FLAGS_INCOMPLETE)
+		if (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE)
 			LOG("Scene is incomplete");
-		if (scene->mFlags && AI_SCENE_FLAGS_VALIDATED)
+		if (scene->mFlags & AI_SCENE_FLAGS_VALIDATED)
 			LOG("Scene validated without warnings");
-		if (scene->mFlags && AI_SCENE_FLAGS_VALIDATION_WARNING)
+		if (scene->mFlags & AI_SCENE_FLAGS_VALIDATION_WARNING)
 			LOG("Scene validated with warnings");
-		if (scene->mFlags && AI_SCENE_FLAGS_VALIDATION_WARNING)
+		if (scene->mFlags & AI_SCENE_FLAGS_VALIDATION_WARNING)
 			LOG("Scene validated with warnings");
-
 
 		bool* material_loads = nullptr;
 		bool* mesh_loads = nullptr;
@@ -470,7 +470,7 @@ const UID ImportManager::ImportScene(const std::string & file, const SceneImport
 					sprintf(ptr, "Material_%s_%i", scene_name.c_str(), i);
 					std::string material_name(ptr);
 
-					UID uid(material_importer->Import(scene->mMaterials[i], import_config->material_import_config));
+					UID uid(material_importer->Import(scene_dir, scene->mMaterials[i], import_config->material_import_config));
 
 					if (uid.IsNull() == false)
 					{

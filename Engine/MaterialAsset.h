@@ -9,6 +9,7 @@ struct TextureLoadConfiguration;
 struct MaterialImportConfiguration : public ImportConfiguration
 {
 	bool include_textures;
+	bool all_textures_in_same_dir;
 
 	TextureImportConfiguration* texture_import_config;
 	TextureLoadConfiguration* texture_load_config; //this is in import to create all texture assets

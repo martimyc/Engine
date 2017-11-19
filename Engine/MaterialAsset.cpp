@@ -3,7 +3,7 @@
 #include "TextureAsset.h"
 #include "MaterialAsset.h"
 
-MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(true)
+MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(true), all_textures_in_same_dir(false)
 {
 	texture_import_config = new TextureImportConfiguration;
 	texture_load_config = new TextureLoadConfiguration;
@@ -19,8 +19,13 @@ bool MaterialImportConfiguration::Config()
 {
 	bool ret = false;
 
-	if (ImGui::Checkbox("Generate Normals", &include_textures))
+	if (ImGui::Checkbox("Include Textures", &include_textures))
 		ret = true;
+
+	if (ImGui::Checkbox("All textures are in scenes dir", &all_textures_in_same_dir))
+		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("If you export a scene and delete all directory hirarchy after to make a .zip for your students you should load scene with this");
 
 	if (include_textures)
 	{

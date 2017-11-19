@@ -54,18 +54,29 @@ unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material) const
 	return total_size;
 }
 
-void MaterialImporter::ImportDiffuse(const aiMaterial * material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportDiffuse(const std::string& scene_dir, const aiMaterial * material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
 
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if(count < relative_path.size())
+				relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
+			
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
 			if (texture_uid.IsNull())
@@ -86,17 +97,28 @@ void MaterialImporter::ImportDiffuse(const aiMaterial * material, char** iterato
 	}
 }
 
-void MaterialImporter::ImportSpecular(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportSpecular(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_SPECULAR, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -118,17 +140,28 @@ void MaterialImporter::ImportSpecular(const aiMaterial * material, char ** itera
 	}
 }
 
-void MaterialImporter::ImportAmbient(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportAmbient(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_AMBIENT); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_AMBIENT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -150,17 +183,28 @@ void MaterialImporter::ImportAmbient(const aiMaterial * material, char ** iterat
 	}
 }
 
-void MaterialImporter::ImportEmissive(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportEmissive(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_EMISSIVE); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_EMISSIVE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_EMISSIVE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -182,17 +226,28 @@ void MaterialImporter::ImportEmissive(const aiMaterial * material, char ** itera
 	}
 }
 
-void MaterialImporter::ImportHeight(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportHeight(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_HEIGHT); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_HEIGHT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -214,17 +269,28 @@ void MaterialImporter::ImportHeight(const aiMaterial * material, char ** iterato
 	}
 }
 
-void MaterialImporter::ImportNormals(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportNormals(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_NORMALS); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_NORMALS, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -246,17 +312,28 @@ void MaterialImporter::ImportNormals(const aiMaterial * material, char ** iterat
 	}
 }
 
-void MaterialImporter::ImportShininess(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportShininess(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_SHININESS); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_SHININESS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_SHININESS, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -278,17 +355,28 @@ void MaterialImporter::ImportShininess(const aiMaterial * material, char ** iter
 	}
 }
 
-void MaterialImporter::ImportOpacity(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportOpacity(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_OPACITY); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_OPACITY, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_OPACITY, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -310,17 +398,28 @@ void MaterialImporter::ImportOpacity(const aiMaterial * material, char ** iterat
 	}
 }
 
-void MaterialImporter::ImportDisplacement(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportDisplacement(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_DISPLACEMENT); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_DISPLACEMENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_DISPLACEMENT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -342,17 +441,28 @@ void MaterialImporter::ImportDisplacement(const aiMaterial * material, char ** i
 	}
 }
 
-void MaterialImporter::ImportLightMap(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportLightMap(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_LIGHTMAP); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_LIGHTMAP, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_LIGHTMAP, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -374,17 +484,28 @@ void MaterialImporter::ImportLightMap(const aiMaterial * material, char ** itera
 	}
 }
 
-void MaterialImporter::ImportReflection(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportReflection(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_REFLECTION); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_REFLECTION, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_REFLECTION, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -406,17 +527,28 @@ void MaterialImporter::ImportReflection(const aiMaterial * material, char ** ite
 	}
 }
 
-void MaterialImporter::ImportUnknown(const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config) const
+void MaterialImporter::ImportUnknown(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
 {
 	std::vector<UID> uids;
 
 	for (int i = 0; i < material->GetTextureCount(aiTextureType_UNKNOWN); i++)
 	{
-		aiString Path;
+		aiString path;
 
-		if (material->GetTexture(aiTextureType_UNKNOWN, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		if (material->GetTexture(aiTextureType_UNKNOWN, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::string full_path = App->file_system->GetAssets() + "\\" + Path.data;
+			std::string full_path(scene_dir);
+
+			if (all_textures_in_same_dir)
+			{
+				std::string relative_path(path.C_Str());
+				size_t count = relative_path.find_last_of("\\");
+				if (count < relative_path.size())
+					relative_path = relative_path.substr(count + 1);
+				full_path += relative_path;
+			}
+			else
+				full_path += path.C_Str();
 
 			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
 
@@ -654,7 +786,7 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-const UID MaterialImporter::Import(const aiMaterial * material, const MaterialImportConfiguration* config) const
+const UID MaterialImporter::Import(const std::string& scene_dir, const aiMaterial * material, const MaterialImportConfiguration* config) const
 {
 	bool ret = true;
 
@@ -673,18 +805,18 @@ const UID MaterialImporter::Import(const aiMaterial * material, const MaterialIm
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
 
-	 ImportDiffuse( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportSpecular( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportAmbient( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportEmissive( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportHeight( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportNormals( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportShininess( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportOpacity( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportDisplacement( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportLightMap( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportReflection( material, &iterator, config->texture_import_config, config->texture_load_config);
-	 ImportUnknown( material, &iterator, config->texture_import_config, config->texture_load_config);
+	 ImportDiffuse(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportSpecular(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportAmbient(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportEmissive(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportHeight(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportNormals(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportShininess(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportOpacity(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportDisplacement(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportLightMap(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportReflection(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportUnknown(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
 
 	uint length = iterator - buffer;
 
