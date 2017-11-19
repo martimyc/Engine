@@ -5,10 +5,16 @@
 
 struct MeshImportConfiguration : public ImportConfiguration
 {
+	bool load_tangents;
+	bool gen_tangents;
+	bool load_normals;
 	bool gen_normals;
-	bool gen_smoth_normals;
-	bool split_large_meshes;
-	bool sort_by_type;
+	bool gen_smooth_normals;
+	bool load_colors;
+	bool load_uvs;
+	bool load_bone_weights;
+
+	MeshImportConfiguration();
 
 	virtual bool Config();
 	virtual void MetaSave(char** iterator) const;

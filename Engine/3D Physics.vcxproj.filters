@@ -600,6 +600,9 @@
     <ClInclude Include="TimeManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\imgui_user.h">
+      <Filter>Sources\3rd Party\ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -880,6 +883,9 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_user.cpp">
+      <Filter>Sources\3rd Party\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="PerfTimer.cpp">
       <Filter>Sources\Tools</Filter>

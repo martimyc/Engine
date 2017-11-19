@@ -67,10 +67,12 @@ public:
 
 struct SceneImportConfiguration : public ImportConfiguration
 {
-	bool inlude_meshes;
+	bool include_meshes;
 	bool include_materials;
-	bool include_textures;
 	bool include_prefabs;
+	bool include_animations;
+	bool include_lights;
+	bool include_cameras;
 
 	MaterialImportConfiguration* material_import_config;
 	MeshImportConfiguration* mesh_import_config;

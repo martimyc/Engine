@@ -6701,7 +6701,7 @@ bool ImGui::SliderBehavior(const ImRect& frame_bb, ImGuiID id, float* v, float v
 //   "%.3f"         1.234
 //   "%5.2f secs"   01.23 secs
 //   "Gold: %.0f"   Gold: 1
-bool ImGui::SliderFloat(const char* label, float* v, float v_min, float v_max,bool print_label, const char* display_format,  float power)
+bool ImGui::SliderFloat(const char* label, float* v, float v_min, float v_max, const char* display_format,  float power)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6756,11 +6756,8 @@ bool ImGui::SliderFloat(const char* label, float* v, float v_min, float v_max,bo
     const char* value_buf_end = value_buf + ImFormatString(value_buf, IM_ARRAYSIZE(value_buf), display_format, *v);
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f,0.5f));
 
-	if (print_label)
-	{
-		if (label_size.x > 0.0f)
-			RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
-	}
+	if (label_size.x > 0.0f)
+		RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     return value_changed;
 }
@@ -6811,20 +6808,20 @@ bool ImGui::VSliderFloat(const char* label, const ImVec2& size, float* v, float 
     return value_changed;
 }
 
-bool ImGui::SliderAngle(const char* label, float* v_rad, float v_degrees_min, float v_degrees_max, bool print_label)
+bool ImGui::SliderAngle(const char* label, float* v_rad, float v_degrees_min, float v_degrees_max)
 {
     float v_deg = (*v_rad) * 360.0f / (2*IM_PI);
-    bool value_changed = SliderFloat(label, &v_deg, v_degrees_min, v_degrees_max, print_label, "%.0f deg", 1.0f);
+    bool value_changed = SliderFloat(label, &v_deg, v_degrees_min, v_degrees_max, "%.0f deg", 1.0f);
     *v_rad = v_deg * (2*IM_PI) / 360.0f;
     return value_changed;
 }
 
-bool ImGui::SliderInt(const char* label, int* v, int v_min, int v_max, bool print_label, const char* display_format)
+bool ImGui::SliderInt(const char* label, int* v, int v_min, int v_max, const char* display_format)
 {
     if (!display_format)
         display_format = "%.0f";
     float v_f = (float)*v;
-    bool value_changed = SliderFloat(label, &v_f, (float)v_min, (float)v_max, print_label, display_format, 1.0f);
+    bool value_changed = SliderFloat(label, &v_f, (float)v_min, (float)v_max, display_format, 1.0f);
     *v = (int)v_f;
     return value_changed;
 }
@@ -6840,7 +6837,7 @@ bool ImGui::VSliderInt(const char* label, const ImVec2& size, int* v, int v_min,
 }
 
 // Add multiple sliders on 1 line for compact edition of multiple components
-bool ImGui::SliderFloatN(const char* label, float* v, int components, float v_min, float v_max, bool print_label, const char* display_format, float power)
+bool ImGui::SliderFloatN(const char* label, float* v, int components, float v_min, float v_max, const char* display_format, float power)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6854,7 +6851,7 @@ bool ImGui::SliderFloatN(const char* label, float* v, int components, float v_mi
     for (int i = 0; i < components; i++)
     {
         PushID(i);
-        value_changed |= SliderFloat("##v", &v[i], v_min, v_max, print_label, display_format, power);
+        value_changed |= SliderFloat("##v", &v[i], v_min, v_max, display_format, power);
         SameLine(0, g.Style.ItemInnerSpacing.x);
         PopID();
         PopItemWidth();
@@ -6867,22 +6864,22 @@ bool ImGui::SliderFloatN(const char* label, float* v, int components, float v_mi
     return value_changed;
 }
 
-bool ImGui::SliderFloat2(const char* label, float v[2], float v_min, float v_max, bool print_label, const char* display_format, float power)
+bool ImGui::SliderFloat2(const char* label, float v[2], float v_min, float v_max, const char* display_format, float power)
 {
-    return SliderFloatN(label, v, 2, v_min, v_max, print_label, display_format, power);
+    return SliderFloatN(label, v, 2, v_min, v_max, display_format, power);
 }
 
-bool ImGui::SliderFloat3(const char* label, float v[3], float v_min, float v_max, bool print_label, const char* display_format, float power)
+bool ImGui::SliderFloat3(const char* label, float v[3], float v_min, float v_max, const char* display_format, float power)
 {
-    return SliderFloatN(label, v, 3, v_min, v_max, print_label, display_format, power);
+    return SliderFloatN(label, v, 3, v_min, v_max, display_format, power);
 }
 
-bool ImGui::SliderFloat4(const char* label, float v[4], float v_min, float v_max, bool print_label, const char* display_format, float power)
+bool ImGui::SliderFloat4(const char* label, float v[4], float v_min, float v_max, const char* display_format, float power)
 {
-    return SliderFloatN(label, v, 4, v_min, v_max, print_label, display_format, power);
+    return SliderFloatN(label, v, 4, v_min, v_max, display_format, power);
 }
 
-bool ImGui::SliderIntN(const char* label, int* v, int components, int v_min, int v_max, bool print_label, const char* display_format)
+bool ImGui::SliderIntN(const char* label, int* v, int components, int v_min, int v_max, const char* display_format)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6896,7 +6893,7 @@ bool ImGui::SliderIntN(const char* label, int* v, int components, int v_min, int
     for (int i = 0; i < components; i++)
     {
         PushID(i);
-        value_changed |= SliderInt("##v", &v[i], v_min, v_max, print_label, display_format);
+        value_changed |= SliderInt("##v", &v[i], v_min, v_max, display_format);
         SameLine(0, g.Style.ItemInnerSpacing.x);
         PopID();
         PopItemWidth();
@@ -6909,19 +6906,19 @@ bool ImGui::SliderIntN(const char* label, int* v, int components, int v_min, int
     return value_changed;
 }
 
-bool ImGui::SliderInt2(const char* label, int v[2], int v_min, int v_max, bool print_label, const char* display_format)
+bool ImGui::SliderInt2(const char* label, int v[2], int v_min, int v_max, const char* display_format)
 {
-    return SliderIntN(label, v, 2, v_min, v_max, print_label, display_format);
+    return SliderIntN(label, v, 2, v_min, v_max, display_format);
 }
 
-bool ImGui::SliderInt3(const char* label, int v[3], int v_min, int v_max, bool print_label, const char* display_format)
+bool ImGui::SliderInt3(const char* label, int v[3], int v_min, int v_max, const char* display_format)
 {
-    return SliderIntN(label, v, 3, v_min, v_max, print_label, display_format);
+    return SliderIntN(label, v, 3, v_min, v_max, display_format);
 }
 
-bool ImGui::SliderInt4(const char* label, int v[4], int v_min, int v_max, bool print_label, const char* display_format)
+bool ImGui::SliderInt4(const char* label, int v[4], int v_min, int v_max, const char* display_format)
 {
-    return SliderIntN(label, v, 4, v_min, v_max, print_label, display_format);
+    return SliderIntN(label, v, 4, v_min, v_max, display_format);
 }
 
 bool ImGui::DragBehavior(const ImRect& frame_bb, ImGuiID id, float* v, float v_speed, float v_min, float v_max, int decimal_precision, float power)
