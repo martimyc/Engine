@@ -12,6 +12,24 @@ Created by [Marc Latorre](https://github.com/marclafr) and [Marti Majó](https:/
 - Docking: We need to save/load the docking positions yet. For now you can dock the windows that are in the tabbar from the start inside your window, however if you restart the MARs Engine or resize the window, the docking windows will return in its original position. We will solve this issue in the next version.
 - Vertex KDTree.
 
+## Incomplete/Problems:
+
+### Not finished: 
+
+#### Time Manager: 
+
+Timers work (window Timers), imported scenes are serialitzated to be loaded later, but GameObjects don't Update acording.
+
+#### Resource manager (see below what is finished): 
+
+- You can't manage files and folders: create / remove / rename yet.
+- Upon start, all resources not managed inside Assets aren't generated in Library yet.
+- Importing options can't be changed from the editor from the inspector yet.
+
+#### AABB's problem: 
+
+Update from parents don't work if you don't update the child later.
+
 ## Changes:
 
 - MD5 UIDs
@@ -20,7 +38,7 @@ Created by [Marc Latorre](https://github.com/marclafr) and [Marti Majó](https:/
 
 - Inspector show all properties for each component on selected GameObject.
 
-- You can pick objects by clicking the mouse.
+- You can pick objects by clicking the mouse, BUT: You must calculate the KDTree first, or it won't work.
 
 - Camera component created.
 
