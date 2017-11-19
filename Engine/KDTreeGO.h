@@ -4,7 +4,7 @@
 #include <vector>
 #include "MathGeoLib\src\MathGeoLibFwd.h"
 
-#define MAX_NUM_OBJECTS 4
+#define MAX_NUM_OBJECTS 3
 #define MAX_SUBDIVISIONS 5
 
 class GameObject;
@@ -54,10 +54,15 @@ public:
 	void GetGameObjects(std::vector<const GameObject*>& vec) const;
 
 	bool IsIn(const GameObject* new_game_object) const;
+	bool AllIn(const GameObject* new_game_object) const;	
 
 	void Draw() const;
 
 	bool AllSamePos(const GameObject* new_game_object) const;
+
+	bool UpdateGO(const GameObject* updated_go);
+
+	void DeleteHirarchy();
 };
 
 class KDTreeGO
@@ -66,12 +71,14 @@ private:
 	KDTNodeGO* root;
 	AABB limits;
 
-	bool ReCalculate(GameObject* new_game_object);
+	bool ReCalculate(const GameObject* new_game_object);
 public:
 	KDTreeGO();
 	~KDTreeGO();
 
 	bool AddGameObject(GameObject* new_game_object);
+
+	void UpdateGO(const GameObject* updated_go);
 
 	void Draw() const;
 };

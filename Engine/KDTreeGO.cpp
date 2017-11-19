@@ -32,7 +32,10 @@ KDTNodeGO::~KDTNodeGO()
 	delete limits;
 
 	if (childs[0] != nullptr)
-		delete[] childs;
+	{
+		delete childs[0];
+		delete childs[1];
+	}
 
 	//Dont think deleting gameobjects through tree is best
 }
@@ -282,7 +285,11 @@ bool KDTNodeGO::RemoveGameObject(const GameObject * new_game_object)
 			ret = true;
 
 	if (partition_axis == Z && Empty())
-		delete[] childs;
+		if (childs != nullptr)
+		{
+			childs[0]->DeleteHirarchy();
+			childs[1]->DeleteHirarchy();
+		}
 
 	return ret;
 }
@@ -325,28 +332,45 @@ void KDTNodeGO::GetGameObjects(std::vector<const GameObject*>& vec) const
 	else
 	{
 		if (game_objects[0] != nullptr)
+		{
 			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 			{
 				if (game_objects[i] != nullptr)
-					vec.push_back(game_objects[i]);
+				{
+					bool repeated = false;
+					for (std::vector<const GameObject*>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+						if ((*it) == game_objects[i])
+							repeated = true;
+					if (!repeated)
+						vec.push_back(game_objects[i]);
+				}
 				else
 					break;
 			}
+		}
 	}
 }
 
 bool KDTNodeGO::IsIn(const GameObject * new_game_object) const
 {
-	math::vec position(new_game_object->GetWorldPosition());
+	math::vec max_pos(new_game_object->GetMaxPos());
+	math::vec min_pos(new_game_object->GetMinPos());
 
-	if (position.x < limits->minPoint.x || position.x > limits->maxPoint.x)
+	if (max_pos.x < limits->minPoint.x || min_pos.x > limits->maxPoint.x)
 		return false;
-	if (position.y < limits->minPoint.y || position.y > limits->maxPoint.y)
+	if (max_pos.y < limits->minPoint.y || min_pos.y > limits->maxPoint.y)
 		return false;
-	if (position.z < limits->minPoint.z || position.z > limits->maxPoint.z)
+	if (max_pos.z < limits->minPoint.z || min_pos.z > limits->maxPoint.z)
 		return false;
 
 	return true;
+}
+
+bool KDTNodeGO::AllIn(const GameObject * new_game_object) const
+{
+	if (limits->Contains(new_game_object->GetMaxPos()) && limits->Contains(new_game_object->GetMinPos()))
+		return true;
+	return false;
 }
 
 void KDTNodeGO::Draw() const
@@ -355,70 +379,33 @@ void KDTNodeGO::Draw() const
 	{
 		if (partition_axis == X)
 			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-		if (partition_axis == Y)
+		else if (partition_axis == Y)
 			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-		if (partition_axis == Z)
+		else if (partition_axis == Z)
 			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 
-		glBegin(GL_LINES);
+		glDisable(GL_CULL_FACE);
+
+		glBegin(GL_QUADS);
 
 		switch (partition_axis)
 		{
 		case X:
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
-
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
-
 			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
 			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
 			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
 			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
 			break;
 		case Y:
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
-
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
-
 			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
 			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
 			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
 			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
 			break;
 		case Z:
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
-
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
-
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
-
 			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
 			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
-
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
 			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
 			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
 			break;
 		default:
@@ -428,6 +415,8 @@ void KDTNodeGO::Draw() const
 		glEnd();
 
 		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+
+		glPointSize(25.0f);
 
 		glBegin(GL_POINTS);
 
@@ -458,28 +447,37 @@ void KDTNodeGO::Draw() const
 			break;
 		}
 
+		glEnd();
+
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-		glEnd();
+		glEnable(GL_CULL_FACE);
+
+		childs[0]->Draw();
+		childs[1]->Draw();
 	}
-
-	glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
-
-	glBegin(GL_POINTS);
-	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	else
 	{
-		if (game_objects[i] != nullptr)
+		glPointSize(25.0f);
+
+		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_POINTS);
+		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			math::vec position = game_objects[i]->GetWorldPosition();
-			glVertex3f(position.x, position.y, position.z);
+			if (game_objects[i] != nullptr)
+			{
+				math::vec position = game_objects[i]->GetWorldPosition();
+				glVertex3f(position.x, position.y, position.z);
+			}
+			else
+				break;
 		}
-		else
-			break;
+
+		glEnd();
+
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-
-	glEnd();
-
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool KDTNodeGO::AllSamePos(const GameObject * new_game_object) const
@@ -492,6 +490,41 @@ bool KDTNodeGO::AllSamePos(const GameObject * new_game_object) const
 	return true;
 }
 
+bool KDTNodeGO::UpdateGO(const GameObject * updated_go)
+{
+	bool ret = false;
+
+	if (partition_axis != NO_PARTITION)
+	{
+
+		if (childs[0]->AllIn(updated_go) == false || childs[1]->AllIn(updated_go) == false)
+		{
+			RemoveGameObject(updated_go);
+			unsigned int num_subdivisions = 0;
+			return AddToCorrectChild(updated_go, num_subdivisions);
+		}
+		else
+		{
+			if (childs[0]->UpdateGO(updated_go))
+				ret = true;
+			if (childs[1]->UpdateGO(updated_go))
+				ret = true;
+		}
+
+		return ret;
+	}
+	else
+		return true;
+}
+
+void KDTNodeGO::DeleteHirarchy()
+{
+	median = 0; 
+	partition_axis = NO_PARTITION;
+	DELETE_PTR(childs[0]);
+	DELETE_PTR(childs[1]);
+}
+
 KDTreeGO::KDTreeGO()
 {
 	AABB limits;
@@ -502,7 +535,7 @@ KDTreeGO::KDTreeGO()
 KDTreeGO::~KDTreeGO()
 {}
 
-bool KDTreeGO::ReCalculate(GameObject* new_game_object)
+bool KDTreeGO::ReCalculate(const GameObject* new_game_object)
 {
 	std::vector<const GameObject*> all_game_objects;
 
@@ -561,6 +594,17 @@ bool KDTreeGO::AddGameObject(GameObject * new_game_object)
 			return false;
 
 	return ret;
+}
+
+void KDTreeGO::UpdateGO(const GameObject * updated_go)
+{
+	if (root->AllIn(updated_go))
+		root->UpdateGO(updated_go);
+	else
+	{
+		root->RemoveGameObject(updated_go);
+		ReCalculate(updated_go);
+	}
 }
 
 void KDTreeGO::Draw() const

@@ -42,9 +42,9 @@ private:
 	bool draw = false;
 
 public:
-
 	GameObject(const std::string& name, bool draw = true);
 	GameObject(const GameObject& copy);
+	GameObject(const GameObject* copy);
 	~GameObject();
 
 private:

@@ -85,6 +85,8 @@ public:
 	void UpdateAABBs(const GameObject* go) const;
 
 	void AddEmptyGO();
+
+	void UpdateKDT(const GameObject* go);
 };
 
 #endif // !_MODULE_SCENE_MANAGER
