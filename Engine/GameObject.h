@@ -43,7 +43,7 @@ private:
 
 public:
 
-	GameObject(const std::string& name);
+	GameObject(const std::string& name, bool draw = true);
 	GameObject(const GameObject& copy);
 	~GameObject();
 

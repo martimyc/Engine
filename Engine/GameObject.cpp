@@ -23,7 +23,7 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const std::string& name): name(name), draw(true)
+GameObject::GameObject(const std::string& name, bool draw): name(name), draw(draw)
 {
 	local_transform = new Transform("Local Transform");
 	world_transform = new Transform("World Transform");

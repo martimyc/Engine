@@ -28,7 +28,7 @@ bool SceneManager::Init()
 {
 	go_kdtree = new KDTreeGO();
 
-	root = new GameObject("Root");
+	root = new GameObject("Root", false);
 	focused = root;
 
 	go_kdtree->AddGameObject(root);
