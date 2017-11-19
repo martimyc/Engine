@@ -25,10 +25,14 @@ UPDATE_STATUS TimeManager::Update(float dt)
 	if (show_timers)
 	{
 		ImGui::Begin("Timers");
-		ImGui::Text("Real Time: %f", real_time_clock.ReadSec());
-		ImGui::Text("Game Time: %f", game_clock.ReadSec());
+		ImGui::Text("Real Time: %.3f", real_time_clock.ReadSec());
+		ImGui::Text("Game Time: %.3f", game_clock.ReadSec());
 		ImGui::End();
 	}
+
+	real_time_since_start = real_time_clock.ReadSec();
+	game_time_since_start = game_clock.ReadSec();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -68,4 +72,14 @@ void TimeManager::PauseGame()
 void TimeManager::DoOneUpdate()
 {
 	//TODO
+}
+
+const float TimeManager::GetRealTimeSinceStart() const
+{
+	return real_time_since_start;
+}
+
+const float TimeManager::GetGameTimeSinceStart() const
+{
+	return game_time_since_start;
 }

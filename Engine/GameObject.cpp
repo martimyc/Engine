@@ -596,11 +596,17 @@ AABB* GameObject::UpdateAABBs(const GameObject* go)
 	{
 		bounds.aabb_bounding_box.Enclose(*(*it));
 	}
-
-	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
+	
+	/*bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
 	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
-	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
 
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
+		(*it)->UpdateAABBs(go);
+	}	
+	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
+	*/
 	return &bounds.aabb_bounding_box;
 }
 
@@ -640,7 +646,6 @@ void GameObject::CreateBounds(const Mesh* mesh)
 
 //	bounds.obb_bounding_box.SetFrom(bounds.aabb_bounding_box);
 //	bounds.original_obb_bounding_box = bounds.obb_bounding_box;
-	App->scene_manager->GetRoot()->bounds.aabb_bounding_box.Enclose(bounds.aabb_bounding_box);
 }
 
 void GameObject::UpdateBounds()
