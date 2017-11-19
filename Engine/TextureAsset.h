@@ -44,6 +44,7 @@ struct TextureImportConfiguration : public ImportConfiguration
 	bool rle = false;
 
 	TextureImportConfiguration();
+	TextureImportConfiguration(const TextureImportConfiguration& copy);
 	TextureImportConfiguration(const std::string& format);
 
 	bool Config();
@@ -100,6 +101,7 @@ struct TextureLoadConfiguration : public LoadConfiguration
 	SCALLING_FILTER scaling_filter;
 
 	TextureLoadConfiguration();
+	TextureLoadConfiguration(const TextureLoadConfiguration& copy);
 
 	bool Config();
 	void MetaSave(char** iterator) const;

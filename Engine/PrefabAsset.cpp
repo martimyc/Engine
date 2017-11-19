@@ -6,7 +6,9 @@ PrefabAsset::PrefabAsset(Resource * resource, const ImportConfiguration * import
 {}
 
 PrefabAsset::~PrefabAsset()
-{}
+{
+	delete resource;
+}
 
 void PrefabAsset::AddInstance(const GameObject * go)
 {

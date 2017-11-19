@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "Globals.h"
 #include "UID.h"
 #include "Resource.h"
 #include "MaterialAsset.h"
@@ -15,10 +16,20 @@ Asset::Asset(RESOURCE_TYPE type, Resource* resource): resource(resource), type(t
 
 Asset::~Asset()
 {
-	delete import_config;
-	delete load_config;
+	if (import_config != nullptr)
+	{
+		delete import_config;
+	}
+
+	if (load_config != nullptr)
+	{
+		delete load_config;
+	}
+
 	if (resource != nullptr)
+	{
 		delete resource;
+	}
 }
 
 RESOURCE_TYPE Asset::GetType() const
@@ -68,12 +79,18 @@ SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), incl
 
 SceneImportConfiguration::~SceneImportConfiguration()
 {
-	delete material_import_config;
-	delete mesh_import_config;
-	delete prefab_import_config;
-	delete material_load_config;
-	delete mesh_load_config;
-	delete prefab_load_config;
+	if(material_import_config != nullptr)
+		DELETE_PTR(material_import_config);
+	if (mesh_import_config != nullptr)
+		DELETE_PTR(mesh_import_config);
+	if (prefab_import_config != nullptr && include_prefabs == false)
+		DELETE_PTR(prefab_import_config);
+	if (material_load_config != nullptr)
+		DELETE_PTR(material_load_config);
+	if (mesh_load_config != nullptr)
+		DELETE_PTR(mesh_load_config);
+	if (prefab_load_config != nullptr && include_prefabs == false)
+		DELETE_PTR(prefab_load_config);
 }
 
 bool SceneImportConfiguration::Config()

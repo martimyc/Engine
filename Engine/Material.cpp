@@ -663,7 +663,11 @@ bool Material::Inspector()
 
 	ImGui::Text("Name: %s", name.c_str());
 
-	source->Inspector();
+	if (ImGui::TreeNode("material"))
+	{
+		source->Inspector();
+		ImGui::TreePop();
+	}
 
 	if (ImGui::Button("Delete"))
 	{
