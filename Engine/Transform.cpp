@@ -17,7 +17,7 @@ void Transform::SetTransform(const math::float4x4& new_transform)
 {
 	transform_matrix = new_transform;
 
-	translation = transform_matrix.TranslatePart();
+	translation = transform_matrix.Transposed().TranslatePart();
 	float3x3 rotation_matrix = transform_matrix.RotatePart();
 	rotation_matrix.Orthonormalize(0, 1, 2);
 	rotation = rotation_matrix.ToQuat();
