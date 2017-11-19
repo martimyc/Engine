@@ -113,7 +113,9 @@ MeshAsset::MeshAsset(Resource * resource, const ImportConfiguration * import_con
 {}
 
 MeshAsset::~MeshAsset()
-{}
+{
+	delete resource;
+}
 
 void MeshAsset::AddInstance(const GameObject * go)
 {

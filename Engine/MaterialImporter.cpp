@@ -77,7 +77,7 @@ void MaterialImporter::ImportDiffuse(const std::string& scene_dir, const aiMater
 			else
 				full_path += path.C_Str();
 			
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, new TextureImportConfiguration(*import_config), new TextureLoadConfiguration(*load_config));
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());

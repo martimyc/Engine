@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "Globals.h"
 #include "Resource.h"
 #include "TextureAsset.h"
 #include "MaterialAsset.h"
@@ -9,10 +10,13 @@ MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(tru
 	texture_load_config = new TextureLoadConfiguration;
 }
 
+MaterialImportConfiguration::MaterialImportConfiguration(const MaterialImportConfiguration & copy): include_textures(copy.include_textures), all_textures_in_same_dir(copy.all_textures_in_same_dir), texture_import_config(copy.texture_import_config), texture_load_config(copy.texture_load_config)
+{}
+
 MaterialImportConfiguration::~MaterialImportConfiguration()
 {
-	delete texture_import_config;
-	delete texture_load_config;
+	DELETE_PTR(texture_import_config);
+	DELETE_PTR(texture_load_config);
 }
 
 bool MaterialImportConfiguration::Config()
@@ -91,7 +95,9 @@ MaterialAsset::MaterialAsset(Resource * resource, const ImportConfiguration * im
 {}
 
 MaterialAsset::~MaterialAsset()
-{}
+{
+	DELETE_PTR(resource);
+}
 
 void MaterialAsset::AddInstance(const GameObject * go)
 {

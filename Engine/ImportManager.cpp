@@ -218,7 +218,11 @@ bool ImportManager::LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_
 		return false;
 	}
 
-	return mesh_importer->Load(to_load, load_config);
+	bool ret = mesh_importer->Load(to_load, load_config);
+
+	//to_load->RecalculateKDT();
+
+	return ret;
 }
 
 bool ImportManager::LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config)
@@ -491,7 +495,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 					{
 						material_loads[i] = true;
 						scene_materials.push_back(uid);
-						App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, import_config->material_import_config, import_config->material_load_config);
+						App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, new MaterialImportConfiguration(*import_config->material_import_config), new MaterialLoadConfiguration(*import_config->material_load_config));
 					}
 					else
 					{
@@ -532,7 +536,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				{
 					mesh_loads[i] = true;
 					scene_meshes.push_back(uid);
-					App->resource_manager->AddAsset(mesh_name, uid, RT_MESH, import_config->mesh_import_config, import_config->mesh_load_config);
+					App->resource_manager->AddAsset(mesh_name, uid, RT_MESH, new MeshImportConfiguration(*import_config->mesh_import_config), new MeshLoadConfiguration(*import_config->mesh_load_config));
 				}
 				else
 				{

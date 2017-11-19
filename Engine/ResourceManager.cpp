@@ -161,7 +161,6 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 
 bool ResourceManager::CleanUp()
 {
-
 	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); ++it)
 		DELETE_PTR(*it);
 	buttons.clear();

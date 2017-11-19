@@ -15,6 +15,7 @@ struct MaterialImportConfiguration : public ImportConfiguration
 	TextureLoadConfiguration* texture_load_config; //this is in import to create all texture assets
 
 	MaterialImportConfiguration();
+	MaterialImportConfiguration(const MaterialImportConfiguration& copy);
 	~MaterialImportConfiguration();
 
 	virtual bool Config();

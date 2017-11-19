@@ -2,7 +2,7 @@
 #include "Mesh.h"
 #include "MeshFilter.h"
 
-MeshFilter::MeshFilter(Mesh * mesh, bool enabled): Component(CT_MESH_FILTER, enabled), mesh(mesh)
+MeshFilter::MeshFilter(Mesh * mesh, bool enabled): Component(CT_MESH_FILTER, enabled), mesh(mesh), draw_kdt(false)
 {}
 
 MeshFilter::~MeshFilter()

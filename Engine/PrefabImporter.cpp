@@ -155,7 +155,8 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 			Mesh* mesh = App->resource_manager->UseMesh(mesh_uid, new_child);
 			new_child->AddComponent(new MeshFilter(mesh));
 
-			bool has_material = **iterator;
+			bool has_material;
+			memcpy(&has_material, *iterator, sizeof(bool));
 			*iterator += sizeof(bool);
 
 			if (has_material)
@@ -163,7 +164,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator, GameObject* parent)
 				UID material_uid;
 				memcpy(&material_uid, *iterator, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
-				Material* material = App->resource_manager->UseMaterial(mesh_uid, new_child);
+				Material* material = App->resource_manager->UseMaterial(material_uid, new_child);
 				new_child->AddComponent(new AppliedMaterial(material));
 			}
 			

@@ -5,7 +5,7 @@
 #include <string>
 #include "Module.h"
 
-#define MAX_LOGS 10
+#define MAX_LOGS 100
 
 class Console : public Module
 {

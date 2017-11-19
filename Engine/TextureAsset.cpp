@@ -6,6 +6,9 @@
 TextureImportConfiguration::TextureImportConfiguration() : format (TF_NORMAL_FORMATS), tga_stamp(false), selected_compresion(4), dxt_format(DXT5), copresion_menu(true), jpg_quality(99), interlaced(false), rle(false)
 {}
 
+TextureImportConfiguration::TextureImportConfiguration(const TextureImportConfiguration & copy): format(copy.format), tga_stamp(copy.tga_stamp), copresion_menu(copy.copresion_menu), selected_compresion (copy.selected_compresion), dxt_format (copy.dxt_format), jpg_quality (copy.jpg_quality), interlaced (copy.interlaced), rle (copy.rle)
+{}
+
 TextureImportConfiguration::TextureImportConfiguration(const std::string & format) : format(TF_NORMAL_FORMATS), tga_stamp(false), selected_compresion(4), dxt_format(DXT5), copresion_menu(true), jpg_quality(99), interlaced(false), rle(false)
 {
 	if (format == "TGA" || format == "tga")
@@ -136,6 +139,9 @@ TextureLoadConfiguration::TextureLoadConfiguration(): offset_x(0), offset_y(0), 
 {
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_possible_anystropy);
 }
+
+TextureLoadConfiguration::TextureLoadConfiguration(const TextureLoadConfiguration & copy): offset_x(copy.offset_x), offset_y(copy.offset_y), mip_mapping(copy.mip_mapping), anysotropy(copy.anysotropy), max_anysotropy(copy.max_anysotropy), anysotropy_level(copy.anysotropy_level), alienify(copy.alienify), blur_average(copy.blur_average), blur_gaussian(copy.blur_gaussian), contrast(copy.contrast), blur_iterations(copy.blur_iterations), amount_of_contrast(copy.amount_of_contrast), equalize(copy.equalize), gamma_correction(copy.gamma_correction), gamma_correction_factor(copy.gamma_correction_factor), negative(copy.negative), noise(copy.noise), noise_tolerance(copy.noise_tolerance), pixelize(copy.pixelize), pixels_across(copy.pixels_across), sharpen(copy.sharpen), sharpening_factor(copy.sharpening_factor), sharpen_iterations(copy.sharpen_iterations), scaling(copy.scaling), scale_width(copy.scale_width), scale_height(copy.scale_height), scale_depth(copy.scale_depth), selected_filter(copy.selected_filter), scaling_filter(copy.scaling_filter)
+{}
 
 bool TextureLoadConfiguration::Config()
 {
@@ -376,7 +382,9 @@ TextureAsset::TextureAsset(Resource* resource, const ImportConfiguration* import
 {}
 
 TextureAsset::~TextureAsset()
-{}
+{
+	delete resource;
+}
 
 void TextureAsset::AddInstance(const Material * material)
 {
