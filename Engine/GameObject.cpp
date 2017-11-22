@@ -502,7 +502,6 @@ const MeshFilter * GameObject::GetMeshFilter() const
 void GameObject::DrawBoundingBoxes() const
 {
 	bounds.aabb_bounding_box.Draw(0.7f, 0.7f, 0.0f, 1.0f);
-//	bounds.obb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
 
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 		(*it)->DrawBoundingBoxes();
@@ -604,20 +603,19 @@ void GameObject::UpdateAABBsParents(const GameObject* go, std::vector<const AABB
 		return;
 	}
 
-	std::vector<const AABB*> aabbs;
-
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		if((*it)->IsRelative(go))
-			(*it)->UpdateAABBsParents(go, aabbs);
+			(*it)->UpdateAABBsParents(go, childs_aabbs);
 
 	bounds.aabb_bounding_box.SetNegativeInfinity();
 	math::vec max_point = GetMaxPos();
 	math::vec min_point = GetMinPos();
 	bounds.aabb_bounding_box.Enclose(max_point);
-	for (std::vector<const AABB*>::const_iterator it = aabbs.begin(); it != aabbs.end(); ++it)
-		bounds.aabb_bounding_box.Enclose(**it);
+	if (min_point.x != max_point.x || min_point.y != max_point.y || min_point.z != max_point.z)
+		bounds.aabb_bounding_box.Enclose(min_point);
 
-	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
+	for (std::vector<const AABB*>::const_iterator it = childs_aabbs.begin(); it != childs_aabbs.end(); ++it)
+		bounds.aabb_bounding_box.Enclose(**it);
 }
 
 void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)
