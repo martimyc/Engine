@@ -143,9 +143,16 @@ void SceneManager::AddPrefabAsNewGameObjects(GameObject * root)
 	focused->AddChild(new GameObject(*root));
 }
 
-void SceneManager::UpdateAABBs(const GameObject* go) const
+void SceneManager::DrawBoundingBoxes() const
 {
-	root->UpdateAABBs(go);
+	root->DrawBoundingBoxes();
+}
+
+const std::vector<const AABB*> SceneManager::UpdateAABBsParents(const GameObject* go) const
+{
+	std::vector<const AABB*> ret;
+	root->UpdateAABBsParents(go, ret);
+	return ret;
 }
 
 void SceneManager::AddEmptyGO()
