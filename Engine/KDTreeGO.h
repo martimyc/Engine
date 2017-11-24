@@ -69,16 +69,15 @@ class KDTreeGO
 {
 private:
 	KDTNodeGO* root;
-	AABB limits;
 
 	bool ReCalculate(const GameObject* new_game_object);
 public:
 	KDTreeGO();
 	~KDTreeGO();
 
-	bool AddGameObject(GameObject* new_game_object);
+	bool AddGameObject(const GameObject* new_game_object);
 
-	void UpdateGO(const GameObject* updated_go);
+	bool UpdateGO(const GameObject* updated_go);
 
 	void Draw() const;
 };

@@ -140,7 +140,11 @@ void SceneManager::AddPrefabToFocused(GameObject * root)
 
 void SceneManager::AddPrefabAsNewGameObjects(GameObject * root)
 {
-	focused->AddChild(new GameObject(*root));
+	GameObject* new_game_object = new GameObject(*root);
+	if (AddToKDT(new_game_object) != false)
+		focused->AddChild(new_game_object);
+	else
+		LOG("%s could not be added to the KD-Tree", root->GetName().c_str());
 }
 
 void SceneManager::UpdateAABBs(const GameObject* go) const

@@ -27,7 +27,7 @@ KDTNodeGO::KDTNodeGO(const AABB& limits) : partition_axis(NO_PARTITION)
 	childs[1] = nullptr;
 }
 
-KDTNodeGO::~KDTNodeGO()
+KDTNodeGO::~KDTNodeGO() //Dont think deleting gameobjects through tree is best
 {
 	delete limits;
 
@@ -36,8 +36,6 @@ KDTNodeGO::~KDTNodeGO()
 		delete childs[0];
 		delete childs[1];
 	}
-
-	//Dont think deleting gameobjects through tree is best
 }
 
 bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object, unsigned int& num_subdivisions)
@@ -368,6 +366,7 @@ bool KDTNodeGO::IsIn(const GameObject * new_game_object) const
 
 bool KDTNodeGO::AllIn(const GameObject * new_game_object) const
 {
+
 	if (limits->Contains(new_game_object->GetMaxPos()) && limits->Contains(new_game_object->GetMinPos()))
 		return true;
 	return false;
@@ -546,12 +545,18 @@ bool KDTreeGO::ReCalculate(const GameObject* new_game_object)
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	limits.Enclose(&new_game_object->GetWorldPosition(), 1);
+	limits.Enclose(new_game_object->GetMaxPos());
+	if(new_game_object->HasMeshFilter())
+		limits.Enclose(new_game_object->GetMinPos());
 
 	if (all_game_objects.size() > 0)
 	{
 		for (std::vector<const GameObject*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
-			limits.Enclose(&(*it)->GetWorldPosition(), 1);
+		{
+			limits.Enclose((*it)->GetMaxPos());
+			if ((*it)->HasMeshFilter())
+				limits.Enclose((*it)->GetMinPos());
+		}
 	}
 
 	root = new KDTNodeGO(limits);
@@ -579,10 +584,8 @@ bool KDTreeGO::ReCalculate(const GameObject* new_game_object)
 	return true;
 }
 
-bool KDTreeGO::AddGameObject(GameObject * new_game_object)
+bool KDTreeGO::AddGameObject(const GameObject * new_game_object)
 {
-	bool ret = true;
-
 	if (root->IsIn(new_game_object))
 	{
 		unsigned int num_subdivisions = 0;
@@ -593,18 +596,19 @@ bool KDTreeGO::AddGameObject(GameObject * new_game_object)
 		if (ReCalculate(new_game_object) == false)
 			return false;
 
-	return ret;
+	if (new_game_object->AddChildsToKDT(*this) == false)
+		return false;
+
+	return true;
 }
 
-void KDTreeGO::UpdateGO(const GameObject * updated_go)
+bool KDTreeGO::UpdateGO(const GameObject * updated_go)
 {
 	if (root->AllIn(updated_go))
-		root->UpdateGO(updated_go);
+		return root->UpdateGO(updated_go);
 	else
-	{
-		root->RemoveGameObject(updated_go);
-		ReCalculate(updated_go);
-	}
+		if(root->RemoveGameObject(updated_go))
+			return ReCalculate(updated_go);
 }
 
 void KDTreeGO::Draw() const

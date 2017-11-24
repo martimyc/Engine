@@ -15,6 +15,8 @@ class MeshFilter;
 class Material;
 class Mesh;
 class Camera;
+class KDTreeGO;
+
 namespace math
 {
 	class LineSegment;
@@ -151,6 +153,8 @@ public:
 	void PickGameObject(const LineSegment* ray, float ray_distance) const;
 
 	AABB* UpdateAABBs(const GameObject* go);
+
+	bool AddChildsToKDT(KDTreeGO& kdt) const;
 };
 
 #endif // !_GAME_OBJECT

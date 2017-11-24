@@ -2,8 +2,9 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Math\float3x3.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
-
 #include "MathGeoLib\src\Geometry\Triangle.h"
+
+#include "KDTreeGO.h"
 
 //components
 #include "Component.h"
@@ -609,6 +610,15 @@ AABB* GameObject::UpdateAABBs(const GameObject* go)
 	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
 	*/
 	return &bounds.aabb_bounding_box;
+}
+
+bool GameObject::AddChildsToKDT(KDTreeGO & kdt) const
+{
+	bool ret = true;
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		if (kdt.AddGameObject(*it) == false)
+			ret = false;
+	return ret;
 }
 
 void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)
