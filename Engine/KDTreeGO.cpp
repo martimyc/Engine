@@ -7,9 +7,8 @@
 #include "GameObject.h"
 #include "KDTreeGO.h"
 
-KDTNodeGO::KDTNodeGO(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION)
+KDTNodeGO::KDTNodeGO(const math::vec min_point, const math::vec max_point): partition_axis(NO_PARTITION), limits(min_point, max_point)
 {
-	limits = new AABB(min_point, max_point);
 	for(int i = 0; i < MAX_NUM_OBJECTS; i++)
 		game_objects[i] = nullptr;
 
@@ -17,9 +16,8 @@ KDTNodeGO::KDTNodeGO(const math::vec min_point, const math::vec max_point): part
 	childs[1] = nullptr;
 }
 
-KDTNodeGO::KDTNodeGO(const AABB& limits) : partition_axis(NO_PARTITION)
+KDTNodeGO::KDTNodeGO(const AABB& limits) : partition_axis(NO_PARTITION), limits(limits)
 {
-	this->limits = new AABB(limits);
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		game_objects[i] = nullptr;
 
@@ -29,8 +27,6 @@ KDTNodeGO::KDTNodeGO(const AABB& limits) : partition_axis(NO_PARTITION)
 
 KDTNodeGO::~KDTNodeGO() //Dont think deleting gameobjects through tree is best
 {
-	delete limits;
-
 	if (childs[0] != nullptr)
 	{
 		delete childs[0];
@@ -59,13 +55,8 @@ bool KDTNodeGO::SubDivide3D(const GameObject* new_game_object, unsigned int& num
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			if (game_objects[i]->GetWorldPosition()[partition_axis] <= median)
-				if (childs[0]->AddGameObject(game_objects[i], num_subdivisions) == false)
-					return false;
-
-			if (game_objects[i]->GetWorldPosition()[partition_axis] > median)
-				if (childs[1]->AddGameObject(game_objects[i], num_subdivisions) == false)
-					return false;
+			if (AddToCorrectChild(game_objects[i], num_subdivisions) == false)
+				return false;
 
 			game_objects[i] = nullptr;
 		}
@@ -98,24 +89,24 @@ void KDTNodeGO::SubDivide(PARTITION_AXIS partition_axis, float median)
 		this->median = median;
 		this->partition_axis = partition_axis;
 
-		math::vec min_point(limits->minPoint);
+		math::vec min_point(limits.minPoint);
 		math::vec max_point;
 
 		switch (partition_axis)
 		{
 		case X:
 			max_point.x = median;
-			max_point.y = limits->maxPoint.y;
-			max_point.z = limits->maxPoint.z;
+			max_point.y = limits.maxPoint.y;
+			max_point.z = limits.maxPoint.z;
 			break;
 		case Y:
-			max_point.x = limits->maxPoint.x;
+			max_point.x = limits.maxPoint.x;
 			max_point.y = median;
-			max_point.z = limits->maxPoint.z;
+			max_point.z = limits.maxPoint.z;
 			break;
 		case Z:
-			max_point.x = limits->maxPoint.x;
-			max_point.y = limits->maxPoint.y;
+			max_point.x = limits.maxPoint.x;
+			max_point.y = limits.maxPoint.y;
 			max_point.z = median;
 			break;
 		default:
@@ -125,23 +116,23 @@ void KDTNodeGO::SubDivide(PARTITION_AXIS partition_axis, float median)
 
 		childs[0] = new KDTNodeGO(min_point, max_point);
 
-		max_point = limits->maxPoint;
+		max_point = limits.maxPoint;
 
 		switch (partition_axis)
 		{
 		case X:
 			min_point.x = median;
-			min_point.y = limits->minPoint.y;
-			min_point.z = limits->minPoint.z;
+			min_point.y = limits.minPoint.y;
+			min_point.z = limits.minPoint.z;
 			break;
 		case Y:
-			min_point.x = limits->minPoint.x;
+			min_point.x = limits.minPoint.x;
 			min_point.y = median;
-			min_point.z = limits->minPoint.z;
+			min_point.z = limits.minPoint.z;
 			break;
 		case Z:
-			min_point.x = limits->minPoint.x;
-			min_point.y = limits->minPoint.y;
+			min_point.x = limits.minPoint.x;
+			min_point.y = limits.minPoint.y;
 			min_point.z = median;
 			break;
 		default:
@@ -242,20 +233,38 @@ bool KDTNodeGO::AddToCorrectChild(const GameObject * new_game_object, unsigned i
 {
 	bool ret = false;
 
-	math::vec max_pos(new_game_object->GetMaxPos());
-	math::vec min_pos(new_game_object->GetMinPos());
+	if (new_game_object->HasMeshFilter())
+	{
+		math::vec max_pos(new_game_object->GetMaxPos());
+		math::vec min_pos(new_game_object->GetMinPos());
 
-	if (min_pos[partition_axis] <= median)
-		if (childs[0]->AddGameObject(new_game_object, num_subdivisions) == false)
-			return false;
-		else
-			ret = true;
+		if (min_pos[partition_axis] < median)
+			if (childs[0]->AddGameObject(new_game_object, num_subdivisions) == false)
+				return false;
+			else
+				ret = true;
 
-	if (max_pos[partition_axis] > median)
-		if (childs[1]->AddGameObject(new_game_object, num_subdivisions) == false)
-			return false;
-		else
-			ret = true;
+		if (max_pos[partition_axis] > median)
+			if (childs[1]->AddGameObject(new_game_object, num_subdivisions) == false)
+				return false;
+			else
+				ret = true;
+	}
+	else
+	{
+		if (new_game_object->GetWorldPosition()[partition_axis] <= median)
+			if (childs[0]->AddGameObject(new_game_object, num_subdivisions) == false)
+				return false;
+			else
+				ret = true;
+
+		if (new_game_object->GetWorldPosition()[partition_axis] > median)
+			if (childs[1]->AddGameObject(new_game_object, num_subdivisions) == false)
+				return false;
+			else
+				ret = true;
+	}
+
 
 	if (ret == false)
 		LOG("Gameobject does not intersect with any child");
@@ -354,11 +363,11 @@ bool KDTNodeGO::IsIn(const GameObject * new_game_object) const
 	math::vec max_pos(new_game_object->GetMaxPos());
 	math::vec min_pos(new_game_object->GetMinPos());
 
-	if (max_pos.x < limits->minPoint.x || min_pos.x > limits->maxPoint.x)
+	if (max_pos.x < limits.minPoint.x || min_pos.x > limits.maxPoint.x)
 		return false;
-	if (max_pos.y < limits->minPoint.y || min_pos.y > limits->maxPoint.y)
+	if (max_pos.y < limits.minPoint.y || min_pos.y > limits.maxPoint.y)
 		return false;
-	if (max_pos.z < limits->minPoint.z || min_pos.z > limits->maxPoint.z)
+	if (max_pos.z < limits.minPoint.z || min_pos.z > limits.maxPoint.z)
 		return false;
 
 	return true;
@@ -366,14 +375,18 @@ bool KDTNodeGO::IsIn(const GameObject * new_game_object) const
 
 bool KDTNodeGO::AllIn(const GameObject * new_game_object) const
 {
+	math::vec max_point(new_game_object->GetMaxPos());
+	math::vec min_point(new_game_object->GetMinPos());
 
-	if (limits->Contains(new_game_object->GetMaxPos()) && limits->Contains(new_game_object->GetMinPos()))
+	if (limits.Contains(max_point) && limits.Contains(min_point)) //TODO sphere and oobb checks when those are done
 		return true;
 	return false;
 }
 
 void KDTNodeGO::Draw() const
 {
+	limits.Draw(1.0f, 0.0f, 1.0f, 1.0f);
+
 	if (partition_axis != NO_PARTITION)
 	{
 		if (partition_axis == X)
@@ -390,22 +403,22 @@ void KDTNodeGO::Draw() const
 		switch (partition_axis)
 		{
 		case X:
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.minPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.maxPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.maxPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.minPoint.z);
 			break;
 		case Y:
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.minPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.maxPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.maxPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.minPoint.z);
 			break;
 		case Z:
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.minPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.maxPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.maxPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.minPoint.y, median);
 			break;
 		default:
 			break;
@@ -422,25 +435,25 @@ void KDTNodeGO::Draw() const
 		switch (partition_axis)
 		{
 		case X:
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.minPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.maxPoint.z);
 
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.maxPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.minPoint.z);
 			break;
 		case Y:
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.minPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.maxPoint.z);
 
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.maxPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.minPoint.z);
 			break;
 		case Z:
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.maxPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.minPoint.y, median);
 
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.minPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.maxPoint.y, median);
 			break;
 		default:
 			break;
@@ -586,7 +599,7 @@ bool KDTreeGO::ReCalculate(const GameObject* new_game_object)
 
 bool KDTreeGO::AddGameObject(const GameObject * new_game_object)
 {
-	if (root->IsIn(new_game_object))
+	if (root->AllIn(new_game_object))
 	{
 		unsigned int num_subdivisions = 0;
 		if (root->AddGameObject(new_game_object, num_subdivisions) == false)

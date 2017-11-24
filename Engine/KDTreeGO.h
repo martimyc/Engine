@@ -2,7 +2,7 @@
 #define KDTREE_GO
 
 #include <vector>
-#include "MathGeoLib\src\MathGeoLibFwd.h"
+#include "MathGeoLib\src\Geometry\AABB.h"
 
 #define MAX_NUM_OBJECTS 3
 #define MAX_SUBDIVISIONS 5
@@ -20,7 +20,7 @@ enum PARTITION_AXIS
 class KDTNodeGO
 {
 private:
-	AABB* limits;
+	AABB limits;
 	const GameObject* game_objects[MAX_NUM_OBJECTS];
 
 	//Partition

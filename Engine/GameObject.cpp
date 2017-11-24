@@ -339,7 +339,13 @@ math::vec GameObject::GetMaxPos() const
 
 	math::float4 max_mesh_point(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ(), 1.0f);
 	max_mesh_point = world_transform->GetTransformMatrix().Transposed() * max_mesh_point;
-	return math::vec(max_mesh_point.x, max_mesh_point.y, max_mesh_point.z);
+
+	math::vec ret;
+	ret.x = std::round(max_mesh_point.x * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.y = std::round(max_mesh_point.y * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.z = std::round(max_mesh_point.z * DECIMAL_NUM) / DECIMAL_NUM;
+
+	return ret;
 }
 
 math::vec GameObject::GetMinPos() const
@@ -351,7 +357,13 @@ math::vec GameObject::GetMinPos() const
 
 	math::float4 min_mesh_point(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ(), 1.0f);
 	min_mesh_point = world_transform->GetTransformMatrix().Transposed() * min_mesh_point;
-	return math::vec(min_mesh_point.x, min_mesh_point.y, min_mesh_point.z);
+
+	math::vec ret;
+	ret.x = std::round(min_mesh_point.x * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.y = std::round(min_mesh_point.y * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.z = std::round(min_mesh_point.z * DECIMAL_NUM) / DECIMAL_NUM;
+
+	return ret;
 }
 
 void GameObject::GetLocalPosX(int & x) const

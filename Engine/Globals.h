@@ -7,6 +7,7 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include <cmath>
 
 #define LOG(format, ...) _log(__FILE__, __LINE__, format, __VA_ARGS__)
 
@@ -49,7 +50,7 @@ enum UPDATE_STATUS
 
 //openGL context versios in use
 #define OPENGL_CONTEXT_MINOR_VERSION 1
-#define OPENGL_CONTEXT_MAJOR_VERSION 2
+#define OPENGL_CONTEXT_MAJOR_VERSION 3
 
 //dirs
 #define LIBRARY_TEXTURES_FOLDER "\\Library\\Textures"
@@ -66,5 +67,7 @@ enum UPDATE_STATUS
 #define FORMAT_PREFAB {0x50, 0x52, 0x45} //PRE
 
 #define SIZE_OF_UID 16
+
+#define DECIMAL_NUM 4
 
 #endif //_GLOBALS
