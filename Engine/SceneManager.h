@@ -82,7 +82,8 @@ public:
 	void AddPrefabToFocused(GameObject* root);
 	void AddPrefabAsNewGameObjects(GameObject* root);
 
-	void UpdateAABBs(const GameObject* go) const;
+	void DrawBoundingBoxes() const;
+	const std::vector<const AABB*> UpdateAABBsParents(const GameObject* go) const;
 
 	void AddEmptyGO();
 

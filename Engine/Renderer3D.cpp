@@ -246,7 +246,6 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 				if (App->camera->DoFrustumCulling(to_draw))
 				{
-					to_draw->DrawBoundingBoxes();	//First bounding boxes, which don't need the transform to be applied
 					math::float4x4 transform(to_draw->GetWorldTransform());
 					glMultMatrixf(&transform.At(0, 0));
 
@@ -266,11 +265,14 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 				material_in_use->DisableDraw();
 		}
 	}
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(opengl_view_matrix);
 
 	//DebugTextures
 	//App->resource_manager->DebugTextures();
+
+	App->scene_manager->DrawBoundingBoxes();
 
 	App->scene_manager->DrawKDT();
 

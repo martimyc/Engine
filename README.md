@@ -2,7 +2,7 @@
 
 This code is under the [GNU General Public License v3.0](https://github.com/martimyc/Engine/blob/master/LICENSE).
 
-Created by [Marc Latorre](https://github.com/marclafr) and [Marti Maj√≥](https://github.com/martimyc).
+Created by [Marc Latorre](https://github.com/marclafr) and [Marti Maj√É¬≥](https://github.com/martimyc).
 
 [Repository](https://github.com/martimyc/Engine).
 
@@ -12,6 +12,20 @@ Created by [Marc Latorre](https://github.com/marclafr) and [Marti Maj√≥](https:/
 - Docking: We need to save/load the docking positions yet. For now you can dock the windows that are in the tabbar from the start inside your window, however if you restart the MARs Engine or resize the window, the docking windows will return in its original position. We will solve this issue in the next version.
 - Vertex KDTree.
 
+## Incomplete/Problems:
+
+### Not finished: 
+
+#### Time Manager: 
+
+Timers work (window Timers), imported scenes are serialitzated to be loaded later, but GameObjects don't Update acording.
+
+#### Resource manager (see below what is finished): 
+
+- You can't manage files and folders: create / remove / rename yet.
+- Upon start, all resources not managed inside Assets aren't generated in Library yet.
+- Importing options can't be changed from the editor from the inspector yet.
+
 ## Changes:
 
 - MD5 UIDs
@@ -20,19 +34,19 @@ Created by [Marc Latorre](https://github.com/marclafr) and [Marti Maj√≥](https:/
 
 - Inspector show all properties for each component on selected GameObject.
 
-- You can pick objects by clicking the mouse.
+- You can pick objects by clicking the mouse, BUT: You must calculate the KDTree first, or it won't work.
 
 - Camera component created.
 
 - All meshes use a bounding volume (AABB) and can be discarded using Frustum Culling.
 
-- Meshes and Textures are saved to our own format (.mm) under ìLibraryî folder.
+- Meshes and Textures are saved to our own format (.mm) under ‚ÄúLibrary‚Äù folder.
 
 
 ### Resource Management:
 
-- There is an ìAssetî window that shows all user assets.
-- Every Asset stores itís importing options.
+- There is an ‚ÄúAsset‚Äù window that shows all user assets.
+- Every Asset stores it‚Äôs importing options.
 
 ## Controls
 
@@ -54,7 +68,7 @@ You have some samples to test the Engine.
 - Right click turns on WASD fps-like movement and R/E (up, down)
 - Mouse wheel zooms in and out
 - Alt+Left click orbits the object
-- Pressing Fù focus the camera around the selected geometry
+- Pressing F¬ù focus the camera around the selected geometry
 
 ### Inspector
 
