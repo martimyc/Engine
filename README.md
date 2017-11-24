@@ -2,7 +2,7 @@
 
 This code is under the [GNU General Public License v3.0](https://github.com/martimyc/Engine/blob/master/LICENSE).
 
-Created by [Marc Latorre](https://github.com/marclafr) and [Marti Maj√≥](https://github.com/martimyc).
+Created by [Marc Latorre](https://github.com/marclafr) and [Marti Maj√É¬≥](https://github.com/martimyc).
 
 [Repository](https://github.com/martimyc/Engine).
 
@@ -26,10 +26,6 @@ Timers work (window Timers), imported scenes are serialitzated to be loaded late
 - Upon start, all resources not managed inside Assets aren't generated in Library yet.
 - Importing options can't be changed from the editor from the inspector yet.
 
-#### AABB's problem: 
-
-Update from parents don't work if you don't update the child later.
-
 ## Changes:
 
 - MD5 UIDs
@@ -44,13 +40,13 @@ Update from parents don't work if you don't update the child later.
 
 - All meshes use a bounding volume (AABB) and can be discarded using Frustum Culling.
 
-- Meshes and Textures are saved to our own format (.mm) under ìLibraryî folder.
+- Meshes and Textures are saved to our own format (.mm) under ‚ÄúLibrary‚Äù folder.
 
 
 ### Resource Management:
 
-- There is an ìAssetî window that shows all user assets.
-- Every Asset stores itís importing options.
+- There is an ‚ÄúAsset‚Äù window that shows all user assets.
+- Every Asset stores it‚Äôs importing options.
 
 ## Controls
 
@@ -72,7 +68,7 @@ You have some samples to test the Engine.
 - Right click turns on WASD fps-like movement and R/E (up, down)
 - Mouse wheel zooms in and out
 - Alt+Left click orbits the object
-- Pressing Fù focus the camera around the selected geometry
+- Pressing F¬ù focus the camera around the selected geometry
 
 ### Inspector
 
