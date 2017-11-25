@@ -372,6 +372,15 @@ public:
 		@see class LCG, RandomPointInside(), RandomVertex(), Edge(), class LineSegment, IsDegenerate(). */
 	vec RandomPointOnEdge(LCG &rng) const;
 
+	//Extra
+	const vec& GetMaxPos() const;
+	const vec& GetMinPos() const;
+	void Infinite();
+
+	bool operator == (const Triangle& t) const;
+
+	void Draw(float red, float green, float blue, float alpha) const;
+
 #ifdef MATH_ENABLE_STL_SUPPORT
 	/// Returns a human-readable representation of this Line. Most useful for debugging purposes.
 	std::string ToString() const;

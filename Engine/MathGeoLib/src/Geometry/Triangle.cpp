@@ -15,6 +15,7 @@
 /** @file Triangle.cpp
 	@author Jukka Jylänki
 	@brief Implementation for the Triangle geometry object. */
+#include "..\..\..\glew\include\GL\glew.h"
 #include "Triangle.h"
 #include "../Math/MathFunc.h"
 #include "../Math/float2.h"
@@ -1912,6 +1913,90 @@ vec Triangle::RandomPointOnEdge(LCG &rng) const
 		return b + (c-b) * r / bc;
 	r -= bc;
 	return c + (a-c) * r / ca;
+}
+
+const vec & Triangle::GetMaxPos() const
+{
+	math::vec ret(a);
+
+	//X
+	if (b.x > ret.x)
+		ret.x = b.x;
+	if (c.x > ret.x)
+		ret.x = c.x;
+
+	//Y
+	if (b.y > ret.y)
+		ret.y = b.y;
+	if (c.y > ret.y)
+		ret.y = c.y;
+
+	//Z
+	if (b.z > ret.z)
+		ret.z = b.z;
+	if (c.z > ret.z)
+		ret.z = c.z;
+
+	return ret;
+}
+
+const vec & Triangle::GetMinPos() const
+{
+	math::vec ret(a);
+
+	//X
+	if (b.x < ret.x)
+		ret.x = b.x;
+	if (c.x < ret.x)
+		ret.x = c.x;
+
+	//Y
+	if (b.y < ret.y)
+		ret.y = b.y;
+	if (c.y < ret.y)
+		ret.y = c.y;
+
+	//Z
+	if (b.z < ret.z)
+		ret.z = b.z;
+	if (c.z < ret.z)
+		ret.z = c.z;
+
+	return ret;
+}
+
+void Triangle::Infinite()
+{
+	a = math::vec::inf;
+	b = math::vec::inf;
+	c = math::vec::inf;
+}
+
+bool Triangle::operator==(const Triangle & t) const
+{
+	return ((math::float3)a == t.a && (math::float3)b == t.b && (math::float3)c == t.c);
+}
+
+void Triangle::Draw(float red, float green, float blue, float alpha) const
+{
+	glLineWidth(3.0f);
+
+	glColor4f(red, green, blue, alpha);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(a.x, a.y, a.z);
+	glVertex3f(b.x, b.y, b.z);
+
+	glVertex3f(b.x, b.y, b.z);
+	glVertex3f(c.x, c.y, c.z);
+
+	glVertex3f(c.x, c.y, c.z);
+	glVertex3f(a.x, a.y, a.z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 Triangle operator *(const float3x3 &transform, const Triangle &triangle)

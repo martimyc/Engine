@@ -543,9 +543,6 @@
     <ClInclude Include="KDTreeGO.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="KDTreeVertex.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClInclude>
@@ -604,6 +601,9 @@
       <Filter>Sources\3rd Party\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTreeTriangle.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -827,9 +827,6 @@
     <ClCompile Include="KDTreeGO.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="KDTreeVertex.cpp">
-      <Filter>Sources\Containers</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
@@ -900,6 +897,9 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="KDTreeTriangle.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

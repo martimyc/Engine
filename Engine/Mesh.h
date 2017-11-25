@@ -8,7 +8,7 @@
 
 class GameObject;
 class AppliedMaterial;
-class KDTreeVertex;
+class KDTreeTriangle;
 
 class Vertex;
 
@@ -40,7 +40,7 @@ struct MeshSource
 
 	//-------
 
-	KDTreeVertex* vertex_kdt = nullptr;
+	KDTreeTriangle* triangle_kdt = nullptr;
 
 	MeshSource();
 	~MeshSource();
@@ -92,13 +92,13 @@ struct MeshSource
 	float GetMaxY() const;
 	float GetMaxZ() const;
 
-	Vertex GetMinXVertex() const;
-	Vertex GetMinYVertex() const;
-	Vertex GetMinZVertex() const;
+	math::vec GetMinXVertex() const;
+	math::vec GetMinYVertex() const;
+	math::vec GetMinZVertex() const;
 
-	Vertex GetMaxXVertex() const;
-	Vertex GetMaxYVertex() const;
-	Vertex GetMaxZVertex() const;
+	math::vec GetMaxXVertex() const;
+	math::vec GetMaxYVertex() const;
+	math::vec GetMaxZVertex() const;
 
 	bool CheckTriangleCollision(const LineSegment * ray, float* distance) const;
 };
@@ -161,13 +161,13 @@ public:
 	float GetMaxY() const;
 	float GetMaxZ() const;
 
-	Vertex GetMinXVertex() const;
-	Vertex GetMinYVertex() const;
-	Vertex GetMinZVertex() const;
+	math::vec GetMinXVertex() const;
+	math::vec GetMinYVertex() const;
+	math::vec GetMinZVertex() const;
 
-	Vertex GetMaxXVertex() const;
-	Vertex GetMaxYVertex() const;
-	Vertex GetMaxZVertex() const;
+	math::vec GetMaxXVertex() const;
+	math::vec GetMaxYVertex() const;
+	math::vec GetMaxZVertex() const;
 
 	//bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
 

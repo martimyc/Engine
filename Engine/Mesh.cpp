@@ -4,7 +4,7 @@
 #include "MathGeoLib\src\Geometry\Triangle.h"
 
 //Containers
-#include "KDTreeVertex.h"
+#include "KDTreeTriangle.h"
 
 //Modules
 #include "Globals.h"
@@ -131,8 +131,6 @@ void MeshSource::Inspector()
 	ImGui::Text("Vertices: %i", num_vertices);
 	ImGui::Text("Indices: %i", num_indices);
 	ImGui::Text("UV channels: %i", num_uv_channels);
-
-	int size = sizeof(*vertex_kdt);
 
 	if (has_vertex_colors)
 		ImGui::Text("Has %i Vertex Color channels", num_color_channels);
@@ -298,23 +296,23 @@ void MeshSource::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat **
 
 void MeshSource::DrawKDT() const
 {
-	if (vertex_kdt != nullptr)
-		vertex_kdt->Draw();
+	if (triangle_kdt != nullptr)
+		triangle_kdt->Draw();
 }
 
 void MeshSource::RecalculateKDT()
 {
-	if (vertex_kdt != nullptr)
-		delete vertex_kdt;
+	if (triangle_kdt != nullptr)
+		delete triangle_kdt;
 
-	vertex_kdt = new KDTreeVertex();
-	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
+	triangle_kdt = new KDTreeTriangle();
+	triangle_kdt->AddTriangles(vertices, indices, num_indices);
 }
 
 bool MeshSource::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
 {
-	if (vertex_kdt != nullptr)
-		return vertex_kdt->RayCollisionKDT(ray, triangle);
+	if (triangle_kdt != nullptr)
+		return triangle_kdt->RayCollisionKDT(ray, triangle);
 	return false;
 }
 
@@ -384,7 +382,7 @@ float MeshSource::GetMaxZ() const
 	return max;
 }
 
-Vertex MeshSource::GetMinXVertex() const
+math::vec MeshSource::GetMinXVertex() const
 {
 	int min = 0.0f;
 
@@ -392,10 +390,10 @@ Vertex MeshSource::GetMinXVertex() const
 		if (min < vertices[i * 3])
 			min = i;
 
-	return 	Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Vertex MeshSource::GetMinYVertex() const
+math::vec MeshSource::GetMinYVertex() const
 {
 	int min = 0.0f;
 
@@ -403,10 +401,10 @@ Vertex MeshSource::GetMinYVertex() const
 		if (min < vertices[i * 3 + 1])
 			min = i;
 
-	return 	Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Vertex MeshSource::GetMinZVertex() const
+math::vec MeshSource::GetMinZVertex() const
 {
 	int min = 0.0f;
 
@@ -414,10 +412,10 @@ Vertex MeshSource::GetMinZVertex() const
 		if (min < vertices[i * 3 + 2])
 			min = i;
 
-	return 	Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Vertex MeshSource::GetMaxXVertex() const
+math::vec MeshSource::GetMaxXVertex() const
 {
 	int max = 0.0f;
 
@@ -425,10 +423,10 @@ Vertex MeshSource::GetMaxXVertex() const
 		if (max > vertices[i * 3])
 			max = i;
 
-	return 	Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-Vertex MeshSource::GetMaxYVertex() const
+math::vec MeshSource::GetMaxYVertex() const
 {
 	int max = 0.0f;
 
@@ -436,10 +434,10 @@ Vertex MeshSource::GetMaxYVertex() const
 		if (max > vertices[i * 3 + 1])
 			max = i;
 
-	return 	Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-Vertex MeshSource::GetMaxZVertex() const
+math::vec MeshSource::GetMaxZVertex() const
 {
 	int max = 0.0f;
 
@@ -447,7 +445,7 @@ Vertex MeshSource::GetMaxZVertex() const
 		if (max > vertices[i * 3 + 2])
 			max = i;
 
-	return 	Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
 /*bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
@@ -751,52 +749,52 @@ float Mesh::GetMaxZ() const
 	return 0.0f;
 }
 
-Vertex Mesh::GetMinXVertex() const
+math::vec Mesh::GetMinXVertex() const
 {
 	if (source != nullptr)
 		return source->GetMinXVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Vertex(0.0f, 0.0f, 0.0f);
+	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
-Vertex Mesh::GetMinYVertex() const
+math::vec Mesh::GetMinYVertex() const
 {
 	if (source != nullptr)
 		return source->GetMinYVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Vertex(0.0f, 0.0f, 0.0f);
+	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
-Vertex Mesh::GetMinZVertex() const
+math::vec Mesh::GetMinZVertex() const
 {
 	if (source != nullptr)
 		return source->GetMinZVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Vertex(0.0f, 0.0f, 0.0f);
+	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
-Vertex Mesh::GetMaxXVertex() const
+math::vec Mesh::GetMaxXVertex() const
 {
 	if (source != nullptr)
 		return source->GetMaxXVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Vertex(0.0f, 0.0f, 0.0f);
+	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
-Vertex Mesh::GetMaxYVertex() const
+math::vec Mesh::GetMaxYVertex() const
 {
 	if (source != nullptr)
 		return source->GetMaxYVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Vertex(0.0f, 0.0f, 0.0f);
+	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
-Vertex Mesh::GetMaxZVertex() const
+math::vec Mesh::GetMaxZVertex() const
 {
 	if (source != nullptr)
 		return source->GetMaxZVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Vertex(0.0f, 0.0f, 0.0f);
+	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
 /*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
