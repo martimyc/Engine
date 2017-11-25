@@ -74,6 +74,8 @@ public:
 	bool UpdateGO(const Geo::Vertex* updated_go);
 
 	void DeleteHirarchy();
+
+	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
 };
 
 class KDTreeVertex
@@ -87,13 +89,15 @@ public:
 	~KDTreeVertex();
 
 	bool AddVertex(const Geo::Vertex* new_vertex);
-	bool AddVertices(const GLfloat*const new_vertices, int num_vertices, const GLuint*const new_indices, int num_indices);
+	bool AddVertices(const float*const new_vertices, int num_vertices, const unsigned int*const new_indices, int num_indices);
 
 	bool RemoveVertex(const Geo::Vertex* new_vertex);
 
 	bool UpdateGO(const Geo::Vertex* updated_go);
 
 	void Draw() const;
+
+	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
 };
 
 namespace KDTV

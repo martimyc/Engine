@@ -3,6 +3,7 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\Triangle.h"
 #include "Globals.h"
 #include "Mesh.h"
 #include "KDTreeVertex.h"
@@ -506,13 +507,13 @@ bool KDTNodeVertex::AddToCorrectChild(const Geo::Vertex * new_vertex, unsigned i
 	math::vec min_pos(new_vertex->GetMinPos());
 
 	if (min_pos[partition_axis] < median)
-		if (childs[0]->AddGameObject(new_vertex, num_subdivisions) == false)
+		if (childs[0]->AddVertex(new_vertex, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
 
 	if (max_pos[partition_axis] > median)
-		if (childs[1]->AddGameObject(new_vertex, num_subdivisions) == false)
+		if (childs[1]->AddVertex(new_vertex, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
@@ -539,7 +540,7 @@ bool KDTNodeVertex::RemoveVertex(const Geo::Vertex * new_vertex)
 			}
 	}
 	else
-		if (childs[0]->RemoveGameObject(new_vertex) || childs[1]->RemoveGameObject(new_vertex))
+		if (childs[0]->RemoveVertex(new_vertex) || childs[1]->RemoveVertex(new_vertex))
 			ret = true;
 
 	if (partition_axis == Z && Empty())
@@ -762,7 +763,7 @@ bool KDTNodeVertex::UpdateGO(const Geo::Vertex * updated_go)
 
 		if (childs[0]->AllIn(updated_go) == false || childs[1]->AllIn(updated_go) == false)
 		{
-			RemoveGameObject(updated_go);
+			RemoveVertex(updated_go);
 			unsigned int num_subdivisions = 0;
 			return AddToCorrectChild(updated_go, num_subdivisions);
 		}
@@ -786,6 +787,42 @@ void KDTNodeVertex::DeleteHirarchy()
 	partition_axis = NO_PARTITION;
 	DELETE_PTR(childs[0]);
 	DELETE_PTR(childs[1]);
+}
+
+
+bool KDTNodeVertex::RayCollisionKDT(const LineSegment * ray, Triangle& triangle) const
+{
+	bool ret = false;
+	if (partition_axis == NO_PARTITION)
+	{
+		if (vertices[0] == nullptr)
+			return false;
+		else
+		{
+			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+			{
+				if (vertices[i] != nullptr)
+				{
+					if (vertices[i]->CheckCollision(ray, triangle))
+						ret = true;
+				}
+				else
+					return false;
+			}
+		}
+	}
+	else
+	{
+		if (childs[0] != nullptr)
+		{
+			if (childs[0]->RayCollisionKDT(ray, triangle))
+				ret = true;
+			if (childs[1]->RayCollisionKDT(ray, triangle))
+				ret = true;
+		}
+	}
+
+	return ret;
 }
 
 KDTreeVertex::KDTreeVertex()
@@ -824,7 +861,7 @@ bool KDTreeVertex::ReCalculate(const Geo::Vertex* new_vertex)
 	root = new KDTNodeVertex(limits);
 
 	unsigned int num_subdivisions = 0;
-	if (root->AddGameObject(new_vertex, num_subdivisions) == false)
+	if (root->AddVertex(new_vertex, num_subdivisions) == false)
 	{
 		LOG("New Geo::Vertex at '%f, %f, %f' could not be added to KDT after recalculating", new_vertex->vertex.x, new_vertex->vertex.y, new_vertex->vertex.z);
 		return false;
@@ -835,7 +872,7 @@ bool KDTreeVertex::ReCalculate(const Geo::Vertex* new_vertex)
 		for (std::vector<const Geo::Vertex*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
 		{
 			num_subdivisions = 0;
-			if (root->AddGameObject(*it, num_subdivisions) == false)
+			if (root->AddVertex(*it, num_subdivisions) == false)
 			{
 				LOG("New Geo::Vertex at '%f, %f, %f' could not be re-added to KDT after recalculating", new_vertex->vertex.x, new_vertex->vertex.y, new_vertex->vertex.z);
 				return false;
@@ -851,7 +888,7 @@ bool KDTreeVertex::AddVertex(const Geo::Vertex * new_vertex)
 	if (root->AllIn(new_vertex))
 	{
 		unsigned int num_subdivisions = 0;
-		if (root->AddGameObject(new_vertex, num_subdivisions) == false)
+		if (root->AddVertex(new_vertex, num_subdivisions) == false)
 			return false;
 	}
 	else
@@ -861,7 +898,7 @@ bool KDTreeVertex::AddVertex(const Geo::Vertex * new_vertex)
 	return true;
 }
 
-bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_vertices, const GLuint * const new_indices, int num_indices)
+bool KDTreeVertex::AddVertices(const float*const new_vertices, int num_vertices, const unsigned int*const new_indices, int num_indices)
 {
 	std::vector<Geo::Vertex*> all_vertices;
 
@@ -896,8 +933,9 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 
 	if (all_vertices.size() > 0)
 	{
+		unsigned int num_subdivisions = 0;
 		for (std::vector<Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
-			if (root->AddVertex(*it) == false)
+			if (root->AddVertex(*it, num_subdivisions) == false)
 			{
 				LOG("Vertex: '%f, %f, %f' could not be added to KDT", (*it)->vertex.x, (*it)->vertex.y, (*it)->vertex.z);
 				return false;
@@ -917,13 +955,18 @@ bool KDTreeVertex::UpdateGO(const Geo::Vertex * updated_go)
 	if (root->AllIn(updated_go))
 		return root->UpdateGO(updated_go);
 	else
-		if (root->RemoveGameObject(updated_go))
+		if (root->RemoveVertex(updated_go))
 			return ReCalculate(updated_go);
 }
 
 void KDTreeVertex::Draw() const
 {
 	root->Draw();
+}
+
+bool KDTreeVertex::RayCollisionKDT(const LineSegment * ray, Triangle& triangle) const
+{
+	return root->RayCollisionKDT(ray, triangle);
 }
 
 //Subdivide priority queue operators
