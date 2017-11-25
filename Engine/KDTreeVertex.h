@@ -2,14 +2,18 @@
 #define KDTREE_VERTEX
 
 #include <vector>
+#include "MathGeoLib\src\MathGeoLibFwd.h"
+#include "MathGeoLib\src\Math\float3.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "Vertex.h"
 
 #define MAX_NUM_OBJECTS 3
 #define MAX_SUBDIVISIONS 5
 
-namespace Geo
+namespace math
 {
-	class Vertex;
+	class Triangle;
+	class LineSegment;
 }
 
 enum PARTITION_AXIS
@@ -24,7 +28,7 @@ class KDTNodeVertex
 {
 private:
 	AABB limits;
-	const Geo::Vertex* vertices[MAX_NUM_OBJECTS];
+	Vertex vertices[MAX_NUM_OBJECTS];
 
 	//Partition
 	PARTITION_AXIS partition_axis;
@@ -37,45 +41,45 @@ public:
 	~KDTNodeVertex();
 
 private:
-	bool SubDivide3D(const Geo::Vertex* new_vertex, unsigned int& num_subdivisions);
+	bool SubDivide3D(const Vertex& new_vertex, unsigned int& num_subdivisions);
 
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
 	void SubDivide(PARTITION_AXIS partition_axis, float median);
 
-	float FindBestMedian(PARTITION_AXIS partition_axis, const Geo::Vertex* new_vertex) const;
+	float FindBestMedian(PARTITION_AXIS partition_axis, const Vertex& new_vertex) const;
 
-	float FindBestMedianX(const Geo::Vertex* new_vertex) const;
+	float FindBestMedianX(const Vertex& new_vertex) const;
 
-	float FindBestMedianY(const Geo::Vertex* new_vertex) const;
+	float FindBestMedianY(const Vertex& new_vertex) const;
 
-	float FindBestMedianZ(const Geo::Vertex* new_vertex) const;
+	float FindBestMedianZ(const Vertex& new_vertex) const;
 
-	bool AllSamePos(const Geo::Vertex* new_vertex) const;
+	bool AllSamePos(const Vertex& new_vertex) const;
 
 	void ReArrange();
 
 	bool Empty() const;
 
-	bool AddToCorrectChild(const Geo::Vertex* new_vertex, unsigned int& num_subdivisions);
+	bool AddToCorrectChild(const Vertex& new_vertex, unsigned int& num_subdivisions);
 
 public:
-	bool AddVertex(const Geo::Vertex* new_vertex, unsigned int& num_subdivisions);
+	bool AddVertex(const Vertex& new_vertex, unsigned int& num_subdivisions);
 
-	bool RemoveVertex(const Geo::Vertex* new_vertex);
+	bool RemoveVertex(const Vertex& new_vertex);
 
-	void GetGameObjects(std::vector<const Geo::Vertex*>& vec) const;
+	void GetVertices(std::vector<Vertex>& vec) const;
 
-	bool IsIn(const Geo::Vertex* new_vertex) const;
-	bool AllIn(const Geo::Vertex* new_vertex) const;
+	bool IsIn(const Vertex& new_vertex) const;
+	bool AllIn(const Vertex& new_vertex) const;
 
 	void Draw() const;
 
-	bool UpdateGO(const Geo::Vertex* updated_go);
+	bool UpdateGO(const Vertex& updated_go);
 
 	void DeleteHirarchy();
 
-	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
+	bool RayCollisionKDT(const math::LineSegment* ray, math::Triangle& triangle) const;
 };
 
 class KDTreeVertex
@@ -83,17 +87,11 @@ class KDTreeVertex
 private:
 	KDTNodeVertex* root;
 
-	bool ReCalculate(const Geo::Vertex* new_vertex);
 public:
 	KDTreeVertex();
 	~KDTreeVertex();
 
-	bool AddVertex(const Geo::Vertex* new_vertex);
 	bool AddVertices(const float*const new_vertices, int num_vertices, const unsigned int*const new_indices, int num_indices);
-
-	bool RemoveVertex(const Geo::Vertex* new_vertex);
-
-	bool UpdateGO(const Geo::Vertex* updated_go);
 
 	void Draw() const;
 
@@ -105,32 +103,32 @@ namespace KDTV
 	//Subdivide priority queue operators
 	struct CompareMaxPositionsX
 	{
-		bool operator()(const Geo::Vertex * go1, const Geo::Vertex * go2);
+		bool operator()(const Vertex& go1, const Vertex& go2);
 	};
 
 	struct CompareMaxPositionsY
 	{
-		bool operator()(const Geo::Vertex * go1, const Geo::Vertex * go2);
+		bool operator()(const Vertex& go1, const Vertex& go2);
 	};
 
 	struct CompareMaxPositionsZ
 	{
-		bool operator()(const Geo::Vertex * go1, const Geo::Vertex * go2);
+		bool operator()(const Vertex& go1, const Vertex& go2);
 	};
 
 	struct CompareMinPositionsX
 	{
-		bool operator()(const Geo::Vertex * go1, const Geo::Vertex * go2);
+		bool operator()(const Vertex& go1, const Vertex& go2);
 	};
 
 	struct CompareMinPositionsY
 	{
-		bool operator()(const Geo::Vertex * go1, const Geo::Vertex * go2);
+		bool operator()(const Vertex& go1, const Vertex& go2);
 	};
 
 	struct CompareMinPositionsZ
 	{
-		bool operator()(const Geo::Vertex * go1, const Geo::Vertex * go2);
+		bool operator()(const Vertex& go1, const Vertex& go2);
 	};
 }
 #endif // !KDTREE_VERTEX

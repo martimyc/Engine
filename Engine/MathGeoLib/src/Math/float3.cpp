@@ -1104,6 +1104,16 @@ float3 &float3::operator /=(float scalar)
 	return *this;
 }
 
+bool float3::operator ==(float3 & vector)
+{
+	return (x == vector.x && y == vector.y && z == vector.z);
+}
+
+bool float3::operator == (const float3 & vector)
+{
+	return (x == vector.x && y == vector.y && z == vector.z);
+}
+
 #ifdef MATH_ENABLE_STL_SUPPORT
 std::ostream &operator <<(std::ostream &out, const float3 &rhs)
 {

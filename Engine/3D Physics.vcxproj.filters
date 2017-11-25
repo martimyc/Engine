@@ -603,6 +603,9 @@
     <ClInclude Include="imgui\imgui_user.h">
       <Filter>Sources\3rd Party\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -896,6 +899,7 @@
     <ClCompile Include="TimeManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

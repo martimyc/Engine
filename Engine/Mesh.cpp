@@ -384,7 +384,7 @@ float MeshSource::GetMaxZ() const
 	return max;
 }
 
-Geo::Vertex MeshSource::GetMinXVertex() const
+Vertex MeshSource::GetMinXVertex() const
 {
 	int min = 0.0f;
 
@@ -392,10 +392,10 @@ Geo::Vertex MeshSource::GetMinXVertex() const
 		if (min < vertices[i * 3])
 			min = i;
 
-	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+	return 	Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Geo::Vertex MeshSource::GetMinYVertex() const
+Vertex MeshSource::GetMinYVertex() const
 {
 	int min = 0.0f;
 
@@ -403,10 +403,10 @@ Geo::Vertex MeshSource::GetMinYVertex() const
 		if (min < vertices[i * 3 + 1])
 			min = i;
 
-	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+	return 	Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Geo::Vertex MeshSource::GetMinZVertex() const
+Vertex MeshSource::GetMinZVertex() const
 {
 	int min = 0.0f;
 
@@ -414,10 +414,10 @@ Geo::Vertex MeshSource::GetMinZVertex() const
 		if (min < vertices[i * 3 + 2])
 			min = i;
 
-	return 	Geo::Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
+	return 	Vertex(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
-Geo::Vertex MeshSource::GetMaxXVertex() const
+Vertex MeshSource::GetMaxXVertex() const
 {
 	int max = 0.0f;
 
@@ -425,10 +425,10 @@ Geo::Vertex MeshSource::GetMaxXVertex() const
 		if (max > vertices[i * 3])
 			max = i;
 
-	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+	return 	Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-Geo::Vertex MeshSource::GetMaxYVertex() const
+Vertex MeshSource::GetMaxYVertex() const
 {
 	int max = 0.0f;
 
@@ -436,10 +436,10 @@ Geo::Vertex MeshSource::GetMaxYVertex() const
 		if (max > vertices[i * 3 + 1])
 			max = i;
 
-	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+	return 	Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-Geo::Vertex MeshSource::GetMaxZVertex() const
+Vertex MeshSource::GetMaxZVertex() const
 {
 	int max = 0.0f;
 
@@ -447,7 +447,7 @@ Geo::Vertex MeshSource::GetMaxZVertex() const
 		if (max > vertices[i * 3 + 2])
 			max = i;
 
-	return 	Geo::Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+	return 	Vertex(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
 /*bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
@@ -751,52 +751,52 @@ float Mesh::GetMaxZ() const
 	return 0.0f;
 }
 
-Geo::Vertex Mesh::GetMinXVertex() const
+Vertex Mesh::GetMinXVertex() const
 {
 	if (source != nullptr)
 		return source->GetMinXVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+	return Vertex(0.0f, 0.0f, 0.0f);
 }
 
-Geo::Vertex Mesh::GetMinYVertex() const
+Vertex Mesh::GetMinYVertex() const
 {
 	if (source != nullptr)
 		return source->GetMinYVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+	return Vertex(0.0f, 0.0f, 0.0f);
 }
 
-Geo::Vertex Mesh::GetMinZVertex() const
+Vertex Mesh::GetMinZVertex() const
 {
 	if (source != nullptr)
 		return source->GetMinZVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+	return Vertex(0.0f, 0.0f, 0.0f);
 }
 
-Geo::Vertex Mesh::GetMaxXVertex() const
+Vertex Mesh::GetMaxXVertex() const
 {
 	if (source != nullptr)
 		return source->GetMaxXVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+	return Vertex(0.0f, 0.0f, 0.0f);
 }
 
-Geo::Vertex Mesh::GetMaxYVertex() const
+Vertex Mesh::GetMaxYVertex() const
 {
 	if (source != nullptr)
 		return source->GetMaxYVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+	return Vertex(0.0f, 0.0f, 0.0f);
 }
 
-Geo::Vertex Mesh::GetMaxZVertex() const
+Vertex Mesh::GetMaxZVertex() const
 {
 	if (source != nullptr)
 		return source->GetMaxZVertex();
 	LOG("Trying to acces non loaded mesh");
-	return Geo::Vertex(0.0f, 0.0f, 0.0f);
+	return Vertex(0.0f, 0.0f, 0.0f);
 }
 
 /*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
@@ -810,128 +810,4 @@ Geo::Vertex Mesh::GetMaxZVertex() const
 void Mesh::SetSource(MeshSource * source)
 {
 	this->source = source;
-}
-
-Geo::Vertex::Vertex(const GLfloat * ptr) : vertex(ptr[0], ptr[1], ptr[2])
-{}
-
-Geo::Vertex::Vertex(float x, float y, float z) : vertex(x, y, z)
-{}
-
-Geo::Vertex::~Vertex()
-{
-	for (std::vector<const Triangle*>::iterator it = triangles.begin(); it != triangles.end(); ++it)
-		if (*it != nullptr)
-			delete *it;
-	triangles.clear();
-}
-
-float Geo::Vertex::operator[](int i) const
-{
-	if (i == 0)
-		return vertex.x;
-	if (i == 1)
-		return vertex.y;
-	if (i == 2)
-		return vertex.z;
-}
-
-void Geo::Vertex::AddTriangle(const math::Triangle * new_triangle)
-{
-	triangles.push_back(new_triangle);
-}
-
-bool Geo::Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle & triangle) const
-{
-	float shortest_dist = ray->Length();
-	float distance = 0.0f;
-
-	bool hit = false;
-
-	//Check all mesh triangles
-	for (int i = 0; i < triangles.size(); i++)
-	{
-		if (ray->Intersects(*triangles[i], &distance, nullptr))
-		{
-			if (shortest_dist > distance)
-			{
-				hit = true;
-				shortest_dist = distance;
-				triangle = *triangles[i];
-			}
-		}
-	}
-
-	if (hit)
-		return true;
-
-	return false;
-}
-
-const math::vec Geo::Vertex::GetMaxPos() const
-{
-	math::vec ret(0.0f, 0.0f, 0.0f);
-
-	for (std::vector<const math::Triangle*>::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
-	{
-		//X
-		if ((*it)->a.x > ret.x)
-			ret.x = (*it)->a.x;
-		if ((*it)->b.x > ret.x)
-			ret.x = (*it)->b.x;
-		if ((*it)->c.x > ret.x)
-			ret.x = (*it)->c.x;
-
-		//Y
-		if ((*it)->a.y > ret.y)
-			ret.y = (*it)->a.y;
-		if ((*it)->b.y > ret.y)
-			ret.y = (*it)->b.y;
-		if ((*it)->c.y > ret.y)
-			ret.y = (*it)->c.y;
-
-		//Z
-		if ((*it)->a.z > ret.z)
-			ret.z = (*it)->a.z;
-		if ((*it)->b.z > ret.z)
-			ret.z = (*it)->b.z;
-		if ((*it)->c.z > ret.z)
-			ret.z = (*it)->c.z;
-	}
-
-	return ret;
-}
-
-const math::vec Geo::Vertex::GetMinPos() const
-{
-	math::vec ret(0.0f, 0.0f, 0.0f);
-
-	for (std::vector<const math::Triangle*>::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
-	{
-		//X
-		if ((*it)->a.x < ret.x)
-			ret.x = (*it)->a.x;
-		if ((*it)->b.x < ret.x)
-			ret.x = (*it)->b.x;
-		if ((*it)->c.x < ret.x)
-			ret.x = (*it)->c.x;
-
-		//Y
-		if ((*it)->a.y < ret.y)
-			ret.y = (*it)->a.y;
-		if ((*it)->b.y < ret.y)
-			ret.y = (*it)->b.y;
-		if ((*it)->c.y < ret.y)
-			ret.y = (*it)->c.y;
-
-		//Z
-		if ((*it)->a.z < ret.z)
-			ret.z = (*it)->a.z;
-		if ((*it)->b.z < ret.z)
-			ret.z = (*it)->b.z;
-		if ((*it)->c.z < ret.z)
-			ret.z = (*it)->c.z;
-	}
-
-	return ret;
 }
