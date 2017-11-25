@@ -16,7 +16,7 @@ class Camera;
 
 struct CompareGOPointers
 {
-	bool operator()(const GameObject* m1, const GameObject* m2);
+	bool operator()(const GameObject * go1, const GameObject * go2);
 };
 
 //Renders the scene into a texture so we can put it into a ImGui Window.

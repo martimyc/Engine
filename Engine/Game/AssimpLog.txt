@@ -1,15 +1,15 @@
-Info,  T9532: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\CubeTest2.fbx
-Info,  T9532: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9532: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
-Info,  T9532: FBX: ignoring empty AnimationStack (using IK?): Take 001
-Info,  T9532: Entering post processing pipeline
-Info,  T9532: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T9532: OptimizeGraphProcess finished; Input nodes: 2, Output nodes: 1
-Info,  T9532: Removed 1 nodes and 0 animation channels (1 output nodes)
-Info,  T9532: Kept 0 lights and 0 cameras
-Info,  T9532: Moved 1 meshes to WCS (number of output meshes: 1)
-Info,  T9532: TriangulateProcess finished. All polygons have been triangulated.
-Info,  T9532: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T9532: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T9532: Cache relevant are 1 meshes (12 faces). Average output ACMR is 2.000000
-Info,  T9532: Leaving post processing pipeline
+Info,  T15432: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\CubeTest2.fbx
+Info,  T15432: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15432: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
+Info,  T15432: FBX: ignoring empty AnimationStack (using IK?): Take 001
+Info,  T15432: Entering post processing pipeline
+Info,  T15432: RemoveVCProcess finished. Data structure cleanup has been done.
+Info,  T15432: OptimizeGraphProcess finished; Input nodes: 2, Output nodes: 1
+Info,  T15432: Removed 1 nodes and 0 animation channels (1 output nodes)
+Info,  T15432: Kept 0 lights and 0 cameras
+Info,  T15432: Moved 1 meshes to WCS (number of output meshes: 1)
+Info,  T15432: TriangulateProcess finished. All polygons have been triangulated.
+Info,  T15432: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Info,  T15432: CalcTangentsProcess finished. Tangents have been calculated
+Info,  T15432: Cache relevant are 1 meshes (12 faces). Average output ACMR is 2.000000
+Info,  T15432: Leaving post processing pipeline

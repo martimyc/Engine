@@ -5,7 +5,7 @@
 #include "MathGeoLib\src\Geometry\AABB.h"
 
 #define MAX_NUM_OBJECTS 3
-#define MAX_SUBDIVISIONS 5
+#define MAX_SUBDIVISIONS 5 //allways odd, never even
 
 class GameObject;
 
@@ -33,6 +33,7 @@ public:
 	KDTNodeGO(const AABB& limits);
 	~KDTNodeGO();
 
+private:
 	bool SubDivide3D(const GameObject* new_game_object, unsigned int& num_subdivisions);
 
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
@@ -41,6 +42,13 @@ public:
 
 	float FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const;
 
+	float FindBestMedianX(const GameObject* new_game_object) const;
+
+	float FindBestMedianY(const GameObject* new_game_object) const;
+
+	float FindBestMedianZ(const GameObject* new_game_object) const;
+
+public:
 	bool AddGameObject(const GameObject* new_game_object, unsigned int& num_subdivisions);
 
 	bool AddToCorrectChild(const GameObject* new_game_object, unsigned int& num_subdivisions);
@@ -80,6 +88,37 @@ public:
 	bool UpdateGO(const GameObject* updated_go);
 
 	void Draw() const;
+};
+
+//Subdivide priority queue operators
+struct CompareMaxPositionsX
+{
+	bool operator()(const GameObject * go1, const GameObject * go2);
+};
+
+struct CompareMaxPositionsY
+{
+	bool operator()(const GameObject * go1, const GameObject * go2);
+};
+
+struct CompareMaxPositionsZ
+{
+	bool operator()(const GameObject * go1, const GameObject * go2);
+};
+
+struct CompareMinPositionsX
+{
+	bool operator()(const GameObject * go1, const GameObject * go2);
+};
+
+struct CompareMinPositionsY
+{
+	bool operator()(const GameObject * go1, const GameObject * go2);
+};
+
+struct CompareMinPositionsZ
+{
+	bool operator()(const GameObject * go1, const GameObject * go2);
 };
 
 #endif // !KDTREE_GO
