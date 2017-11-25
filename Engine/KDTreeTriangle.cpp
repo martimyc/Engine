@@ -726,7 +726,7 @@ void KDTNodeTriangle::Draw() const
 bool KDTNodeTriangle::AllSamePos(const math::Triangle& new_triangle) const
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (new_triangle == triangles[i])
+		if ((new_triangle == triangles[i]) == false)
 			return false;
 	return true;
 }
