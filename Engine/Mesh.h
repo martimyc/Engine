@@ -23,46 +23,20 @@ namespace Geo
 
 		std::vector<const math::Triangle*> triangles;
 
-		Vertex(const GLfloat* ptr) : vertex(ptr[0], ptr[1], ptr[2])
-		{}
+		Vertex(const GLfloat* ptr); 
 
-		Vertex(float x, float y, float z): vertex(x, y, z)
-		{}
+		Vertex(float x, float y, float z);
 
-		~Vertex()
-		{
-			for (std::vector<const Triangle*>::iterator it = triangles.begin(); it != triangles.end(); ++it)
-				if (*it != nullptr)
-					delete *it;
-			triangles.clear();
-		}
+		~Vertex();
 
-		float operator [] (int i)
-		{
-			if (i == 0)
-				return vertex.x;
-			if (i == 1)
-				return vertex.y;
-			if (i == 2)
-				return vertex.z;
-		}
+		float operator [] (int i) const;
 
-		float operator [] (int i) const
-		{
-			if (i == 0)
-				return vertex.x;
-			if (i == 1)
-				return vertex.y;
-			if (i == 2)
-				return vertex.z;
-		}
-
-		void AddTriangle(const math::Triangle* new_triangle)
-		{
-			triangles.push_back(new_triangle);
-		}
+		void AddTriangle(const math::Triangle* new_triangle);
 
 		bool CheckCollision(const LineSegment* ray, math::Triangle& triangle) const;
+
+		const math::vec GetMaxPos() const;
+		const math::vec GetMinPos() const;
 	};
 }
 

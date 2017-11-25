@@ -3,16 +3,12 @@
 #include <vector>
 #include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
-#include "MathGeoLib\src\Geometry\Triangle.h"
-#include "MathGeoLib\src\Geometry\LineSegment.h"
-#include "Brofiler\Brofiler.h"
 #include "Globals.h"
 #include "Mesh.h"
 #include "KDTreeVertex.h"
 
-KDTNodeVertex::KDTNodeVertex(const math::vec min_point, const math::vec max_point) : partition_axis(NO_PARTITION)
+KDTNodeVertex::KDTNodeVertex(const math::vec min_point, const math::vec max_point) : partition_axis(NO_PARTITION), limits(min_point, max_point)
 {
-	limits = new AABB(min_point, max_point);
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		vertices[i] = nullptr;
 
@@ -20,9 +16,8 @@ KDTNodeVertex::KDTNodeVertex(const math::vec min_point, const math::vec max_poin
 	childs[1] = nullptr;
 }
 
-KDTNodeVertex::KDTNodeVertex(const AABB& limits) : partition_axis(NO_PARTITION)
+KDTNodeVertex::KDTNodeVertex(const AABB& limits) : partition_axis(NO_PARTITION), limits(limits)
 {
-	this->limits = new AABB(limits);
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		vertices[i] = nullptr;
 
@@ -30,18 +25,23 @@ KDTNodeVertex::KDTNodeVertex(const AABB& limits) : partition_axis(NO_PARTITION)
 	childs[1] = nullptr;
 }
 
-KDTNodeVertex::~KDTNodeVertex()
+KDTNodeVertex::~KDTNodeVertex() //Dont think deleting gameobjects through tree is best
 {
-	delete limits;
-
 	if (childs[0] != nullptr)
-		delete[] childs;
-
-	//Dont think deleting gameobjects through tree is best
+	{
+		delete childs[0];
+		delete childs[1];
+	}
 }
 
-bool KDTNodeVertex::SubDivide3D(const Geo::Vertex* new_vertex)
+bool KDTNodeVertex::SubDivide3D(const Geo::Vertex* new_vertex, unsigned int& num_subdivisions)
 {
+	if (++num_subdivisions >= MAX_SUBDIVISIONS)
+	{
+		LOG("Subdividing over limit");
+		return false;
+	}
+
 	if (!AllSamePos(new_vertex))
 	{
 		float median_x = FindBestMedian(X, new_vertex);
@@ -55,18 +55,13 @@ bool KDTNodeVertex::SubDivide3D(const Geo::Vertex* new_vertex)
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			if ((*vertices[i])[partition_axis] <= median)
-				if (childs[0]->AddVertex(vertices[i]) == false)
-					return false;
-
-			if ((*vertices[i])[partition_axis] > median)
-				if (childs[1]->AddVertex(vertices[i]) == false)
-					return false;
+			if (AddToCorrectChild(vertices[i], num_subdivisions) == false)
+				return false;
 
 			vertices[i] = nullptr;
 		}
 
-		if (AddToCorrectChild(new_vertex) == false)
+		if (AddToCorrectChild(new_vertex, num_subdivisions) == false)
 			return false;
 
 		return true;
@@ -94,24 +89,24 @@ void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 		this->median = median;
 		this->partition_axis = partition_axis;
 
-		math::vec min_point(limits->minPoint);
+		math::vec min_point(limits.minPoint);
 		math::vec max_point;
 
 		switch (partition_axis)
 		{
 		case X:
 			max_point.x = median;
-			max_point.y = limits->maxPoint.y;
-			max_point.z = limits->maxPoint.z;
+			max_point.y = limits.maxPoint.y;
+			max_point.z = limits.maxPoint.z;
 			break;
 		case Y:
-			max_point.x = limits->maxPoint.x;
+			max_point.x = limits.maxPoint.x;
 			max_point.y = median;
-			max_point.z = limits->maxPoint.z;
+			max_point.z = limits.maxPoint.z;
 			break;
 		case Z:
-			max_point.x = limits->maxPoint.x;
-			max_point.y = limits->maxPoint.y;
+			max_point.x = limits.maxPoint.x;
+			max_point.y = limits.maxPoint.y;
 			max_point.z = median;
 			break;
 		default:
@@ -121,23 +116,23 @@ void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 
 		childs[0] = new KDTNodeVertex(min_point, max_point);
 
-		max_point = limits->maxPoint;
+		max_point = limits.maxPoint;
 
 		switch (partition_axis)
 		{
 		case X:
 			min_point.x = median;
-			min_point.y = limits->minPoint.y;
-			min_point.z = limits->minPoint.z;
+			min_point.y = limits.minPoint.y;
+			min_point.z = limits.minPoint.z;
 			break;
 		case Y:
-			min_point.x = limits->minPoint.x;
+			min_point.x = limits.minPoint.x;
 			min_point.y = median;
-			min_point.z = limits->minPoint.z;
+			min_point.z = limits.minPoint.z;
 			break;
 		case Z:
-			min_point.x = limits->minPoint.x;
-			min_point.y = limits->minPoint.y;
+			min_point.x = limits.minPoint.x;
+			min_point.y = limits.minPoint.y;
 			min_point.z = median;
 			break;
 		default:
@@ -153,55 +148,322 @@ void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 
 float KDTNodeVertex::FindBestMedian(PARTITION_AXIS partition_axis, const Geo::Vertex* new_vertex) const
 {
-	std::vector<float> axis_points;
-	std::priority_queue <float, std::vector<float>, std::greater<float>> queue;
-
-	axis_points.push_back((*new_vertex)[partition_axis]);
-	queue.push((*new_vertex)[partition_axis]);
-
-	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	switch (partition_axis)
 	{
-		if (vertices[i] != nullptr)
-		{
-			bool repeated = false;
-			float to_add = (*vertices[i])[partition_axis];
-
-			for (std::vector<float>::const_iterator it = axis_points.begin(); it != axis_points.end(); ++it)
-			{
-				if (*it == to_add)
-					repeated = true;
-			}
-
-			if (!repeated)
-			{
-				axis_points.push_back(to_add);
-				queue.push((*vertices[i])[partition_axis]);
-			}
-		}
-		else
-			break;
-	}
-
-	if (queue.size() % 2 != 0)
-	{
-		for (unsigned int to_pop = 0; to_pop < queue.size() / 2; to_pop++)
-			queue.pop();
-		return queue.top();
-	}
-	else
-	{
-		for (unsigned int to_pop = 0; to_pop < queue.size() / 2 - 1; to_pop++)
-			queue.pop();
-		float first = queue.top();
-
-		queue.pop();
-		float second = queue.top();
-
-		return (first + second) / 2;
+	case X: return FindBestMedianX(new_vertex);
+	case Y: return FindBestMedianY(new_vertex);
+	case Z: return FindBestMedianZ(new_vertex);
+	default: LOG("Trying to find median of non-standard axsis");
 	}
 }
 
-bool KDTNodeVertex::AddVertex(const Geo::Vertex * new_vertex)
+float KDTNodeVertex::FindBestMedianX(const Geo::Vertex * new_vertex) const
+{
+	std::priority_queue<const Geo::Vertex*, std::vector<const Geo::Vertex*>, KDTV::CompareMaxPositionsX> max_queue;
+	std::priority_queue<const Geo::Vertex*, std::vector<const Geo::Vertex*>, KDTV::CompareMinPositionsX> min_queue;
+
+	bool repeated = false;
+
+	max_queue.push(new_vertex);
+	min_queue.push(new_vertex);
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
+			if (vertices[i]->GetMaxPos().x == vertices[j]->GetMaxPos().x)
+				repeated = true;
+		if (vertices[i]->GetMaxPos().x == new_vertex->GetMaxPos().x)
+			repeated = true;
+
+		if (repeated == false)
+			max_queue.push(vertices[i]);
+
+		repeated == false;
+
+		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
+			if (vertices[i]->GetMinPos().x == vertices[j]->GetMinPos().x)
+				repeated = true;
+
+		if (vertices[i]->GetMinPos().x == new_vertex->GetMinPos().x)
+			repeated = true;
+
+		if (repeated == false)
+			min_queue.push(vertices[i]);
+	}
+
+	for (int i = max_queue.size() / 2; i > 0; i--) //Empty biggest max & smallest min
+	{
+		max_queue.pop();
+		min_queue.pop();
+	}
+
+	const Geo::Vertex* current_max = max_queue.top();
+	const Geo::Vertex* current_min = min_queue.top();
+
+	bool unusable = false;
+
+	while (max_queue.size() != 1 && min_queue.size() != 1)
+	{
+		if (current_max->GetMaxPos().x <= current_min->GetMinPos().x)
+		{
+			if (unusable)
+				return current_max->GetMaxPos().x;
+
+			float median = current_max->GetMaxPos().x;
+			median += (current_min->GetMinPos().x - median) / 2.0f;
+			return median;
+		}
+		else
+		{
+			unusable = true;
+
+			min_queue.pop();
+			if (current_max->GetMaxPos().x <= min_queue.top()->GetMinPos().x)
+			{
+				float median = current_max->GetMaxPos().x;
+				median += (min_queue.top()->GetMinPos().x - median) / 2.0f;
+				return median;
+			}
+
+			max_queue.pop();
+			if (current_min->GetMinPos().x >= max_queue.top()->GetMaxPos().x)
+			{
+				float median = max_queue.top()->GetMaxPos().x;
+				median += (current_min->GetMinPos().x - median) / 2.0f;
+				return median;
+			}
+
+			current_max = max_queue.top();
+			current_min = min_queue.top();
+		}
+	}
+
+	LOG("Median could not be found");
+
+	//if median can't be found we return point in between max points so that at least one of the nodes will be halve free
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		max_queue.push(vertices[i]);
+
+	max_queue.push(new_vertex);
+
+	for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+		max_queue.pop();
+
+	float fail = max_queue.top()->GetMaxPos().x;
+
+	max_queue.pop();
+
+	fail += (max_queue.top()->GetMaxPos().x - fail) / 2.0f;
+
+	return fail;
+}
+
+float KDTNodeVertex::FindBestMedianY(const Geo::Vertex * new_vertex) const
+{
+	std::priority_queue<const Geo::Vertex*, std::vector<const Geo::Vertex*>, KDTV::CompareMaxPositionsY> max_queue;
+	std::priority_queue<const Geo::Vertex*, std::vector<const Geo::Vertex*>, KDTV::CompareMinPositionsY> min_queue;
+
+	bool repeated = false;
+
+	max_queue.push(new_vertex);
+	min_queue.push(new_vertex);
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
+			if (vertices[i]->GetMaxPos().y == vertices[j]->GetMaxPos().y)
+				repeated = true;
+		if (vertices[i]->GetMaxPos().y == new_vertex->GetMaxPos().y)
+			repeated = true;
+
+		if (repeated == false)
+			max_queue.push(vertices[i]);
+
+		repeated == false;
+
+		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
+			if (vertices[i]->GetMinPos().y == vertices[j]->GetMinPos().y)
+				repeated = true;
+
+		if (vertices[i]->GetMinPos().y == new_vertex->GetMinPos().y)
+			repeated = true;
+
+		if (repeated == false)
+			min_queue.push(vertices[i]);
+	}
+
+	for (int i = max_queue.size() / 2; i > 0; i--) //Empty biggest max & smallest min
+	{
+		max_queue.pop();
+		min_queue.pop();
+	}
+
+	const Geo::Vertex* current_max = max_queue.top();
+	const Geo::Vertex* current_min = min_queue.top();
+
+	bool unusable = false;
+
+	while (max_queue.size() != 1 && min_queue.size() != 1)
+	{
+		if (current_max->GetMaxPos().y <= current_min->GetMinPos().y)
+		{
+			if (unusable)
+				return current_max->GetMaxPos().y;
+
+			float median = current_max->GetMaxPos().y;
+			median += (current_min->GetMinPos().y - median) / 2.0f;
+			return median;
+		}
+		else
+		{
+			unusable = true;
+
+			min_queue.pop();
+			if (current_max->GetMaxPos().y <= min_queue.top()->GetMinPos().y)
+			{
+				float median = current_max->GetMaxPos().y;
+				median += (min_queue.top()->GetMinPos().y - median) / 2.0f;
+				return median;
+			}
+
+			max_queue.pop();
+			if (current_min->GetMinPos().y >= max_queue.top()->GetMaxPos().y)
+			{
+				float median = max_queue.top()->GetMaxPos().y;
+				median += (current_min->GetMinPos().y - median) / 2.0f;
+				return median;
+			}
+
+			current_max = max_queue.top();
+			current_min = min_queue.top();
+		}
+	}
+
+	LOG("Median could not be found");
+
+	//if median can't be found we return point in between max points so that at least one of the nodes will be halve free
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		max_queue.push(vertices[i]);
+
+	max_queue.push(new_vertex);
+
+	for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+		max_queue.pop();
+
+	float fail = max_queue.top()->GetMaxPos().y;
+
+	max_queue.pop();
+
+	fail += (max_queue.top()->GetMaxPos().y - fail) / 2.0f;
+
+	return fail;
+}
+
+float KDTNodeVertex::FindBestMedianZ(const Geo::Vertex * new_vertex) const
+{
+	std::priority_queue<const Geo::Vertex*, std::vector<const Geo::Vertex*>, KDTV::CompareMaxPositionsZ> max_queue;
+	std::priority_queue<const Geo::Vertex*, std::vector<const Geo::Vertex*>, KDTV::CompareMinPositionsZ> min_queue;
+
+	bool repeated = false;
+
+	max_queue.push(new_vertex);
+	min_queue.push(new_vertex);
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
+			if (vertices[i]->GetMaxPos().z == vertices[j]->GetMaxPos().z)
+				repeated = true;
+		if (vertices[i]->GetMaxPos().z == new_vertex->GetMaxPos().z)
+			repeated = true;
+
+		if (repeated == false)
+			max_queue.push(vertices[i]);
+
+		repeated == false;
+
+		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
+			if (vertices[i]->GetMinPos().z == vertices[j]->GetMinPos().z)
+				repeated = true;
+
+		if (vertices[i]->GetMinPos().z == new_vertex->GetMinPos().z)
+			repeated = true;
+
+		if (repeated == false)
+			min_queue.push(vertices[i]);
+	}
+
+	for (int i = max_queue.size() / 2; i > 0; i--) //Empty biggest max & smallest min
+	{
+		max_queue.pop();
+		min_queue.pop();
+	}
+
+	const Geo::Vertex* current_max = max_queue.top();
+	const Geo::Vertex* current_min = min_queue.top();
+
+	bool unusable = false;
+
+	while (max_queue.size() != 1 && min_queue.size() != 1)
+	{
+		if (current_max->GetMaxPos().z <= current_min->GetMinPos().z)
+		{
+			if (unusable)
+				return current_max->GetMaxPos().z;
+
+			float median = current_max->GetMaxPos().z;
+			median += (current_min->GetMinPos().z - median) / 2.0f;
+			return median;
+		}
+		else
+		{
+			unusable = true;
+
+			min_queue.pop();
+			if (current_max->GetMaxPos().z <= min_queue.top()->GetMinPos().z)
+			{
+				float median = current_max->GetMaxPos().z;
+				median += (min_queue.top()->GetMinPos().z - median) / 2.0f;
+				return median;
+			}
+
+			max_queue.pop();
+			if (current_min->GetMinPos().z >= max_queue.top()->GetMaxPos().z)
+			{
+				float median = max_queue.top()->GetMaxPos().z;
+				median += (current_min->GetMinPos().z - median) / 2.0f;
+				return median;
+			}
+
+			current_max = max_queue.top();
+			current_min = min_queue.top();
+		}
+	}
+
+	LOG("Median could not be found");
+
+	//if median can't be found we return point in between max points so that at least one of the nodes will be halve free
+
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		max_queue.push(vertices[i]);
+
+	max_queue.push(new_vertex);
+
+	for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+		max_queue.pop();
+
+	float fail = max_queue.top()->GetMaxPos().z;
+
+	max_queue.pop();
+
+	fail += (max_queue.top()->GetMaxPos().z - fail) / 2.0f;
+
+	return fail;
+}
+
+bool KDTNodeVertex::AddVertex(const Geo::Vertex * new_vertex, unsigned int& num_subdivisions)
 {
 	bool ret = false;
 
@@ -218,42 +480,45 @@ bool KDTNodeVertex::AddVertex(const Geo::Vertex * new_vertex)
 				}
 		}
 		else
-			if (SubDivide3D(new_vertex) == false)
+		{
+			if (SubDivide3D(new_vertex, num_subdivisions) == false)
 				return false;
 			else
 				ret = true;
+		}
 	}
 	else
-		if (AddToCorrectChild(new_vertex) == false)
+	{
+		if (AddToCorrectChild(new_vertex, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
+	}
 
 	return ret;
 }
 
-bool KDTNodeVertex::AddToCorrectChild(const Geo::Vertex * new_vertex)
+bool KDTNodeVertex::AddToCorrectChild(const Geo::Vertex * new_vertex, unsigned int& num_subdivisions)
 {
 	bool ret = false;
 
-	if ((*new_vertex)[partition_axis] <= median)
-	{
-		if (childs[0]->AddVertex(new_vertex) == false)
-			return false;
-		else
-			ret = true;
-	}
+	math::vec max_pos(new_vertex->GetMaxPos());
+	math::vec min_pos(new_vertex->GetMinPos());
 
-	if ((*new_vertex)[partition_axis] > median)
-	{
-		if (childs[1]->AddVertex(new_vertex) == false)
+	if (min_pos[partition_axis] < median)
+		if (childs[0]->AddGameObject(new_vertex, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
-	}
+
+	if (max_pos[partition_axis] > median)
+		if (childs[1]->AddGameObject(new_vertex, num_subdivisions) == false)
+			return false;
+		else
+			ret = true;
 
 	if (ret == false)
-		LOG("Vertex does not fit inside any child");
+		LOG("Gameobject does not intersect with any child");
 
 	return ret;
 }
@@ -274,11 +539,15 @@ bool KDTNodeVertex::RemoveVertex(const Geo::Vertex * new_vertex)
 			}
 	}
 	else
-		if (childs[0]->RemoveVertex(new_vertex) || childs[1]->RemoveVertex(new_vertex))
+		if (childs[0]->RemoveGameObject(new_vertex) || childs[1]->RemoveGameObject(new_vertex))
 			ret = true;
 
 	if (partition_axis == Z && Empty())
-		delete[] childs;
+		if (childs != nullptr)
+		{
+			childs[0]->DeleteHirarchy();
+			childs[1]->DeleteHirarchy();
+		}
 
 	return ret;
 }
@@ -311,49 +580,72 @@ bool KDTNodeVertex::Empty() const
 	}
 }
 
-void KDTNodeVertex::GetVertices(std::vector<const Geo::Vertex*>& vec) const
+void KDTNodeVertex::GetGameObjects(std::vector<const Geo::Vertex*>& vec) const
 {
 	if (partition_axis != NO_PARTITION)
 	{
-		childs[0]->GetVertices(vec);
-		childs[1]->GetVertices(vec);
+		childs[0]->GetGameObjects(vec);
+		childs[1]->GetGameObjects(vec);
 	}
 	else
 	{
 		if (vertices[0] != nullptr)
+		{
 			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 			{
 				if (vertices[i] != nullptr)
-					vec.push_back(vertices[i]);
+				{
+					bool repeated = false;
+					for (std::vector<const Geo::Vertex*>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+						if ((*it) == vertices[i])
+							repeated = true;
+					if (!repeated)
+						vec.push_back(vertices[i]);
+				}
 				else
 					break;
 			}
+		}
 	}
 }
 
 bool KDTNodeVertex::IsIn(const Geo::Vertex * new_vertex) const
 {
+	math::vec max_pos(new_vertex->GetMaxPos());
+	math::vec min_pos(new_vertex->GetMinPos());
 
-	if (new_vertex->vertex.x < limits->minPoint.x || new_vertex->vertex.x > limits->maxPoint.x)
+	if (max_pos.x < limits.minPoint.x || min_pos.x > limits.maxPoint.x)
 		return false;
-	if (new_vertex->vertex.y < limits->minPoint.y || new_vertex->vertex.y > limits->maxPoint.y)
+	if (max_pos.y < limits.minPoint.y || min_pos.y > limits.maxPoint.y)
 		return false;
-	if (new_vertex->vertex.z < limits->minPoint.z || new_vertex->vertex.z > limits->maxPoint.z)
+	if (max_pos.z < limits.minPoint.z || min_pos.z > limits.maxPoint.z)
 		return false;
 
 	return true;
 }
 
+bool KDTNodeVertex::AllIn(const Geo::Vertex * new_vertex) const
+{
+	math::vec max_point(new_vertex->GetMaxPos());
+	math::vec min_point(new_vertex->GetMinPos());
+
+	if (limits.Contains(max_point) && limits.Contains(min_point)) //TODO sphere and oobb checks when those are done
+		return true;
+	return false;
+}
+
 void KDTNodeVertex::Draw() const
 {
+	limits.Draw(1.0f, 0.0f, 1.0f, 1.0f);
+
 	if (partition_axis != NO_PARTITION)
 	{
 		if (partition_axis == X)
-			glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		else if (partition_axis == Y)
-			glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 		else if (partition_axis == Z)
-			glColor4f(0.0f, 0.0f, 1.0f, 0.5f);
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 
 		glDisable(GL_CULL_FACE);
 
@@ -362,22 +654,22 @@ void KDTNodeVertex::Draw() const
 		switch (partition_axis)
 		{
 		case X:
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);			
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.minPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.maxPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.maxPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.minPoint.z);
 			break;
 		case Y:
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);			
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.minPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.maxPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.maxPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.minPoint.z);
 			break;
 		case Z:
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.minPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.maxPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.maxPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.minPoint.y, median);
 			break;
 		default:
 			break;
@@ -387,43 +679,60 @@ void KDTNodeVertex::Draw() const
 
 		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 
-		glPointSize(5.0f);
+		glPointSize(25.0f);
 
 		glBegin(GL_POINTS);
 
 		switch (partition_axis)
 		{
 		case X:
-			glVertex3f(median, limits->minPoint.y, limits->minPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->maxPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.minPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.maxPoint.z);
 
-			glVertex3f(median, limits->minPoint.y, limits->maxPoint.z);
-			glVertex3f(median, limits->maxPoint.y, limits->minPoint.z);
+			glVertex3f(median, limits.minPoint.y, limits.maxPoint.z);
+			glVertex3f(median, limits.maxPoint.y, limits.minPoint.z);
 			break;
 		case Y:
-			glVertex3f(limits->minPoint.x, median, limits->minPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->maxPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.minPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.maxPoint.z);
 
-			glVertex3f(limits->minPoint.x, median, limits->maxPoint.z);
-			glVertex3f(limits->maxPoint.x, median, limits->minPoint.z);
+			glVertex3f(limits.minPoint.x, median, limits.maxPoint.z);
+			glVertex3f(limits.maxPoint.x, median, limits.minPoint.z);
 			break;
 		case Z:
-			glVertex3f(limits->maxPoint.x, limits->maxPoint.y, median);
-			glVertex3f(limits->maxPoint.x, limits->minPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.maxPoint.y, median);
+			glVertex3f(limits.maxPoint.x, limits.minPoint.y, median);
 
-			glVertex3f(limits->minPoint.x, limits->minPoint.y, median);
-			glVertex3f(limits->minPoint.x, limits->maxPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.minPoint.y, median);
+			glVertex3f(limits.minPoint.x, limits.maxPoint.y, median);
 			break;
 		default:
 			break;
 		}
 
+		glEnd();
+
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+		glEnable(GL_CULL_FACE);
+
+		childs[0]->Draw();
+		childs[1]->Draw();
+	}
+	else
+	{
+		glPointSize(25.0f);
+
+		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_POINTS);
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
 			if (vertices[i] != nullptr)
-				glVertex3f(vertices[i]->vertex.x, vertices[i]->vertex.y, vertices[i]->vertex.z);
+			{
+				math::vec position = vertices[i]->vertex;
+				glVertex3f(position.x, position.y, position.z);
+			}
 			else
 				break;
 		}
@@ -431,57 +740,52 @@ void KDTNodeVertex::Draw() const
 		glEnd();
 
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glEnable(GL_CULL_FACE);
-	}
-
-	if (partition_axis != NO_PARTITION)
-	{
-		childs[0]->Draw();
-		childs[1]->Draw();
 	}
 }
 
 bool KDTNodeVertex::AllSamePos(const Geo::Vertex * new_vertex) const
 {
+	math::vec position = new_vertex->vertex;
+
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (new_vertex->vertex.x != vertices[i]->vertex.x || new_vertex->vertex.y != vertices[i]->vertex.y || new_vertex->vertex.z != vertices[i]->vertex.z)
+		if (position.x != vertices[i]->vertex.x || position.y != vertices[i]->vertex.y || position.z != vertices[i]->vertex.z)
 			return false;
 	return true;
 }
 
-bool KDTNodeVertex::RayCollisionKDT(const LineSegment * ray, Triangle& triangle) const
+bool KDTNodeVertex::UpdateGO(const Geo::Vertex * updated_go)
 {
 	bool ret = false;
-	if (partition_axis == NO_PARTITION)
+
+	if (partition_axis != NO_PARTITION)
 	{
-		if (vertices[0] == nullptr)
-			return false;
+
+		if (childs[0]->AllIn(updated_go) == false || childs[1]->AllIn(updated_go) == false)
+		{
+			RemoveGameObject(updated_go);
+			unsigned int num_subdivisions = 0;
+			return AddToCorrectChild(updated_go, num_subdivisions);
+		}
 		else
 		{
-			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			{
-				if (vertices[i] != nullptr)
-				{
-					if (vertices[i]->CheckCollision(ray, triangle))
-						ret = true;
-				}
-				else
-					return false;
-			}
+			if (childs[0]->UpdateGO(updated_go))
+				ret = true;
+			if (childs[1]->UpdateGO(updated_go))
+				ret = true;
 		}
+
+		return ret;
 	}
 	else
-	{
-		if (childs[0] != nullptr)
-		{
-			if (childs[0]->RayCollisionKDT(ray, triangle))
-				ret = true;
-			if(childs[1]->RayCollisionKDT(ray, triangle))
-				ret = true;
-		}
-	}
+		return true;
+}
 
-	return ret;
+void KDTNodeVertex::DeleteHirarchy()
+{
+	median = 0;
+	partition_axis = NO_PARTITION;
+	DELETE_PTR(childs[0]);
+	DELETE_PTR(childs[1]);
 }
 
 KDTreeVertex::KDTreeVertex()
@@ -494,56 +798,67 @@ KDTreeVertex::KDTreeVertex()
 KDTreeVertex::~KDTreeVertex()
 {}
 
-bool KDTreeVertex::ReCalculate(Geo::Vertex* new_vertex)
+bool KDTreeVertex::ReCalculate(const Geo::Vertex* new_vertex)
 {
-	std::vector<const Geo::Vertex*> all_vertices;
+	std::vector<const Geo::Vertex*> all_game_objects;
 
-	root->GetVertices(all_vertices);
+	root->GetGameObjects(all_game_objects);
 
 	delete root;
 
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	limits.Enclose(new_vertex->vertex);
+	limits.Enclose(new_vertex->GetMaxPos());
+	limits.Enclose(new_vertex->GetMinPos());
 
-	if (all_vertices.size() > 0)
+	if (all_game_objects.size() > 0)
 	{
-		for (std::vector<const Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
-			limits.Enclose(&(*it)->vertex, 1);
+		for (std::vector<const Geo::Vertex*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+		{
+			limits.Enclose((*it)->GetMaxPos());
+			limits.Enclose((*it)->GetMinPos());
+		}
 	}
 
 	root = new KDTNodeVertex(limits);
 
-	if (root->AddVertex(new_vertex) == false)
+	unsigned int num_subdivisions = 0;
+	if (root->AddGameObject(new_vertex, num_subdivisions) == false)
 	{
-		LOG("New Vertex: '%f, %f, %f' could not be added to KDT after recalculating", new_vertex->vertex.x, new_vertex->vertex.y, new_vertex->vertex.z);
+		LOG("New Geo::Vertex at '%f, %f, %f' could not be added to KDT after recalculating", new_vertex->vertex.x, new_vertex->vertex.y, new_vertex->vertex.z);
 		return false;
 	}
 
-	if (all_vertices.size() > 0)
+	if (all_game_objects.size() > 0)
 	{
-		for (std::vector<const Geo::Vertex*>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
-			if (root->AddVertex(*it) == false)
+		for (std::vector<const Geo::Vertex*>::const_iterator it = all_game_objects.begin(); it != all_game_objects.end(); ++it)
+		{
+			num_subdivisions = 0;
+			if (root->AddGameObject(*it, num_subdivisions) == false)
 			{
-				LOG("Vertex: '%f, %f, %f' could not be re-added to KDT after recalculating", (*it)->vertex.x, (*it)->vertex.y, (*it)->vertex.z);
+				LOG("New Geo::Vertex at '%f, %f, %f' could not be re-added to KDT after recalculating", new_vertex->vertex.x, new_vertex->vertex.y, new_vertex->vertex.z);
 				return false;
 			}
+		}
 	}
 
 	return true;
 }
 
-bool KDTreeVertex::AddVertex(Geo::Vertex * new_vertex)
+bool KDTreeVertex::AddVertex(const Geo::Vertex * new_vertex)
 {
-	bool ret = false;
-
-	if (root->IsIn(new_vertex))
-		ret = root->AddVertex(new_vertex);
+	if (root->AllIn(new_vertex))
+	{
+		unsigned int num_subdivisions = 0;
+		if (root->AddGameObject(new_vertex, num_subdivisions) == false)
+			return false;
+	}
 	else
-		ret = ReCalculate(new_vertex);
+		if (ReCalculate(new_vertex) == false)
+			return false;
 
-	return ret;
+	return true;
 }
 
 bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_vertices, const GLuint * const new_indices, int num_indices)
@@ -592,12 +907,52 @@ bool KDTreeVertex::AddVertices(const GLfloat * const new_vertices, int num_verti
 	return true;
 }
 
+bool KDTreeVertex::RemoveVertex(const Geo::Vertex * new_vertex)
+{
+	return root->RemoveVertex(new_vertex);;
+}
+
+bool KDTreeVertex::UpdateGO(const Geo::Vertex * updated_go)
+{
+	if (root->AllIn(updated_go))
+		return root->UpdateGO(updated_go);
+	else
+		if (root->RemoveGameObject(updated_go))
+			return ReCalculate(updated_go);
+}
+
 void KDTreeVertex::Draw() const
 {
 	root->Draw();
 }
 
-bool KDTreeVertex::RayCollisionKDT(const LineSegment * ray, Triangle& triangle) const
+//Subdivide priority queue operators
+bool KDTV::CompareMaxPositionsX::operator()(const Geo::Vertex * v1, const Geo::Vertex * v2)
 {
-	return root->RayCollisionKDT(ray, triangle);
+	return v1->GetMaxPos().x < v2->GetMaxPos().x;
+}
+
+bool KDTV::CompareMaxPositionsY::operator()(const Geo::Vertex * v1, const Geo::Vertex * v2)
+{
+	return v1->GetMaxPos().y < v2->GetMaxPos().y;
+}
+
+bool KDTV::CompareMaxPositionsZ::operator()(const Geo::Vertex * v1, const Geo::Vertex * v2)
+{
+	return v1->GetMaxPos().z < v2->GetMaxPos().z;
+}
+
+bool KDTV::CompareMinPositionsX::operator()(const Geo::Vertex * v1, const Geo::Vertex * v2)
+{
+	return v1->GetMinPos().x > v2->GetMinPos().x;
+}
+
+bool KDTV::CompareMinPositionsY::operator()(const Geo::Vertex * v1, const Geo::Vertex * v2)
+{
+	return v1->GetMinPos().y > v2->GetMinPos().y;
+}
+
+bool KDTV::CompareMinPositionsZ::operator()(const Geo::Vertex * v1, const Geo::Vertex * v2)
+{
+	return v1->GetMinPos().z > v2->GetMinPos().z;
 }

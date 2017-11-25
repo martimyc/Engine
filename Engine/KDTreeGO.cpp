@@ -159,8 +159,8 @@ float KDTNodeGO::FindBestMedian(PARTITION_AXIS partition_axis, const GameObject*
 
 float KDTNodeGO::FindBestMedianX(const GameObject * new_game_object) const
 {
-	std::priority_queue<const GameObject*, std::vector<const GameObject*>, CompareMaxPositionsX> max_queue;
-	std::priority_queue<const GameObject*, std::vector<const GameObject*>, CompareMinPositionsX> min_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject*>, KDTGO::CompareMaxPositionsX> max_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject*>, KDTGO::CompareMinPositionsX> min_queue;
 
 	bool repeated = false;
 
@@ -261,8 +261,8 @@ float KDTNodeGO::FindBestMedianX(const GameObject * new_game_object) const
 
 float KDTNodeGO::FindBestMedianY(const GameObject * new_game_object) const
 {
-	std::priority_queue<const GameObject*, std::vector<const GameObject*>, CompareMaxPositionsY> max_queue;
-	std::priority_queue<const GameObject*, std::vector<const GameObject*>, CompareMinPositionsY> min_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject*>, KDTGO::CompareMaxPositionsY> max_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject*>, KDTGO::CompareMinPositionsY> min_queue;
 
 	bool repeated = false;
 
@@ -363,8 +363,8 @@ float KDTNodeGO::FindBestMedianY(const GameObject * new_game_object) const
 
 float KDTNodeGO::FindBestMedianZ(const GameObject * new_game_object) const
 {
-	std::priority_queue<const GameObject*, std::vector<const GameObject*>, CompareMaxPositionsZ> max_queue;
-	std::priority_queue<const GameObject*, std::vector<const GameObject*>, CompareMinPositionsZ> min_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject*>, KDTGO::CompareMaxPositionsZ> max_queue;
+	std::priority_queue<const GameObject*, std::vector<const GameObject*>, KDTGO::CompareMinPositionsZ> min_queue;
 
 	bool repeated = false;
 
@@ -766,7 +766,7 @@ bool KDTNodeGO::AllSamePos(const GameObject * new_game_object) const
 	math::vec position = new_game_object->GetWorldPosition();
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (position.x != game_objects[i]->GetLocalPosition().x || position.y != game_objects[i]->GetLocalPosition().y || position.z != game_objects[i]->GetLocalPosition().z)
+		if (position.x != game_objects[i]->GetWorldPosition().x || position.y != game_objects[i]->GetWorldPosition().y || position.z != game_objects[i]->GetWorldPosition().z)
 			return false;
 	return true;
 }
@@ -884,6 +884,11 @@ bool KDTreeGO::AddGameObject(const GameObject * new_game_object)
 	return true;
 }
 
+bool KDTreeGO::RemoveGameObject(const GameObject * new_game_object)
+{
+	return root->RemoveGameObject(new_game_object);
+}
+
 bool KDTreeGO::UpdateGO(const GameObject * updated_go)
 {
 	if (root->AllIn(updated_go))
@@ -899,32 +904,32 @@ void KDTreeGO::Draw() const
 }
 
 //Subdivide priority queue operators
-bool CompareMaxPositionsX::operator()(const GameObject * go1, const GameObject * go2)
+bool KDTGO::CompareMaxPositionsX::operator()(const GameObject * go1, const GameObject * go2)
 {
 	return go1->GetMaxPos().x < go2->GetMaxPos().x;
 }
 
-bool CompareMaxPositionsY::operator()(const GameObject * go1, const GameObject * go2)
+bool KDTGO::CompareMaxPositionsY::operator()(const GameObject * go1, const GameObject * go2)
 {
 	return go1->GetMaxPos().y < go2->GetMaxPos().y;
 }
 
-bool CompareMaxPositionsZ::operator()(const GameObject * go1, const GameObject * go2)
+bool KDTGO::CompareMaxPositionsZ::operator()(const GameObject * go1, const GameObject * go2)
 {
 	return go1->GetMaxPos().z < go2->GetMaxPos().z;
 }
 
-bool CompareMinPositionsX::operator()(const GameObject * go1, const GameObject * go2)
+bool KDTGO::CompareMinPositionsX::operator()(const GameObject * go1, const GameObject * go2)
 {
 	return go1->GetMinPos().x > go2->GetMinPos().x;
 }
 
-bool CompareMinPositionsY::operator()(const GameObject * go1, const GameObject * go2)
+bool KDTGO::CompareMinPositionsY::operator()(const GameObject * go1, const GameObject * go2)
 {
 	return go1->GetMinPos().y > go2->GetMinPos().y;
 }
 
-bool CompareMinPositionsZ::operator()(const GameObject * go1, const GameObject * go2)
+bool KDTGO::CompareMinPositionsZ::operator()(const GameObject * go1, const GameObject * go2)
 {
 	return go1->GetMinPos().z > go2->GetMinPos().z;
 }

@@ -812,6 +812,35 @@ void Mesh::SetSource(MeshSource * source)
 	this->source = source;
 }
 
+Geo::Vertex::Vertex(const GLfloat * ptr) : vertex(ptr[0], ptr[1], ptr[2])
+{}
+
+Geo::Vertex::Vertex(float x, float y, float z) : vertex(x, y, z)
+{}
+
+Geo::Vertex::~Vertex()
+{
+	for (std::vector<const Triangle*>::iterator it = triangles.begin(); it != triangles.end(); ++it)
+		if (*it != nullptr)
+			delete *it;
+	triangles.clear();
+}
+
+float Geo::Vertex::operator[](int i) const
+{
+	if (i == 0)
+		return vertex.x;
+	if (i == 1)
+		return vertex.y;
+	if (i == 2)
+		return vertex.z;
+}
+
+void Geo::Vertex::AddTriangle(const math::Triangle * new_triangle)
+{
+	triangles.push_back(new_triangle);
+}
+
 bool Geo::Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle & triangle) const
 {
 	float shortest_dist = ray->Length();
@@ -828,7 +857,7 @@ bool Geo::Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle &
 			{
 				hit = true;
 				shortest_dist = distance;
-				triangle = *triangles[i];				
+				triangle = *triangles[i];
 			}
 		}
 	}
@@ -837,4 +866,72 @@ bool Geo::Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle &
 		return true;
 
 	return false;
+}
+
+const math::vec Geo::Vertex::GetMaxPos() const
+{
+	math::vec ret(0.0f, 0.0f, 0.0f);
+
+	for (std::vector<const math::Triangle*>::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
+	{
+		//X
+		if ((*it)->a.x > ret.x)
+			ret.x = (*it)->a.x;
+		if ((*it)->b.x > ret.x)
+			ret.x = (*it)->b.x;
+		if ((*it)->c.x > ret.x)
+			ret.x = (*it)->c.x;
+
+		//Y
+		if ((*it)->a.y > ret.y)
+			ret.y = (*it)->a.y;
+		if ((*it)->b.y > ret.y)
+			ret.y = (*it)->b.y;
+		if ((*it)->c.y > ret.y)
+			ret.y = (*it)->c.y;
+
+		//Z
+		if ((*it)->a.z > ret.z)
+			ret.z = (*it)->a.z;
+		if ((*it)->b.z > ret.z)
+			ret.z = (*it)->b.z;
+		if ((*it)->c.z > ret.z)
+			ret.z = (*it)->c.z;
+	}
+
+	return ret;
+}
+
+const math::vec Geo::Vertex::GetMinPos() const
+{
+	math::vec ret(0.0f, 0.0f, 0.0f);
+
+	for (std::vector<const math::Triangle*>::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
+	{
+		//X
+		if ((*it)->a.x < ret.x)
+			ret.x = (*it)->a.x;
+		if ((*it)->b.x < ret.x)
+			ret.x = (*it)->b.x;
+		if ((*it)->c.x < ret.x)
+			ret.x = (*it)->c.x;
+
+		//Y
+		if ((*it)->a.y < ret.y)
+			ret.y = (*it)->a.y;
+		if ((*it)->b.y < ret.y)
+			ret.y = (*it)->b.y;
+		if ((*it)->c.y < ret.y)
+			ret.y = (*it)->c.y;
+
+		//Z
+		if ((*it)->a.z < ret.z)
+			ret.z = (*it)->a.z;
+		if ((*it)->b.z < ret.z)
+			ret.z = (*it)->b.z;
+		if ((*it)->c.z < ret.z)
+			ret.z = (*it)->c.z;
+	}
+
+	return ret;
 }

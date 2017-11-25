@@ -5,7 +5,7 @@
 #include "MathGeoLib\src\Geometry\AABB.h"
 
 #define MAX_NUM_OBJECTS 3
-#define MAX_SUBDIVISIONS 5 //allways odd, never even
+#define MAX_SUBDIVISIONS 5
 
 class GameObject;
 
@@ -48,16 +48,18 @@ private:
 
 	float FindBestMedianZ(const GameObject* new_game_object) const;
 
-public:
-	bool AddGameObject(const GameObject* new_game_object, unsigned int& num_subdivisions);
-
-	bool AddToCorrectChild(const GameObject* new_game_object, unsigned int& num_subdivisions);
-
-	bool RemoveGameObject(const GameObject* new_game_object);
+	bool AllSamePos(const GameObject* new_game_object) const;
 
 	void ReArrange();
 
+	bool AddToCorrectChild(const GameObject* new_game_object, unsigned int& num_subdivisions);
+
 	bool Empty() const;
+
+public:
+	bool AddGameObject(const GameObject* new_game_object, unsigned int& num_subdivisions);
+
+	bool RemoveGameObject(const GameObject* new_game_object);
 
 	void GetGameObjects(std::vector<const GameObject*>& vec) const;
 
@@ -65,8 +67,6 @@ public:
 	bool AllIn(const GameObject* new_game_object) const;	
 
 	void Draw() const;
-
-	bool AllSamePos(const GameObject* new_game_object) const;
 
 	bool UpdateGO(const GameObject* updated_go);
 
@@ -85,42 +85,45 @@ public:
 
 	bool AddGameObject(const GameObject* new_game_object);
 
+	bool RemoveGameObject(const GameObject* new_game_object);
+
 	bool UpdateGO(const GameObject* updated_go);
 
 	void Draw() const;
 };
 
-//Subdivide priority queue operators
-struct CompareMaxPositionsX
+namespace KDTGO
 {
-	bool operator()(const GameObject * go1, const GameObject * go2);
-};
+	//Subdivide priority queue operators
+	struct CompareMaxPositionsX
+	{
+		bool operator()(const GameObject * go1, const GameObject * go2);
+	};
 
-struct CompareMaxPositionsY
-{
-	bool operator()(const GameObject * go1, const GameObject * go2);
-};
+	struct CompareMaxPositionsY
+	{
+		bool operator()(const GameObject * go1, const GameObject * go2);
+	};
 
-struct CompareMaxPositionsZ
-{
-	bool operator()(const GameObject * go1, const GameObject * go2);
-};
+	struct CompareMaxPositionsZ
+	{
+		bool operator()(const GameObject * go1, const GameObject * go2);
+	};
 
-struct CompareMinPositionsX
-{
-	bool operator()(const GameObject * go1, const GameObject * go2);
-};
+	struct CompareMinPositionsX
+	{
+		bool operator()(const GameObject * go1, const GameObject * go2);
+	};
 
-struct CompareMinPositionsY
-{
-	bool operator()(const GameObject * go1, const GameObject * go2);
-};
+	struct CompareMinPositionsY
+	{
+		bool operator()(const GameObject * go1, const GameObject * go2);
+	};
 
-struct CompareMinPositionsZ
-{
-	bool operator()(const GameObject * go1, const GameObject * go2);
-};
+	struct CompareMinPositionsZ
+	{
+		bool operator()(const GameObject * go1, const GameObject * go2);
+	};
+}
 
 #endif // !KDTREE_GO
-
-
