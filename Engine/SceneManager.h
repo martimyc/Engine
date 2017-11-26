@@ -83,7 +83,6 @@ public:
 	void AddPrefabAsNewGameObjects(GameObject* root);
 
 	void DrawBoundingBoxes() const;
-	const std::vector<const AABB*> UpdateAABBsParents(const GameObject* go) const;
 
 	void AddEmptyGO();
 
