@@ -39,6 +39,7 @@ public:
 	const float GetAspectRatio() const;	//width/height
 
 	void SetTitle(const char* title);
+	void WindowResize(uint w, uint h);
 
 public:
 	//The window we'll be rendering to
