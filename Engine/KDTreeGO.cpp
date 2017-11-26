@@ -1,8 +1,6 @@
 #include <functional>
 #include <queue>
-#include <vector>
 #include "glew\include\GL\glew.h"
-#include "MathGeoLib\src\Geometry\AABB.h"
 #include "Globals.h"
 #include "GameObject.h"
 #include "KDTreeGO.h"

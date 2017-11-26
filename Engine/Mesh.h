@@ -8,37 +8,10 @@
 
 class GameObject;
 class AppliedMaterial;
-class KDTreeVertex;
-namespace math
-{
-	class Triangle;
-	class LineSegment;
-}
+class KDTreeTriangle;
 
-namespace Geo
-{
-	struct Vertex
-	{
-		math::vec vertex;
+class Vertex;
 
-		std::vector<const math::Triangle*> triangles;
-
-		Vertex(const GLfloat* ptr); 
-
-		Vertex(float x, float y, float z);
-
-		~Vertex();
-
-		float operator [] (int i) const;
-
-		void AddTriangle(const math::Triangle* new_triangle);
-
-		bool CheckCollision(const LineSegment* ray, math::Triangle& triangle) const;
-
-		const math::vec GetMaxPos() const;
-		const math::vec GetMinPos() const;
-	};
-}
 
 struct MeshSource
 {
@@ -67,7 +40,7 @@ struct MeshSource
 
 	//-------
 
-	KDTreeVertex* vertex_kdt = nullptr;
+	KDTreeTriangle* triangle_kdt = nullptr;
 
 	MeshSource();
 	~MeshSource();
@@ -119,13 +92,13 @@ struct MeshSource
 	float GetMaxY() const;
 	float GetMaxZ() const;
 
-	Geo::Vertex GetMinXVertex() const;
-	Geo::Vertex GetMinYVertex() const;
-	Geo::Vertex GetMinZVertex() const;
+	math::vec GetMinXVertex() const;
+	math::vec GetMinYVertex() const;
+	math::vec GetMinZVertex() const;
 
-	Geo::Vertex GetMaxXVertex() const;
-	Geo::Vertex GetMaxYVertex() const;
-	Geo::Vertex GetMaxZVertex() const;
+	math::vec GetMaxXVertex() const;
+	math::vec GetMaxYVertex() const;
+	math::vec GetMaxZVertex() const;
 
 	bool CheckTriangleCollision(const LineSegment * ray, float* distance) const;
 };
@@ -188,13 +161,13 @@ public:
 	float GetMaxY() const;
 	float GetMaxZ() const;
 
-	Geo::Vertex GetMinXVertex() const;
-	Geo::Vertex GetMinYVertex() const;
-	Geo::Vertex GetMinZVertex() const;
+	math::vec GetMinXVertex() const;
+	math::vec GetMinYVertex() const;
+	math::vec GetMinZVertex() const;
 
-	Geo::Vertex GetMaxXVertex() const;
-	Geo::Vertex GetMaxYVertex() const;
-	Geo::Vertex GetMaxZVertex() const;
+	math::vec GetMaxXVertex() const;
+	math::vec GetMaxYVertex() const;
+	math::vec GetMaxZVertex() const;
 
 	//bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
 

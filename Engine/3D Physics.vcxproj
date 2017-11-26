@@ -146,7 +146,7 @@
     <ClInclude Include="imgui\imgui_dock.h" />
     <ClInclude Include="ImportManager.h" />
     <ClInclude Include="KDTreeGO.h" />
-    <ClInclude Include="KDTreeVertex.h" />
+    <ClInclude Include="KDTreeTriangle.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialImporter.h" />
     <ClInclude Include="MeshFilter.h" />
@@ -248,6 +248,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UID.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -271,7 +272,7 @@
     <ClCompile Include="imgui\imgui_user.cpp" />
     <ClCompile Include="ImportManager.cpp" />
     <ClCompile Include="KDTreeGO.cpp" />
-    <ClCompile Include="KDTreeVertex.cpp" />
+    <ClCompile Include="KDTreeTriangle.cpp" />
     <ClCompile Include="MainMenuBar.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialAsset.cpp" />
@@ -343,6 +344,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UID.cpp" />
+    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
