@@ -146,7 +146,7 @@
     <ClInclude Include="imgui\imgui_dock.h" />
     <ClInclude Include="ImportManager.h" />
     <ClInclude Include="KDTreeGO.h" />
-    <ClInclude Include="KDTreeVertex.h" />
+    <ClInclude Include="KDTreeTriangle.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialImporter.h" />
     <ClInclude Include="MeshFilter.h" />
@@ -272,7 +272,7 @@
     <ClCompile Include="imgui\imgui_user.cpp" />
     <ClCompile Include="ImportManager.cpp" />
     <ClCompile Include="KDTreeGO.cpp" />
-    <ClCompile Include="KDTreeVertex.cpp" />
+    <ClCompile Include="KDTreeTriangle.cpp" />
     <ClCompile Include="MainMenuBar.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialAsset.cpp" />

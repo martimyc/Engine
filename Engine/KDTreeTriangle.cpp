@@ -4,27 +4,27 @@
 #include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "MathGeoLib\src\Geometry\Triangle.h"
 #include "Globals.h"
-#include "KDTreeVertex.h"
+#include "KDTreeTriangle.h"
 
-KDTNodeVertex::KDTNodeVertex(const math::vec min_point, const math::vec max_point) : partition_axis(NO_PARTITION), limits(min_point, max_point)
+KDTNodeTriangle::KDTNodeTriangle(const math::vec min_point, const math::vec max_point) : partition_axis(NO_PARTITION), limits(min_point, max_point)
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		vertices[i].Infinite();
+		triangles[i].Infinite();
 
 	childs[0] = nullptr;
 	childs[1] = nullptr;
 }
 
-KDTNodeVertex::KDTNodeVertex(const AABB& limits) : partition_axis(NO_PARTITION), limits(limits)
+KDTNodeTriangle::KDTNodeTriangle(const AABB& limits) : partition_axis(NO_PARTITION), limits(limits)
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		vertices[i].Infinite();
+		triangles[i].Infinite();
 
 	childs[0] = nullptr;
 	childs[1] = nullptr;
 }
 
-KDTNodeVertex::~KDTNodeVertex() //Dont think deleting gameobjects through tree is best
+KDTNodeTriangle::~KDTNodeTriangle() //Dont think deleting gameobjects through tree is best
 {
 	if (childs[0] != nullptr)
 	{
@@ -33,7 +33,7 @@ KDTNodeVertex::~KDTNodeVertex() //Dont think deleting gameobjects through tree i
 	}
 }
 
-bool KDTNodeVertex::SubDivide3D(const Vertex& new_vertex, unsigned int& num_subdivisions)
+bool KDTNodeTriangle::SubDivide3D(const math::Triangle& new_triangle, unsigned int& num_subdivisions)
 {
 	if (++num_subdivisions >= MAX_SUBDIVISIONS)
 	{
@@ -41,11 +41,11 @@ bool KDTNodeVertex::SubDivide3D(const Vertex& new_vertex, unsigned int& num_subd
 		return false;
 	}
 
-	if (!AllSamePos(new_vertex))
+	if (!AllSamePos(new_triangle))
 	{
-		float median_x = FindBestMedianX(new_vertex);
-		float median_y = FindBestMedianY(new_vertex);
-		float median_z = FindBestMedianZ(new_vertex);
+		float median_x = FindBestMedianX(new_triangle);
+		float median_y = FindBestMedianY(new_triangle);
+		float median_z = FindBestMedianZ(new_triangle);
 
 		SubDivide(X, median_x);
 		SubDivideChilds(Y, median_y);
@@ -54,13 +54,13 @@ bool KDTNodeVertex::SubDivide3D(const Vertex& new_vertex, unsigned int& num_subd
 
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			if (AddToCorrectChild(vertices[i], num_subdivisions) == false)
+			if (AddToCorrectChild(triangles[i], num_subdivisions) == false)
 				return false;
 
-			vertices[i].Infinite();
+			triangles[i].Infinite();
 		}
 
-		if (AddToCorrectChild(new_vertex, num_subdivisions) == false)
+		if (AddToCorrectChild(new_triangle, num_subdivisions) == false)
 			return false;
 
 		return true;
@@ -70,7 +70,7 @@ bool KDTNodeVertex::SubDivide3D(const Vertex& new_vertex, unsigned int& num_subd
 	return false;
 }
 
-void KDTNodeVertex::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
+void KDTNodeTriangle::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] != nullptr)
 	{
@@ -81,7 +81,7 @@ void KDTNodeVertex::SubDivideChilds(PARTITION_AXIS partition_axis, float median)
 		LOG("No childs to subdivide");
 }
 
-void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
+void KDTNodeTriangle::SubDivide(PARTITION_AXIS partition_axis, float median)
 {
 	if (childs[0] == nullptr)
 	{
@@ -113,7 +113,7 @@ void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 			break;
 		}
 
-		childs[0] = new KDTNodeVertex(min_point, max_point);
+		childs[0] = new KDTNodeTriangle(min_point, max_point);
 
 		max_point = limits.maxPoint;
 
@@ -139,38 +139,38 @@ void KDTNodeVertex::SubDivide(PARTITION_AXIS partition_axis, float median)
 			break;
 		}
 
-		childs[1] = new KDTNodeVertex(min_point, max_point);
+		childs[1] = new KDTNodeTriangle(min_point, max_point);
 	}
 	else
 		LOG("Trying to subdivide node with existing childs");
 }
 
-float KDTNodeVertex::FindBestMedianX(const Vertex& new_vertex) const
+float KDTNodeTriangle::FindBestMedianX(const math::Triangle& new_triangle) const
 {
 	std::priority_queue<float, std::vector<float>, std::greater<float>> queue;
 
 	bool repeated = false;
 
-	queue.push(new_vertex.X());
+	queue.push(new_triangle.CenterPoint().x);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
 		repeated = false;
-		if (vertices[i].X() == new_vertex.X())
+		if (triangles[i].CenterPoint().x == new_triangle.CenterPoint().x)
 			repeated = true;
 
 		if (i > 0)
 		{
 			for (int j = i - 1; j >= 0; j--)
-				if (vertices[i].X() == vertices[j].X())
+				if (triangles[i].CenterPoint().x == triangles[j].CenterPoint().x)
 				{
-					repeated == true;
+					repeated = true;
 					break;
 				}
 		}
 
 		if (repeated == false)
-			queue.push(vertices[i].X());
+			queue.push(triangles[i].CenterPoint().x);
 	}
 
 	if (queue.size() >= 2)
@@ -189,32 +189,32 @@ float KDTNodeVertex::FindBestMedianX(const Vertex& new_vertex) const
 		return limits.CenterPoint().x;
 }
 
-float KDTNodeVertex::FindBestMedianY(const Vertex& new_vertex) const
+float KDTNodeTriangle::FindBestMedianY(const math::Triangle& new_triangle) const
 {
 	std::priority_queue<float, std::vector<float>, std::greater<float>> queue;
 
 	bool repeated = false;
 
-	queue.push(new_vertex.Y());
+	queue.push(new_triangle.CenterPoint().y);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
 		repeated = false;
-		if (vertices[i].Y() == new_vertex.Y())
+		if (triangles[i].CenterPoint().y == new_triangle.CenterPoint().y)
 			repeated = true;
 
 		if (i > 0)
 		{
 			for (int j = i - 1; j >= 0; j--)
-				if (vertices[i].Y() == vertices[j].Y())
+				if (triangles[i].CenterPoint().y == triangles[j].CenterPoint().y)
 				{
-					repeated == true;
+					repeated = true;
 					break;
 				}
 		}
 
 		if (repeated == false)
-			queue.push(vertices[i].Y());
+			queue.push(triangles[i].CenterPoint().y);
 	}
 
 	if (queue.size() >= 2)
@@ -233,32 +233,32 @@ float KDTNodeVertex::FindBestMedianY(const Vertex& new_vertex) const
 		return limits.CenterPoint().y;
 }
 
-float KDTNodeVertex::FindBestMedianZ(const Vertex& new_vertex) const
+float KDTNodeTriangle::FindBestMedianZ(const math::Triangle& new_triangle) const
 {
 	std::priority_queue<float, std::vector<float>, std::greater<float>> queue;
 
 	bool repeated = false;
 
-	queue.push(new_vertex.Z());
+	queue.push(new_triangle.CenterPoint().z);
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
 		repeated = false;
-		if (vertices[i].Z() == new_vertex.Z())
+		if (triangles[i].CenterPoint().z == new_triangle.CenterPoint().z)
 			repeated = true;
 
 		if (i > 0)
 		{
 			for (int j = i - 1; j >= 0; j--)
-				if (vertices[i].Z() == vertices[j].Z())
+				if (triangles[i].CenterPoint().z == triangles[j].CenterPoint().z)
 				{
-					repeated == true;
+					repeated = true;
 					break;
 				}
 		}
 
 		if (repeated == false)
-			queue.push(vertices[i].Z());
+			queue.push(triangles[i].CenterPoint().z);
 	}
 
 	if (queue.size() >= 2)
@@ -277,40 +277,34 @@ float KDTNodeVertex::FindBestMedianZ(const Vertex& new_vertex) const
 		return limits.CenterPoint().z;
 }
 
-bool KDTNodeVertex::AddVertex(const Vertex& new_vertex, unsigned int& num_subdivisions)
+bool KDTNodeTriangle::AddTriangle(const math::Triangle& new_triangle, unsigned int& num_subdivisions)
 {
 	bool ret = false;
 
 	if (partition_axis == NO_PARTITION)
 	{
-		if (IsIn(new_vertex))
+		if (IsIn(new_triangle))
 		{
-			LOG("Adding repeated vertex");
-			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-				if (vertices[i].IsFinite() == false)
-					if (vertices[i] == new_vertex)
-					{
-						vertices[i].AddTriangles(new_vertex);
-						ret = true;
-					}			
+			LOG("Adding repeated triangle");
+			ret = true;
 		}
 		else
 		{
-			if (vertices[MAX_NUM_OBJECTS - 1].IsFinite() == false)
+			if (triangles[MAX_NUM_OBJECTS - 1].IsFinite() == false)
 			{
 				for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-					if (vertices[i].IsFinite() == false)
+					if (triangles[i].IsFinite() == false)
 					{
-						vertices[i] = new_vertex;
-						UpdateMax(new_vertex.GetMaxPos());
-						UpdateMin(new_vertex.GetMinPos());
+						triangles[i] = new_triangle;
+						UpdateMax(new_triangle.GetMaxPos());
+						UpdateMin(new_triangle.GetMinPos());
 						ret = true;
 						break;
 					}
 			}
 			else
 			{
-				if (SubDivide3D(new_vertex, num_subdivisions) == false)
+				if (SubDivide3D(new_triangle, num_subdivisions) == false)
 					return false;
 				else
 					ret = true;
@@ -319,7 +313,7 @@ bool KDTNodeVertex::AddVertex(const Vertex& new_vertex, unsigned int& num_subdiv
 	}
 	else
 	{
-		if (AddToCorrectChild(new_vertex, num_subdivisions) == false)
+		if (AddToCorrectChild(new_triangle, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
@@ -328,31 +322,31 @@ bool KDTNodeVertex::AddVertex(const Vertex& new_vertex, unsigned int& num_subdiv
 	return ret;
 }
 
-bool KDTNodeVertex::AddToCorrectChild(const Vertex& new_vertex, unsigned int& num_subdivisions)
+bool KDTNodeTriangle::AddToCorrectChild(const math::Triangle& new_triangle, unsigned int& num_subdivisions)
 {
 	bool ret = false;
 
 	float pos = 0.0f;
 
-	if (new_vertex.Vec()[partition_axis] <= median)
-		if (childs[0]->AddVertex(new_vertex, num_subdivisions) == false)
+	if (new_triangle.CenterPoint()[partition_axis] <= median)
+		if (childs[0]->AddTriangle(new_triangle, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
 
-	if (new_vertex.Vec()[partition_axis] > median)
-		if (childs[1]->AddVertex(new_vertex, num_subdivisions) == false)
+	if (new_triangle.CenterPoint()[partition_axis] > median)
+		if (childs[1]->AddTriangle(new_triangle, num_subdivisions) == false)
 			return false;
 		else
 			ret = true;
 
 	if (ret == false)
-		LOG("Vertex is not in any child");
+		LOG("math::Triangle is not in any child");
 
 	return ret;
 }
 
-void KDTNodeVertex::UpdateMax(const math::vec & vec)
+void KDTNodeTriangle::UpdateMax(const math::vec & vec)
 {
 	if (vec.x > max.x)
 		max.x = vec.x;
@@ -362,7 +356,7 @@ void KDTNodeVertex::UpdateMax(const math::vec & vec)
 		max.z = vec.z;
 }
 
-void KDTNodeVertex::UpdateMin(const math::vec & vec)
+void KDTNodeTriangle::UpdateMin(const math::vec & vec)
 {
 	if (vec.x < min.x)
 		min.x = vec.x;
@@ -372,14 +366,14 @@ void KDTNodeVertex::UpdateMin(const math::vec & vec)
 		min.z = vec.z;
 }
 
-void KDTNodeVertex::UpdateMax()
+void KDTNodeTriangle::UpdateMax()
 {
 	if (partition_axis == NO_PARTITION)
 	{
-		max = vertices[0].GetMaxPos();
+		max = triangles[0].GetMaxPos();
 		for (int i = 1; i < MAX_NUM_OBJECTS; i++)
-			if (vertices[i].IsFinite())
-				UpdateMax(vertices[i].GetMaxPos());
+			if (triangles[i].IsFinite())
+				UpdateMax(triangles[i].GetMaxPos());
 			else
 				break;
 	}
@@ -390,14 +384,14 @@ void KDTNodeVertex::UpdateMax()
 	}
 }
 
-void KDTNodeVertex::UpdateMin()
+void KDTNodeTriangle::UpdateMin()
 {
 	if (partition_axis == NO_PARTITION)
 	{
-		max = vertices[0].GetMinPos();
+		max = triangles[0].GetMinPos();
 		for (int i = 1; i < MAX_NUM_OBJECTS; i++)
-			if (vertices[i].IsFinite())
-				UpdateMin(vertices[i].GetMinPos());
+			if (triangles[i].IsFinite())
+				UpdateMin(triangles[i].GetMinPos());
 			else
 				break;
 	}
@@ -408,34 +402,34 @@ void KDTNodeVertex::UpdateMin()
 	}
 }
 
-const math::vec& KDTNodeVertex::GetMax() const
+const math::vec& KDTNodeTriangle::GetMax() const
 {
 	return max;
 }
 
-const math::vec& KDTNodeVertex::GetMin() const
+const math::vec& KDTNodeTriangle::GetMin() const
 {
 	return min;
 }
 
-math::AABB KDTNodeVertex::GetMaxMinAABB() const
+math::AABB KDTNodeTriangle::GetMaxMinAABB() const
 {
 	return math::AABB(min, max);
 }
 
-bool KDTNodeVertex::RemoveVertex(const Vertex& new_vertex)
+bool KDTNodeTriangle::RemoveTriangle(const math::Triangle& new_triangle)
 {
 	bool ret = false;
 
 	if (partition_axis == NO_PARTITION)
 	{
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-			if (vertices[i] == new_vertex)
+			if (triangles[i] == new_triangle)
 			{
-				math::vec v_max(vertices[i].GetMaxPos());
-				math::vec v_min(vertices[i].GetMinPos());
+				math::vec v_max(triangles[i].GetMaxPos());
+				math::vec v_min(triangles[i].GetMinPos());
 
-				vertices[i].Infinite();
+				triangles[i].Infinite();
 				ret = true;
 				ReArrange();
 
@@ -448,12 +442,23 @@ bool KDTNodeVertex::RemoveVertex(const Vertex& new_vertex)
 			}
 	}
 	else
-		if (childs[0]->RemoveVertex(new_vertex) || childs[1]->RemoveVertex(new_vertex))
-		{
-			ret = true;
-			UpdateMax();
-			UpdateMin();
-		}
+	{
+		if(childs[0]->WithinLimits(new_triangle.CenterPoint()))
+			if (childs[0]->RemoveTriangle(new_triangle))
+			{
+				ret = true;
+				UpdateMax();
+				UpdateMin();
+			}
+
+		if (childs[1]->WithinLimits(new_triangle.CenterPoint()))
+			if (childs[1]->RemoveTriangle(new_triangle))
+			{
+				ret = true;
+				UpdateMax();
+				UpdateMin();
+			}
+	}
 
 	if (partition_axis == Z && Empty())
 		if (childs != nullptr)
@@ -465,27 +470,18 @@ bool KDTNodeVertex::RemoveVertex(const Vertex& new_vertex)
 	return ret;
 }
 
-void KDTNodeVertex::ReArrange()
+void KDTNodeTriangle::ReArrange()
 {
-	bool end = false;
-
-	while (!end)
-	{
-		for (int i = 0; i < MAX_NUM_OBJECTS - 1; i++)
+	for (int i = 0; i < MAX_NUM_OBJECTS - 1; i++)
+		if (triangles[i].IsFinite() == false && triangles[i + 1].IsFinite() == true)
 		{
-			if (vertices[i].IsFinite() == false && vertices[i + 1].IsFinite() == true)
-			{
-				vertices[i] = vertices[i + 1];
-				break;
-			}
-
-			if (i == MAX_NUM_OBJECTS - 1)
-				end = true;
+			triangles[i] = triangles[i + 1];
+			i = 0;
+			break;
 		}
-	}
 }
 
-bool KDTNodeVertex::Empty() const
+bool KDTNodeTriangle::Empty() const
 {
 	if (partition_axis == NO_PARTITION)
 	{
@@ -503,27 +499,27 @@ bool KDTNodeVertex::Empty() const
 	}
 }
 
-void KDTNodeVertex::GetVertices(std::vector<Vertex>& vec) const
+void KDTNodeTriangle::GetTriangles(std::vector<math::Triangle>& vec) const
 {
 	if (partition_axis != NO_PARTITION)
 	{
-		childs[0]->GetVertices(vec);
-		childs[1]->GetVertices(vec);
+		childs[0]->GetTriangles(vec);
+		childs[1]->GetTriangles(vec);
 	}
 	else
 	{
-		if (vertices[0].IsFinite() == false)
+		if (triangles[0].IsFinite() == false)
 		{
 			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 			{
-				if (vertices[i].IsFinite() == true)
+				if (triangles[i].IsFinite() == true)
 				{
 					bool repeated = false;
-					for (std::vector<Vertex>::const_iterator it = vec.begin(); it != vec.end(); ++it)
-						if ((*it) == vertices[i])
+					for (std::vector<math::Triangle>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+						if ((*it) == triangles[i])
 							repeated = true;
 					if (!repeated)
-						vec.push_back(vertices[i]);
+						vec.push_back(triangles[i]);
 				}
 				else
 					break;
@@ -532,12 +528,12 @@ void KDTNodeVertex::GetVertices(std::vector<Vertex>& vec) const
 	}
 }
 
-bool KDTNodeVertex::IsIn(const Vertex& new_vertex) const
+bool KDTNodeTriangle::IsIn(const math::Triangle& new_triangle) const
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if (vertices[i].IsFinite())
+		if (triangles[i].IsFinite())
 		{
-			if (vertices[i] == new_vertex)
+			if (triangles[i] == new_triangle)
 				return true;
 		}
 		else
@@ -545,7 +541,12 @@ bool KDTNodeVertex::IsIn(const Vertex& new_vertex) const
 	return false;
 }
 
-void KDTNodeVertex::Draw() const
+bool KDTNodeTriangle::WithinLimits(const math::vec& vec) const
+{
+	return limits.Contains(vec);
+}
+
+void KDTNodeTriangle::Draw() const
 {
 	limits.Draw(1.0f, 0.0f, 1.0f, 1.0f);
 
@@ -634,23 +635,23 @@ void KDTNodeVertex::Draw() const
 	{
 		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 		{
-			if (vertices[i].IsFinite() == true)
-				vertices[i].Draw(0.0f, 1.0f, 1.0f, 1.0f);
+			if (triangles[i].IsFinite() == true)
+				triangles[i].Draw(0.0f, 1.0f, 1.0f, 1.0f);
 			else
 				break;
 		}
 	}
 }
 
-bool KDTNodeVertex::AllSamePos(const Vertex& new_vertex) const
+bool KDTNodeTriangle::AllSamePos(const math::Triangle& new_triangle) const
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		if ((new_vertex == vertices[i]) == false)
+		if ((new_triangle == triangles[i]) == false)
 			return false;
 	return true;
 }
 
-void KDTNodeVertex::DeleteHirarchy()
+void KDTNodeTriangle::DeleteHirarchy()
 {
 	median = 0;
 	partition_axis = NO_PARTITION;
@@ -659,21 +660,29 @@ void KDTNodeVertex::DeleteHirarchy()
 }
 
 
-bool KDTNodeVertex::RayCollisionKDT(const LineSegment * ray, float& shortest_distance) const
+bool KDTNodeTriangle::RayCollisionKDT(const LineSegment * ray, float& shortest_distance) const
 {
 	bool ret = false;
 	if (partition_axis == NO_PARTITION)
 	{
-		if (vertices[0].IsFinite())
+		if (triangles[0].IsFinite())
 			return false;
 		else
 		{
 			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 			{
-				if (vertices[i].IsFinite() == true)
+				if (triangles[i].IsFinite() == true)
 				{
-					if (vertices[i].CheckCollision(ray, shortest_distance))
-						ret = true;
+					float distance = 0.0f;
+
+					if (ray->Intersects(triangles[i], &distance, nullptr))
+					{
+						if (shortest_distance > distance)
+						{
+							ret = true;
+							shortest_distance = distance;
+						}
+					}
 				}
 				else
 					return false;
@@ -697,66 +706,66 @@ bool KDTNodeVertex::RayCollisionKDT(const LineSegment * ray, float& shortest_dis
 	return ret;
 }
 
-bool KDTNodeVertex::Inside(const Vertex & new_vertex) const
+bool KDTNodeTriangle::Inside(const math::Triangle & new_triangle) const
 {
-	if (new_vertex.X() < limits.MinX())
+	if (new_triangle.CenterPoint().x < limits.MinX())
 		return false;
-	if (new_vertex.X() > limits.MaxX())
-		return false;
-
-	if (new_vertex.Y() < limits.MinY())
-		return false;
-	if (new_vertex.Y() > limits.MaxY())
+	if (new_triangle.CenterPoint().x > limits.MaxX())
 		return false;
 
-	if (new_vertex.Z() < limits.MinZ())
+	if (new_triangle.CenterPoint().y < limits.MinY())
 		return false;
-	if (new_vertex.Z() > limits.MaxZ())
+	if (new_triangle.CenterPoint().y > limits.MaxY())
+		return false;
+
+	if (new_triangle.CenterPoint().z < limits.MinZ())
+		return false;
+	if (new_triangle.CenterPoint().z > limits.MaxZ())
 		return false;
 
 	return true;
 }
 
-bool KDTreeVertex::ReCalculate(const Vertex & new_vertex)
+bool KDTreeTriangle::ReCalculate(const math::Triangle & new_triangle)
 {
-	std::vector<Vertex> all_triangles;
+	std::vector<math::Triangle> all_triangles;
 
-	root->GetVertices(all_triangles);
+	root->GetTriangles(all_triangles);
 
 	delete root;
 
 	AABB limits;
 	limits.SetNegativeInfinity();
 
-	limits.Enclose(new_vertex.GetMaxPos());
-	limits.Enclose(new_vertex.GetMinPos());
+	limits.Enclose(new_triangle.GetMaxPos());
+	limits.Enclose(new_triangle.GetMinPos());
 
 	if (all_triangles.size() > 0)
 	{
-		for (std::vector<Vertex>::const_iterator it = all_triangles.begin(); it != all_triangles.end(); ++it)
+		for (std::vector<math::Triangle>::const_iterator it = all_triangles.begin(); it != all_triangles.end(); ++it)
 		{
 			limits.Enclose(it->GetMaxPos());
 			limits.Enclose(it->GetMinPos());
 		}
 	}
 
-	root = new KDTNodeVertex(limits);
+	root = new KDTNodeTriangle(limits);
 
 	unsigned int num_subdivisions = 0;
-	if (root->AddVertex(new_vertex, num_subdivisions) == false)
+	if (root->AddTriangle(new_triangle, num_subdivisions) == false)
 	{
-		LOG("New vertex: '%f, %f, %f' could not be added to KDT", new_vertex.X(), new_vertex.Y(), new_vertex.Z());
+		LOG("New triangle:\nA:'%f, %f, %f'\nB:'%f, %f, %f'\nC:'%f, %f, %f'\nCould not be added to KDT", new_triangle.a.x, new_triangle.a.y, new_triangle.a.z, new_triangle.b.x, new_triangle.b.y, new_triangle.b.z, new_triangle.c.x, new_triangle.c.y, new_triangle.c.z);
 		return false;
 	}
 
 	if (all_triangles.size() > 0)
 	{
-		for (std::vector<Vertex>::const_iterator it = all_triangles.begin(); it != all_triangles.end(); ++it)
+		for (std::vector<math::Triangle>::const_iterator it = all_triangles.begin(); it != all_triangles.end(); ++it)
 		{
 			num_subdivisions = 0;
-			if (root->AddVertex(*it, num_subdivisions) == false)
+			if (root->AddTriangle(*it, num_subdivisions) == false)
 			{
-				LOG("Vertex: '%f, %f, %f' could not be re-added to KDT", (*it).X(), (*it).Y(), (*it).Z());
+				LOG("Triangle:\nA:'%f, %f, %f'\nB:'%f, %f, %f'\nC:'%f, %f, %f'\nCould not be re-added to KDT", (*it).a.x, (*it).a.y, (*it).a.z, (*it).b.x, (*it).b.y, (*it).b.z, (*it).c.x, (*it).c.y, (*it).c.z);
 				return false;
 			}
 		}
@@ -765,55 +774,46 @@ bool KDTreeVertex::ReCalculate(const Vertex & new_vertex)
 	return true;
 }
 
-KDTreeVertex::KDTreeVertex()
+KDTreeTriangle::KDTreeTriangle()
 {
 	AABB limits;
 	limits.SetNegativeInfinity();
-	root = new KDTNodeVertex(limits);
+	root = new KDTNodeTriangle(limits);
 }
 
-KDTreeVertex::~KDTreeVertex()
+KDTreeTriangle::~KDTreeTriangle()
 {
 	delete root;
-	triangles.clear();
 }
 
-bool KDTreeVertex::AddVertex(const Vertex& new_vertex)
+bool KDTreeTriangle::AddTriangle(const math::Triangle& new_triangle)
 {
-	if (root->Inside(new_vertex))
+	if (root->Inside(new_triangle))
 	{
 		unsigned int num_subdivisions = 0;
-		if (root->AddVertex(new_vertex, num_subdivisions) == false)
+		if (root->AddTriangle(new_triangle, num_subdivisions) == false)
 			return false;
 	}
 	else
-		if (ReCalculate(new_vertex) == false)
+		if (ReCalculate(new_triangle) == false)
 			return false;
 
 	return true;
 }
 
-bool KDTreeVertex::RemoveVertex(const Vertex& new_vertex)
+bool KDTreeTriangle::RemoveTriangle(const math::Triangle& new_triangle)
 {
-	return root->RemoveVertex(new_vertex);
+	return root->RemoveTriangle(new_triangle);
 }
 
-bool KDTreeVertex::AddVertices(const float*const new_vertices, int num_vertices, const unsigned int*const new_indices, int num_indices)
+bool KDTreeTriangle::AddTriangles(const float*const new_vertices, const unsigned int*const new_indices, int num_indices, const math::vec& max, const math::vec& min)
 {
-	std::vector<Vertex> all_vertices;
-	all_vertices.reserve(num_vertices);
+	std::vector<math::Triangle> all_triangles;
 
-	AABB limits;
-	limits.SetNegativeInfinity();
-
-	for (int i = 0; i < num_vertices; i++)
-	{
-		all_vertices.push_back(&new_vertices[i * 3]);
-		limits.Enclose(all_vertices.back().Vec());
-	}
+	AABB limits(min,max);
 
 	int num_triangles = num_indices / 3;
-	triangles.reserve(num_triangles);
+	all_triangles.reserve(num_triangles);
 
 	for (int i = 0; i < num_triangles; i++)
 	{
@@ -821,54 +821,27 @@ bool KDTreeVertex::AddVertices(const float*const new_vertices, int num_vertices,
 		unsigned int v_b = new_indices[i * 3 + 1];
 		unsigned int v_c = new_indices[i * 3 + 2];
 
-		triangles.push_back(math::Triangle());
-		Triangle* tri = &triangles.back();
+		Triangle tri;
 
-		memcpy(&tri->a, &new_vertices[v_a], sizeof(float) * 3);
-		memcpy(&tri->b, &new_vertices[v_b], sizeof(float) * 3);
-		memcpy(&tri->c, &new_vertices[v_c], sizeof(float) * 3);
+		memcpy(&tri.a, &new_vertices[v_a * 3], sizeof(float) * 3);
+		memcpy(&tri.b, &new_vertices[v_b * 3], sizeof(float) * 3);
+		memcpy(&tri.c, &new_vertices[v_c * 3], sizeof(float) * 3);
 
-		all_vertices[v_a].AddTriangle(tri);
-		all_vertices[v_b].AddTriangle(tri);
-		all_vertices[v_c].AddTriangle(tri);
+		all_triangles.push_back(tri);
+
+		//all_triangles.push_back((math::vec)new_vertices[v_a], (math::vec)new_vertices[v_b], (math::vec)new_vertices[v_c]);
 	}
 
-	int remaining_vertices;
-	bool end = false;
-	while (!end)
-	{
-		for (int i = 0; i < all_vertices.size(); i++)
-		{
-			bool erased = false;
-			for (int j = i - 1; j >= 0; j--)
-			{
-				if ((math::float3)all_vertices[i].Vec() == all_vertices[j].Vec())
-				{
-					all_vertices[j].AddTriangles(all_vertices[i]);
-					all_vertices.erase(all_vertices.begin() + i);
-					erased = true;
-					break;
-				}
-			}
+	root = new KDTNodeTriangle(limits);
 
-			if (i < all_vertices.size())
-				end = true;
-
-			if (erased)
-				break;
-		}
-	}
-
-	root = new KDTNodeVertex(limits);
-
-	if (all_vertices.size() > 0)
+	if (all_triangles.size() > 0)
 	{
 		unsigned int num_subdivisions = 0;
-		for (std::vector<Vertex>::const_iterator it = all_vertices.begin(); it != all_vertices.end(); ++it)
+		for (std::vector<math::Triangle>::const_iterator it = all_triangles.begin(); it != all_triangles.end(); ++it)
 		{
-			if (root->AddVertex(*it, num_subdivisions) == false)
+			if (root->AddTriangle(*it, num_subdivisions) == false)
 			{
-				LOG("Vertex: '%f, %f, %f' could not be added to KDT", (*it).X(), (*it).Y(), (*it).Z());
+				LOG("Triangle:\nA:'%f, %f, %f'\nB:'%f, %f, %f'\nC:'%f, %f, %f'\nCould not be added to KDT", (*it).a.x, (*it).a.y, (*it).a.z, (*it).b.x, (*it).b.y, (*it).b.z, (*it).c.x, (*it).c.y, (*it).c.z);
 				return false;
 			}
 			num_subdivisions = 0;
@@ -878,12 +851,12 @@ bool KDTreeVertex::AddVertices(const float*const new_vertices, int num_vertices,
 	return true;
 }
 
-void KDTreeVertex::Draw() const
+void KDTreeTriangle::Draw() const
 {
 	root->Draw();
 }
 
-float KDTreeVertex::RayCollisionKDT(const LineSegment * ray) const
+float KDTreeTriangle::RayCollisionKDT(const LineSegment * ray) const
 {
 	float shortest_distance = ray->Length();
 	if (root->RayCollisionKDT(ray, shortest_distance))

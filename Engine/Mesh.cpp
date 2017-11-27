@@ -4,7 +4,7 @@
 #include "MathGeoLib\src\Geometry\Triangle.h"
 
 //Containers
-#include "KDTreeVertex.h"
+#include "KDTreeTriangle.h"
 
 //Modules
 #include "Globals.h"
@@ -296,23 +296,23 @@ void MeshSource::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat **
 
 void MeshSource::DrawKDT() const
 {
-	if (vertex_kdt != nullptr)
-		vertex_kdt->Draw();
+	if (triangle_kdt != nullptr)
+		triangle_kdt->Draw();
 }
 
 void MeshSource::RecalculateKDT()
 {
-	if (vertex_kdt != nullptr)
-		delete vertex_kdt;
+	if (triangle_kdt != nullptr)
+		delete triangle_kdt;
 
-	vertex_kdt = new KDTreeVertex();
-	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
+	triangle_kdt = new KDTreeTriangle();
+	triangle_kdt->AddTriangles(vertices, indices, num_indices, GetMaxVec(), GetMinVec());
 }
 
 float MeshSource::RayCollisionKDT(const LineSegment* ray) const
 {
-	if (vertex_kdt != nullptr)
-		return vertex_kdt->RayCollisionKDT(ray);
+	if (triangle_kdt != nullptr)
+		return triangle_kdt->RayCollisionKDT(ray);
 	LOG("No KDT to check collisions");
 	return ray->Length();
 }
@@ -350,6 +350,11 @@ float MeshSource::GetMinZ() const
 	return min;
 }
 
+math::vec MeshSource::GetMaxVec() const
+{
+	return math::vec(GetMaxX(), GetMaxY(), GetMaxZ());
+}
+
 float MeshSource::GetMaxX() const
 {
 	float max = -inf;
@@ -381,6 +386,11 @@ float MeshSource::GetMaxZ() const
 			max = vertices[i * 3 + 2];
 
 	return max;
+}
+
+math::vec MeshSource::GetMinVec() const
+{
+	return math::vec(GetMinX(), GetMinY(), GetMinZ());
 }
 
 math::vec MeshSource::GetMinXVertex() const

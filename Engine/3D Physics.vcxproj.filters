@@ -603,7 +603,7 @@
     <ClInclude Include="Vertex.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="KDTreeVertex.h">
+    <ClInclude Include="KDTreeTriangle.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -896,10 +896,10 @@
     <ClCompile Include="TimeManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="KDTreeVertex.cpp">
+    <ClCompile Include="Vertex.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
+    <ClCompile Include="KDTreeTriangle.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
   </ItemGroup>

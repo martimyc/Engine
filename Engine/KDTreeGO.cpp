@@ -773,8 +773,14 @@ bool KDTNodeGO::RemoveGameObject(const GameObject * new_game_object)
 			}
 	}
 	else
-		if (childs[0]->RemoveGameObject(new_game_object) || childs[1]->RemoveGameObject(new_game_object))
-			ret = true;
+	{
+		if (childs[0]->IsIn(new_game_object))
+			if (childs[0]->RemoveGameObject(new_game_object))
+				ret = true;
+		if (childs[1]->IsIn(new_game_object))
+			if (childs[1]->RemoveGameObject(new_game_object))
+				ret = true;
+	}
 
 	if (partition_axis == Z && Empty())
 		if (childs != nullptr)
