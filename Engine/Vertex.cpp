@@ -50,7 +50,14 @@ float Vertex::operator[](int i) const
 
 bool Vertex::operator==(const math::vec & vec) const
 {
-	return (math::float3)vertex == vec;
+	if (abs(vertex.x - vec.x) > EPSILON)
+		return false;
+	if (abs(vertex.y - vec.y) > EPSILON)
+		return false;
+	if (abs(vertex.z - vec.z) > EPSILON)
+		return false;
+
+	return true;
 }
 
 bool Vertex::operator==(const Vertex & v) const
@@ -60,9 +67,6 @@ bool Vertex::operator==(const Vertex & v) const
 	if (abs(vertex.y - v.Y()) > EPSILON)
 		return false;
 	if (abs(vertex.z - v.Z()) > EPSILON)
-		return false;
-
-	if (triangles.size() == v.triangles.size())
 		return false;
 
 	return true;

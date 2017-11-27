@@ -291,7 +291,7 @@ bool KDTNodeVertex::AddVertex(const Vertex& new_vertex, unsigned int& num_subdiv
 					if (vertices[i] == new_vertex)
 					{
 						vertices[i].AddTriangles(new_vertex);
-						return true;
+						ret = true;
 					}			
 		}
 		else
@@ -467,12 +467,22 @@ bool KDTNodeVertex::RemoveVertex(const Vertex& new_vertex)
 
 void KDTNodeVertex::ReArrange()
 {
-	for (int i = 0; i < MAX_NUM_OBJECTS - 1; i++)
-		if (vertices[i].IsFinite() == false && vertices[i + 1].IsFinite() == true)
+	bool end = false;
+
+	while (!end)
+	{
+		for (int i = 0; i < MAX_NUM_OBJECTS - 1; i++)
 		{
-			vertices[i] = vertices[i + 1];
-			i = 0;
+			if (vertices[i].IsFinite() == false && vertices[i + 1].IsFinite() == true)
+			{
+				vertices[i] = vertices[i + 1];
+				break;
+			}
+
+			if (i == MAX_NUM_OBJECTS - 1)
+				end = true;
 		}
+	}
 }
 
 bool KDTNodeVertex::Empty() const
