@@ -68,7 +68,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 				if (ImGui::MenuItem("Window"))
 					App->window->OpenCloseConfigWindowWindow();
 
-				if (ImGui::MenuItem("Scene"))
+				if (ImGui::MenuItem("Draw Modes"))
 					App->scene_manager->OpenCloseConfigSceneWindow();
 
 				ImGui::EndMenu();

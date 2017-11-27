@@ -302,7 +302,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->resource_manager->CreateButtons();
 	ImGui::End();
 
-	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth() - 15, render_to_texture->GetHeight() - 35), ImVec2(0, 1), ImVec2(1, 0), ImVec4(1, 1, 1, 1), ImVec4(1, 0, 0, 1));
+	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth() - 15, render_to_texture->GetHeight() - 35), ImVec2(0, 1), ImVec2(1, 0));
 
 	App->EndDockWindow();
 
