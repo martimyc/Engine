@@ -10,12 +10,14 @@ namespace math
 	class LineSegment;
 }
 
-struct Vertex
+class Vertex
 {
+private:
 	math::vec vertex;
 
 	std::vector<const math::Triangle*> triangles;
 
+public:
 	Vertex();
 
 	Vertex(const float* ptr);
@@ -23,6 +25,11 @@ struct Vertex
 	Vertex(float x, float y, float z);
 
 	~Vertex();
+
+	float X() const;
+	float Y() const;
+	float Z() const;
+	const math::vec& Vec() const;
 
 	float operator [] (int i) const;
 
@@ -36,11 +43,18 @@ struct Vertex
 	const Vertex& operator = (const math::vec& v);
 
 	void AddTriangle(const math::Triangle* new_triangle);
+	void AddTriangles(const Vertex& vertex);
 
-	bool CheckCollision(const LineSegment* ray, math::Triangle& triangle) const;
+	bool CheckCollision(const LineSegment* ray, float shortest_distance) const;
 
 	const math::vec GetMaxPos() const;
 	const math::vec GetMinPos() const;
+
+	void Infinite();
+
+	bool IsFinite() const;
+
+	void Draw(float red, float green, float blue, float alpha) const;
 };
 
 #endif // !VERTEX

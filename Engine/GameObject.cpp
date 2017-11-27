@@ -545,6 +545,8 @@ void GameObject::RemoveAppliedMaterial()
 
 void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) const
 {
+	//TODO both trough kdt and without it
+
 	std::map<float, GameObject*> aabb_collisions;
 	LineSegment ray_local_space(*ray);
 
@@ -575,7 +577,9 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 		{
 			if ((*it).second->HasMeshFilter())
 			{
-				if ((*it).second->GetMesh()->RayCollisionKDT(ray, triangle_to_test))
+				float distance = (*it).second->GetMesh()->RayCollisionKDT(ray);
+
+				if (distance < ray->Length())
 				{
 					if (go != nullptr)
 					{

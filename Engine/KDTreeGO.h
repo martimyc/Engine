@@ -56,6 +56,8 @@ private:
 
 	bool Empty() const;
 
+	bool AllreadySaved(const GameObject* new_game_object) const;
+
 public:
 	bool AddGameObject(const GameObject* new_game_object, unsigned int& num_subdivisions);
 
@@ -63,14 +65,14 @@ public:
 
 	void GetGameObjects(std::vector<const GameObject*>& vec) const;
 
-	bool IsIn(const GameObject* new_game_object) const;
-	bool AllIn(const GameObject* new_game_object) const;	
-
 	void Draw() const;
 
 	bool UpdateGO(const GameObject* updated_go);
 
 	void DeleteHirarchy();
+
+	bool AllIn(const GameObject* new_game_object) const;
+	bool IsIn(const GameObject* new_game_object) const;
 };
 
 class KDTreeGO

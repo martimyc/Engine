@@ -8,7 +8,7 @@
 
 class GameObject;
 class AppliedMaterial;
-class KDTreeTriangle;
+class KDTreeVertex;
 
 class Vertex;
 
@@ -40,7 +40,7 @@ struct MeshSource
 
 	//-------
 
-	KDTreeTriangle* triangle_kdt = nullptr;
+	KDTreeVertex* vertex_kdt = nullptr;
 
 	MeshSource();
 	~MeshSource();
@@ -81,7 +81,7 @@ struct MeshSource
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
-	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle)const;
+	float RayCollisionKDT(const LineSegment* ray)const;
 
 	//Max & Min
 	float GetMinX() const;
@@ -150,7 +150,7 @@ public:
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
-	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
+	float RayCollisionKDT(const LineSegment* ray) const;
 
 	//Max & Min
 	float GetMinX() const;

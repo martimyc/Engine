@@ -4,7 +4,7 @@
 #include "MathGeoLib\src\Geometry\Triangle.h"
 
 //Containers
-#include "KDTreeTriangle.h"
+#include "KDTreeVertex.h"
 
 //Modules
 #include "Globals.h"
@@ -296,24 +296,25 @@ void MeshSource::SetColors(const GLuint & num_channels, GLuint * ids, GLfloat **
 
 void MeshSource::DrawKDT() const
 {
-	if (triangle_kdt != nullptr)
-		triangle_kdt->Draw();
+	if (vertex_kdt != nullptr)
+		vertex_kdt->Draw();
 }
 
 void MeshSource::RecalculateKDT()
 {
-	if (triangle_kdt != nullptr)
-		delete triangle_kdt;
+	if (vertex_kdt != nullptr)
+		delete vertex_kdt;
 
-	triangle_kdt = new KDTreeTriangle();
-	triangle_kdt->AddTriangles(vertices, indices, num_indices);
+	vertex_kdt = new KDTreeVertex();
+	vertex_kdt->AddVertices(vertices, num_vertices, indices, num_indices);
 }
 
-bool MeshSource::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+float MeshSource::RayCollisionKDT(const LineSegment* ray) const
 {
-	if (triangle_kdt != nullptr)
-		return triangle_kdt->RayCollisionKDT(ray, triangle);
-	return false;
+	if (vertex_kdt != nullptr)
+		return vertex_kdt->RayCollisionKDT(ray);
+	LOG("No KDT to check collisions");
+	return ray->Length();
 }
 
 float MeshSource::GetMinX() const
@@ -692,10 +693,10 @@ void Mesh::RecalculateKDT()
 		LOG("Trying to acces non loaded mesh");
 }
 
-bool Mesh::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+float Mesh::RayCollisionKDT(const LineSegment* ray) const
 {
 	if (source != nullptr)
-		return source->RayCollisionKDT(ray, triangle);
+		return source->RayCollisionKDT(ray);
 
 	LOG("Trying to acces non loaded mesh");
 	return false;
