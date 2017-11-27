@@ -1,25 +1,41 @@
+#include "glew\include\GL\glew.h"
 #include "MathGeoLib\src\Geometry\Triangle.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
+#include "Globals.h"
 #include "Vertex.h"
 
 Vertex::Vertex() : vertex(math::float3::inf)
-{
-	if (this->vertex == math::float3::inf)
-		float a = 0.0f;
-}
-
-Vertex::Vertex(const float * ptr) : vertex(ptr[0], ptr[1], ptr[2])
 {}
+
+Vertex::Vertex(const float * ptr)
+{
+	memcpy(&vertex, ptr, sizeof(float) * 3);
+}
 
 Vertex::Vertex(float x, float y, float z) : vertex(x, y, z)
 {}
 
 Vertex::~Vertex()
+{}
+
+float Vertex::X() const
 {
-	for (std::vector<const Triangle*>::iterator it = triangles.begin(); it != triangles.end(); ++it)
-		if (*it != nullptr)
-			delete *it;
-	triangles.clear();
+	return vertex.x;
+}
+
+float Vertex::Y() const
+{
+	return vertex.y;
+}
+
+float Vertex::Z() const
+{
+	return vertex.z;
+}
+
+const math::vec & Vertex::Vec() const
+{
+	return vertex;
 }
 
 float Vertex::operator[](int i) const
@@ -34,20 +50,24 @@ float Vertex::operator[](int i) const
 
 bool Vertex::operator==(const math::vec & vec) const
 {
-	return (math::float3)vertex == vec;
+	if (abs(vertex.x - vec.x) > EPSILON)
+		return false;
+	if (abs(vertex.y - vec.y) > EPSILON)
+		return false;
+	if (abs(vertex.z - vec.z) > EPSILON)
+		return false;
+
+	return true;
 }
 
 bool Vertex::operator==(const Vertex & v) const
 {
-	if (((math::float3)vertex == v.vertex) == false)
+	if (abs(vertex.x - v.X()) > EPSILON)
 		return false;
-
-	if (triangles.size() == v.triangles.size())
+	if (abs(vertex.y - v.Y()) > EPSILON)
 		return false;
-
-	for (int i = 0; i < triangles.size(); i++)
-		if (triangles[i] != v.triangles[i])
-			return false;
+	if (abs(vertex.z - v.Z()) > EPSILON)
+		return false;
 
 	return true;
 }
@@ -76,7 +96,7 @@ const Vertex & Vertex::operator=(const Vertex & v)
 {
 	vertex = v.vertex;
 
-	for (std::vector<const math::Triangle*>::const_iterator it = v.triangles.begin(); it != triangles.end(); ++it)
+	for (std::vector<const math::Triangle*>::const_iterator it = v.triangles.begin(); it != v.triangles.end(); ++it)
 		triangles.push_back(*it);
 
 	return *this;
@@ -95,7 +115,21 @@ void Vertex::AddTriangle(const math::Triangle * new_triangle)
 	triangles.push_back(new_triangle);
 }
 
-bool Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle & triangle) const
+void Vertex::AddTriangles(const Vertex& vertex)
+{
+	for (std::vector<const math::Triangle*>::const_iterator it = vertex.triangles.begin(); it != vertex.triangles.end(); ++it)
+	{
+		bool already_in = false;
+		for (std::vector<const math::Triangle*>::const_iterator it2 = triangles.begin(); it2 != triangles.end(); ++it2)
+			if (*it == *it2)
+				already_in = true;
+
+		if(already_in == false)
+			triangles.push_back(*it);
+	}		
+}
+
+bool Vertex::CheckCollision(const math::LineSegment * ray, float shortest_distance) const
 {
 	float shortest_dist = ray->Length();
 	float distance = 0.0f;
@@ -111,7 +145,6 @@ bool Vertex::CheckCollision(const math::LineSegment * ray, math::Triangle & tria
 			{
 				hit = true;
 				shortest_dist = distance;
-				triangle = *triangles[i];
 			}
 		}
 	}
@@ -188,4 +221,30 @@ const math::vec Vertex::GetMinPos() const
 	}
 
 	return ret;
+}
+
+void Vertex::Infinite()
+{
+	vertex = math::vec::inf;
+	triangles.clear();
+}
+
+bool Vertex::IsFinite() const
+{
+	return vertex.IsFinite();
+}
+
+void Vertex::Draw(float red, float green, float blue, float alpha) const
+{
+	glPointSize(25.0f);
+
+	glColor4f(red, green, blue, alpha);
+
+	glBegin(GL_POINTS);
+
+	glVertex3f(vertex.x, vertex.y, vertex.z);
+
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }

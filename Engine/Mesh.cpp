@@ -306,14 +306,15 @@ void MeshSource::RecalculateKDT()
 		delete triangle_kdt;
 
 	triangle_kdt = new KDTreeTriangle();
-	triangle_kdt->AddTriangles(vertices, indices, num_indices);
+	triangle_kdt->AddTriangles(vertices, indices, num_indices, GetMaxVec(), GetMinVec());
 }
 
-bool MeshSource::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+float MeshSource::RayCollisionKDT(const LineSegment* ray) const
 {
 	if (triangle_kdt != nullptr)
-		return triangle_kdt->RayCollisionKDT(ray, triangle);
-	return false;
+		return triangle_kdt->RayCollisionKDT(ray);
+	LOG("No KDT to check collisions");
+	return ray->Length();
 }
 
 float MeshSource::GetMinX() const
@@ -349,6 +350,11 @@ float MeshSource::GetMinZ() const
 	return min;
 }
 
+math::vec MeshSource::GetMaxVec() const
+{
+	return math::vec(GetMaxX(), GetMaxY(), GetMaxZ());
+}
+
 float MeshSource::GetMaxX() const
 {
 	float max = -inf;
@@ -380,6 +386,11 @@ float MeshSource::GetMaxZ() const
 			max = vertices[i * 3 + 2];
 
 	return max;
+}
+
+math::vec MeshSource::GetMinVec() const
+{
+	return math::vec(GetMinX(), GetMinY(), GetMinZ());
 }
 
 math::vec MeshSource::GetMinXVertex() const
@@ -692,10 +703,10 @@ void Mesh::RecalculateKDT()
 		LOG("Trying to acces non loaded mesh");
 }
 
-bool Mesh::RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const
+float Mesh::RayCollisionKDT(const LineSegment* ray) const
 {
 	if (source != nullptr)
-		return source->RayCollisionKDT(ray, triangle);
+		return source->RayCollisionKDT(ray);
 
 	LOG("Trying to acces non loaded mesh");
 	return false;

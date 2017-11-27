@@ -2,11 +2,11 @@
 #define KDTREE_VERTEX
 
 #include <vector>
-#include "MathGeoLib\src\Geometry\Triangle.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
+#include "MathGeoLib\src\Geometry\Triangle.h"
 
-#define MAX_NUM_OBJECTS 3
-#define MAX_SUBDIVISIONS 5
+#define MAX_NUM_OBJECTS 7
+#define MAX_SUBDIVISIONS 10
 
 namespace math
 {
@@ -27,6 +27,8 @@ class KDTNodeTriangle
 private:
 	AABB limits;
 	math::Triangle triangles[MAX_NUM_OBJECTS];
+	math::vec max;
+	math::vec min;
 
 	//Partition
 	PARTITION_AXIS partition_axis;
@@ -39,45 +41,55 @@ public:
 	~KDTNodeTriangle();
 
 private:
-	bool SubDivide3D(const math::Triangle& new_vertex, unsigned int& num_subdivisions);
+	bool SubDivide3D(const math::Triangle& new_triangle, unsigned int& num_subdivisions);
 
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
 	void SubDivide(PARTITION_AXIS partition_axis, float median);
 
-	float FindBestMedian(PARTITION_AXIS partition_axis, const math::Triangle& new_vertex) const;
+	float FindBestMedianX(const math::Triangle& new_triangle) const;
 
-	float FindBestMedianX(const math::Triangle& new_vertex) const;
+	float FindBestMedianY(const math::Triangle& new_triangle) const;
 
-	float FindBestMedianY(const math::Triangle& new_vertex) const;
+	float FindBestMedianZ(const math::Triangle& new_triangle) const;
 
-	float FindBestMedianZ(const math::Triangle& new_vertex) const;
-
-	bool AllSamePos(const math::Triangle& new_vertex) const;
+	bool AllSamePos(const math::Triangle& new_triangle) const;
 
 	void ReArrange();
 
 	bool Empty() const;
 
-	bool AddToCorrectChild(const math::Triangle& new_vertex, unsigned int& num_subdivisions);
+	bool AddToCorrectChild(const math::Triangle& new_triangle, unsigned int& num_subdivisions);
+
+	void UpdateMax(const math::vec& vec);
+	void UpdateMin(const math::vec& vec);
+
+	void UpdateMax();
+	void UpdateMin();
+
+	const math::vec& GetMax() const;
+	const math::vec& GetMin() const;
+
+	math::AABB GetMaxMinAABB() const;
+
+	bool IsIn(const math::Triangle& new_triangle) const;
+
+	bool WithinLimits(const math::vec& vec) const;
 
 public:
-	bool AddTriangle(const math::Triangle& new_vertex, unsigned int& num_subdivisions);
+	bool AddTriangle(const math::Triangle& new_triangle, unsigned int& num_subdivisions);
 
-	bool RemoveTriangle(const math::Triangle& new_vertex);
+	bool RemoveTriangle(const math::Triangle& new_triangle);
 
 	void GetTriangles(std::vector<math::Triangle>& vec) const;
 
-	bool IsIn(const math::Triangle& new_vertex) const;
-	bool AllIn(const math::Triangle& new_vertex) const;
-
 	void Draw() const;
-
-	bool UpdateTriangle(const math::Triangle& updated_go);
 
 	void DeleteHirarchy();
 
-	bool RayCollisionKDT(const math::LineSegment* ray, math::Triangle& triangle) const;
+	bool RayCollisionKDT(const math::LineSegment* ray, float& shortest_distance) const;
+
+	bool Inside(const math::Triangle& new_triangle) const;
 };
 
 class KDTreeTriangle
@@ -85,48 +97,21 @@ class KDTreeTriangle
 private:
 	KDTNodeTriangle* root;
 
+	bool ReCalculate(const math::Triangle& new_triangle);
+
 public:
 	KDTreeTriangle();
 	~KDTreeTriangle();
 
-	bool AddTriangles(const float*const new_vertices, const unsigned int*const new_indices, int num_indices);
+	bool AddTriangle(const math::Triangle& new_triangle);
+
+	bool RemoveTriangle(const math::Triangle& new_triangle);
+
+	bool AddTriangles(const float*const new_vertices, const unsigned int*const new_indices, int num_indices, const math::vec& max, const math::vec& min);
 
 	void Draw() const;
 
-	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
+	float RayCollisionKDT(const LineSegment* ray) const;
 };
 
-namespace KDTT
-{
-	//Subdivide priority queue operators
-	struct CompareMaxPositionsX
-	{
-		bool operator()(const math::Triangle& go1, const math::Triangle& go2);
-	};
-
-	struct CompareMaxPositionsY
-	{
-		bool operator()(const math::Triangle& go1, const math::Triangle& go2);
-	};
-
-	struct CompareMaxPositionsZ
-	{
-		bool operator()(const math::Triangle& go1, const math::Triangle& go2);
-	};
-
-	struct CompareMinPositionsX
-	{
-		bool operator()(const math::Triangle& go1, const math::Triangle& go2);
-	};
-
-	struct CompareMinPositionsY
-	{
-		bool operator()(const math::Triangle& go1, const math::Triangle& go2);
-	};
-
-	struct CompareMinPositionsZ
-	{
-		bool operator()(const math::Triangle& go1, const math::Triangle& go2);
-	};
-}
 #endif // !KDTREE_VERTEX

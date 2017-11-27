@@ -68,6 +68,7 @@ enum UPDATE_STATUS
 
 #define SIZE_OF_UID 16
 
-#define DECIMAL_NUM 4
+#define EPSILON 0.00001f
+#define DECIMAL_NUM 5
 
 #endif //_GLOBALS

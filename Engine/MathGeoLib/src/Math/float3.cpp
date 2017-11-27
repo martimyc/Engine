@@ -37,6 +37,8 @@
 #include "../Geometry/Capsule.h"
 #include "MathFunc.h"
 
+#include "..\..\..\Globals.h"
+
 #ifdef MATH_SIMD
 #include "simd.h"
 #include "float4_sse.h"
@@ -1106,12 +1108,26 @@ float3 &float3::operator /=(float scalar)
 
 bool float3::operator ==(float3 & vector)
 {
-	return (x == vector.x && y == vector.y && z == vector.z);
+	if (abs(x - vector.x) > EPSILON)
+		return false;
+	if (abs(y - vector.y) > EPSILON)
+		return false;
+	if (abs(z - vector.z) > EPSILON)
+		return false;
+
+	return true;
 }
 
 bool float3::operator == (const float3 & vector)
 {
-	return (x == vector.x && y == vector.y && z == vector.z);
+	if (abs(x - vector.x) > EPSILON)
+		return false;
+	if (abs(y - vector.y) > EPSILON)
+		return false;
+	if (abs(z - vector.z) > EPSILON)
+		return false;
+
+	return true;
 }
 
 #ifdef MATH_ENABLE_STL_SUPPORT

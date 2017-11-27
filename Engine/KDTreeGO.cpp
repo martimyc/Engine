@@ -167,36 +167,49 @@ float KDTNodeGO::FindBestMedianX(const GameObject * new_game_object) const
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
-		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
-			if (game_objects[i]->GetMaxPos().x == game_objects[j]->GetMaxPos().x)
-				repeated = true;
+		repeated = false;
 		if (game_objects[i]->GetMaxPos().x == new_game_object->GetMaxPos().x)
 			repeated = true;
 
-		if(repeated == false)
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMaxPos().x == game_objects[j]->GetMaxPos().x)
+				{
+					repeated == true;
+					break;
+				}
+		}
+
+		if (repeated == false)
 			max_queue.push(game_objects[i]);
 
-		repeated == false;
-
-		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
-			if (game_objects[i]->GetMinPos().x == game_objects[j]->GetMinPos().x)
-				repeated = true;
-
+		repeated = false;
 		if (game_objects[i]->GetMinPos().x == new_game_object->GetMinPos().x)
 			repeated = true;
 
-		if(repeated == false)
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMinPos().x == game_objects[j]->GetMinPos().x)
+				{
+					repeated == true;
+					break;
+				}
+		}
+
+		if (repeated == false)
 			min_queue.push(game_objects[i]);
 	}
 
-	for(int i = max_queue.size() / 2; i > 0; i--) //Empty biggest max & smallest min
+	for (int i = max_queue.size() / 2; i > 0; i--) //Empty biggest max & smallest min
 	{
 		max_queue.pop();
 		min_queue.pop();
 	}
 
-	const GameObject* current_max = max_queue.top();
-	const GameObject* current_min = min_queue.top();
+	const GameObject* current_max(max_queue.top());
+	const GameObject* current_min(min_queue.top());
 
 	bool unusable = false;
 
@@ -239,22 +252,80 @@ float KDTNodeGO::FindBestMedianX(const GameObject * new_game_object) const
 	LOG("Median could not be found");
 
 	//if median can't be found we return point in between max points so that at least one of the nodes will be halve free
-
-	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		max_queue.push(game_objects[i]);
-
+	while (max_queue.size() != 0)
+		max_queue.pop();
 	max_queue.push(new_game_object);
 
-	for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		repeated = false;
+		if (game_objects[i]->GetMaxPos().x == new_game_object->GetMaxPos().x)
+			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMaxPos().x == game_objects[j]->GetMaxPos().x)
+				{
+					repeated == true;
+					break;
+				}
+		}
+
+		if (repeated == false)
+			max_queue.push(game_objects[i]);
+	}
+
+	if (max_queue.size() > 1)
+	{
+		for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+			max_queue.pop();
+
+		float halve_max_big = max_queue.top()->GetMaxPos().x;
 		max_queue.pop();
+		float halve_max_small = max_queue.top()->GetMaxPos().x;
 
-	float fail = max_queue.top()->GetMaxPos().x;
+		return ((halve_max_big + halve_max_small) / 2.0f);
+	}
+	else
+	{
+		while (min_queue.size() != 0)
+			min_queue.pop();
+		min_queue.push(new_game_object);
 
-	max_queue.pop();
+		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		{
+			repeated = false;
+			if (game_objects[i]->GetMinPos().x == new_game_object->GetMinPos().x)
+				repeated = true;
 
-	fail += (max_queue.top()->GetMaxPos().x - fail) / 2.0f;
+			if (i > 0)
+			{
+				for (int j = i - 1; j >= 0; j--)
+					if (game_objects[i]->GetMinPos().x == game_objects[j]->GetMinPos().x)
+					{
+						repeated == true;
+						break;
+					}
+			}
 
-	return fail;
+			if (repeated == false)
+				min_queue.push(game_objects[i]);
+		}
+
+		if (min_queue.size() > 1)
+		{
+			for (int i = min_queue.size() / 2 - 1; i > 0; i--) //Empty biggest min & smallest min
+				min_queue.pop();
+
+			float halve_min_big = min_queue.top()->GetMinPos().x;
+			min_queue.pop();
+			float halve_min_small = min_queue.top()->GetMinPos().x;
+
+			return ((halve_min_big + halve_min_small) / 2.0f);
+		}
+	}
+	return limits.CenterPoint().x;
 }
 
 float KDTNodeGO::FindBestMedianY(const GameObject * new_game_object) const
@@ -269,23 +340,36 @@ float KDTNodeGO::FindBestMedianY(const GameObject * new_game_object) const
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
-		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
-			if (game_objects[i]->GetMaxPos().y == game_objects[j]->GetMaxPos().y)
-				repeated = true;
+		repeated = false;
 		if (game_objects[i]->GetMaxPos().y == new_game_object->GetMaxPos().y)
 			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMaxPos().y == game_objects[j]->GetMaxPos().y)
+				{
+					repeated == true;
+					break;
+				}
+		}
 
 		if (repeated == false)
 			max_queue.push(game_objects[i]);
 
-		repeated == false;
-
-		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
-			if (game_objects[i]->GetMinPos().y == game_objects[j]->GetMinPos().y)
-				repeated = true;
-
+		repeated = false;
 		if (game_objects[i]->GetMinPos().y == new_game_object->GetMinPos().y)
 			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMinPos().y == game_objects[j]->GetMinPos().y)
+				{
+					repeated == true;
+					break;
+				}
+		}
 
 		if (repeated == false)
 			min_queue.push(game_objects[i]);
@@ -297,8 +381,8 @@ float KDTNodeGO::FindBestMedianY(const GameObject * new_game_object) const
 		min_queue.pop();
 	}
 
-	const GameObject* current_max = max_queue.top();
-	const GameObject* current_min = min_queue.top();
+	const GameObject* current_max(max_queue.top());
+	const GameObject* current_min(min_queue.top());
 
 	bool unusable = false;
 
@@ -341,22 +425,80 @@ float KDTNodeGO::FindBestMedianY(const GameObject * new_game_object) const
 	LOG("Median could not be found");
 
 	//if median can't be found we return point in between max points so that at least one of the nodes will be halve free
-
-	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		max_queue.push(game_objects[i]);
-
+	while (max_queue.size() != 0)
+		max_queue.pop();
 	max_queue.push(new_game_object);
 
-	for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		repeated = false;
+		if (game_objects[i]->GetMaxPos().y == new_game_object->GetMaxPos().y)
+			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMaxPos().y == game_objects[j]->GetMaxPos().y)
+				{
+					repeated == true;
+					break;
+				}
+		}
+
+		if (repeated == false)
+			max_queue.push(game_objects[i]);
+	}
+
+	if (max_queue.size() > 1)
+	{
+		for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+			max_queue.pop();
+
+		float halve_max_big = max_queue.top()->GetMaxPos().y;
 		max_queue.pop();
+		float halve_max_small = max_queue.top()->GetMaxPos().y;
 
-	float fail = max_queue.top()->GetMaxPos().y;
+		return ((halve_max_big + halve_max_small) / 2.0f);
+	}
+	else
+	{
+		while (min_queue.size() != 0)
+			min_queue.pop();
+		min_queue.push(new_game_object);
 
-	max_queue.pop();
+		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		{
+			repeated = false;
+			if (game_objects[i]->GetMinPos().y == new_game_object->GetMinPos().y)
+				repeated = true;
 
-	fail += (max_queue.top()->GetMaxPos().y - fail) / 2.0f;
+			if (i > 0)
+			{
+				for (int j = i - 1; j >= 0; j--)
+					if (game_objects[i]->GetMinPos().y == game_objects[j]->GetMinPos().y)
+					{
+						repeated == true;
+						break;
+					}
+			}
 
-	return fail;
+			if (repeated == false)
+				min_queue.push(game_objects[i]);
+		}
+
+		if (min_queue.size() > 1)
+		{
+			for (int i = min_queue.size() / 2 - 1; i > 0; i--) //Empty biggest min & smallest min
+				min_queue.pop();
+
+			float halve_min_big = min_queue.top()->GetMinPos().y;
+			min_queue.pop();
+			float halve_min_small = min_queue.top()->GetMinPos().y;
+
+			return ((halve_min_big + halve_min_small) / 2.0f);
+		}
+	}
+	return limits.CenterPoint().y;
 }
 
 float KDTNodeGO::FindBestMedianZ(const GameObject * new_game_object) const
@@ -371,23 +513,36 @@ float KDTNodeGO::FindBestMedianZ(const GameObject * new_game_object) const
 
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
 	{
-		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
-			if (game_objects[i]->GetMaxPos().z == game_objects[j]->GetMaxPos().z)
-				repeated = true;
+		repeated = false;
 		if (game_objects[i]->GetMaxPos().z == new_game_object->GetMaxPos().z)
 			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMaxPos().z == game_objects[j]->GetMaxPos().z)
+				{
+					repeated == true;
+					break;
+				}
+		}
 
 		if (repeated == false)
 			max_queue.push(game_objects[i]);
 
-		repeated == false;
-
-		for (int j = i + 1; j < MAX_NUM_OBJECTS; j++)
-			if (game_objects[i]->GetMinPos().z == game_objects[j]->GetMinPos().z)
-				repeated = true;
-
+		repeated = false;
 		if (game_objects[i]->GetMinPos().z == new_game_object->GetMinPos().z)
 			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMinPos().z == game_objects[j]->GetMinPos().z)
+				{
+					repeated == true;
+					break;
+				}
+		}
 
 		if (repeated == false)
 			min_queue.push(game_objects[i]);
@@ -399,8 +554,8 @@ float KDTNodeGO::FindBestMedianZ(const GameObject * new_game_object) const
 		min_queue.pop();
 	}
 
-	const GameObject* current_max = max_queue.top();
-	const GameObject* current_min = min_queue.top();
+	const GameObject* current_max(max_queue.top());
+	const GameObject* current_min(min_queue.top());
 
 	bool unusable = false;
 
@@ -443,22 +598,80 @@ float KDTNodeGO::FindBestMedianZ(const GameObject * new_game_object) const
 	LOG("Median could not be found");
 
 	//if median can't be found we return point in between max points so that at least one of the nodes will be halve free
-
-	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-		max_queue.push(game_objects[i]);
-
+	while (max_queue.size() != 0)
+		max_queue.pop();
 	max_queue.push(new_game_object);
 
-	for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		repeated = false;
+		if (game_objects[i]->GetMaxPos().z == new_game_object->GetMaxPos().z)
+			repeated = true;
+
+		if (i > 0)
+		{
+			for (int j = i - 1; j >= 0; j--)
+				if (game_objects[i]->GetMaxPos().z == game_objects[j]->GetMaxPos().z)
+				{
+					repeated == true;
+					break;
+				}
+		}
+
+		if (repeated == false)
+			max_queue.push(game_objects[i]);
+	}
+
+	if (max_queue.size() > 1)
+	{
+		for (int i = max_queue.size() / 2 - 1; i > 0; i--) //Empty biggest max & smallest min
+			max_queue.pop();
+
+		float halve_max_big = max_queue.top()->GetMaxPos().z;
 		max_queue.pop();
+		float halve_max_small = max_queue.top()->GetMaxPos().z;
 
-	float fail = max_queue.top()->GetMaxPos().z;
+		return ((halve_max_big + halve_max_small) / 2.0f);
+	}
+	else
+	{
+		while (min_queue.size() != 0)
+			min_queue.pop();
+		min_queue.push(new_game_object);
 
-	max_queue.pop();
+		for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+		{
+			repeated = false;
+			if (game_objects[i]->GetMinPos().z == new_game_object->GetMinPos().z)
+				repeated = true;
 
-	fail += (max_queue.top()->GetMaxPos().z - fail) / 2.0f;
+			if (i > 0)
+			{
+				for (int j = i - 1; j >= 0; j--)
+					if (game_objects[i]->GetMinPos().z == game_objects[j]->GetMinPos().z)
+					{
+						repeated == true;
+						break;
+					}
+			}
 
-	return fail;
+			if (repeated == false)
+				min_queue.push(game_objects[i]);
+		}
+
+		if (min_queue.size() > 1)
+		{
+			for (int i = min_queue.size() / 2 - 1; i > 0; i--) //Empty biggest min & smallest min
+				min_queue.pop();
+
+			float halve_min_big = min_queue.top()->GetMinPos().z;
+			min_queue.pop();
+			float halve_min_small = min_queue.top()->GetMinPos().z;
+
+			return ((halve_min_big + halve_min_small) / 2.0f);
+		}
+	}
+	return limits.CenterPoint().z;
 }
 
 bool KDTNodeGO::AddGameObject(const GameObject * new_game_object, unsigned int& num_subdivisions)
@@ -467,22 +680,27 @@ bool KDTNodeGO::AddGameObject(const GameObject * new_game_object, unsigned int& 
 
 	if (partition_axis == NO_PARTITION)
 	{
-		if (game_objects[MAX_NUM_OBJECTS - 1] == nullptr)
-		{
-			for (int i = 0; i < MAX_NUM_OBJECTS; i++)
-				if (game_objects[i] == nullptr)
-				{
-					game_objects[i] = new_game_object;
-					ret = true;
-					break;
-				}
-		}
+		if (AllreadySaved(new_game_object))
+			LOG("Adding repeated go");
 		else
 		{
-			if (SubDivide3D(new_game_object, num_subdivisions) == false)
-				return false;
+			if (game_objects[MAX_NUM_OBJECTS - 1] == nullptr)
+			{
+				for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+					if (game_objects[i] == nullptr)
+					{
+						game_objects[i] = new_game_object;
+						ret = true;
+						break;
+					}
+			}
 			else
-				ret = true;
+			{
+				if (SubDivide3D(new_game_object, num_subdivisions) == false)
+					return false;
+				else
+					ret = true;
+			}
 		}
 	}
 	else
@@ -555,8 +773,14 @@ bool KDTNodeGO::RemoveGameObject(const GameObject * new_game_object)
 			}
 	}
 	else
-		if (childs[0]->RemoveGameObject(new_game_object) || childs[1]->RemoveGameObject(new_game_object))
-			ret = true;
+	{
+		if (childs[0]->IsIn(new_game_object))
+			if (childs[0]->RemoveGameObject(new_game_object))
+				ret = true;
+		if (childs[1]->IsIn(new_game_object))
+			if (childs[1]->RemoveGameObject(new_game_object))
+				ret = true;
+	}
 
 	if (partition_axis == Z && Empty())
 		if (childs != nullptr)
@@ -647,6 +871,21 @@ bool KDTNodeGO::AllIn(const GameObject * new_game_object) const
 
 	if (limits.Contains(max_point) && limits.Contains(min_point)) //TODO sphere and oobb checks when those are done
 		return true;
+	return false;
+}
+
+bool KDTNodeGO::AllreadySaved(const GameObject * new_game_object) const
+{
+	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
+	{
+		if (game_objects[i] != nullptr)
+		{
+			if (game_objects[i] == new_game_object)
+				return true;
+		}
+		else
+			break;			
+	}
 	return false;
 }
 

@@ -896,7 +896,9 @@
     <ClCompile Include="TimeManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
     <ClCompile Include="KDTreeTriangle.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>

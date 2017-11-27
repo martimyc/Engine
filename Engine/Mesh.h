@@ -81,16 +81,18 @@ struct MeshSource
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
-	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle)const;
+	float RayCollisionKDT(const LineSegment* ray)const;
 
 	//Max & Min
 	float GetMinX() const;
 	float GetMinY() const;
 	float GetMinZ() const;
+	math::vec GetMaxVec() const;
 
 	float GetMaxX() const;
 	float GetMaxY() const;
 	float GetMaxZ() const;
+	math::vec GetMinVec() const;
 
 	math::vec GetMinXVertex() const;
 	math::vec GetMinYVertex() const;
@@ -150,7 +152,7 @@ public:
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
-	bool RayCollisionKDT(const LineSegment* ray, Triangle& triangle) const;
+	float RayCollisionKDT(const LineSegment* ray) const;
 
 	//Max & Min
 	float GetMinX() const;
