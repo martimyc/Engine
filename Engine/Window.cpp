@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "Console.h"
 #include "Camera3D.h"
+#include "Renderer3D.h"
 #include "Window.h"
 
 Window::Window(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -203,9 +204,7 @@ UPDATE_STATUS Window::Configuration(float dt)
 				break;
 			}
 			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
-			aspect_ratio = (float)screen_width / screen_height;
-			App->camera->RecalculateFOV();
-			App->SetDockContextSize(screen_width*scale, screen_height*scale);
+			App->renderer_3d->OnResize(screen_width*scale, screen_height*scale);
 		}
 
 		json_object_set_number(json_object(win), "screen_width", screen_width);
@@ -327,4 +326,13 @@ const float Window::GetAspectRatio() const
 void Window::SetTitle(const char* title)
 {
 	SDL_SetWindowTitle(window, title);
+}
+
+void Window::WindowResize(uint w, uint h)
+{
+	glViewport(0, 0, w, h);
+	screen_width = w;
+	screen_height = h;
+	aspect_ratio = (float)w / h;
+	App->camera->RecalculateFOV();
 }

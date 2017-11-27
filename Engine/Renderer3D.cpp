@@ -129,7 +129,6 @@ bool Renderer3D::Init()
 	//ImGui Color Configuration
 	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, { 0.20f, 0.20f, 0.216f, 1.0f });
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.10f, 0.10f, 0.10f, 1.0f });
-	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, { 0.157f, 0.157f, 0.157f, 1.0f });
 	ImGui::PushStyleColor(ImGuiCol_TitleBg, { 0.315f, 0.315f, 0.315f, 1.0f });
 	ImGui::PushStyleColor(ImGuiCol_Header, { 0.09f, 0.09f, 0.09f, 1.0f });
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.15f, 0.15f, 0.15f, 1.0f });
@@ -282,11 +281,11 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 	render_to_texture->UnBindFrameBuffer();
 
-
 	ImGuiWindowFlags flags_scene = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 	App->BeginDockWindow("Scene", nullptr, flags_scene);
 	
 	mouse_on_scene_window = ImGui::IsWindowHovered();
+
 	render_to_texture->SetPosX(ImGui::GetWindowPos().x);
 	render_to_texture->SetPosY(ImGui::GetWindowPos().y);
 	render_to_texture->SetWidth(ImGui::GetWindowWidth());
@@ -303,7 +302,7 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	App->resource_manager->CreateButtons();
 	ImGui::End();
 
-	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth(), render_to_texture->GetHeight()), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth() - 15, render_to_texture->GetHeight() - 35), ImVec2(0, 1), ImVec2(1, 0), ImVec4(1, 1, 1, 1), ImVec4(1, 0, 0, 1));
 
 	App->EndDockWindow();
 
@@ -332,26 +331,19 @@ void Renderer3D::OpenCloseConfigRendererWindow()
 
 void Renderer3D::OnResize(int width, int height)
 {
-	glViewport(0, 0, width, height);
+	App->window->WindowResize(width, height);
 
 	App->SetDockContextSize(width, height);
 
 	if (render_to_texture)
 	{
-		render_to_texture->SetWidth(width);
-		render_to_texture->SetHeight(height);
+		glDeleteTextures(1, &render_to_texture->GetTextureID());
+		glDeleteRenderbuffers(1, &render_to_texture->GetDepthID());
+		glDeleteFramebuffers(1, &render_to_texture->GetFrameBufferID());
+		render_to_texture->CreateFrameBuffer(width, height);
 	}
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glLoadMatrixf(App->camera->GetProjMatrix());
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewProjMatrix());
+	ChangeCameraMatrixView();
 }
 
 void Renderer3D::DrawGameObject(const GameObject* game_object)
@@ -447,6 +439,20 @@ void Renderer3D::DrawGrid()
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+void Renderer3D::ChangeCameraMatrixView()
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glLoadMatrixf(App->camera->GetProjMatrix());
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->GetViewProjMatrix());
+}
+
 bool CompareGOPointers::operator()(const GameObject * go1, const GameObject * go2)
 {
 	unsigned int priority_one = ((go1->GetAppliedMaterial() == nullptr) ? 0 : go1->GetAppliedMaterial()->GetMaterial()->GetPriority());
@@ -473,8 +479,7 @@ void FrameBuffer::CreateFrameBuffer(const int _width, const int _height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); // automatic mipmap
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// create a renderbuffer object to store depth info
@@ -489,51 +494,43 @@ void FrameBuffer::CreateFrameBuffer(const int _width, const int _height)
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer_id);
 
 	// attach the texture to FBO color attachment point
-	glFramebufferTexture2D(GL_FRAMEBUFFER,      // 1. fbo target: GL_FRAMEBUFFER 
-		GL_COLOR_ATTACHMENT0,					// 2. attachment point
-		GL_TEXTURE_2D,							// 3. tex target: GL_TEXTURE_2D
-		rendered_texture_id,					// 4. tex ID
-		0);										// 5. mipmap level: 0(base)
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rendered_texture_id, 0);
 
 	// attach the renderbuffer to depth attachment point
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER,		// 1. fbo target: GL_FRAMEBUFFER
-		GL_DEPTH_ATTACHMENT,						// 2. attachment point
-		GL_RENDERBUFFER,							// 3. rbo target: GL_RENDERBUFFER
-		depth_render_id);							// 4. rbo ID
-
-
-	// switch back to window-system-provided framebuffer
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_render_id);
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void FrameBuffer::BindFrameBuffer()
 {
 	glViewport(0, 0, width, height);
-	// set rendering destination to FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer_id);
-
-	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void FrameBuffer::UnBindFrameBuffer()
 {
-	// unbind FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// trigger mipmaps generation explicitly
-	// NOTE: If GL_GENERATE_MIPMAP is set to GL_TRUE, then glCopyTexSubImage2D()
-	// triggers mipmap generation automatically. However, the texture attached
-	// onto a FBO should generate mipmaps manually via glGenerateMipmap().
 	glBindTexture(GL_TEXTURE_2D, rendered_texture_id);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 }
 
-GLuint FrameBuffer::GetTextureID()
+const GLuint& FrameBuffer::GetTextureID()
 {
 	return rendered_texture_id;
+}
+
+const GLuint& FrameBuffer::GetFrameBufferID()
+{
+	return frame_buffer_id;
+}
+
+const GLuint& FrameBuffer::GetDepthID()
+{
+	return depth_render_id;
 }
 
 uint FrameBuffer::GetWidth() const

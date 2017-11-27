@@ -51,6 +51,7 @@ private:
 	std::string name;
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
+	GameObject* parent = nullptr;
 	Transform* local_transform = nullptr;
 	Transform* world_transform = nullptr;
 	Bounds bounds;
@@ -66,9 +67,9 @@ private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
+	void UpdateBoundsChilds();
+	void UpdateBoundsParents();
 
-	bool IsChild(const GameObject* go)const;
-	bool IsRelative(const GameObject* go)const;
 	void UpdateAABBs();
 	void UpdateWorldTransform(const math::float4x4& parent_world_transform);
 	void UpdateTransforms();
@@ -153,8 +154,6 @@ public:
 	void RemoveAppliedMaterial();
 
 	void PickGameObject(const LineSegment* ray, float ray_distance) const;
-
-	void UpdateAABBsParents(const GameObject* go, std::vector<const AABB*>& childs_aabbs);
 
 	bool AddChildsToKDT(KDTreeGO& kdt) const;
 };

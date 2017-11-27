@@ -30,7 +30,9 @@ public:
 	void BindFrameBuffer();
 	void UnBindFrameBuffer();
 
-	GLuint GetTextureID();
+	const GLuint& GetTextureID();
+	const GLuint& GetFrameBufferID();
+	const GLuint& GetDepthID();
 	uint GetWidth() const;
 	uint GetHeight() const;
 	uint GetPosX() const;
@@ -43,7 +45,7 @@ public:
 private:
 	GLuint frame_buffer_id = 0;
 	GLuint rendered_texture_id = 0;
-	GLuint depth_render_id;
+	GLuint depth_render_id = 0;
 	uint width = 0;
 	uint height = 0;
 	uint pos_x = 0;
@@ -101,6 +103,8 @@ public:
 	int GetSceneWidth() const;
 	int GetSceneHeight() const;
 	bool IsSceneWindowHovered()const;
+	void ChangeCameraMatrixView();
+
 };
 
 #endif //_MODULE_RENDERER_3D

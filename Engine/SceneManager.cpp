@@ -152,13 +152,6 @@ void SceneManager::DrawBoundingBoxes() const
 	root->DrawBoundingBoxes();
 }
 
-const std::vector<const AABB*> SceneManager::UpdateAABBsParents(const GameObject* go) const
-{
-	std::vector<const AABB*> ret;
-	root->UpdateAABBsParents(go, ret);
-	return ret;
-}
-
 void SceneManager::AddEmptyGO()
 {
 	char name[256];
