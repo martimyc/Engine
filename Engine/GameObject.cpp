@@ -172,6 +172,13 @@ void GameObject::Inspector()
 		App->scene_manager->UpdateKDT(this);
 	}
 
+	//Other components
+	if (components.size() > 0)
+	{
+		for (int i = 0; i < components.size(); i++)
+			components[i]->Inspector();
+	}
+
 	if (ImGui::TreeNode("Debug"))
 	{
 		if (ImGui::TreeNode("Bounds"))
@@ -183,13 +190,6 @@ void GameObject::Inspector()
 		}
 
 		ImGui::TreePop();
-	}
-
-	//Other components
-	if (components.size() > 0)
-	{
-		for (int i = 0; i < components.size(); i++)
-			components[i]->Inspector();
 	}
 	ImGui::End();
 }

@@ -63,7 +63,7 @@ private:
 
 	bool draw_spheres = false;
 	bool draw_aabbs = false;
-	bool draw_obbs = true;
+	bool draw_obbs = false;
 
 public:
 	GameObject(const std::string& name, bool draw = true);
