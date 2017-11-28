@@ -6,12 +6,19 @@
 #include "MathGeoLib\src\Math\float3.h"
 #include "Resource.h"
 
+#define KDT_GRAPH_SIZE 30
+
 class GameObject;
 class AppliedMaterial;
 class KDTreeTriangle;
 
 class Vertex;
 
+enum RAYCAST
+{
+	RC_BRUTE_FORCE = 0,
+	RC_KDT
+};
 
 struct MeshSource
 {
@@ -39,8 +46,11 @@ struct MeshSource
 	GLfloat** colors = nullptr;
 
 	//-------
-
+	RAYCAST raycast = RC_BRUTE_FORCE;
+	int selected_raycast = 0;
 	KDTreeTriangle* triangle_kdt = nullptr;
+	float raycast_ms_log[KDT_GRAPH_SIZE] = {};
+	float raycast_checks_log[KDT_GRAPH_SIZE] = {};
 
 	MeshSource();
 	~MeshSource();
@@ -81,7 +91,9 @@ struct MeshSource
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
-	float RayCollisionKDT(const LineSegment* ray)const;
+	float RayCollisionKDT(const LineSegment* ray);
+	float CheckTriangleCollision(const LineSegment * ray);
+	float RayCollision(const LineSegment* ray);
 
 	//Max & Min
 	float GetMinX() const;
@@ -101,8 +113,6 @@ struct MeshSource
 	math::vec GetMaxXVertex() const;
 	math::vec GetMaxYVertex() const;
 	math::vec GetMaxZVertex() const;
-
-	bool CheckTriangleCollision(const LineSegment * ray, float* distance) const;
 };
 
 class Mesh : public Resource
@@ -152,7 +162,7 @@ public:
 	//KDT
 	void DrawKDT() const;
 	void RecalculateKDT();
-	float RayCollisionKDT(const LineSegment* ray) const;
+	float RayCollision(const LineSegment* ray) const;
 
 	//Max & Min
 	float GetMinX() const;

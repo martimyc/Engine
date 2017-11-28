@@ -23,14 +23,14 @@ const Mesh * MeshFilter::GetMesh() const
 
 void MeshFilter::Inspector()
 {
-	ImGui::Checkbox("Draw KDT", &draw_kdt);
-	
-	ImGui::Text("Name: %s", mesh->GetName().c_str());
+	if (ImGui::TreeNode("Mesh"))
+	{
+		ImGui::Text("Name: %s", mesh->GetName().c_str());
 
-	if (ImGui::Button("Recalculate KDT"))
-		mesh->RecalculateKDT();
-	
-	mesh->Inspector();
+		mesh->Inspector();
+
+		ImGui::TreePop();
+	}
 }
 
 const std::string & MeshFilter::GetName() const

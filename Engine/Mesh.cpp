@@ -6,6 +6,8 @@
 //Containers
 #include "KDTreeTriangle.h"
 
+#include "Timer.h"
+
 //Modules
 #include "Globals.h"
 #include "Application.h"
@@ -17,7 +19,10 @@
 #include "Material.h"
 
 MeshSource::MeshSource(): vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
-{}
+{
+	memset(raycast_ms_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
+	memset(raycast_checks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
+}
 
 MeshSource::~MeshSource()
 {
@@ -136,6 +141,49 @@ void MeshSource::Inspector()
 		ImGui::Text("Has %i Vertex Color channels", num_color_channels);
 	else
 		ImGui::Text("Does not have Vertex Colors");
+
+	if (ImGui::TreeNode("KDT"))
+	{
+		if (triangle_kdt != nullptr)
+		{
+			triangle_kdt->Inspector();
+
+
+			ImGui::Text("Raycast:");
+			ImGui::SameLine();
+
+			const char* items[] = { "Brute Force", "KDT" };
+			if (ImGui::Combo("", &selected_raycast, items, IM_ARRAYSIZE(items)))
+			{
+				switch (selected_raycast)
+				{
+				case 0:	raycast = RC_BRUTE_FORCE; break;
+				case 1:	raycast = RC_KDT; break;
+				}
+			}
+
+			ImGui::Text("Number of Checks per Raycast:");
+			char raycast_checks_title[25];
+			sprintf_s(raycast_checks_title, 25, "Checks: %.1f", raycast_checks_log[KDT_GRAPH_SIZE - 1]);
+			ImGui::PlotHistogram("     ", raycast_checks_log, IM_ARRAYSIZE(raycast_checks_log), KDT_GRAPH_SIZE, raycast_checks_title, 0.0f, 80.0f, ImVec2(0, 100));
+
+			ImGui::Text("Time per Raycast:");
+			char raycast_ms_title[25];
+			sprintf_s(raycast_ms_title, 25, "Ms: %.1f", raycast_ms_log[KDT_GRAPH_SIZE - 1]);
+			ImGui::PlotHistogram("      ", raycast_ms_log, IM_ARRAYSIZE(raycast_ms_log), KDT_GRAPH_SIZE, raycast_ms_title, 0.0f, 80.0f, ImVec2(0, 100));
+
+			if (ImGui::Button("Recalculate"))
+				RecalculateKDT();
+		}
+		else
+		{
+			ImGui::Text("KDT has not been calculated yet");
+			if (ImGui::Button("Calculate"))
+				RecalculateKDT();
+		}
+
+		ImGui::TreePop();
+	}
 }
 
 const GLuint MeshSource::GetVerticesID() const
@@ -309,12 +357,23 @@ void MeshSource::RecalculateKDT()
 	triangle_kdt->AddTriangles(vertices, indices, num_indices, GetMaxVec(), GetMinVec());
 }
 
-float MeshSource::RayCollisionKDT(const LineSegment* ray) const
+float MeshSource::RayCollisionKDT(const LineSegment* ray)
 {
+	float ret = ray->Length();
+
 	if (triangle_kdt != nullptr)
-		return triangle_kdt->RayCollisionKDT(ray);
+	{
+		for (uint i = 0; i < KDT_GRAPH_SIZE; i++)
+			raycast_checks_log[i] = raycast_checks_log[i + 1];
+
+		unsigned int checks = 0;
+		ret = triangle_kdt->RayCollisionKDT(ray, checks);
+
+		raycast_checks_log[KDT_GRAPH_SIZE - 1] = checks;
+	}
 	LOG("No KDT to check collisions");
-	return ray->Length();
+
+	return ret;
 }
 
 float MeshSource::GetMinX() const
@@ -459,32 +518,55 @@ math::vec MeshSource::GetMaxZVertex() const
 	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
 }
 
-/*bool MeshSource::CheckTriangleCollision(const LineSegment * ray, float * distance) const
+float MeshSource::CheckTriangleCollision(const LineSegment * ray)
 {
 	Triangle triangle_to_test;
-	//float original_dist = *distance;
-	bool hit = false;
+
+	for (uint i = 0; i < KDT_GRAPH_SIZE; i++)
+		raycast_checks_log[i] = raycast_checks_log[i + 1];
+
+	raycast_checks_log[KDT_GRAPH_SIZE - 1] = 0.0f;
+
+	float shortest_distance = ray->Length();
+	float distance = 0.0f;
 
 	int num_triangles = num_indices / 3;
 
 	for (int i = 0; i < num_triangles; i++)
 	{
-		triangle_to_test.a = vec(vertices[indices[i * 3]], vertices[indices[i * 3 + 1]], vertices[indices[i * 3 + 2]]); i++;
-		triangle_to_test.b = vec(vertices[indices[i * 3]], vertices[indices[i * 3 + 1]], vertices[indices[i * 3 + 2]]); i++;
-		triangle_to_test.c = vec(vertices[indices[i * 3]], vertices[indices[i * 3 + 1]], vertices[indices[i * 3 + 2]]);
+		triangle_to_test.a = vec(vertices[indices[i * 3]]);
+		triangle_to_test.b = vec(vertices[indices[i * 3 + 1]]);
+		triangle_to_test.c = vec(vertices[indices[i * 3 + 2]]);
 
 		//Check all mesh triangles
-		if (ray->Intersects(triangle_to_test, distance, nullptr))
-			hit = true;
+		if (ray->Intersects(triangle_to_test, &distance, nullptr))
+			if (distance < shortest_distance)
+				shortest_distance = distance;
+
+		raycast_checks_log[KDT_GRAPH_SIZE - 1]++;
 	}
 
-	if (hit)
-		return true;
-	//if (no_hits)
-	//	distance = &original_dist;
+	return distance;
+}
 
-	return false;
-}*/
+float MeshSource::RayCollision(const LineSegment * ray)
+{
+	float ret = 0.0f;
+
+	Timer timer;
+
+	if (raycast == RC_BRUTE_FORCE)
+		ret = CheckTriangleCollision(ray);
+	else if (raycast == RC_KDT)
+		ret = RayCollisionKDT(ray);
+
+	for (uint i = 0; i < KDT_GRAPH_SIZE; i++)
+		raycast_ms_log[i] = raycast_ms_log[i + 1];
+
+	raycast_ms_log[KDT_GRAPH_SIZE - 1] = timer.Read();
+
+	return ret;
+}
 
 //Mesh
 Mesh::Mesh(const std::string name, const UID& uid):Resource(RT_MESH, name, uid), source(nullptr)
@@ -703,10 +785,10 @@ void Mesh::RecalculateKDT()
 		LOG("Trying to acces non loaded mesh");
 }
 
-float Mesh::RayCollisionKDT(const LineSegment* ray) const
+float Mesh::RayCollision(const LineSegment* ray) const
 {
 	if (source != nullptr)
-		return source->RayCollisionKDT(ray);
+		return source->RayCollision(ray);
 
 	LOG("Trying to acces non loaded mesh");
 	return false;

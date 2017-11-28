@@ -5,7 +5,7 @@
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "MathGeoLib\src\Geometry\Triangle.h"
 
-#define MAX_NUM_OBJECTS 7
+#define MAX_NUM_OBJECTS 13
 #define MAX_SUBDIVISIONS 10
 
 namespace math
@@ -27,8 +27,8 @@ class KDTNodeTriangle
 private:
 	AABB limits;
 	math::Triangle triangles[MAX_NUM_OBJECTS];
-	math::vec max;
-	math::vec min;
+	math::vec max_vec;
+	math::vec min_vec;
 
 	//Partition
 	PARTITION_AXIS partition_axis;
@@ -41,7 +41,7 @@ public:
 	~KDTNodeTriangle();
 
 private:
-	bool SubDivide3D(const math::Triangle& new_triangle, unsigned int& num_subdivisions);
+	bool SubDivide3D(const math::Triangle& new_triangle, unsigned int& num_subdivisions, unsigned int& num_nodes, unsigned int& bytes);
 
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
@@ -59,10 +59,10 @@ private:
 
 	bool Empty() const;
 
-	bool AddToCorrectChild(const math::Triangle& new_triangle, unsigned int& num_subdivisions);
+	bool AddToCorrectChild(const math::Triangle& new_triangle, unsigned int& num_subdivisions, unsigned int& num_nodes, unsigned int& bytes);
 
-	void UpdateMax(const math::vec& vec);
-	void UpdateMin(const math::vec& vec);
+	void UpdateMax(math::vec vec);
+	void UpdateMin(math::vec vec);
 
 	void UpdateMax();
 	void UpdateMin();
@@ -76,10 +76,14 @@ private:
 
 	bool WithinLimits(const math::vec& vec) const;
 
-public:
-	bool AddTriangle(const math::Triangle& new_triangle, unsigned int& num_subdivisions);
+	bool Intersects(const math::LineSegment* ray) const;
 
-	bool RemoveTriangle(const math::Triangle& new_triangle);
+	float GetDistance() const;
+
+public:
+	bool AddTriangle(const math::Triangle& new_triangle, unsigned int& num_subdivisions, unsigned int& num_nodes, unsigned int& bytes);
+
+	bool RemoveTriangle(const math::Triangle& new_triangle, unsigned int& num_nodes, unsigned int& bytes);
 
 	void GetTriangles(std::vector<math::Triangle>& vec) const;
 
@@ -87,7 +91,7 @@ public:
 
 	void DeleteHirarchy();
 
-	bool RayCollisionKDT(const math::LineSegment* ray, float& shortest_distance) const;
+	bool RayCollisionKDT(const math::LineSegment* ray, float& shortest_distance, unsigned int& num_checks) const;
 
 	bool Inside(const math::Triangle& new_triangle) const;
 };
@@ -96,6 +100,12 @@ class KDTreeTriangle
 {
 private:
 	KDTNodeTriangle* root;
+
+	unsigned int bytes;
+	
+	unsigned int num_nodes;
+
+	bool draw;
 
 	bool ReCalculate(const math::Triangle& new_triangle);
 
@@ -111,7 +121,9 @@ public:
 
 	void Draw() const;
 
-	float RayCollisionKDT(const LineSegment* ray) const;
+	float RayCollisionKDT(const LineSegment* ray, unsigned int& num_checks) const;
+
+	void Inspector();
 };
 
 #endif // !KDTREE_VERTEX

@@ -573,30 +573,18 @@ void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) cons
 	{
 		//Check triangles
 		GameObject* go = nullptr;
-		math::Triangle tri;
-		math::Triangle triangle_to_test;
+		float shortest_distance = ray->Length();
 
 		for (std::map<float, GameObject*>::iterator it = aabb_collisions.begin(); it != aabb_collisions.end(); ++it)
 		{
 			if ((*it).second->HasMeshFilter())
 			{
-				float distance = (*it).second->GetMesh()->RayCollisionKDT(ray);
+				float distance = (*it).second->GetMesh()->RayCollision(ray);
 
-				if (distance < ray->Length())
+				if (distance < shortest_distance)
 				{
-					if (go != nullptr)
-					{
-						if (triangle_to_test.Distance(ray->a) < tri.Distance(ray->a))
-						{
-							tri = triangle_to_test;
-							go = (*it).second;
-						}
-					}
-					else
-					{
-						tri = triangle_to_test;
-						go = (*it).second;
-					}
+					shortest_distance = distance;
+					go = (*it).second;
 				}
 			}
 		}
