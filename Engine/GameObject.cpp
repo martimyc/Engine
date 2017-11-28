@@ -172,6 +172,13 @@ void GameObject::Inspector()
 		App->scene_manager->UpdateKDT(this);
 	}
 
+	//Other components
+	if (components.size() > 0)
+	{
+		for (int i = 0; i < components.size(); i++)
+			components[i]->Inspector();
+	}
+
 	if (ImGui::TreeNode("Debug"))
 	{
 		if (ImGui::TreeNode("Bounds"))
@@ -183,13 +190,6 @@ void GameObject::Inspector()
 		}
 
 		ImGui::TreePop();
-	}
-
-	//Other components
-	if (components.size() > 0)
-	{
-		for (int i = 0; i < components.size(); i++)
-			components[i]->Inspector();
 	}
 	ImGui::End();
 }
@@ -674,27 +674,10 @@ void GameObject::CreateBounds(const Mesh* mesh)
 
 void GameObject::UpdateBounds()
 {
-	UpdateBoundsChilds();
-	UpdateBoundsParents();
+	UpdateBoundsOthers();
 }
 
-void GameObject::UpdateBoundsChilds()
-{
-	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-	{
-		//TODO: This should be from the lowest child to the upper one.
-		(*it)->bounds.aabb_bounding_box.minPoint = (*it)->bounds.original_aabb_bb_points[0];
-		(*it)->bounds.aabb_bounding_box.maxPoint = (*it)->bounds.original_aabb_bb_points[1];
-		(*it)->bounds.aabb_bounding_box.TransformAsAABB((*it)->GetWorldTransform().Transposed());
-				
-		(*it)->ResetOBBToOriginal();
-		(*it)->bounds.obb_bounding_box.Transform((*it)->GetWorldTransform().Transposed());
-
-		(*it)->UpdateBoundsChilds();
-	}
-}
-
-void GameObject::UpdateBoundsParents()
+void GameObject::UpdateBoundsOthers()
 {
 	if (parent != nullptr)
 	{
@@ -718,7 +701,7 @@ void GameObject::UpdateBoundsParents()
 				parent->bounds.obb_bounding_box.Enclose(obb_points[i]);
 		}
 
-		parent->UpdateBoundsParents();
+		parent->UpdateBoundsOthers();
 	}
 }
 
@@ -768,7 +751,7 @@ void GameObject::IncludeMeshInOBB(const Mesh * mesh)
 }
 
 void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transform)
-{
+{	
 	world_transform->SetTransform(parent_world_transform * local_transform->GetTransformMatrix());
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)

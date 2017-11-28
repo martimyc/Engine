@@ -661,10 +661,10 @@ bool Material::Inspector()
 {
 	bool ret = true;
 
-	ImGui::Text("Name: %s", name.c_str());
 
-	if (ImGui::TreeNode("material"))
+	if (ImGui::TreeNode("Material"))
 	{
+		ImGui::Text("Name: %s", name.c_str());
 		source->Inspector();
 		ImGui::TreePop();
 	}

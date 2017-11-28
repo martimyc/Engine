@@ -63,7 +63,7 @@ private:
 
 	bool draw_spheres = false;
 	bool draw_aabbs = false;
-	bool draw_obbs = true;
+	bool draw_obbs = false;
 
 public:
 	GameObject(const std::string& name, bool draw = true);
@@ -74,8 +74,7 @@ private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
-	void UpdateBoundsChilds();
-	void UpdateBoundsParents();
+	void UpdateBoundsOthers();
 	void ResetOBBToOriginal();
 
 	void UpdateBoundsSelf();
@@ -168,4 +167,3 @@ public:
 };
 
 #endif // !_GAME_OBJECT
-
