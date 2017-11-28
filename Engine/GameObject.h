@@ -74,8 +74,7 @@ private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
 	void UpdateBounds();
-	void UpdateBoundsChilds();
-	void UpdateBoundsParents();
+	void UpdateBoundsOthers();
 	void ResetOBBToOriginal();
 
 	void UpdateBoundsSelf();
@@ -168,4 +167,3 @@ public:
 };
 
 #endif // !_GAME_OBJECT
-
