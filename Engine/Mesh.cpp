@@ -20,7 +20,7 @@
 
 MeshSource::MeshSource(): vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
 {
-	memset(raycast_ms_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
+	memset(raycast_ticks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
 	memset(raycast_checks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
 }
 
@@ -168,9 +168,9 @@ void MeshSource::Inspector()
 			ImGui::PlotHistogram("     ", raycast_checks_log, IM_ARRAYSIZE(raycast_checks_log), KDT_GRAPH_SIZE, raycast_checks_title, 0.0f, 80.0f, ImVec2(0, 100));
 
 			ImGui::Text("Time per Raycast:");
-			char raycast_ms_title[25];
-			sprintf_s(raycast_ms_title, 25, "Ms: %.1f", raycast_ms_log[KDT_GRAPH_SIZE - 1]);
-			ImGui::PlotHistogram("      ", raycast_ms_log, IM_ARRAYSIZE(raycast_ms_log), KDT_GRAPH_SIZE, raycast_ms_title, 0.0f, 80.0f, ImVec2(0, 100));
+			char raycast_ticks_title[25];
+			sprintf_s(raycast_ticks_title, 25, "Ticks: %.1f", raycast_ticks_log[KDT_GRAPH_SIZE - 1]);
+			ImGui::PlotHistogram("      ", raycast_ticks_log, IM_ARRAYSIZE(raycast_ticks_log), KDT_GRAPH_SIZE, raycast_ticks_title, 0.0f, 80.0f, ImVec2(0, 100));
 
 			if (ImGui::Button("Recalculate"))
 				RecalculateKDT();
@@ -363,7 +363,7 @@ float MeshSource::RayCollisionKDT(const LineSegment* ray)
 
 	if (triangle_kdt != nullptr)
 	{
-		for (uint i = 0; i < KDT_GRAPH_SIZE; i++)
+		for (unsigned int i = 0; i < KDT_GRAPH_SIZE - 1; i++)
 			raycast_checks_log[i] = raycast_checks_log[i + 1];
 
 		unsigned int checks = 0;
@@ -520,9 +520,7 @@ math::vec MeshSource::GetMaxZVertex() const
 
 float MeshSource::CheckTriangleCollision(const LineSegment * ray)
 {
-	Triangle triangle_to_test;
-
-	for (uint i = 0; i < KDT_GRAPH_SIZE; i++)
+	for (unsigned int i = 0; i < KDT_GRAPH_SIZE - 1; i++)
 		raycast_checks_log[i] = raycast_checks_log[i + 1];
 
 	raycast_checks_log[KDT_GRAPH_SIZE - 1] = 0.0f;
@@ -530,13 +528,18 @@ float MeshSource::CheckTriangleCollision(const LineSegment * ray)
 	float shortest_distance = ray->Length();
 	float distance = 0.0f;
 
-	int num_triangles = num_indices / 3;
+	unsigned int num_triangles = num_indices / 3;
+	math::Triangle triangle_to_test;
 
 	for (int i = 0; i < num_triangles; i++)
-	{
-		triangle_to_test.a = vec(vertices[indices[i * 3]]);
-		triangle_to_test.b = vec(vertices[indices[i * 3 + 1]]);
-		triangle_to_test.c = vec(vertices[indices[i * 3 + 2]]);
+	{	
+		unsigned int index_1 = indices[i * 3];
+		unsigned int index_2 = indices[i * 3 + 1];
+		unsigned int index_3 = indices[i * 3 + 2];
+
+		memcpy(&triangle_to_test.a, &vertices[index_1], sizeof(float) * 3);
+		memcpy(&triangle_to_test.b, &vertices[index_2], sizeof(float) * 3);
+		memcpy(&triangle_to_test.c, &vertices[index_3], sizeof(float) * 3);
 
 		//Check all mesh triangles
 		if (ray->Intersects(triangle_to_test, &distance, nullptr))
@@ -551,19 +554,19 @@ float MeshSource::CheckTriangleCollision(const LineSegment * ray)
 
 float MeshSource::RayCollision(const LineSegment * ray)
 {
-	float ret = 0.0f;
-
 	Timer timer;
+
+	float ret = 0.0f;
 
 	if (raycast == RC_BRUTE_FORCE)
 		ret = CheckTriangleCollision(ray);
 	else if (raycast == RC_KDT)
 		ret = RayCollisionKDT(ray);
 
-	for (uint i = 0; i < KDT_GRAPH_SIZE; i++)
-		raycast_ms_log[i] = raycast_ms_log[i + 1];
+	for (unsigned int i = 0; i < KDT_GRAPH_SIZE - 1; i++)
+		raycast_ticks_log[i] = raycast_ticks_log[i + 1];
 
-	raycast_ms_log[KDT_GRAPH_SIZE - 1] = timer.Read();
+	raycast_ticks_log[KDT_GRAPH_SIZE - 1] = timer.Read();
 
 	return ret;
 }

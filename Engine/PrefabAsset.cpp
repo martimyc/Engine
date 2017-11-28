@@ -15,7 +15,7 @@ void PrefabAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
-PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(true), split_large_meshes(true), sort_by_type(false)
+PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false)
 {}
 
 bool PrefabImportConfiguration::Config()
@@ -36,6 +36,11 @@ bool PrefabImportConfiguration::Config()
 		ret = true;
 	ImGui::SameLine();
 	ImGui::HelpMarker("This step splits meshes with more than one primitive type in homogeneous sub-meshes.");
+
+	if (ImGui::Checkbox("Optimize Graph", &optimize_graph))
+		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("Nodes without animations, bones, lights or cameras assigned are collapsed and joined.\nNode names can be lost during this step.");
 
 	return ret;
 }

@@ -388,7 +388,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 	Assimp::Importer* importer = new Assimp::Importer;
 
 	//Config
-	unsigned int flags =  aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_FindInvalidData | aiProcess_FindInstances | aiProcess_OptimizeGraph;
+	unsigned int flags =  aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_FindInvalidData | aiProcess_FindInstances;
 	//aiProcess_TransformUVCoords  as long as there are no uv transforms
 	//anim: aiProcess_LimitBoneWeights & aiProcess_SplitByBoneCount & aiProcess_Debone 
 	//aiProcess_FixInfacingNormals result might not always be correct
@@ -445,6 +445,8 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		flags |= aiProcess_PreTransformVertices;
 	if (import_config->prefab_import_config->split_large_meshes)
 		flags |= aiProcess_SplitLargeMeshes;
+	if (import_config->prefab_import_config->optimize_graph)
+		flags |= aiProcess_OptimizeGraph;
 	if (import_config->prefab_import_config->sort_by_type)
 	{
 		flags |= aiProcess_SortByPType;

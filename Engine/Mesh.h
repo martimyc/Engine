@@ -49,7 +49,7 @@ struct MeshSource
 	RAYCAST raycast = RC_BRUTE_FORCE;
 	int selected_raycast = 0;
 	KDTreeTriangle* triangle_kdt = nullptr;
-	float raycast_ms_log[KDT_GRAPH_SIZE] = {};
+	float raycast_ticks_log[KDT_GRAPH_SIZE] = {};
 	float raycast_checks_log[KDT_GRAPH_SIZE] = {};
 
 	MeshSource();

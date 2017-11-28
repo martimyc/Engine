@@ -4,7 +4,7 @@
 #include <vector>
 #include "MathGeoLib\src\Geometry\AABB.h"
 
-#define MAX_NUM_OBJECTS 3
+#define MAX_NUM_OBJECTS 5
 #define MAX_SUBDIVISIONS 5
 
 class GameObject;
