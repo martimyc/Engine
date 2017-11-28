@@ -736,6 +736,14 @@ float Mesh::GetMinZ() const
 	return 0.0f;
 }
 
+math::vec Mesh::GetMinVec() const
+{
+	if (source != nullptr)
+		return source->GetMinVec();
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::zero;
+}
+
 float Mesh::GetMaxX() const
 {
 	if (source != nullptr)
@@ -758,6 +766,14 @@ float Mesh::GetMaxZ() const
 		return source->GetMaxZ();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
+}
+
+math::vec Mesh::GetMaxVec() const
+{
+	if (source != nullptr)
+		return source->GetMaxVec();
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::zero;
 }
 
 math::vec Mesh::GetMinXVertex() const

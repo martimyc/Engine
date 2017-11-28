@@ -158,10 +158,12 @@ public:
 	float GetMinX() const;
 	float GetMinY() const;
 	float GetMinZ() const;
+	math::vec GetMinVec() const;
 
 	float GetMaxX() const;
 	float GetMaxY() const;
 	float GetMaxZ() const;
+	math::vec GetMaxVec() const;
 
 	math::vec GetMinXVertex() const;
 	math::vec GetMinYVertex() const;

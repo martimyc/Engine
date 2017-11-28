@@ -28,16 +28,20 @@ struct Bounds
 	AABB aabb_bounding_box;
 	math::vec original_aabb_bb_points[2];
 	OBB obb_bounding_box;
-
-
+	OBB original_obb_bounding_box;
+	
 	Bounds()
 	{
 		aabb_bounding_box.SetNegativeInfinity();
 		original_aabb_bb_points[0].zero;
 		original_aabb_bb_points[1].zero;
+		obb_bounding_box.SetNegativeInfinity();
+		obb_bounding_box.r = math::vec::zero;
+		original_obb_bounding_box.SetNegativeInfinity();
+		original_obb_bounding_box.r = math::vec::zero;
 	}
 
-	Bounds(const Bounds& copy): aabb_bounding_box(copy.aabb_bounding_box)
+	Bounds(const Bounds& copy): aabb_bounding_box(copy.aabb_bounding_box), obb_bounding_box(copy.obb_bounding_box), original_obb_bounding_box(copy.original_obb_bounding_box)
 	{
 		original_aabb_bb_points[0] = copy.original_aabb_bb_points[0];
 		original_aabb_bb_points[1] = copy.original_aabb_bb_points[1];
@@ -57,6 +61,10 @@ private:
 	bool is_camera = false;
 	bool draw = false;
 
+	bool draw_spheres = false;
+	bool draw_aabbs = false;
+	bool draw_obbs = true;
+
 public:
 	GameObject(const std::string& name, bool draw = true);
 	GameObject(const GameObject& copy);
@@ -68,8 +76,9 @@ private:
 	void UpdateBounds();
 	void UpdateBoundsChilds();
 	void UpdateBoundsParents();
+	void ResetOBBToOriginal();
 
-	void UpdateAABBs();
+	void UpdateBoundsSelf();
 	void IncludeMeshInOBB(const Mesh* mesh);
 	void UpdateWorldTransform(const math::float4x4& parent_world_transform);
 	void UpdateTransforms();
