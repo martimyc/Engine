@@ -7,6 +7,9 @@
 #include "Globals.h"
 #include "KDTreeTriangle.h"
 
+KDTNodeTriangle::KDTNodeTriangle()
+{}
+
 KDTNodeTriangle::KDTNodeTriangle(const math::vec min_point, const math::vec max_point) : partition_axis(NO_PARTITION), limits(min_point, max_point), max_vec(math::vec::nan), min_vec(math::vec::nan)
 {
 	for (int i = 0; i < MAX_NUM_OBJECTS; i++)
@@ -776,6 +779,80 @@ bool KDTNodeTriangle::Inside(const math::Triangle & new_triangle) const
 	return true;
 }
 
+void KDTNodeTriangle::Save(char ** iterator) const
+{
+	memcpy(*iterator, &limits, sizeof(math::AABB));
+	*iterator += sizeof(math::AABB);
+
+	memcpy(*iterator, &max_vec, sizeof(math::vec));
+	*iterator += sizeof(math::vec);
+
+	memcpy(*iterator, &min_vec, sizeof(math::vec));
+	*iterator += sizeof(math::vec);
+
+	memcpy(*iterator, &partition_axis, sizeof(PARTITION_AXIS));
+	*iterator += sizeof(PARTITION_AXIS);
+
+	if (partition_axis == NO_PARTITION)
+	{
+		memcpy(*iterator, triangles, sizeof(math::Triangle)* MAX_NUM_OBJECTS);
+		*iterator += sizeof(math::Triangle) * MAX_NUM_OBJECTS;
+	}
+	else
+	{
+		memcpy(*iterator, &median, sizeof(float));
+		*iterator += sizeof(float);
+
+		childs[0]->Save(iterator);
+		childs[1]->Save(iterator);
+	}
+}
+
+void KDTNodeTriangle::Load(char ** iterator)
+{
+	memcpy(&limits, *iterator, sizeof(math::AABB));
+	*iterator += sizeof(math::AABB);
+
+	memcpy(&max_vec, *iterator, sizeof(math::vec));
+	*iterator += sizeof(math::vec);
+
+	memcpy(&min_vec, *iterator, sizeof(math::vec));
+	*iterator += sizeof(math::vec);
+
+	memcpy(&partition_axis, *iterator, sizeof(PARTITION_AXIS));
+	*iterator += sizeof(PARTITION_AXIS);
+
+	if (partition_axis == NO_PARTITION)
+	{
+		memcpy(triangles, *iterator, sizeof(math::Triangle)* MAX_NUM_OBJECTS);
+		*iterator += sizeof(math::Triangle) * MAX_NUM_OBJECTS;
+	}
+	else
+	{
+		memcpy(&median, *iterator, sizeof(float));
+		*iterator += sizeof(float);
+
+		childs[0] = new KDTNodeTriangle;
+		childs[0]->Load(iterator);
+		childs[1] = new KDTNodeTriangle;
+		childs[1]->Load(iterator);
+	}
+}
+
+void KDTNodeTriangle::GetSaveSize(unsigned int & save_size) const
+{
+	save_size += sizeof(math::AABB) + sizeof(math::vec) * 2 + sizeof(PARTITION_AXIS);
+
+	if(partition_axis == NO_PARTITION)
+		save_size += sizeof(math::Triangle) * MAX_NUM_OBJECTS;
+	else
+	{
+		save_size += sizeof(float);
+		childs[0]->GetSaveSize(save_size);
+		childs[1]->GetSaveSize(save_size);
+	}
+}
+
 bool KDTreeTriangle::ReCalculate(const math::Triangle & new_triangle)
 {
 	std::vector<math::Triangle> all_triangles;
@@ -866,7 +943,7 @@ bool KDTreeTriangle::AddTriangles(const float*const new_vertices, const unsigned
 {
 	std::vector<math::Triangle> all_triangles;
 
-	AABB limits(min_vec,max_vec);
+	AABB limits(min_vec, max_vec);
 
 	int num_triangles = num_indices / 3;
 	all_triangles.reserve(num_triangles);
@@ -884,10 +961,10 @@ bool KDTreeTriangle::AddTriangles(const float*const new_vertices, const unsigned
 		memcpy(&tri.c, &new_vertices[v_c * 3], sizeof(float) * 3);
 
 		all_triangles.push_back(tri);
-
-		//all_triangles.push_back((math::vec)new_vertices[v_a], (math::vec)new_vertices[v_b], (math::vec)new_vertices[v_c]);
 	}
 
+	if (root != nullptr)
+		delete root;
 	root = new KDTNodeTriangle(limits);
 
 	if (all_triangles.size() > 0)
@@ -927,4 +1004,39 @@ void KDTreeTriangle::Inspector()
 
 	ImGui::Text("Number of Nodes: %i", num_nodes);
 	ImGui::Text("Size: %i MB", bytes / 1024);
+}
+
+void KDTreeTriangle::Save(char ** iterator) const
+{
+	memcpy(*iterator, &bytes, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	memcpy(*iterator, &num_nodes, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	memcpy(*iterator, &draw, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	root->Save(iterator);
+}
+
+void KDTreeTriangle::Load(char ** iterator)
+{
+	memcpy( &bytes, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	memcpy( &num_nodes, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	memcpy( &draw, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	root->Load(iterator);
+}
+
+unsigned int KDTreeTriangle::GetSaveSize() const
+{
+	unsigned int save_size = sizeof(unsigned int) * 2 + sizeof(bool);
+	root->GetSaveSize(save_size);
+	return save_size;
 }

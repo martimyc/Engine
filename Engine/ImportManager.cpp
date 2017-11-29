@@ -529,7 +529,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				sprintf(ptr, "%s_Mesh_%i", scene_name.c_str(), i);
 				std::string mesh_name(ptr);
 
-				UID uid(mesh_importer->Import(scene->mMeshes[i]));
+				UID uid(mesh_importer->Import(scene->mMeshes[i], import_config->mesh_import_config));
 
 				mesh_loads[i] = true;
 				scene_meshes.push_back(uid);
@@ -545,7 +545,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 					LOG("Mesh (%i) could not be imported correctly", i);
 					material_loads[i] = false;
 				}
-			}
+			}			
 		}
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
@@ -562,6 +562,9 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				prefab_uid = UID();
 			}
 		}
+
+		delete[] material_loads;
+		delete[] mesh_loads;
 		delete importer;
 	}
 	else	

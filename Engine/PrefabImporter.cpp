@@ -76,7 +76,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 	*iterator += sizeof(uint);
 
 	for (int i = 0; i < child->mNumMeshes; i++)
-	{
+	{		
 		if (mesh_loads[child->mMeshes[i]])
 		{
 			unsigned int num_mesh = child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], mesh_loads);

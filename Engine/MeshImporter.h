@@ -13,6 +13,7 @@ struct Mesh;
 struct UID;
 struct MeshImportConfiguration;
 struct MeshLoadConfiguration;
+class KDTreeTriangle;
 
 class MeshImporter
 {
@@ -21,11 +22,11 @@ public:
 	~MeshImporter();
 
 private:
-	unsigned int GetTotalSize(const aiMesh* mesh) const;
+	unsigned int GetTotalSize(const aiMesh * mesh, bool kdt, const KDTreeTriangle& tree) const;
 
 public:
 	//TODO change for config
-	const UID Import(const aiMesh* mesh);
+	const UID Import(const aiMesh* mesh, const MeshImportConfiguration* config);
 	bool Load(Mesh* to_load, const MeshLoadConfiguration* config);
 };
 

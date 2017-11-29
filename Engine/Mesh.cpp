@@ -186,6 +186,17 @@ void MeshSource::Inspector()
 	}
 }
 
+void MeshSource::SaveKDT(char ** iterator) const
+{
+	triangle_kdt->Save(iterator);
+}
+
+void MeshSource::LoadKDT(char ** iterator)
+{
+	triangle_kdt = new KDTreeTriangle;
+	triangle_kdt->Load(iterator);
+}
+
 const GLuint MeshSource::GetVerticesID() const
 {
 	return vertex_id;

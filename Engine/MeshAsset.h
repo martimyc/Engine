@@ -13,6 +13,7 @@ struct MeshImportConfiguration : public ImportConfiguration
 	bool load_colors;
 	bool load_uvs;
 	bool load_bone_weights;
+	bool kdt;
 
 	MeshImportConfiguration();
 
