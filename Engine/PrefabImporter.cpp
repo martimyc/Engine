@@ -36,11 +36,15 @@ unsigned int PrefabImporter::GetFailedBefore(unsigned int pos, bool* loads) cons
 	return ret;
 }
 
-unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads) const
+unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads, const char* name) const
 {
 	// name + transform  + mesh + material + num_childs + childs
+	uint ret = 0;
 
-	uint ret = node->mName.length + 1;
+	if (name == nullptr)
+		ret += node->mName.length + 1;
+	else
+		ret += strlen(name) + 1;
 
 	ret += sizeof(float) * 16;
 
@@ -63,10 +67,18 @@ unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads) 
 	return ret;
 }
 
-void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const aiScene * scene, const std::vector<UID>& materials, bool * material_loads, const std::vector<UID>& meshes, bool * mesh_loads)
+void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const aiScene * scene, const std::vector<UID>& materials, bool * material_loads, const std::vector<UID>& meshes, bool * mesh_loads, const char* name)
 {
-	memcpy(*iterator, child->mName.C_Str(), child->mName.length + 1);
-	*iterator += child->mName.length + 1;
+	if (name == nullptr)
+	{
+		memcpy(*iterator, child->mName.C_Str(), child->mName.length + 1);
+		*iterator += child->mName.length + 1;
+	}
+	else
+	{
+		memcpy(*iterator, name, strlen(name) + 1);
+		*iterator += strlen(name) + 1;
+	}
 
 	memcpy(*iterator, &child->mTransformation, sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
@@ -80,8 +92,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		if (mesh_loads[child->mMeshes[i]])
 		{
 			unsigned int num_mesh = child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], mesh_loads);
-			UID id(meshes[num_mesh]);
-			memcpy(*iterator, &id, SIZE_OF_UID);
+			memcpy(*iterator, &meshes[num_mesh], SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 
 			bool has_material = material_loads[scene->mMeshes[child->mMeshes[i]]->mMaterialIndex];
@@ -91,8 +102,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 			if (has_material)
 			{
 				unsigned int material_index = scene->mMeshes[num_mesh]->mMaterialIndex - GetFailedBefore(scene->mMeshes[num_mesh]->mMaterialIndex, material_loads);
-				UID id(materials[material_index]);
-				memcpy(*iterator, &id, SIZE_OF_UID);
+				memcpy(*iterator, &materials[material_index], SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
 			}
 		}
@@ -183,19 +193,19 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 	return new_game_object;
 }
 
-const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads)
+const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const char* name)
 {
 	aiNode* root_node = scene->mRootNode;
 
 	char format[FORMAT_SIZE] = FORMAT_PREFAB;
-	char* buffer = new char[FORMAT_SIZE + GetNodeSize(root_node, mesh_loads)];
+	char* buffer = new char[FORMAT_SIZE + GetNodeSize(root_node, mesh_loads, name)];
 	char* iterator = buffer;
 
 	//First specify format
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
 
-	ImportNode(root_node, &iterator, scene, materials, material_loads, meshes, mesh_loads);
+	ImportNode(root_node, &iterator, scene, materials, material_loads, meshes, mesh_loads, name);
 
 	uint length = iterator - buffer;
 	UID uid(buffer, length);

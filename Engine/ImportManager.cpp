@@ -378,10 +378,6 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 {
 	UID prefab_uid;
 
-	/*std::string assets_path(App->file_system->GetAssets());
-	path += "\\";
-	path += file;*/
-
 	std::string scene_name(GetImportFileNameNoExtension());
 	std::string scene_dir(path.substr(0, path.find_last_of("\\") + 1)); // +1 to include \\
 
@@ -423,7 +419,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 	if (import_config->include_meshes == false)
 		remove_components |= aiComponent_MESHES;
 	else
-		flags |= aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_OptimizeMeshes;
+		flags |= aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
 
 	if (import_config->include_materials == false)
 		remove_components |= aiComponent_MATERIALS;
@@ -447,6 +443,8 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		flags |= aiProcess_SplitLargeMeshes;
 	if (import_config->prefab_import_config->optimize_graph)
 		flags |= aiProcess_OptimizeGraph;
+	if (import_config->prefab_import_config->optimize_meshes)
+		flags |= aiProcess_OptimizeMeshes;
 	if (import_config->prefab_import_config->sort_by_type)
 	{
 		flags |= aiProcess_SortByPType;
@@ -531,9 +529,6 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 
 				UID uid(mesh_importer->Import(scene->mMeshes[i], import_config->mesh_import_config));
 
-				mesh_loads[i] = true;
-				scene_meshes.push_back(uid);
-
 				if (uid.IsNull() == false)
 				{
 					mesh_loads[i] = true;
@@ -552,7 +547,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 
 		if (scene->mRootNode != nullptr)
 		{
-			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads);
+			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_name.c_str());
 
 			if (prefab_uid.IsNull() == false)
 				App->resource_manager->AddAsset(scene_name, prefab_uid, RT_PREFAB, import_config->prefab_import_config, import_config->prefab_load_config);

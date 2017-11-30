@@ -9,6 +9,7 @@ struct PrefabImportConfiguration : public ImportConfiguration
 	bool split_large_meshes;
 	bool sort_by_type;
 	bool optimize_graph;
+	bool optimize_meshes;
 
 	PrefabImportConfiguration();
 

@@ -1,13 +1,11 @@
-Info,  T8596: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\BakerHouse.fbx
-Info,  T8596: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T8596: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
-Warn,  T8596: FBX-DOM (TOK_KEY, offset 0xd7b7) shading mode not recognized: Phong
-Info,  T8596: Entering post processing pipeline
-Info,  T8596: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T8596: OptimizeGraphProcess finished; Input nodes: 3, Output nodes: 1
-Info,  T8596: OptimizeMeshesProcess finished. Input meshes: 2, Output meshes: 1
-Info,  T8596: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T8596: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T8596: JoinVerticesProcess finished | Verts in: 3075 out: 1532 | ~50.2%
-Info,  T8596: Cache relevant are 1 meshes (1025 faces). Average output ACMR is 1.522927
-Info,  T8596: Leaving post processing pipeline
+Info,  T21516: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\BakerHouse.fbx
+Info,  T21516: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T21516: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
+Warn,  T21516: FBX-DOM (TOK_KEY, offset 0xd7b7) shading mode not recognized: Phong
+Info,  T21516: Entering post processing pipeline
+Info,  T21516: RemoveVCProcess finished. Data structure cleanup has been done.
+Info,  T21516: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Info,  T21516: CalcTangentsProcess finished. Tangents have been calculated
+Info,  T21516: JoinVerticesProcess finished | Verts in: 3075 out: 1532 | ~50.2%
+Info,  T21516: Cache relevant are 2 meshes (1025 faces). Average output ACMR is 1.522927
+Info,  T21516: Leaving post processing pipeline

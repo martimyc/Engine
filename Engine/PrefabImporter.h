@@ -23,13 +23,13 @@ public:
 
 private:
 	unsigned int GetFailedBefore(unsigned int pos, bool* loads) const;
-	unsigned int GetNodeSize(const aiNode* node, bool* mesh_loads) const;
-	void ImportNode(const aiNode* child, char** iterator, const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads);
+	unsigned int GetNodeSize(const aiNode* node, bool* mesh_loads, const char* name = nullptr) const;
+	void ImportNode(const aiNode* child, char** iterator, const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const char* name = nullptr);
 	GameObject* LoadChild(char** iterator);
 
 public:
 	//TODO change for config
-	const UID Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads);
+	const UID Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const char* name = nullptr);
 	bool Load(Prefab* to_load, const PrefabLoadConfiguration* config);
 };
 

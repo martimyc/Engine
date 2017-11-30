@@ -15,7 +15,7 @@ void PrefabAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
-PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false)
+PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(false)
 {}
 
 bool PrefabImportConfiguration::Config()
@@ -41,6 +41,11 @@ bool PrefabImportConfiguration::Config()
 		ret = true;
 	ImGui::SameLine();
 	ImGui::HelpMarker("Nodes without animations, bones, lights or cameras assigned are collapsed and joined.\nNode names can be lost during this step.");
+
+	if (ImGui::Checkbox("Optimize Meshes", &optimize_meshes))
+		ret = true;
+	ImGui::SameLine();
+	ImGui::HelpMarker("A postprocessing step to reduce the number of meshes.");
 
 	return ret;
 }
