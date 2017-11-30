@@ -59,6 +59,9 @@ struct MeshSource
 
 	void Inspector();
 
+	void SaveKDT(char ** iterator) const;
+	void LoadKDT(char ** iterator);
+
 	//Getters
 	//Vertices
 	const GLuint GetVerticesID() const;

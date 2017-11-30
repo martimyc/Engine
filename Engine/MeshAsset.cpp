@@ -9,6 +9,9 @@ bool MeshImportConfiguration::Config()
 {
 	bool ret = false;
 
+	if (ImGui::Checkbox("KDT", &kdt))
+		ret = true;
+
 	ImGui::Columns(2);
 
 	if (ImGui::Checkbox("Load Tangents & Bytangents", &load_tangents))

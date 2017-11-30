@@ -25,8 +25,8 @@ enum PARTITION_AXIS
 class KDTNodeTriangle
 {
 private:
-	AABB limits;
 	math::Triangle triangles[MAX_NUM_OBJECTS];
+	AABB limits;
 	math::vec max_vec;
 	math::vec min_vec;
 
@@ -34,6 +34,8 @@ private:
 	PARTITION_AXIS partition_axis;
 	KDTNodeTriangle* childs[2];
 	float median;
+
+	KDTNodeTriangle();
 
 public:
 	KDTNodeTriangle(const math::vec min_point, const math::vec max_point);
@@ -94,6 +96,11 @@ public:
 	bool RayCollisionKDT(const math::LineSegment* ray, float& shortest_distance, unsigned int& num_checks) const;
 
 	bool Inside(const math::Triangle& new_triangle) const;
+	
+	void Save(char ** iterator) const;
+	void Load(char ** iterator);
+
+	void GetSaveSize(unsigned int& save_size) const;
 };
 
 class KDTreeTriangle
@@ -124,6 +131,11 @@ public:
 	float RayCollisionKDT(const LineSegment* ray, unsigned int& num_checks) const;
 
 	void Inspector();
+
+	void Save(char ** iterator) const;
+	void Load(char ** iterator);
+
+	unsigned int GetSaveSize() const;
 };
 
 #endif // !KDTREE_VERTEX

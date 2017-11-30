@@ -3,6 +3,8 @@
 #include "FileSystem.h"
 #include "Application.h"
 #include "Mesh.h"
+#include "KDTreeTriangle.h"
+#include "MeshAsset.h"
 #include "MeshImporter.h"
 
 MeshImporter::MeshImporter()
@@ -11,7 +13,7 @@ MeshImporter::MeshImporter()
 MeshImporter::~MeshImporter()
 {}
 
-unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
+unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh, bool kdt, const KDTreeTriangle& tree) const
 {
 	unsigned int total_size = FORMAT_SIZE;
 	total_size += sizeof(GLuint);
@@ -37,6 +39,8 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 
 	total_size += sizeof(GLfloat) * mesh->mNumVertices * 3;
 
+	total_size += sizeof(bool);
+
 	if (mesh->HasVertexColors(0))
 	{
 		total_size += sizeof(GLuint);
@@ -44,15 +48,77 @@ unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh) const
 			total_size += sizeof(GLfloat) * mesh->mNumVertices * 4;
 	}
 
+	total_size += sizeof(bool);
+
+	if (kdt)
+		total_size += tree.GetSaveSize();
+
 	return total_size;
 }
 
-const UID MeshImporter::Import(const aiMesh * mesh)
+const UID MeshImporter::Import(const aiMesh * mesh, const MeshImportConfiguration* config)
 {
-	bool ret = true;
+	KDTreeTriangle tree;
+
+	//Load Vertices
+	unsigned int* indices = new unsigned int[mesh->mNumFaces * 3];
+
+	if (mesh->HasPositions() == false)
+	{
+		LOG("Mesh has no vertices");
+		return false;
+	}
+
+	// Copy faces
+	if (mesh->HasFaces())
+	{
+		GLuint num_faces = mesh->mNumFaces;
+
+		for (int i = 0; i < mesh->mNumFaces; i++)
+		{
+			if (mesh->mFaces[i].mNumIndices != 3)
+			{
+				LOG("WARNING, geometry face with != 3 indices!");
+				return false;
+			}
+			else
+				memcpy(&indices[i * 3], mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
+		}
+	}
+	else
+	{
+		LOG("Mesh has no faces");
+		return false;
+	}
+
+	if (config->kdt)
+	{
+		math::vec max_vec(mesh->mVertices[0].x, mesh->mVertices[0].y, mesh->mVertices[0].z);
+		math::vec min_vec(mesh->mVertices[0].x, mesh->mVertices[0].y, mesh->mVertices[0].z);
+
+		for (int i = 1; i < mesh->mNumVertices; i++)
+		{
+			if (mesh->mVertices[i].x > max_vec.x)
+				max_vec.x = mesh->mVertices[i].x;
+			if (mesh->mVertices[i].y > max_vec.y)
+				max_vec.y = mesh->mVertices[i].y;
+			if (mesh->mVertices[i].z > max_vec.z)
+				max_vec.z = mesh->mVertices[i].z;
+
+			if (mesh->mVertices[i].x < min_vec.x)
+				min_vec.x = mesh->mVertices[i].x;
+			if (mesh->mVertices[i].y < min_vec.y)
+				min_vec.y = mesh->mVertices[i].y;
+			if (mesh->mVertices[i].z < min_vec.z)
+				min_vec.z = mesh->mVertices[i].z;
+		}
+		tree.AddTriangles( (float*)mesh->mVertices, indices, mesh->mNumFaces * 3, max_vec, min_vec);
+	}
 
 	char format[FORMAT_SIZE] = FORMAT_MESH;
-	char* buffer = new char[GetTotalSize(mesh)];
+
+	char* buffer = new char[GetTotalSize(mesh, config->kdt, tree)];
+
 	char* iterator = buffer;
 
 	//First specify format
@@ -64,50 +130,24 @@ const UID MeshImporter::Import(const aiMesh * mesh)
 	iterator += sizeof(GLuint);
 
 	//Load Vertices
-	if (mesh->HasPositions())
-	{
-		memcpy(iterator, mesh->mVertices, sizeof(GLfloat) * num_vertices * 3);
-		iterator += sizeof(GLfloat) * num_vertices * 3;
-	}
-	else
-	{
-		LOG("Mesh has no vertices");
-		ret = false;
-	}
+	memcpy(iterator, mesh->mVertices, sizeof(GLfloat) * num_vertices * 3);
+	iterator += sizeof(GLfloat) * num_vertices * 3;
 
 	// Copy faces
-	if (mesh->HasFaces() && ret == true)
-	{
-		GLuint num_faces = mesh->mNumFaces;
-		memcpy(iterator, &num_faces, sizeof(GLuint));
-		iterator += sizeof(GLuint);
+	GLuint num_indices = mesh->mNumFaces * 3;
+	memcpy(iterator, &num_indices, sizeof(GLuint));
+	iterator += sizeof(GLuint);
 
-		for (int i = 0; i < mesh->mNumFaces; i++)
-		{
-			if (mesh->mFaces[i].mNumIndices != 3)
-			{
-				LOG("WARNING, geometry face with != 3 indices!");
-				ret = false;
-				break;
-			}
-			else
-			{
-				memcpy(iterator, mesh->mFaces[i].mIndices, sizeof(GLuint) * 3);
-				iterator += sizeof(GLuint) * 3;
-			}
-		}
-	}
-	else
-	{
-		LOG("Mesh has no faces");
-		ret = false;
-	}
+	memcpy(iterator, indices, sizeof(GLuint) *num_indices);
+	iterator += sizeof(GLuint) * num_indices;
+	delete [] indices;
 
+	//UVs
 	GLuint num_uv_channels = mesh->GetNumUVChannels();
 	memcpy(iterator, &num_uv_channels, sizeof(GLuint));
 	iterator += sizeof(GLuint);
 
-	if (mesh->HasTextureCoords(0) && ret == true)
+	if (mesh->HasTextureCoords(0))
 	{
 		GLuint num_uv_components = 0;
 
@@ -136,36 +176,44 @@ const UID MeshImporter::Import(const aiMesh * mesh)
 	else
 		LOG("Mesh has no texture coordinates in channel 0");
 
-	if (ret == true)
+	//Normals will Always exsist thanks to assimp either loading or generating them
+	memcpy(iterator, mesh->mNormals, sizeof(GLfloat) * num_vertices * 3);	
+	iterator += sizeof(GLfloat) * num_vertices * 3;
+
+	memcpy(iterator, &config->load_colors, sizeof(bool));
+	iterator += sizeof(bool);
+
+	if (config->load_colors)
 	{
-		//Normals will either exist or be generated here all to 1.0f, 1.0f, 1.0f
-		if (mesh->HasNormals() && ret == true)
-			memcpy(iterator, mesh->mNormals, sizeof(GLfloat) * num_vertices * 3);
-		else
+		if (mesh->HasVertexColors(0))
 		{
-			LOG("Mesh has no Normals even thow assimp should have generated them, all normals will be set to: 1.0f, 1.0f, 1.0f");
-			memset(iterator, 1.0f, sizeof(GLfloat) * num_vertices * 3);
+			GLuint num_color_channels = mesh->GetNumColorChannels();
+			memcpy(iterator, &num_color_channels, sizeof(GLuint));
+			iterator += sizeof(GLuint);
+
+			for (int i = 0; i < num_color_channels; i++)
+			{
+				memcpy(iterator, mesh->mColors[i], sizeof(GLfloat) * num_vertices * 4);
+				iterator += sizeof(GLfloat) * num_vertices * 4;
+			}
 		}
-		iterator += sizeof(GLfloat) * num_vertices * 3;
+		else
+			LOG("Mesh has no vertex colors");
 	}
 
-	int size_now = iterator - buffer;
-	int test = GetTotalSize(mesh);
-
-	if (mesh->HasVertexColors(0) && ret == true)
+	if (config->kdt)
 	{
-		GLuint num_color_channels = mesh->GetNumColorChannels();
-		memcpy(iterator, &num_color_channels, sizeof(GLuint));
-		iterator += sizeof(GLuint);
-
-		for (int i = 0; i < num_color_channels; i++)
-		{
-			memcpy(iterator, mesh->mColors[i], sizeof(GLfloat) * num_vertices * 4);
-			iterator += sizeof(GLfloat) * num_vertices * 4;	
-		}
+		bool has_kdt = true;
+		memcpy(iterator, &has_kdt, sizeof(bool));
+		iterator += sizeof(bool);
+		tree.Save(&iterator);
 	}
 	else
-		LOG("Mesh has no vertex colors");
+	{
+		bool kdt = false;
+		memcpy(iterator, &kdt, sizeof(bool));
+		iterator += sizeof(bool);
+	}
 
 	// Bones and TangentsAndBitangents not loaded yet TODO
 
@@ -230,14 +278,13 @@ bool MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 			return false;
 		}
 
-		GLuint num_faces;
-		memcpy(&num_faces, iterator, sizeof(GLuint));
+		GLuint num_indices;
+		memcpy(&num_indices, iterator, sizeof(GLuint));
 		iterator += sizeof(GLuint);
 
-		if (num_faces > 0)
+		if (num_indices > 0)
 		{
 			GLuint indices_id = 0;
-			GLuint num_indices = num_faces * 3;
 			GLuint* indices = new GLuint[num_indices];
 
 			memcpy(indices, iterator, sizeof(GLuint) * num_indices);
@@ -300,32 +347,46 @@ bool MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 
 		new_mesh->SetNormals(normals_id, normals);
 
-		GLuint num_color_channels;
-		memcpy(&num_color_channels, iterator, sizeof(GLuint));
-		iterator += sizeof(GLuint);
+		bool colors;
+		memcpy(&colors, iterator, sizeof(bool));
+		iterator += sizeof(bool);
 
-		if (num_color_channels < 0)
+		if (colors)
 		{
-			GLuint* color_ids = new GLuint[num_color_channels];
-			GLfloat** colors = new GLfloat*[num_color_channels];
+			GLuint num_color_channels;
+			memcpy(&num_color_channels, iterator, sizeof(GLuint));
+			iterator += sizeof(GLuint);
 
-			for (int i = 0; i < num_color_channels; i++)
+			if (num_color_channels < 0)
 			{
-				colors[i] = new GLfloat[num_vertices * 4];
+				GLuint* color_ids = new GLuint[num_color_channels];
+				GLfloat** colors = new GLfloat*[num_color_channels];
 
-				memcpy(colors[i], iterator, sizeof(GLfloat) * num_vertices * 4);
-				iterator += sizeof(GLfloat) * num_vertices * 4;
+				for (int i = 0; i < num_color_channels; i++)
+				{
+					colors[i] = new GLfloat[num_vertices * 4];
 
-				glGenBuffers(1, &color_ids[i]);
-				glBindBuffer(GL_ARRAY_BUFFER, color_ids[i]);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * 4, colors[i], GL_STATIC_DRAW);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
+					memcpy(colors[i], iterator, sizeof(GLfloat) * num_vertices * 4);
+					iterator += sizeof(GLfloat) * num_vertices * 4;
+
+					glGenBuffers(1, &color_ids[i]);
+					glBindBuffer(GL_ARRAY_BUFFER, color_ids[i]);
+					glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * 4, colors[i], GL_STATIC_DRAW);
+					glBindBuffer(GL_ARRAY_BUFFER, 0);
+				}
+
+				new_mesh->SetColors(num_color_channels, color_ids, colors);
 			}
-
-			new_mesh->SetColors(num_color_channels, color_ids, colors);
+			else
+				LOG("Mesh has no vertex colors");
 		}
-		else
-			LOG("Mesh has no vertex colors");
+
+		bool kdt;
+		memcpy(&kdt, iterator, sizeof(bool));
+		iterator += sizeof(bool);
+
+		if(kdt)
+			new_mesh->LoadKDT(&iterator);
 
 		to_load->SetSource(new_mesh);
 		return true;
