@@ -4,20 +4,14 @@
 #include "TextureAsset.h"
 #include "MaterialAsset.h"
 
-MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(true), all_textures_in_same_dir(false)
-{
-	texture_import_config = new TextureImportConfiguration;
-	texture_load_config = new TextureLoadConfiguration;
-}
+MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(true), all_textures_in_same_dir(false), texture_import_config (new TextureImportConfiguration),texture_load_config (new TextureLoadConfiguration)
+{}
 
 MaterialImportConfiguration::MaterialImportConfiguration(const MaterialImportConfiguration & copy): include_textures(copy.include_textures), all_textures_in_same_dir(copy.all_textures_in_same_dir), texture_import_config(copy.texture_import_config), texture_load_config(copy.texture_load_config)
 {}
 
 MaterialImportConfiguration::~MaterialImportConfiguration()
-{
-	DELETE_PTR(texture_import_config);
-	DELETE_PTR(texture_load_config);
-}
+{}
 
 bool MaterialImportConfiguration::Config()
 {
@@ -53,19 +47,31 @@ bool MaterialImportConfiguration::Config()
 
 void MaterialImportConfiguration::MetaSave(char ** iterator) const
 {
+	memcpy(*iterator, &include_textures, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &all_textures_in_same_dir, sizeof(bool));
+	*iterator += sizeof(bool);
+
 	texture_import_config->MetaSave(iterator);
 	texture_load_config->MetaSave(iterator);
 }
 
 void MaterialImportConfiguration::MetaLoad(char ** iterator)
 {
+	memcpy(&include_textures, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&all_textures_in_same_dir, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
 	texture_import_config->MetaLoad(iterator);
 	texture_load_config->MetaLoad(iterator);
 }
 
 unsigned int MaterialImportConfiguration::GetMetaSize() const
 {
-	return texture_import_config->GetMetaSize() + texture_load_config->GetMetaSize();
+	return texture_import_config->GetMetaSize() + texture_load_config->GetMetaSize() + sizeof(bool) * 2;
 }
 
 bool MaterialLoadConfiguration::Config()
@@ -75,29 +81,21 @@ bool MaterialLoadConfiguration::Config()
 }
 
 void MaterialLoadConfiguration::MetaSave(char ** iterator) const
-{
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
-}
+{}
 
 void MaterialLoadConfiguration::MetaLoad(char ** iterator)
-{
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
-}
+{}
 
 unsigned int MaterialLoadConfiguration::GetMetaSize() const
 {
-	return sizeof(MaterialLoadConfiguration);
+	return 0;
 }
 
 MaterialAsset::MaterialAsset(Resource * resource, const ImportConfiguration * import_config, const LoadConfiguration * load_config) : Asset(RT_MATERIAL, resource, import_config, load_config)
 {}
 
 MaterialAsset::~MaterialAsset()
-{
-	DELETE_PTR(resource);
-}
+{}
 
 void MaterialAsset::AddInstance(const GameObject * go)
 {

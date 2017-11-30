@@ -67,7 +67,7 @@ unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads, 
 	return ret;
 }
 
-void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const aiScene * scene, const std::vector<UID>& materials, bool * material_loads, const std::vector<UID>& meshes, bool * mesh_loads, const char* name)
+void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const aiScene * scene, const std::vector<std::pair<UID, std::string>>& materials, bool* material_loads, const std::vector<std::pair<UID, std::string>>& meshes, bool * mesh_loads, const char* name)
 {
 	if (name == nullptr)
 	{
@@ -92,7 +92,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		if (mesh_loads[child->mMeshes[i]])
 		{
 			unsigned int num_mesh = child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], mesh_loads);
-			memcpy(*iterator, &meshes[num_mesh], SIZE_OF_UID);
+			memcpy(*iterator, &meshes[num_mesh].first, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 
 			bool has_material = material_loads[scene->mMeshes[child->mMeshes[i]]->mMaterialIndex];
@@ -102,7 +102,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 			if (has_material)
 			{
 				unsigned int material_index = scene->mMeshes[num_mesh]->mMaterialIndex - GetFailedBefore(scene->mMeshes[num_mesh]->mMaterialIndex, material_loads);
-				memcpy(*iterator, &materials[material_index], SIZE_OF_UID);
+				memcpy(*iterator, &materials[material_index].first, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
 			}
 		}
@@ -193,7 +193,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 	return new_game_object;
 }
 
-const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& materials, bool* material_loads, const std::vector<UID>& meshes, bool* mesh_loads, const char* name)
+const UID PrefabImporter::Import(const aiScene* scene, const std::vector<std::pair<UID, std::string>>& materials, bool* material_loads, const std::vector<std::pair<UID, std::string>>& meshes, bool* mesh_loads, const char* name)
 {
 	aiNode* root_node = scene->mRootNode;
 
@@ -221,7 +221,7 @@ const UID PrefabImporter::Import(const aiScene* scene, const std::vector<UID>& m
 	return uid;
 }
 
-bool PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration * config)
+bool PrefabImporter::Load(Prefab* to_load, const PrefabLoadConfiguration* config)
 {
 	char* buffer = nullptr;
 	char* iterator = nullptr;

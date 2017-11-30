@@ -16,20 +16,9 @@ Asset::Asset(RESOURCE_TYPE type, Resource* resource): resource(resource), type(t
 
 Asset::~Asset()
 {
-	if (import_config != nullptr)
-	{
-		delete import_config;
-	}
-
-	if (load_config != nullptr)
-	{
-		delete load_config;
-	}
-
-	if (resource != nullptr)
-	{
-		delete resource;
-	}
+	delete import_config;
+	delete load_config;
+	delete resource;
 }
 
 RESOURCE_TYPE Asset::GetType() const
@@ -37,12 +26,12 @@ RESOURCE_TYPE Asset::GetType() const
 	return type;
 }
 
-const ImportConfiguration * Asset::GetImportConfig() const
+const ImportConfiguration* Asset::GetImportConfig() const
 {
 	return import_config;
 }
 
-const LoadConfiguration * Asset::GetLoadConfig() const
+const LoadConfiguration* Asset::GetLoadConfig() const
 {
 	return load_config;
 }
@@ -67,31 +56,11 @@ const std::string & Asset::GetName() const
 	return resource->GetName();
 }
 
-SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false)
-{
-	material_import_config = new MaterialImportConfiguration;
-	mesh_import_config = new MeshImportConfiguration;
-	prefab_import_config = new PrefabImportConfiguration;
-	material_load_config = new MaterialLoadConfiguration;
-	mesh_load_config = new MeshLoadConfiguration;
-	prefab_load_config = new PrefabLoadConfiguration;
-}
+SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration),prefab_load_config(new PrefabLoadConfiguration)
+{}
 
 SceneImportConfiguration::~SceneImportConfiguration()
-{
-	if(material_import_config != nullptr)
-		DELETE_PTR(material_import_config);
-	if (mesh_import_config != nullptr)
-		DELETE_PTR(mesh_import_config);
-	if (prefab_import_config != nullptr && include_prefabs == false)
-		DELETE_PTR(prefab_import_config);
-	if (material_load_config != nullptr)
-		DELETE_PTR(material_load_config);
-	if (mesh_load_config != nullptr)
-		DELETE_PTR(mesh_load_config);
-	if (prefab_load_config != nullptr && include_prefabs == false)
-		DELETE_PTR(prefab_load_config);
-}
+{}
 
 bool SceneImportConfiguration::Config()
 {
@@ -165,8 +134,23 @@ bool SceneImportConfiguration::Config()
 
 void SceneImportConfiguration::MetaSave(char ** iterator) const
 {
-	memcpy(*iterator, this, sizeof(bool) * 4);
-	*iterator += sizeof(bool) * 4;
+	memcpy(*iterator, &include_meshes, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &include_materials, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &include_prefabs, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &include_animations, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &include_lights, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &include_cameras, sizeof(bool));
+	*iterator += sizeof(bool);
 
 	material_import_config->MetaSave(iterator);
 	mesh_import_config->MetaSave(iterator);
@@ -179,8 +163,23 @@ void SceneImportConfiguration::MetaSave(char ** iterator) const
 
 void SceneImportConfiguration::MetaLoad(char ** iterator)
 {
-	memcpy(this, *iterator, sizeof(bool) * 4);
-	*iterator += sizeof(bool) * 4;
+	memcpy(&include_meshes, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&include_materials, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&include_prefabs, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&include_animations, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&include_lights, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&include_cameras, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
 
 	material_import_config->MetaLoad(iterator);
 	mesh_import_config->MetaLoad(iterator);
@@ -193,7 +192,7 @@ void SceneImportConfiguration::MetaLoad(char ** iterator)
 
 unsigned int SceneImportConfiguration::GetMetaSize() const
 {
-	unsigned int size = sizeof(bool) * 4;
+	unsigned int size = sizeof(bool) * 6;
 	size += material_import_config->GetMetaSize();
 	size += mesh_import_config->GetMetaSize();
 	size += prefab_import_config->GetMetaSize();

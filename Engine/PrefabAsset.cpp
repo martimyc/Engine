@@ -6,9 +6,7 @@ PrefabAsset::PrefabAsset(Resource * resource, const ImportConfiguration * import
 {}
 
 PrefabAsset::~PrefabAsset()
-{
-	delete resource;
-}
+{}
 
 void PrefabAsset::AddInstance(const GameObject * go)
 {
@@ -52,19 +50,43 @@ bool PrefabImportConfiguration::Config()
 
 void PrefabImportConfiguration::MetaSave(char ** iterator) const
 {
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(*iterator, &pre_transform, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &split_large_meshes, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &sort_by_type, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &optimize_graph, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &optimize_meshes, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 void PrefabImportConfiguration::MetaLoad(char ** iterator)
 {
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(&pre_transform, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&split_large_meshes, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&sort_by_type, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&optimize_graph, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&optimize_meshes, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 unsigned int PrefabImportConfiguration::GetMetaSize() const
 {
-	return sizeof(PrefabImportConfiguration);
+	return sizeof(bool) * 5;
 }
 
 bool PrefabLoadConfiguration::Config()
@@ -73,18 +95,12 @@ bool PrefabLoadConfiguration::Config()
 }
 
 void PrefabLoadConfiguration::MetaSave(char ** iterator) const
-{
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
-}
+{}
 
 void PrefabLoadConfiguration::MetaLoad(char ** iterator)
-{
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
-}
+{}
 
 unsigned int PrefabLoadConfiguration::GetMetaSize() const
 {
-	return sizeof(PrefabLoadConfiguration);
+	return 0;
 }

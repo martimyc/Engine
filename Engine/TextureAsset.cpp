@@ -636,9 +636,7 @@ TextureAsset::TextureAsset(Resource* resource, const ImportConfiguration* import
 {}
 
 TextureAsset::~TextureAsset()
-{
-	delete resource;
-}
+{}
 
 void TextureAsset::AddInstance(const Material * material)
 {

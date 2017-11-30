@@ -22,6 +22,7 @@ class PrefabImporter;
 
 struct ImportConfiguration;
 struct LoadConfiguration;
+struct TextureImportConfiguration;
 struct TextureLoadConfiguration;
 struct MaterialLoadConfiguration;
 struct MeshLoadConfiguration;
@@ -77,10 +78,12 @@ private:
 	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
 
 	//Meta files
-	bool MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
+	bool TextureMetaSave(const std::string& file, const UID& resource_id, const TextureImportConfiguration* import_config, const TextureLoadConfiguration* load_config) const;
+	bool SceneMetaSave(const std::string& file, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID& prefab_id, const SceneImportConfiguration* import_config) const;
 
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
+	void LoadScene(char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const;
 
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;
@@ -93,10 +96,10 @@ public:
 
 	void SentToImport(const std::string& path, RESOURCE_TYPE type);
 
-	bool LoadMaterial(Material * to_load, const MaterialLoadConfiguration * load_config);
-	bool LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config);
-	bool LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_config);
-	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config);
+	bool LoadMaterial(Material * to_load, const MaterialLoadConfiguration* load_config) const;
+	bool LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config) const;
+	bool LoadMesh(Mesh * to_load, const MeshLoadConfiguration* load_config) const;
+	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration* load_config) const;
 	GLuint GenerateButtonImage(const std::string &relative_path);
 
 	void MetaLoad(const std::string& file) const;

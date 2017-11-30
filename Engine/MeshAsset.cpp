@@ -2,7 +2,7 @@
 #include "Resource.h"
 #include "MeshAsset.h"
 
-MeshImportConfiguration::MeshImportConfiguration():	load_tangents(false), gen_tangents(true), load_normals(false), gen_normals(false), gen_smooth_normals(true), load_colors(false), load_uvs(true), load_bone_weights(false)
+MeshImportConfiguration::MeshImportConfiguration():	load_tangents(false), gen_tangents(true), load_normals(false), gen_normals(false), gen_smooth_normals(true), load_colors(false), load_uvs(true), load_bone_weights(false), kdt(false)
 {}
 
 bool MeshImportConfiguration::Config()
@@ -75,19 +75,76 @@ bool MeshImportConfiguration::Config()
 
 void MeshImportConfiguration::MetaSave(char ** iterator) const
 {
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(*iterator, &load_tangents, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &gen_tangents, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &load_normals, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &gen_normals, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &gen_smooth_normals, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &load_colors, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &load_uvs, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &load_bone_weights, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &kdt, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 void MeshImportConfiguration::MetaLoad(char ** iterator)
 {
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(&load_tangents, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&gen_tangents, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&load_normals, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&gen_normals, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&gen_smooth_normals, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&load_colors, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&load_uvs, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&load_bone_weights, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&kdt, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 unsigned int MeshImportConfiguration::GetMetaSize() const
 {
-	return sizeof(MeshLoadConfiguration);
+	unsigned int ret = sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	return ret;
 }
 
 bool MeshLoadConfiguration::Config()
@@ -96,29 +153,21 @@ bool MeshLoadConfiguration::Config()
 }
 
 void MeshLoadConfiguration::MetaSave(char ** iterator) const
-{
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
-}
+{}
 
 void MeshLoadConfiguration::MetaLoad(char ** iterator)
-{
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
-}
+{}
 
 unsigned int MeshLoadConfiguration::GetMetaSize() const
 {
-	return sizeof(MeshLoadConfiguration);
+	return 0;
 }
 
 MeshAsset::MeshAsset(Resource * resource, const ImportConfiguration * import_config, const LoadConfiguration * load_config) : Asset(RT_MESH, resource, import_config, load_config)
 {}
 
 MeshAsset::~MeshAsset()
-{
-	delete resource;
-}
+{}
 
 void MeshAsset::AddInstance(const GameObject * go)
 {

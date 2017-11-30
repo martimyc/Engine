@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "imgui\imgui.h"
 #include "Parson\parson.h"
 
@@ -188,7 +190,7 @@ void ImportManager::SentToImport(const std::string & path, RESOURCE_TYPE type)
 	texture_importer->GenerateImage(import_path, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config, importing_img_id, importing_img_width, importing_img_height);
 }
 
-bool ImportManager::LoadMaterial(Material * to_load, const MaterialLoadConfiguration * load_config)
+bool ImportManager::LoadMaterial(Material * to_load, const MaterialLoadConfiguration* load_config) const
 {
 	if (to_load->IsLoaded() == true)
 	{
@@ -199,7 +201,7 @@ bool ImportManager::LoadMaterial(Material * to_load, const MaterialLoadConfigura
 	return material_importer->Load(to_load, App->resource_manager->GetNewMaterialPriority(), load_config);
 }
 
-bool ImportManager::LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config)
+bool ImportManager::LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config) const
 {
 	if (to_load->IsLoaded() == true)
 	{
@@ -210,7 +212,7 @@ bool ImportManager::LoadTexture(Texture * to_load, const TextureLoadConfiguratio
 	return texture_importer->Load(to_load, load_config);
 }
 
-bool ImportManager::LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_config)
+bool ImportManager::LoadMesh(Mesh * to_load, const MeshLoadConfiguration* load_config) const
 {
 	if (to_load->IsLoaded() == true)
 	{
@@ -225,7 +227,7 @@ bool ImportManager::LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_
 	return ret;
 }
 
-bool ImportManager::LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config)
+bool ImportManager::LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration* load_config) const
 {
 	if (to_load->IsLoaded() == true)
 	{
@@ -272,6 +274,8 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 			LOG("Could not import texture from %s corectlly", path.c_str());
 			return UID();
 		}
+		if (TextureMetaSave(file_name_ext, uid, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config) == false)
+			return UID();
 		break;
 	case RT_PREFAB:
 		uid = ImportScene(path, (SceneImportConfiguration*)import_config);
@@ -286,24 +290,19 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 		return UID();
 	}
 
-	if (MetaSave(file_name_ext, uid, import_type, import_config, load_config) == false)
-		return UID();
-
 	if(type != RT_PREFAB)
 		App->resource_manager->AddAsset(file_name_no_ext, uid, type, import_config, load_config);
 
 	return uid;
 }
 
-bool ImportManager::MetaSave(const std::string & file, const UID & resource_id, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config) const
+bool ImportManager::TextureMetaSave(const std::string & file, const UID & resource_id, const TextureImportConfiguration * import_config, const TextureLoadConfiguration * load_config) const
 {
 	unsigned int buff_size = file.size() + 1;
 	buff_size += SIZE_OF_UID;
-	buff_size += sizeof(type);
+	buff_size += sizeof(RESOURCE_TYPE);
 	buff_size += import_config->GetMetaSize();
-
-	if (type != RT_PREFAB) //scenes have no load_config
-		buff_size += load_config->GetMetaSize();
+	buff_size += load_config->GetMetaSize();
 
 	char* buffer = new char[buff_size];
 	char* iterator = buffer;
@@ -314,13 +313,81 @@ bool ImportManager::MetaSave(const std::string & file, const UID & resource_id, 
 	memcpy(iterator, &resource_id, SIZE_OF_UID);
 	iterator += SIZE_OF_UID;
 
-	memcpy(iterator, &type, sizeof(type));
+	RESOURCE_TYPE type = RT_TEXTURE;
+	memcpy(iterator, &type, sizeof(RESOURCE_TYPE));
 	iterator += sizeof(RESOURCE_TYPE);
 
 	import_config->MetaSave(&iterator);
 
-	if (type != RT_PREFAB) //scenes have no load_config
-		load_config->MetaSave(&iterator);
+	load_config->MetaSave(&iterator);
+
+	int size = iterator - buffer;
+
+	if (App->file_system->SaveMetaFile(buffer, size, file.c_str()) == false)
+		return false;
+
+	delete[] buffer;
+
+	return true;
+}
+
+bool ImportManager::SceneMetaSave(const std::string & file, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID & prefab_id, const SceneImportConfiguration * import_config) const
+{
+	unsigned int buff_size = file.size() + 1;
+	buff_size += SIZE_OF_UID;
+	buff_size += sizeof(RESOURCE_TYPE);
+	buff_size += import_config->GetMetaSize();
+
+	buff_size += sizeof(unsigned int);
+	buff_size += mesh_uids.size() * SIZE_OF_UID;
+	for (std::vector<std::pair<UID, std::string>>::const_iterator it = mesh_uids.begin(); it != mesh_uids.end(); ++it)
+		buff_size += it->second.size() + 1;
+
+	buff_size += sizeof(unsigned int);
+	buff_size += material_uids.size() * SIZE_OF_UID;
+	for (std::vector<std::pair<UID, std::string>>::const_iterator it = material_uids.begin(); it != material_uids.end(); ++it)
+		buff_size += it->second.size() + 1;
+
+	char* buffer = new char[buff_size];
+	char* iterator = buffer;
+
+	memcpy(iterator, file.c_str(), file.length() + 1);
+	iterator += file.length() + 1;
+
+	memcpy(iterator, &prefab_id, SIZE_OF_UID);
+	iterator += SIZE_OF_UID;
+
+	RESOURCE_TYPE type = RT_PREFAB;
+	memcpy(iterator, &type, sizeof(RESOURCE_TYPE));
+	iterator += sizeof(RESOURCE_TYPE);
+
+	import_config->MetaSave(&iterator);
+
+	unsigned int num_meshes = mesh_uids.size();
+	memcpy(iterator, &num_meshes, sizeof(unsigned int));
+	iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_meshes; i++)
+	{
+		memcpy(iterator, &mesh_uids[i].first, SIZE_OF_UID);
+		iterator += SIZE_OF_UID;
+
+		memcpy(iterator, mesh_uids[i].second.c_str(), mesh_uids[i].second.size() + 1);
+		iterator += mesh_uids[i].second.size() + 1;
+	}
+
+	unsigned int num_materials = material_uids.size();
+	memcpy(iterator, &num_materials, sizeof(unsigned int));
+	iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_materials; i++)
+	{
+		memcpy(iterator, &material_uids[i].first, SIZE_OF_UID);
+		iterator += SIZE_OF_UID;
+
+		memcpy(iterator, material_uids[i].second.c_str(), material_uids[i].second.size() + 1);
+		iterator += material_uids[i].second.size() + 1;
+	}
 
 	int size = iterator - buffer;
 
@@ -364,7 +431,10 @@ void ImportManager::MetaLoad(const std::string & file) const
 			App->resource_manager->AddAsset(name, uid, RT_TEXTURE, import_config, load_config);
 			break;
 		case RT_PREFAB:
-			//new_resource = new Scene(name, uid); TODO
+			import_config = new SceneImportConfiguration;
+			import_config->MetaLoad(&iterator);
+			LoadScene(&iterator,(SceneImportConfiguration*) import_config, name);
+			App->resource_manager->AddAsset(name, uid, RT_PREFAB, ((SceneImportConfiguration*)import_config)->prefab_import_config, ((SceneImportConfiguration*)import_config)->prefab_load_config);
 			break;
 		}
 	}
@@ -471,8 +541,8 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		bool* material_loads = nullptr;
 		bool* mesh_loads = nullptr;
 
-		std::vector<UID> scene_materials;
-		std::vector<UID> scene_meshes;
+		std::vector<std::pair<UID, std::string>> scene_materials;
+		std::vector<std::pair<UID, std::string>> scene_meshes;
 
 		if (scene->HasMaterials())
 		{
@@ -494,7 +564,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 					if (uid.IsNull() == false)
 					{
 						material_loads[i] = true;
-						scene_materials.push_back(uid);
+						scene_materials.push_back(std::make_pair(uid,ptr));
 						App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, new MaterialImportConfiguration(*import_config->material_import_config), new MaterialLoadConfiguration(*import_config->material_load_config));
 					}
 					else
@@ -523,16 +593,20 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 			{
 				LOG("Loading Mesh %i", i);
 
-				char ptr[255];
-				sprintf(ptr, "%s_Mesh_%i", scene_name.c_str(), i);
-				std::string mesh_name(ptr);
+				std::string mesh_name(scene->mMeshes[i]->mName.C_Str());
+				if (mesh_name.substr(0, mesh_name.find_first_of(".")) == "Untitled")
+				{
+					char ptr[255];
+					sprintf(ptr, "%s_Mesh_%i", scene_name.c_str(), i);
+					mesh_name = ptr;
+				}
 
 				UID uid(mesh_importer->Import(scene->mMeshes[i], import_config->mesh_import_config));
 
 				if (uid.IsNull() == false)
 				{
 					mesh_loads[i] = true;
-					scene_meshes.push_back(uid);
+					scene_meshes.push_back(std::make_pair(uid, mesh_name.c_str()));
 					App->resource_manager->AddAsset(mesh_name, uid, RT_MESH, new MeshImportConfiguration(*import_config->mesh_import_config), new MeshLoadConfiguration(*import_config->mesh_load_config));
 				}
 				else
@@ -558,14 +632,53 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 			}
 		}
 
+		SceneMetaSave(GetImportFileNameWithExtension(), scene_meshes, scene_materials, prefab_uid, import_config);
+
 		delete[] material_loads;
 		delete[] mesh_loads;
 		delete importer;
 	}
-	else	
+	else
+	{
 		LOG("Error %s loading scene %s", aiGetErrorString(), path.c_str());
-		
+	}
+	
 	return prefab_uid;
+}
+
+void ImportManager::LoadScene(char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const
+{
+	unsigned int num_meshes;
+	memcpy( &num_meshes, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_meshes; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		std::string name(*iterator);
+		*iterator += name.size() + 1;
+
+		App->resource_manager->AddAsset(name, uid, RT_MESH, config->mesh_import_config, config->mesh_load_config);
+	}
+
+	unsigned int num_materials;
+	memcpy(&num_materials, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_materials; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		std::string name(*iterator);
+		*iterator += name.size() + 1;
+
+		App->resource_manager->AddAsset(name, uid, RT_MATERIAL, config->mesh_import_config, config->mesh_load_config);
+	}
 }
 
 const std::string ImportManager::GetImportFileNameNoExtension() const
