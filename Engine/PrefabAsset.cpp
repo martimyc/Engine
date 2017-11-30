@@ -15,7 +15,7 @@ void PrefabAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
-PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(false)
+PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(true)
 {}
 
 bool PrefabImportConfiguration::Config()

@@ -1,5 +1,8 @@
 #include <windows.h>
 #include <fstream>
+#include "Dirent\dirent.h"
+#include "ImportManager.h"
+#include "Application.h"
 #include "FileSystem.h"
 
 FileSystem::FileSystem(const char * name, bool start_enabled): Module(name, start_enabled)
@@ -59,7 +62,13 @@ bool FileSystem::Init()
 	return true;
 }
 
-bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relative_path)
+bool FileSystem::Start()
+{
+	GenerateAssets(GetAssets());
+	return true;
+}
+
+bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relative_path) const
 {
 	bool ret = true;
 
@@ -88,7 +97,7 @@ bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relat
 	return ret;
 }
 
-unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
+unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer) const
 {
 	unsigned int size = 0;
 	std::ifstream ifs(path, std::ios::binary);
@@ -125,7 +134,7 @@ unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 	return size;
 }
 
-unsigned int FileSystem::LoadMetaFile(const std::string & file, char ** buffer)
+unsigned int FileSystem::LoadMetaFile(const std::string & file, char ** buffer) const
 {
 	std::string path(GetAssets());
 	path += "\\";
@@ -134,7 +143,7 @@ unsigned int FileSystem::LoadMetaFile(const std::string & file, char ** buffer)
 	return LoadFileBinary(path, buffer);
 }
 
-bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const std::string& name, const char * format)
+bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const std::string& name, const char * format) const
 {
 	bool ret = true;
 
@@ -157,12 +166,12 @@ bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * r
 	return ret;
 }
 
-bool FileSystem::SaveMetaFile(const char * buffer, unsigned int size, const char * name)
+bool FileSystem::SaveMetaFile(const char * buffer, unsigned int size, const char * name) const
 {
 	return SaveFile(buffer, size, ASSETS_FOLDER, name, "meta");
 }
 
-bool FileSystem::CopyToAssets(const std::string& path)
+bool FileSystem::CopyToAssets(const std::string& path) const
 {
 	bool ret = true;
 	std::string name;
@@ -191,6 +200,36 @@ bool FileSystem::CopyToAssets(const std::string& path)
 	delete[] buffer;
 
 	return ret;
+}
+
+bool FileSystem::GenerateAssets(const std::string & directory) const
+{
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(directory.c_str())) != NULL) {
+		/* Create assets for all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			std::string file(ent->d_name);
+			if (ent->d_type == DT_DIR)
+			{}//TODO
+			else if (ent->d_type == DT_REG)
+			{
+				if (IsMeta(file))
+				{
+					App->import_manager->MetaLoad(file);
+					LOG("Generated asset from %s", file.c_str());
+				}
+			}
+		}
+		closedir(dir);
+	}
+	else {
+		/* could not open directory */
+		perror("");
+		return EXIT_FAILURE;
+	}
+	return false;
 }
 
 bool FileSystem::Exsists(const char * path) const
@@ -241,4 +280,9 @@ const std::string FileSystem::GetMeshes() const
 const std::string FileSystem::GetPrefabs() const
 {
 	return working_directory + LIBRARY_PREFABS_FOLDER;
+}
+
+bool FileSystem::IsMeta(const std::string & file) const
+{
+	return file.substr(file.find_last_of(".")) == ".meta";
 }

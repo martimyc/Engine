@@ -315,7 +315,7 @@ bool ImportManager::MetaSave(const std::string & file, const UID & resource_id, 
 	iterator += SIZE_OF_UID;
 
 	memcpy(iterator, &type, sizeof(type));
-	iterator += sizeof(type);
+	iterator += sizeof(RESOURCE_TYPE);
 
 	import_config->MetaSave(&iterator);
 
@@ -332,7 +332,7 @@ bool ImportManager::MetaSave(const std::string & file, const UID & resource_id, 
 	return true;
 }
 
-Asset* ImportManager::MetaLoad(const std::string & file) const
+void ImportManager::MetaLoad(const std::string & file) const
 {
 	char* buffer = nullptr;
 	unsigned int length = App->file_system->LoadMetaFile(file, &buffer);
@@ -340,38 +340,38 @@ Asset* ImportManager::MetaLoad(const std::string & file) const
 	if (buffer != nullptr && length != 0)
 	{
 		char* iterator = buffer;
-		std::string name(iterator);
-		iterator += name.length() + 1;
+		std::string filename(iterator);
+		iterator += filename.length() + 1;
+
+		std::string name(filename.substr(0, filename.find_first_of(".")));
 
 		UID uid(iterator);
 		iterator += SIZE_OF_UID;
 
 		RESOURCE_TYPE type = *((RESOURCE_TYPE*)iterator);
-		iterator += sizeof(type);
+		iterator += sizeof(RESOURCE_TYPE);
 
-		Resource* new_resource = nullptr;
 		ImportConfiguration* import_config = nullptr;
 		LoadConfiguration* load_config = nullptr;
-		Asset* new_asset = nullptr;
 
 		switch (type)
 		{
 		case RT_TEXTURE:
-			new_resource = new Texture(name, uid);
 			import_config = new TextureImportConfiguration;
 			import_config->MetaLoad(&iterator);
 			load_config = new TextureLoadConfiguration;
 			load_config->MetaLoad(&iterator);
-			new_asset = new TextureAsset(new_resource, import_config, load_config);
-			return new_asset;
+			App->resource_manager->AddAsset(name, uid, RT_TEXTURE, import_config, load_config);
+			break;
 		case RT_PREFAB:
 			//new_resource = new Scene(name, uid); TODO
 			break;
 		}
 	}
-	
-	LOG("Metafile %s could not be loaded correctly", file.c_str());
-	return nullptr;
+	else
+		LOG("Metafile %s could not be loaded correctly", file.c_str());
+
+	delete[] buffer;
 }
 
 const UID ImportManager::ImportScene(const std::string & path, const SceneImportConfiguration* import_config) const

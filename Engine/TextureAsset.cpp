@@ -87,19 +87,69 @@ bool TextureImportConfiguration::Config()
 
 void TextureImportConfiguration::MetaSave(char** iterator) const
 {
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(*iterator, &format, sizeof(TEXTURE_FORMATS));
+	*iterator += sizeof(TEXTURE_FORMATS);
+
+	memcpy(*iterator, &tga_stamp, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &copresion_menu, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &selected_compresion, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &dxt_format, sizeof(DXT));
+	*iterator += sizeof(DXT);
+
+	memcpy(*iterator, &jpg_quality, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &interlaced, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &rle, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 void TextureImportConfiguration::MetaLoad(char** iterator)
 {
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(&format, *iterator, sizeof(TEXTURE_FORMATS));
+	*iterator += sizeof(TEXTURE_FORMATS);
+
+	memcpy(&tga_stamp, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&copresion_menu, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&selected_compresion, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&dxt_format, *iterator, sizeof(DXT));
+	*iterator += sizeof(DXT);
+
+	memcpy(&jpg_quality, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&interlaced, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&rle, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 unsigned int TextureImportConfiguration::GetMetaSize() const
 {
-	return sizeof(TextureImportConfiguration);
+	unsigned int ret = sizeof(TEXTURE_FORMATS);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(int);
+	ret += sizeof(DXT);
+	ret += sizeof(int);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	return ret;
 }
 
 const char * TextureImportConfiguration::GetCompresionCString() const
@@ -363,19 +413,223 @@ bool TextureLoadConfiguration::Config()
 
 void TextureLoadConfiguration::MetaSave(char** iterator) const
 {
-	memcpy(*iterator, this, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(*iterator, &offset_x, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &offset_y, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &mip_mapping, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &anysotropy, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &max_anysotropy, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &max_possible_anystropy, sizeof(GLfloat));
+	*iterator += sizeof(GLfloat);
+
+	memcpy(*iterator, &anysotropy_level, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &alienify, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &blur_average, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &blur_gaussian, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &blur_iterations, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &contrast, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &amount_of_contrast, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &equalize, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &gamma_correction, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &gamma_correction_factor, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &negative, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &noise, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &noise_tolerance, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &pixelize, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &pixels_across, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &sharpen, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &sharpening_factor, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &sharpen_iterations, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &scaling, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &scale_width, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &scale_height, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &scale_depth, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &selected_filter, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(*iterator, &scaling_filter, sizeof(SCALLING_FILTER));
+	*iterator += sizeof(SCALLING_FILTER);
 }
 
 void TextureLoadConfiguration::MetaLoad(char** iterator)
 {
-	memcpy(this, *iterator, GetMetaSize());
-	*iterator += GetMetaSize();
+	memcpy(&offset_x, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&offset_y, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&mip_mapping, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&anysotropy, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&max_anysotropy, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&max_possible_anystropy, *iterator, sizeof(GLfloat));
+	*iterator += sizeof(GLfloat);
+
+	memcpy(&anysotropy_level, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&alienify, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&blur_average, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&blur_gaussian, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&blur_iterations, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&contrast, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&amount_of_contrast, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&equalize, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&gamma_correction, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&gamma_correction_factor, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&negative, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&noise, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&noise_tolerance, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&pixelize, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&pixels_across, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&sharpen, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&sharpening_factor, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&sharpen_iterations, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&scaling, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&scale_width, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&scale_height, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&scale_depth, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&selected_filter, *iterator, sizeof(int));
+	*iterator += sizeof(int);
+
+	memcpy(&scaling_filter, *iterator, sizeof(SCALLING_FILTER));
+	*iterator += sizeof(SCALLING_FILTER);
 }
 
 unsigned int TextureLoadConfiguration::GetMetaSize() const
 {
-	return sizeof(TextureLoadConfiguration);
+	unsigned int ret = sizeof(int);
+	ret += sizeof(int);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(GLfloat);
+	ret += sizeof(float);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(int);
+	ret += sizeof(bool);
+	ret += sizeof(float);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(float);
+	ret += sizeof(bool);
+	ret += sizeof(bool);
+	ret += sizeof(float);
+	ret += sizeof(bool);
+	ret += sizeof(int);
+	ret += sizeof(bool);
+	ret += sizeof(float);
+	ret += sizeof(int);
+	ret += sizeof(bool);
+	ret += sizeof(int);
+	ret += sizeof(int);
+	ret += sizeof(int);
+	ret += sizeof(int);
+	ret += sizeof(SCALLING_FILTER);
+	return ret;
 }
 
 TextureAsset::TextureAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config) : Asset(RT_TEXTURE, resource, import_config, load_config)

@@ -88,6 +88,9 @@
     <Filter Include="Sources\Resources">
       <UniqueIdentifier>{719b3869-8e28-4021-9919-d6679ab53f71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd Party\Dirent">
+      <UniqueIdentifier>{2e2a533d-b791-4a0c-aeea-17f0cf55e249}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -605,6 +608,9 @@
     </ClInclude>
     <ClInclude Include="KDTreeTriangle.h">
       <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Dirent\dirent.h">
+      <Filter>Sources\3rd Party\Dirent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

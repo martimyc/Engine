@@ -81,6 +81,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />
     <ClInclude Include="Asset.h" />
+    <ClInclude Include="Dirent\dirent.h" />
     <ClInclude Include="imgui\imgui_user.h" />
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MD5.h" />

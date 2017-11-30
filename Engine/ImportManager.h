@@ -78,7 +78,6 @@ private:
 
 	//Meta files
 	bool MetaSave(const std::string& file, const UID& resource_id, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
-	Asset* MetaLoad(const std::string& file) const;
 
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
@@ -99,6 +98,8 @@ public:
 	bool LoadMesh(Mesh * to_load, const MeshLoadConfiguration * load_config);
 	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration * load_config);
 	GLuint GenerateButtonImage(const std::string &relative_path);
+
+	void MetaLoad(const std::string& file) const;
 };
 
 
