@@ -15,6 +15,7 @@
 /** @file Sphere.cpp
 	@author Jukka Jylänki
 	@brief Implementation for the Sphere geometry object. */
+#include "..\..\..\glew\include\GL\glew.h"
 #include "Sphere.h"
 #ifdef MATH_ENABLE_STL_SUPPORT
 #include <utility>
@@ -71,6 +72,51 @@ Sphere::Sphere(const vec &a, const vec &b, const vec &c)
 Sphere::Sphere(const vec &a, const vec &b, const vec &c, const vec &d)
 {
 	*this = FitThroughPoints(a, b, c, d);
+}
+
+void Sphere::Draw(float red, float green, float blue, float alpha, int num_segments) const
+{
+	glLineWidth(3.0f);
+	glColor4f(red, green, blue, alpha);
+
+	// X/Y circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x_z = r * cosf(theta);
+		float x = x_z * sinf(pi / 4);
+		float z = x_z * cosf(pi / 4);
+		float y = r * sinf(theta);
+		glVertex3f(x + pos.x, y + pos.y, z + pos.z);
+	}
+	glEnd();
+
+	// Z/Y circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x_z = r * cosf(theta);
+		float x = x_z * sinf(pi / 4);
+		float z = x_z * cosf(pi / 4);
+		float y = r * sinf(theta);
+		glVertex3f(x + pos.x, y + pos.y, -z + pos.z);
+	}
+	glEnd();
+
+	// X/Z circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x = r * cosf(theta);
+		float z = r * sinf(theta);
+		glVertex3f(x + pos.x, pos.y, z + pos.z);
+	}
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Sphere::Translate(const vec &offset)

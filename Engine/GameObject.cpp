@@ -25,12 +25,16 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const std::string& name, bool draw): name(name), draw(draw)
+GameObject::GameObject(const std::string& name, bool draw) : name(name), draw(draw), parent(nullptr)
 {
 	local_transform = new Transform("Local Transform");
 	world_transform = new Transform("World Transform");
 
-	//bounds.sphere_bounding_box.SetNegativeInfinity();
+	bounds.sphere_bounding_box.SetNegativeInfinity();
+	bounds.sphere_bounding_box.r = 0.0f;
+	bounds.original_sphere_bounding_box.SetNegativeInfinity();
+	bounds.original_sphere_bounding_box.r = 0.0f;
+
 	bounds.aabb_bounding_box.SetNegativeInfinity();
 	bounds.original_aabb_bb_points[0] = vec(0.0f, 0.0f, 0.0f);
 	bounds.original_aabb_bb_points[1] = vec(0.0f, 0.0f, 0.0f);
@@ -44,10 +48,27 @@ GameObject::GameObject(const std::string& name, bool draw): name(name), draw(dra
 	bounds.obb_bounding_box.axis[2] = bounds.original_obb_bounding_box.axis[2] = math::vec(0, 0, 1);
 }
 
-GameObject::GameObject(const GameObject & copy): name(copy.name), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds)
+GameObject::GameObject(const GameObject & copy) : name(copy.name), parent(copy.parent), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds)
 {
 	local_transform->SetTransform(copy.local_transform->GetTransformMatrix());
 	world_transform->SetTransform(copy.world_transform->GetTransformMatrix());
+
+	bounds.sphere_bounding_box.SetNegativeInfinity();
+	bounds.sphere_bounding_box.r = 0.0f;
+	bounds.original_sphere_bounding_box.SetNegativeInfinity();
+	bounds.original_sphere_bounding_box.r = 0.0f;
+
+	bounds.aabb_bounding_box.SetNegativeInfinity();
+	bounds.original_aabb_bb_points[0] = vec(0.0f, 0.0f, 0.0f);
+	bounds.original_aabb_bb_points[1] = vec(0.0f, 0.0f, 0.0f);
+
+	bounds.obb_bounding_box.SetNegativeInfinity();
+	bounds.original_obb_bounding_box.SetNegativeInfinity();
+	bounds.obb_bounding_box.pos = bounds.original_obb_bounding_box.pos = math::vec::zero;
+	bounds.obb_bounding_box.r = bounds.original_obb_bounding_box.r = math::vec::zero;
+	bounds.obb_bounding_box.axis[0] = bounds.original_obb_bounding_box.axis[0] = math::vec(1, 0, 0);
+	bounds.obb_bounding_box.axis[1] = bounds.original_obb_bounding_box.axis[1] = math::vec(0, 1, 0);
+	bounds.obb_bounding_box.axis[2] = bounds.original_obb_bounding_box.axis[2] = math::vec(0, 0, 1);
 
 	for (std::vector<Component*>::const_iterator it = copy.components.begin(); it != copy.components.end(); ++it)
 	{
@@ -55,6 +76,7 @@ GameObject::GameObject(const GameObject & copy): name(copy.name), local_transfor
 		{
 		case CT_MESH_FILTER:
 			components.push_back(new MeshFilter(*((MeshFilter*)(*it))));
+			CreateBounds(((MeshFilter*)(*it))->GetMesh());
 			break;
 		case CT_APPLIED_MATERIAL:
 			components.push_back(new AppliedMaterial(*((AppliedMaterial*)(*it))));
@@ -66,7 +88,7 @@ GameObject::GameObject(const GameObject & copy): name(copy.name), local_transfor
 
 	for (std::vector<GameObject*>::const_iterator it = copy.childs.begin(); it != copy.childs.end(); ++it)
 	{
-		childs.push_back(new GameObject(*(*it)));
+		AddChild(new GameObject(*(*it)));
 	}
 }
 
@@ -301,7 +323,8 @@ GameObject * GameObject::CreateChild(Component * component, const char* const na
 
 void GameObject::AddChild(GameObject* child)
 {
-	child->parent = this;
+	if (child->parent != this)
+		child->parent = this;
 	child->world_transform->SetTransform(GetWorldTransform());
 	child->SetWorldTransform(GetWorldTransform()); 
 	childs.push_back(child);
@@ -489,9 +512,19 @@ const math::vec&  GameObject::GetWorldScale(int & x, int & y, int & z) const
 	return world_transform->GetTransformScale();;
 }
 
+const Sphere * GameObject::GetBoundingSphere() const
+{
+	return &bounds.sphere_bounding_box;
+}
+
 const AABB * GameObject::GetAABB() const
 {
 	return &bounds.aabb_bounding_box;
+}
+
+const OBB * GameObject::GetOBB() const
+{
+	return &bounds.obb_bounding_box;
 }
 
 bool GameObject::IsCamera() const
@@ -538,6 +571,8 @@ const MeshFilter * GameObject::GetMeshFilter() const
 
 void GameObject::DrawBoundingBoxes() const
 {
+	if (draw_spheres)
+		bounds.sphere_bounding_box.Draw(0.0f, 1.0f, 0.0f, 1.0f); 
 	if (draw_aabbs)
 		bounds.aabb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
 	if (draw_obbs)
@@ -635,8 +670,6 @@ void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_CAMERA)
 			((Camera*)(*it))->TransformCamera();
-
-	UpdateBounds();
 }
 
 void GameObject::SetWorldTransform(const math::float4x4 & new_world_transform)
@@ -650,90 +683,98 @@ void GameObject::SetWorldTransform(const math::float4x4 & new_world_transform)
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_CAMERA)
 			((Camera*)(*it))->TransformCamera();
-
-	UpdateBounds();
 }
 
 void GameObject::CreateBounds(const Mesh* mesh)
 {
+	bounds.sphere_bounding_box.Enclose(math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
+	bounds.sphere_bounding_box.Enclose(math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
+	bounds.original_sphere_bounding_box.Enclose(math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
+	bounds.original_sphere_bounding_box.Enclose(math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
+
 	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint = (math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
 	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
 
 	IncludeMeshInOBB(mesh);
-	
-	if (mesh != nullptr)
+}
+
+void GameObject::UpdateBoundsParents()
+{
+	UpdateBoundsParent();
+
+	if (parent != nullptr)
+		parent->UpdateBoundsParents();
+}
+
+void GameObject::UpdateBoundsSelf()
+{
+	if (childs.size() == 0)
 	{
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxXVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinXVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxYVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinYVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxZVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinZVertex()));
+		//Sphere
+		bounds.sphere_bounding_box = bounds.original_sphere_bounding_box;
+		bounds.sphere_bounding_box.Transform(world_transform->GetTransformMatrix().Transposed());
+
+		//AABB
+		bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
+		bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
+		bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
+
+		//OBB
+		bounds.obb_bounding_box = bounds.original_obb_bounding_box;
+		bounds.obb_bounding_box.Transform(world_transform->GetTransformMatrix().Transposed());
+
+		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+		{
+			//Sphere
+			bounds.sphere_bounding_box.Enclose((*it)->bounds.sphere_bounding_box);
+
+			//AABB
+			bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
+
+			//OBB
+			math::vec obb_points[8];
+			(*it)->bounds.obb_bounding_box.GetCornerPoints(obb_points);
+			for (int i = 0; i < 8; ++i)
+				bounds.obb_bounding_box.Enclose(obb_points[i]);
+		}
 	}
 }
 
-void GameObject::UpdateBounds()
-{
-	UpdateBoundsOthers();
-}
-
-void GameObject::UpdateBoundsOthers()
+void GameObject::UpdateBoundsParent()
 {
 	if (parent != nullptr)
 	{
+		//Sphere
+		parent->bounds.sphere_bounding_box = parent->bounds.original_sphere_bounding_box;
+		parent->bounds.sphere_bounding_box.Transform(parent->GetWorldTransform().Transposed());
+
+		//AABB
 		parent->bounds.aabb_bounding_box.SetNegativeInfinity();
 		parent->bounds.aabb_bounding_box.minPoint = parent->bounds.original_aabb_bb_points[0];
 		parent->bounds.aabb_bounding_box.maxPoint = parent->bounds.original_aabb_bb_points[1];
 		parent->bounds.aabb_bounding_box.TransformAsAABB(parent->GetWorldTransform().Transposed());
 
-
-		parent->ResetOBBToOriginal();
-		if (!parent->bounds.obb_bounding_box.r.IsZero())
-			parent->bounds.obb_bounding_box.Transform(parent->GetWorldTransform().Transposed());
+		//OBB
+		parent->bounds.obb_bounding_box = parent->bounds.original_obb_bounding_box;
+		parent->bounds.obb_bounding_box.Transform(parent->GetWorldTransform().Transposed());
 
 		for (std::vector<GameObject*>::iterator it = parent->childs.begin(); it != parent->childs.end(); ++it)
 		{
+			//Sphere
+			if ((*it)->bounds.sphere_bounding_box.r > EPSILON)
+				parent->bounds.sphere_bounding_box.Enclose((*it)->bounds.sphere_bounding_box);
+			else
+				parent->bounds.sphere_bounding_box.Enclose((*it)->bounds.sphere_bounding_box.pos);
+
+			//AABB
 			parent->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
 
+			//OBB
 			math::vec obb_points[8];
 			(*it)->bounds.obb_bounding_box.GetCornerPoints(obb_points);
 			for (int i = 0; i < 8; ++i)
 				parent->bounds.obb_bounding_box.Enclose(obb_points[i]);
 		}
-
-		parent->UpdateBoundsOthers();
-	}
-}
-
-void GameObject::ResetOBBToOriginal()
-{
-	bounds.obb_bounding_box.pos = bounds.original_obb_bounding_box.pos;
-	bounds.obb_bounding_box.r = bounds.original_obb_bounding_box.r;
-	bounds.obb_bounding_box.axis[0] = bounds.original_obb_bounding_box.axis[0];
-	bounds.obb_bounding_box.axis[1] = bounds.original_obb_bounding_box.axis[1];
-	bounds.obb_bounding_box.axis[2] = bounds.original_obb_bounding_box.axis[2];
-}
-
-void GameObject::UpdateBoundsSelf()
-{
-	//AABB
-	bounds.aabb_bounding_box.minPoint = bounds.original_aabb_bb_points[0];
-	bounds.aabb_bounding_box.maxPoint = bounds.original_aabb_bb_points[1];
-	bounds.aabb_bounding_box.TransformAsAABB(world_transform->GetTransformMatrix().Transposed());
-
-	//OBB
-	ResetOBBToOriginal();	
-	bounds.obb_bounding_box.Transform(world_transform->GetTransformMatrix().Transposed());
-
-	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
-	{
-		//AABB
-		bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);
-		//OBB
-		math::vec obb_points[8];
-		(*it)->bounds.obb_bounding_box.GetCornerPoints(obb_points);
-		for (int i = 0; i < 8; ++i)
-			bounds.obb_bounding_box.Enclose(obb_points[i]);
 	}
 }
 
@@ -747,6 +788,13 @@ void GameObject::IncludeMeshInOBB(const Mesh * mesh)
 		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMinYVertex()));
 		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMaxZVertex()));
 		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMinZVertex()));
+
+		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxXVertex()));
+		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinXVertex()));
+		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxYVertex()));
+		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinYVertex()));
+		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxZVertex()));
+		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinZVertex()));
 	}
 }
 
@@ -758,6 +806,7 @@ void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transfo
 		(*it)->UpdateWorldTransform(world_transform->GetTransformMatrix());
 
 	UpdateBoundsSelf();
+	UpdateBoundsParents();
 }
 
 void GameObject::UpdateTransforms()
@@ -770,6 +819,4 @@ void GameObject::UpdateTransforms()
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_CAMERA)
 			((Camera*)(*it))->TransformCamera();
-
-	UpdateBounds();
 }

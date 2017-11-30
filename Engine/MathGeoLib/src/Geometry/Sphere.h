@@ -61,6 +61,8 @@ public:
 	/** @note The resulting sphere may not be the minimal enclosing sphere for the four points! */
 	Sphere(const vec &pointA, const vec &pointB, const vec &pointC, const vec &pointD);
 
+	void Draw(float red, float green, float blue, float alpha, int num_segments = 40) const;
+
 	/// Translates this Sphere in world space.
 	/** @param offset The amount of displacement to apply to this Sphere, in world space coordinates.
 		@see Transform(). */
