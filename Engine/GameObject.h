@@ -24,9 +24,12 @@ namespace math
 
 struct Bounds
 {
-//	Sphere sphere_bounding_box;
+	Sphere sphere_bounding_box;
+	Sphere original_sphere_bounding_box;
+
 	AABB aabb_bounding_box;
 	math::vec original_aabb_bb_points[2];
+
 	OBB obb_bounding_box;
 	OBB original_obb_bounding_box;
 	
@@ -73,11 +76,10 @@ public:
 private:
 	//Bounding Boxes
 	void CreateBounds(const Mesh* mesh);
-	void UpdateBounds();
-	void UpdateBoundsOthers();
-	void ResetOBBToOriginal();
+	void UpdateBoundsParents();
 
 	void UpdateBoundsSelf();
+	void UpdateBoundsParent();
 	void IncludeMeshInOBB(const Mesh* mesh);
 	void UpdateWorldTransform(const math::float4x4& parent_world_transform);
 	void UpdateTransforms();
@@ -142,7 +144,9 @@ public:
 	void  GetWorldScaleZ(int& z) const;
 	const math::vec&  GetWorldScale(int& x, int& y, int& z) const;
 
+	const Sphere* GetBoundingSphere() const;
 	const AABB* GetAABB() const;
+	const OBB* GetOBB() const;
 	bool IsCamera()const;
 	//-----
 

@@ -2321,6 +2321,12 @@ void OBBTransform(OBB &o, const Matrix &transform)
 	o.r.x = o.axis[0].Normalize();
 	o.r.y = o.axis[1].Normalize();
 	o.r.z = o.axis[2].Normalize();
+	if (o.axis[0] == o.axis[1] || o.axis[0] == o.axis[2] || o.axis[1] == o.axis[2])
+	{
+		o.axis[0] = math::vec::unitX;
+		o.axis[1] = math::vec::unitY;
+		o.axis[2] = math::vec::unitZ;
+	}
 }
 
 void OBB::Transform(const float3x3 &transform)
