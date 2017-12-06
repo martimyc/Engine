@@ -5,7 +5,7 @@
 #include "Globals.h"
 #include "Transform.h"
 
-Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1)
+Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), center(0, 0, 0)
 {
 	transform_matrix = transform_matrix.identity;
 }
@@ -22,6 +22,11 @@ void Transform::SetTransform(const math::float4x4& new_transform)
 	rotation_matrix.Orthonormalize(0, 1, 2);
 	rotation = rotation_matrix.ToQuat();
 	scaling = transform_matrix.GetScale();	
+}
+
+void Transform::SetTransformCenter(const math::vec center_)
+{
+	center = center_;
 }
 
 void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)
@@ -94,7 +99,7 @@ void Transform::Update()
 	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
 	float3x3 rotation_matrix(rotation);
 	transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
-	transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;	//Scalate
+	transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;		//Scalate
 }
 
 bool Transform::Inspector()
@@ -131,9 +136,9 @@ bool Transform::Inspector()
 
 		ImGui::Separator();
 
-		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f))	ret = true;
-		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f))	ret = true;
-		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f))	ret = true;
+		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f, 0.001f, 2500, "%.3f"))	ret = true;
+		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f, 0.001f, 2500, "%.3f"))	ret = true;
+		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f, 0.001f, 2500, "%.3f"))	ret = true;
 		
 		ImGui::TreePop();
 	}

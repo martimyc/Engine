@@ -696,6 +696,10 @@ void GameObject::CreateBounds(const Mesh* mesh)
 	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
 
 	IncludeMeshInOBB(mesh);
+
+	//Set center
+	if (mesh != nullptr)
+		local_transform->SetTransformCenter(mesh->GetCenter());
 }
 
 void GameObject::UpdateBoundsParents()
@@ -782,19 +786,19 @@ void GameObject::IncludeMeshInOBB(const Mesh * mesh)
 {
 	if (mesh != nullptr)
 	{
-		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMaxXVertex()));
-		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMinXVertex()));
-		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMaxYVertex()));
-		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMinYVertex()));
-		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMaxZVertex()));
-		bounds.obb_bounding_box.Enclose(math::vec(mesh->GetMinZVertex()));
+		bounds.obb_bounding_box.pos = mesh->GetMaxXVertex();
+		bounds.obb_bounding_box.Enclose(mesh->GetMinXVertex());
+		bounds.obb_bounding_box.Enclose(mesh->GetMaxYVertex());
+		bounds.obb_bounding_box.Enclose(mesh->GetMinYVertex());
+		bounds.obb_bounding_box.Enclose(mesh->GetMaxZVertex());
+		bounds.obb_bounding_box.Enclose(mesh->GetMinZVertex());
 
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxXVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinXVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxYVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinYVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMaxZVertex()));
-		bounds.original_obb_bounding_box.Enclose(math::vec(mesh->GetMinZVertex()));
+		bounds.original_obb_bounding_box.pos = mesh->GetMaxXVertex();
+		bounds.original_obb_bounding_box.Enclose(mesh->GetMinXVertex());
+		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxYVertex());
+		bounds.original_obb_bounding_box.Enclose(mesh->GetMinYVertex());
+		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxZVertex());
+		bounds.original_obb_bounding_box.Enclose(mesh->GetMinZVertex());
 	}
 }
 

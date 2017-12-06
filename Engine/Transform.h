@@ -12,6 +12,7 @@ private:
 	std::string name;
 	float3 translation;
 	float3 scaling;
+	float3 center;
 	Quat rotation;
 	float roll, pitch, yaw;	// roll (x-axis rotation)	// pitch (y-axis rotation)	// yaw (z-axis rotation)
 	
@@ -25,6 +26,7 @@ public:
 	~Transform();
 
 	void SetTransform(const math::float4x4& new_transform);
+	void SetTransformCenter(const math::vec center);
 
 	const float4x4& GetTransformMatrix();
 	const vec& GetTransformTranslation();
