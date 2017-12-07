@@ -119,6 +119,8 @@ public:
 	~TextureAsset();
 
 	void AddInstance(const Material* material);
+
+	GLuint GetImage() const;
 };
 
 

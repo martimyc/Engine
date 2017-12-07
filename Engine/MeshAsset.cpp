@@ -173,3 +173,13 @@ void MeshAsset::AddInstance(const GameObject * go)
 {
 	instances.push_back(go);
 }
+
+GLuint MeshAsset::GetImage() const
+{
+	return 0;
+}
+
+void MeshAsset::SetImage(GLuint id)
+{
+	image = id;
+}

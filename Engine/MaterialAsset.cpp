@@ -101,3 +101,13 @@ void MaterialAsset::AddInstance(const GameObject * go)
 {
 	instances.push_back(go);
 }
+
+GLuint MaterialAsset::GetImage() const
+{
+	return 0;
+}
+
+void MaterialAsset::SetImage(GLuint id)
+{
+	image = id;
+}

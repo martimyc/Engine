@@ -203,3 +203,197 @@ IMGUI_API bool ImGui::SliderInt4NoLabel(const char * label, int v[4], int v_min,
 {
 	return SliderIntNNoLabel(label, v, 4, v_min, v_max, display_format);
 }
+
+bool ImGui::Asset(const char * label, const ImVec2 image_size, bool selected, ImTextureID image_id, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col)
+{
+	ImGuiWindow* window = GetCurrentWindow();
+	if (window->SkipItems)
+		return false;
+
+	ImGuiID id(window->GetID(label));
+
+	const char* label_end = FindRenderedTextEnd(label);
+	const ImVec2 label_size = CalcTextSize(label, label_end, false);
+
+	ImVec2 total_size(image_size + ImVec2(6, 6));
+	total_size.y += label_size.y;
+
+	ImRect image_bb(window->DC.CursorPos + ImVec2(3, 3), window->DC.CursorPos + image_size + ImVec2(3, 3));
+
+	if (label_size.x > image_size.x + 6)
+	{
+		total_size.x = label_size.x;
+		image_bb.Min.x = window->DC.CursorPos.x + label_size.x / 2 - image_size.x / 2;
+		image_bb.Max = image_bb.Min + image_size;
+	}	
+
+	const ImVec2 text_pos (window->DC.CursorPos.x, image_bb.Max.y + 3);
+
+	ImRect bb(window->DC.CursorPos, window->DC.CursorPos + total_size);
+
+	ImGuiTreeNodeFlags flags = NULL;
+
+	if (selected)
+		flags = ImGuiTreeNodeFlags_Selected;
+
+	bool hovered, held, pressed = ButtonBehavior(bb, id, &hovered, &held, flags);
+
+	const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+
+	if (hovered || (flags & ImGuiTreeNodeFlags_Selected))
+		RenderFrame(bb.Min, bb.Max, col, false);
+
+	ImGuiContext& g = *GImGui;
+	const ImGuiStyle& style = g.Style;
+	
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+
+	if (border_col.w > 0.0f)
+	{
+		window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(border_col), 0.0f);
+		window->DrawList->AddImage(image_id, image_bb.Min + ImVec2(1, 1), image_bb.Max - ImVec2(1, 1), uv0, uv1, GetColorU32(tint_col));
+	}
+	else
+	{
+		window->DrawList->AddImage(image_id, image_bb.Min, image_bb.Max, uv0, uv1, GetColorU32(tint_col));
+	}
+
+	RenderTextClipped(text_pos, bb.Max, label, label_end, &label_size);
+
+
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+
+	ItemSize(bb);
+	if (!ItemAdd(bb, NULL))
+		return false;
+
+	if (g.IO.MouseDoubleClicked[0] && IsHovered(bb, id))
+		return true;
+}
+
+/*
+ImGuiWindow* window = GetCurrentWindow();
+if (window->SkipItems)
+return;
+
+ImRect image_bb(window->DC.CursorPos, window->DC.CursorPos + size);
+
+ItemSize(image_bb);
+if (!ItemAdd(image_bb, NULL))
+return;*/
+//------
+
+/*ImGuiWindow* window = GetCurrentWindow();
+if (window->SkipItems)
+return;*/
+/*
+ImGuiID id(window->GetID(label));
+
+ImGuiContext& g = *GImGui;
+const ImGuiStyle& style = g.Style;
+const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
+const ImVec2 padding = display_frame ? style.FramePadding : ImVec2(style.FramePadding.x, 0.0f);
+
+const char* label_end = FindRenderedTextEnd(label);
+const ImVec2 label_size = CalcTextSize(label, label_end, false);
+
+// We vertically grow up to current line height up the typical widget height.
+const float text_base_offset_y = ImMax(0.0f, window->DC.CurrentLineTextBaseOffset - padding.y); // Latch before ItemSize changes it
+const float frame_height = ImMax(ImMin(window->DC.CurrentLineHeight, g.FontSize + style.FramePadding.y * 2), size.y + label_size.y + padding.y * 2);
+ImRect bb = ImRect(window->DC.CursorPos, ImVec2(window->Pos.x + GetContentRegionMax().x, window->DC.CursorPos.y + frame_height));
+if (display_frame)
+{
+	// Framed header expand a little outside the default padding
+	bb.Min.x -= (float)(int)(window->WindowPadding.x*0.5f) - 1;
+	bb.Max.x += (float)(int)(window->WindowPadding.x*0.5f) - 1;
+}
+
+const float text_offset_x = (g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2));   // Collapser arrow width + Spacing
+const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);   // Include collapser
+ItemSize(ImVec2(text_width, frame_height), text_base_offset_y);
+
+// For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
+// (Ideally we'd want to add a flag for the user to specify we want want the hit test to be done up to the right side of the content or not)
+const ImRect interact_bb = display_frame ? bb : ImRect(bb.Min.x, bb.Min.y, bb.Min.x + text_width + style.ItemSpacing.x * 2, bb.Max.y);*/
+/*bool is_open = TreeNodeBehaviorIsOpen(id, flags);
+if (!ItemAdd(interact_bb, &id))
+{
+if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+TreePushRawID(id);
+return is_open;
+}*/
+
+// Flags that affects opening behavior:
+// - 0(default) ..................... single-click anywhere to open
+// - OpenOnDoubleClick .............. double-click anywhere to open
+// - OpenOnArrow .................... single-click on arrow to open
+// - OpenOnDoubleClick|OpenOnArrow .. single-click on arrow or double-click anywhere to open
+/*ImGuiButtonFlags button_flags = ImGuiButtonFlags_NoKeyModifiers | ((flags & ImGuiTreeNodeFlags_AllowOverlapMode) ? ImGuiButtonFlags_AllowOverlapMode : 0);
+if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+button_flags |= ImGuiButtonFlags_PressedOnDoubleClick | ((flags & ImGuiTreeNodeFlags_OpenOnArrow) ? ImGuiButtonFlags_PressedOnClickRelease : 0);
+bool hovered, held, pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);*/
+/*if (pressed && !(flags & ImGuiTreeNodeFlags_Leaf))
+{
+bool toggled = !(flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick));
+if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
+toggled |= IsMouseHoveringRect(interact_bb.Min, ImVec2(interact_bb.Min.x + text_offset_x, interact_bb.Max.y));
+if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+toggled |= g.IO.MouseDoubleClicked[0];
+if (toggled)
+{
+is_open = !is_open;
+window->DC.StateStorage->SetInt(id, is_open);
+}
+}*/
+/*if (flags & ImGuiTreeNodeFlags_AllowOverlapMode)
+SetItemAllowOverlap();
+
+// Render
+const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+//const ImVec2 text_pos = bb.Min + ImVec2(text_offset_x, padding.y + text_base_offset_y);
+const ImVec2 text_pos = bb.Min + ImVec2(0, padding.y + text_base_offset_y + size.y); // no text offset
+if (display_frame)
+{
+	// Framed type
+	RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);*/
+	/*RenderCollapseTriangle(bb.Min + padding + ImVec2(0.0f, text_base_offset_y), is_open, 1.0f);
+	if (g.LogEnabled)
+	{
+	// NB: '##' is normally used to hide text (as a library-wide feature), so we need to specify the text range to make sure the ## aren't stripped out here.
+	const char log_prefix[] = "\n##";
+	const char log_suffix[] = "##";
+	LogRenderedText(text_pos, log_prefix, log_prefix + 3);
+	RenderTextClipped(text_pos, bb.Max, label, label_end, &label_size);
+	LogRenderedText(text_pos, log_suffix + 1, log_suffix + 3);
+	}
+	else
+	{
+	RenderTextClipped(text_pos, bb.Max, label, label_end, &label_size);
+	}*/
+/*
+	RenderTextClipped(text_pos, bb.Max, label, label_end, &label_size);
+}
+else
+{
+	// Unframed typed for tree nodes
+	if (hovered || (flags & ImGuiTreeNodeFlags_Selected))
+		RenderFrame(bb.Min, bb.Max, col, false);*/
+
+	/*if (flags & ImGuiTreeNodeFlags_Bullet)
+	RenderBullet(bb.Min + ImVec2(text_offset_x * 0.5f, g.FontSize*0.50f + text_base_offset_y));
+	else if (!(flags & ImGuiTreeNodeFlags_Leaf))
+	RenderCollapseTriangle(bb.Min + ImVec2(padding.x, g.FontSize*0.15f + text_base_offset_y), is_open, 0.70f);
+	if (g.LogEnabled)
+	LogRenderedText(text_pos, ">");*/
+	/*RenderText(text_pos, label, label_end, false);
+}*/
+
+/*if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+TreePushRawID(id);*/
+//return;
+
+//-----
+
+/*ImGui::Button
+ImGui::Image((void*)image, size);
+ImGui::Text(name);*/

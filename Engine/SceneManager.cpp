@@ -230,8 +230,6 @@ GameObject * SceneManager::GetRoot() const
 
 void SceneManager::Hirarchy()
 {
-	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((focused == root) ? ImGuiTreeNodeFlags_Selected : 0);
-
 	if (ImGui::Begin("Hirarchy", &hirarchy_active))
 	{
 		root->Hirarchy(focused);

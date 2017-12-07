@@ -27,6 +27,9 @@ UPDATE_STATUS TimeManager::Update(float dt)
 		ImGui::Begin("Timers");
 		ImGui::Text("Real Time: %.3f", real_time_clock.ReadSec());
 		ImGui::Text("Game Time: %.3f", game_clock.ReadSec());
+
+		ImGui::Asset("Test", ImVec2(100, 100), false, (void*)5);
+
 		ImGui::End();
 	}
 

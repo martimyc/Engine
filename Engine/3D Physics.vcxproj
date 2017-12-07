@@ -81,6 +81,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />
     <ClInclude Include="Asset.h" />
+    <ClInclude Include="AssetDirectory.h" />
     <ClInclude Include="Dirent\dirent.h" />
     <ClInclude Include="imgui\imgui_user.h" />
     <ClInclude Include="MaterialAsset.h" />
@@ -249,13 +250,13 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UID.h" />
-    <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AppliedMaterial.cpp" />
     <ClCompile Include="Asset.cpp" />
+    <ClCompile Include="AssetDirectory.cpp" />
     <ClCompile Include="BasicGeometry.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
@@ -345,7 +346,6 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UID.cpp" />
-    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

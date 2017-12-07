@@ -20,6 +20,8 @@ class MaterialImporter;
 class TextureImporter;
 class PrefabImporter;
 
+class AssetDirectory;
+
 struct ImportConfiguration;
 struct LoadConfiguration;
 struct TextureImportConfiguration;
@@ -83,7 +85,7 @@ private:
 
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
-	void LoadScene(char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const;
+	void LoadScene(AssetDirectory* dir, char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const;
 
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;
@@ -102,7 +104,7 @@ public:
 	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration* load_config) const;
 	GLuint GenerateButtonImage(const std::string &relative_path);
 
-	void MetaLoad(const std::string& file) const;
+	void MetaLoad(const std::string& file, AssetDirectory* dir) const;
 };
 
 

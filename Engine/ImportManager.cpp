@@ -15,6 +15,7 @@
 #include "MaterialAsset.h"
 #include "PreFab.h"
 #include "PrefabAsset.h"
+#include "AssetDirectory.h"
 
 //Components
 #include "Transform.h"
@@ -279,6 +280,7 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 		break;
 	case RT_PREFAB:
 		uid = ImportScene(path, (SceneImportConfiguration*)import_config);
+		delete import_config;
 		if (uid.IsNull())
 		{
 			LOG("Could not import scene from %s corectlly", path.c_str());
@@ -399,7 +401,7 @@ bool ImportManager::SceneMetaSave(const std::string & file, const std::vector<st
 	return true;
 }
 
-void ImportManager::MetaLoad(const std::string & file) const
+void ImportManager::MetaLoad(const std::string & file, AssetDirectory* dir) const
 {
 	char* buffer = nullptr;
 	unsigned int length = App->file_system->LoadMetaFile(file, &buffer);
@@ -428,13 +430,13 @@ void ImportManager::MetaLoad(const std::string & file) const
 			import_config->MetaLoad(&iterator);
 			load_config = new TextureLoadConfiguration;
 			load_config->MetaLoad(&iterator);
-			App->resource_manager->AddAsset(name, uid, RT_TEXTURE, import_config, load_config);
+			dir->AddAsset(name, uid, RT_TEXTURE, import_config, load_config);
 			break;
 		case RT_PREFAB:
 			import_config = new SceneImportConfiguration;
 			import_config->MetaLoad(&iterator);
-			LoadScene(&iterator,(SceneImportConfiguration*) import_config, name);
-			App->resource_manager->AddAsset(name, uid, RT_PREFAB, ((SceneImportConfiguration*)import_config)->prefab_import_config, ((SceneImportConfiguration*)import_config)->prefab_load_config);
+			LoadScene(dir, &iterator,(SceneImportConfiguration*) import_config, name);
+			dir->AddAsset(name, uid, RT_PREFAB, ((SceneImportConfiguration*)import_config)->prefab_import_config, ((SceneImportConfiguration*)import_config)->prefab_load_config);
 			break;
 		}
 	}
@@ -646,7 +648,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 	return prefab_uid;
 }
 
-void ImportManager::LoadScene(char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const
+void ImportManager::LoadScene(AssetDirectory* dir, char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const
 {
 	unsigned int num_meshes;
 	memcpy( &num_meshes, *iterator, sizeof(unsigned int));
@@ -661,7 +663,7 @@ void ImportManager::LoadScene(char ** iterator, const SceneImportConfiguration* 
 		std::string name(*iterator);
 		*iterator += name.size() + 1;
 
-		App->resource_manager->AddAsset(name, uid, RT_MESH, config->mesh_import_config, config->mesh_load_config);
+		dir->AddAsset(name, uid, RT_MESH, config->mesh_import_config, config->mesh_load_config);
 	}
 
 	unsigned int num_materials;
@@ -677,7 +679,7 @@ void ImportManager::LoadScene(char ** iterator, const SceneImportConfiguration* 
 		std::string name(*iterator);
 		*iterator += name.size() + 1;
 
-		App->resource_manager->AddAsset(name, uid, RT_MATERIAL, config->mesh_import_config, config->mesh_load_config);
+		dir->AddAsset(name, uid, RT_MATERIAL, config->mesh_import_config, config->mesh_load_config);
 	}
 }
 

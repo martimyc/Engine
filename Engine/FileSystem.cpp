@@ -1,7 +1,9 @@
 #include <windows.h>
 #include <fstream>
 #include "Dirent\dirent.h"
+#include "AssetDirectory.h"
 #include "ImportManager.h"
+#include "ResourceManager.h"
 #include "Application.h"
 #include "FileSystem.h"
 
@@ -64,7 +66,11 @@ bool FileSystem::Init()
 
 bool FileSystem::Start()
 {
-	GenerateAssets(GetAssets());
+	AssetDirectory* assets = GenerateAssets(GetAssets());
+	if (assets != nullptr)
+		App->resource_manager->SetRootDir(assets);
+	else
+		LOG("Could not generate assets");
 	return true;
 }
 
@@ -202,34 +208,41 @@ bool FileSystem::CopyToAssets(const std::string& path) const
 	return ret;
 }
 
-bool FileSystem::GenerateAssets(const std::string & directory) const
+AssetDirectory* FileSystem::GenerateAssets(const std::string & directory) const
 {
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(directory.c_str())) != NULL) {
+	DIR* dir;
+	struct dirent* ent;
+	AssetDirectory* asset_dir = nullptr;
+
+	if ((dir = opendir(directory.c_str())) != NULL)
+	{
+		asset_dir = new AssetDirectory(directory);
 		/* Create assets for all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL)
 		{
 			std::string file(ent->d_name);
-			if (ent->d_type == DT_DIR)
-			{}//TODO
+
+			if (ent->d_type == DT_DIR && file != "." && file != "..")
+			{
+				AssetDirectory* child_dir = GenerateAssets(file);
+				if (child_dir != nullptr)
+					asset_dir->AddDir(child_dir);
+			}
 			else if (ent->d_type == DT_REG)
 			{
 				if (IsMeta(file))
 				{
-					App->import_manager->MetaLoad(file);
-					LOG("Generated asset from %s", file.c_str());
+					App->import_manager->MetaLoad(file, asset_dir);
+					LOG("Generated asset from %s into folder %s", file.c_str(), asset_dir->GetName().c_str());
 				}
 			}
 		}
 		closedir(dir);
 	}
-	else {
-		/* could not open directory */
-		perror("");
-		return EXIT_FAILURE;
-	}
-	return false;
+	else 
+		LOG("Directory %s could not be opened", directory.c_str());
+
+	return asset_dir;
 }
 
 bool FileSystem::Exsists(const char * path) const

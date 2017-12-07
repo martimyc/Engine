@@ -3,6 +3,8 @@
 
 #include "Asset.h"
 
+typedef unsigned int GLuint;
+
 struct MeshImportConfiguration : public ImportConfiguration
 {
 	bool load_tangents;
@@ -35,6 +37,7 @@ class MeshAsset : public Asset
 {
 private:
 	std::vector<const GameObject*> instances;
+	GLuint image;
 
 public:
 	MeshAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
@@ -42,6 +45,8 @@ public:
 
 	void AddInstance(const GameObject* go);
 
+	GLuint GetImage() const;
+	void SetImage(GLuint id);
 };
 #endif // !MESH_ASSET
 

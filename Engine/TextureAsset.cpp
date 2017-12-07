@@ -1,6 +1,7 @@
 #include "imgui\imgui.h"
 #include "Globals.h"
 #include "Resource.h"
+#include "Texture.h"
 #include "TextureAsset.h"
 
 TextureImportConfiguration::TextureImportConfiguration() : format (TF_NORMAL_FORMATS), tga_stamp(false), selected_compresion(4), dxt_format(DXT5), copresion_menu(true), jpg_quality(99), interlaced(false), rle(false)
@@ -641,4 +642,9 @@ TextureAsset::~TextureAsset()
 void TextureAsset::AddInstance(const Material * material)
 {
 	instances.push_back(material);
+}
+
+GLuint TextureAsset::GetImage() const
+{
+	return ((Texture*)resource)->GetTextureID();
 }

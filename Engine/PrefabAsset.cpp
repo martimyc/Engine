@@ -13,6 +13,16 @@ void PrefabAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
+GLuint PrefabAsset::GetImage() const
+{
+	return 0;
+}
+
+void PrefabAsset::SetImage(GLuint id)
+{
+	image = id;
+}
+
 PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(true)
 {}
 

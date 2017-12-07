@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+typedef unsigned int GLuint;
+
 struct UID;
 
 class MaterialImportConfiguration;
@@ -63,6 +65,8 @@ public:
 	Resource* GetResource() const;
 
 	const std::string& GetName() const;
+
+	virtual GLuint GetImage() const = 0;
 };
 
 struct SceneImportConfiguration : public ImportConfiguration

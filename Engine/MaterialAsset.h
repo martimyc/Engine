@@ -3,6 +3,8 @@
 
 #include "Asset.h"
 
+typedef unsigned int GLuint;
+
 struct TextureImportConfiguration;
 struct TextureLoadConfiguration;
 
@@ -36,12 +38,16 @@ class MaterialAsset: public Asset
 {
 private:
 	std::vector<const GameObject*> instances;
+	GLuint image;
 
 public:
 	MaterialAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~MaterialAsset();
 
 	void AddInstance(const GameObject* go);
+
+	GLuint GetImage() const;
+	void SetImage( GLuint id);
 };
 
 #endif // !MATERIAL_ASSET

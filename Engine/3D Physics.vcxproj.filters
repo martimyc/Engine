@@ -603,14 +603,14 @@
     <ClInclude Include="imgui\imgui_user.h">
       <Filter>Sources\3rd Party\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="KDTreeTriangle.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Dirent\dirent.h">
       <Filter>Sources\3rd Party\Dirent</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetDirectory.h">
+      <Filter>Sources\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -902,10 +902,10 @@
     <ClCompile Include="TimeManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
+    <ClCompile Include="KDTreeTriangle.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="KDTreeTriangle.cpp">
+    <ClCompile Include="AssetDirectory.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
   </ItemGroup>

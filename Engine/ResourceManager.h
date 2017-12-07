@@ -8,7 +8,6 @@
 #define CHECKERS_HEIGHT 256
 #define CHECKERS_WIDTH 256
 
-class Resource;
 class Material;
 class Texture;
 class Mesh;
@@ -16,6 +15,7 @@ class Prefab;
 class Asset;
 class UID;
 class GameObject;
+class AssetDirectory;
 
 enum RESOURCE_TYPE;
 struct ImportConfiguration;
@@ -45,7 +45,9 @@ class ResourceManager: public Module
 private:
 	std::vector<Button*> buttons;
 	std::vector<Asset*> assets;
-	Asset* selected_asset;
+	unsigned int selected;
+	AssetDirectory* current_dir;
+	AssetDirectory* root_dir;
 
 	//Materials
 	unsigned int num_materials = 0;
@@ -73,8 +75,6 @@ private:
 	Prefab* GetPrefab(const UID& uid);
 	Material* CreateEmptyMaterial(const char* name = nullptr);
 
-	void LoadToScene();
-
 	//Textures
 	Texture* LoadCheckers();
 
@@ -90,6 +90,7 @@ public:
 	void AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	void DeleteAsset(Asset* to_delete);
 	bool Exsists(const UID& id) const;
+
 	Material* UseMaterial(const UID& id, const GameObject* go) const;
 	Texture* UseTexture(const UID& id, const Material* material) const;
 	Mesh* UseMesh(const UID& id, const GameObject* go) const;
@@ -101,6 +102,11 @@ public:
 	void DebugTextures() const;
 
 	void CreateButtons() const;
+
+	void LoadToScene(Asset* asset);
+
+	void SetRootDir(AssetDirectory* dir);
+	void SetCurrentDir(AssetDirectory* dir);
 };
 
 #endif // !RESOURCE_MANAGER

@@ -2,6 +2,7 @@
 #define PREFAB_ASSET
 
 #include "Asset.h"
+typedef unsigned int GLuint;
 
 struct PrefabImportConfiguration : public ImportConfiguration
 {
@@ -31,11 +32,15 @@ class PrefabAsset : public Asset
 {
 private:
 	std::vector<const GameObject*> instances;
+	GLuint image;
 
 public:
 	PrefabAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	~PrefabAsset();
 
 	void AddInstance(const GameObject* go);
+
+	GLuint GetImage() const;
+	void SetImage(GLuint id);
 };
 #endif // !PREFAB_ASSET

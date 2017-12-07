@@ -4,6 +4,8 @@
 #include <string>
 #include "Module.h"
 
+class AssetDirectory;
+
 class FileSystem: public Module
 {
 private:
@@ -27,7 +29,7 @@ public:
 
 	bool CopyToAssets(const std::string& path) const;
 
-	bool GenerateAssets(const std::string& directory) const;
+	AssetDirectory* GenerateAssets(const std::string& directory) const;
 
 	//Gets
 	bool Exsists(const char* path) const;
