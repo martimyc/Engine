@@ -13,13 +13,12 @@ UPDATE_STATUS Console::Update(float dt)
 {
 	BROFILER_CATEGORY("Console Update", Profiler::Color::AliceBlue)
 
-		if (console_active)
-		{
-			App->BeginDockWindow("Console", &console_active);
-			for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
-				ImGui::Text(it->c_str());
-			App->EndDockWindow();
-		}
+	if (App->BeginDockWindow("Console", &console_active))
+	{
+		for (std::deque<std::string>::const_iterator it = log_vec.begin(); it != log_vec.end(); ++it)
+			ImGui::Text(it->c_str());
+	}
+	App->EndDockWindow();
 
 	return UPDATE_CONTINUE;
 }

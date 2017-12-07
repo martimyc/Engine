@@ -73,7 +73,7 @@ private:
 
 	GLuint cube_id;
 
-	bool config_renderer = true;
+	bool config_renderer = false;
 	FrameBuffer* render_to_texture = nullptr;
 	bool mouse_on_scene_window = true;
 
@@ -95,6 +95,7 @@ public:
 	void OpenCloseConfigRendererWindow();
 
 	void OnResize(int width, int height);
+	void OnResize(int width, int height, int prev_width, int prev_height);
 
 	void DrawGameObject(const GameObject* game_object);
 

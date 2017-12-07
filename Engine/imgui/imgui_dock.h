@@ -65,6 +65,10 @@ namespace ImGui
 			bool isContainer() const;
 			void setChildrenPosSize(const ImVec2& _pos, const ImVec2& _size);
 			void setPosSize(const ImVec2& _pos, const ImVec2& _size);
+			
+			void Save(JSON_Object* dock_object) const;
+			void Load(const JSON_Object* dock_object);
+			void LoadHierarchy(const JSON_Object* dock_object);
 		};
 
 		DockContext();
@@ -82,7 +86,7 @@ namespace ImGui
 		bool BeginDock(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0, const ImVec2& default_size = ImVec2(-1, -1));
 		void EndDock();
 
-		void SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_);
+		void SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_, float width_difference = 1.0f, float height_difference = 1.0f);
 
 		void LoadDocks();
 		void SaveDocks();
@@ -91,6 +95,8 @@ namespace ImGui
 		ImVec2 workspace_pos;
 		ImVec2 workspace_size;
 		void TabbarInContext(Dock* dock_to_tab);
+		int GetDockPos(const Dock* dock) const;
+		DockContext::Dock* GetDockbyPos(int position) const;
 
 		void RootDock(const ImVec2& pos, const ImVec2& size);
 		void SetDockActive(); 

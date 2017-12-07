@@ -17,7 +17,7 @@ private:
 	bool borderless = false;
 	bool fullscreen_desktop = false;
 
-	bool config_window = true;
+	bool config_window = false;
 	float aspect_ratio;
 
 public:
@@ -39,7 +39,7 @@ public:
 	const float GetAspectRatio() const;	//width/height
 
 	void SetTitle(const char* title);
-	void WindowResize(uint w, uint h);
+	void WindowResize(uint w, uint h, bool change_w_h = true);
 
 public:
 	//The window we'll be rendering to

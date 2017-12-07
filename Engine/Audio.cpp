@@ -51,15 +51,17 @@ bool Audio::Init()
 	JSON_Object* audio = json_object_dotget_object(obj, "Audio"); 
 	volume = json_object_get_number(audio, "volume");
 
+	config_audio = false;
+
 	return ret;
 }
 
 UPDATE_STATUS Audio::Configuration(float dt)
 {
 	BROFILER_CATEGORY("Audio Configuration", Profiler::Color::Crimson);
-		
-	UPDATE_STATUS ret = UPDATE_CONTINUE;
 
+	UPDATE_STATUS ret = UPDATE_CONTINUE;
+	
 	if (App->BeginDockWindow("Audio", &config_audio))
 	{
 		JSON_Value* config = json_parse_file("config.json");

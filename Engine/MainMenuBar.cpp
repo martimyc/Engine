@@ -8,6 +8,7 @@
 #include "HardwareSoftwareInfo.h"
 #include "Renderer3D.h"
 #include "Window.h"
+#include "TimeManager.h"
 //TODO if we only have 1 obj
 #include "SceneManager.h"
 #include "GameObject.h"
@@ -42,8 +43,11 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 		{
 			if (ImGui::BeginMenu("Debug"))
 			{
-				if (ImGui::MenuItem("Show Editor Camera Info"))
+				if (ImGui::MenuItem("Editor Camera Info"))
 					App->camera->OpenCloseMatricesDebugWindow();
+
+				if (ImGui::MenuItem("Timers"))
+					App->time_manager->OpenCloseTimers();
 
 				ImGui::EndMenu();
 			}
@@ -73,7 +77,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 
 				ImGui::EndMenu();
 			}
-			
+
 			if (ImGui::MenuItem("Console"))
 				App->console->OpenCloseConsoleWindow();
 
@@ -87,7 +91,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 
 				//if (ImGui::MenuItem("ImGui Demo"))
 				//	Activate(UI_TEST);
-				
+
 				//ImGui::EndMenu();
 			//}
 
@@ -103,7 +107,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 
 				if (ImGui::MenuItem("Sphere"))
 					App->primitives->CreateSphere();
-			
+
 				ImGui::EndMenu();
 			}
 
@@ -123,16 +127,14 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 
 			if (ImGui::MenuItem("About"))
 				show_about = !show_about;
-			
+
 			ImGui::EndMenu();
 		}
 
 		ImGui::EndMainMenuBar();
-		
-		if (show_about)
-		{
-			ImGui::Begin("About", &show_about);
 
+		if (App->BeginDockWindow("About", &show_about))
+		{
 			ImGui::Text("%s", App->GetTitle());
 			ImGui::Text("Organization: %s", App->GetOrganization());
 
@@ -150,7 +152,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 				App->OpenWebsite("https://github.com/martimyc");
 
 			ImGui::PopStyleColor(3);
-			
+
 			ImGui::Separator();
 			ImGui::Text("Libraries:");
 
@@ -176,7 +178,7 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			ImGui::SameLine();
 			if (ImGui::Button("OPENGL Version 4"))
 				App->OpenWebsite("https://www.opengl.org/");
-		
+
 			ImGui::SameLine();
 			if (ImGui::Button("Glew V.2.1.0"))
 				App->OpenWebsite("https://github.com/nigels-com/glew/releases/tag/glew-2.1.0");
@@ -192,11 +194,11 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 
 			ImGui::Separator();
 			if (ImGui::Button("License"))
-				App->OpenWebsite("https://github.com/martimyc/Engine/blob/master/LICENSE"); 
-			
+				App->OpenWebsite("https://github.com/martimyc/Engine/blob/master/LICENSE");
+
 			ImGui::PopStyleColor(3);
-			ImGui::End();
 		}
+		App->EndDockWindow();
 
 		ret = UPDATE_CONTINUE;
 	}

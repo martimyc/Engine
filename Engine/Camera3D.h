@@ -22,7 +22,7 @@ private :
 	float vertical_fov_editor_camera;
 	std::vector<Plane> frustum_planes;
 
-	bool config_camera = true;
+	bool config_camera = false;
 
 	float camera_speed = 5.0f;
 	float camera_zoom_speed = 1.75f;

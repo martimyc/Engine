@@ -85,9 +85,8 @@ bool Application::Init()
 
 	std::vector<Module*>::const_iterator it = modules.begin();
 
-	dock_context = new ImGui::DockContext();
+	dock_context = new ImGui::DockContext();	//Don't need to LoadDocks, as the OnResize will do it when creating the window
 	SetDockContextSize(App->window->GetWidth(), App->window->GetHeight());
-	dock_context->LoadDocks();
 
 	// Call Init() in all modules
 	for(; it != modules.end() && ret == true; ++it)
@@ -98,6 +97,8 @@ bool Application::Init()
 	
 	for(it = modules.begin(); it != modules.end() && ret == true; ++it)
 		ret = (*it)->Start();
+
+	config_app = false;
 
 	return ret;
 }
@@ -237,9 +238,9 @@ void Application::OpenCloseConfigAppWindow()
 	config_app = !config_app;
 }
 
-void Application::SetDockContextSize(const int width, const int height)
+void Application::SetDockContextSize(const int width, const int height, float width_difference, float height_difference)
 {
-	dock_context->SetWorkspacePosSize(ImVec2(0, 23), ImVec2(width, height));
+	dock_context->SetWorkspacePosSize(ImVec2(0, 23), ImVec2(width, height - 23), width_difference, height_difference);	//23 is the main bar menu height
 }
 
 bool Application::BeginDockWindow(const char * label, bool * opened, ImGuiWindowFlags extra_flags)

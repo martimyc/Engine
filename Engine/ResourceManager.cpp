@@ -133,7 +133,7 @@ bool ResourceManager::Init()
 
 UPDATE_STATUS ResourceManager::Update(float dt)
 {
-	if (ImGui::Begin("Assets"))
+	if (App->BeginDockWindow("Assets"))
 	{
 		for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
 		{
@@ -155,7 +155,7 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 		if (ImGui::Button("Load To Scene"))
 			LoadToScene();
 	}
-	ImGui::End();
+	App->EndDockWindow();
 	return UPDATE_CONTINUE;
 }
 

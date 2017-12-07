@@ -45,6 +45,26 @@ namespace ImGui
 		doDock(*dock_to_tab, dest_dock, Slot_Tab);
 	}
 
+	int DockContext::GetDockPos(const Dock * dock) const
+	{
+		if (dock == nullptr)
+			return -1;
+
+		for (int i = 0; i < g_dock.m_docks.size(); i++)
+			if (dock == g_dock.m_docks[i])
+				return i;
+
+		return -1;
+	}
+
+	DockContext::Dock* DockContext::GetDockbyPos(int position) const
+	{
+		if (position < m_docks.size() && position >= 0)
+			return m_docks[position];
+
+		return nullptr;
+	}
+
 	void DockContext::RootDock(const ImVec2& pos, const ImVec2& size)
 	{
 		g_dock.rootDock(pos, size);
@@ -68,138 +88,77 @@ namespace ImGui
 		g_dock.end();
 	}
 
-	void DockContext::SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_)
+	void DockContext::SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_, float width_difference, float height_difference)
 	{
 		if (g_dock.workspace_pos != pos_ || g_dock.workspace_size != size_)
 		{
 			g_dock.ShutdownDock();
+			LoadDocks();
+			for (int i = 0; i < g_dock.m_docks.size(); i++)
+			{
+				g_dock.m_docks[i]->pos.x *= width_difference;
+				g_dock.m_docks[i]->pos.y *= height_difference;
+				g_dock.m_docks[i]->size.x *= width_difference;
+				g_dock.m_docks[i]->size.y *= height_difference;
+			}
 			g_dock.workspace_pos = pos_;
 			g_dock.workspace_size = size_;
+			SaveDocks();
 		}
 	}
 
 	void DockContext::LoadDocks()
 	{
-		/*
-		JSON_Value* docks = json_parse_file("docks.json");
-		JSON_Object* obj = json_value_get_object(docks);
-		JSON_Object* all_docks = json_object_dotget_object(obj, "All Docks");
+		const JSON_Value* dock_configuration = json_parse_file("docks.json");
+		const JSON_Object* root_object = json_value_get_object(dock_configuration);
+		JSON_Object* docks_start = json_object_dotget_object(root_object, "Docking Config");
 
-		const int num_docks = json_object_get_number(all_docks, "num_docks");
+		int num_docks = json_object_get_number(docks_start, "docks_num");
+		JSON_Object* dock_object = nullptr;
+		
+		for (int i = 0; i < num_docks; i++)
+		{
+			char dock_name[10];
+			sprintf(dock_name, "dock_%i", i);
+			dock_object = json_object_dotget_object(docks_start, dock_name);
+
+			Dock* new_dock = new Dock();
+			new_dock = (Dock *)MemAlloc(sizeof(Dock));
+			new_dock->Load(dock_object);
+
+			g_dock.m_docks.push_back(new_dock);
+		}
 
 		for (int i = 0; i < num_docks; i++)
 		{
-			std::string temp = "Dock" + std::to_string(i);
-			JSON_Object* dock_obj = json_object_dotget_object(obj, temp.c_str());
-			
-			Dock* dock = new Dock();
-			//std::string label = 
-			dock->label = (char*)json_object_get_string(dock_obj, "label"); //label.c_str();
-			dock->id = json_object_get_number(dock_obj, "id");
-			//dock->prev_tab = json_object_get_number(dock_obj, "prev_tab");
-			//dock->next_tab = json_object_get_number(dock_obj, "next_tab");	//Parent && childs
-			dock->active = json_object_get_boolean(dock_obj, "active");
-			dock->pos.x = json_object_get_number(dock_obj, "pos_x");
-			dock->pos.y = json_object_get_number(dock_obj, "pos_y");
-			dock->size.x = json_object_get_number(dock_obj, "size_x");
-			dock->size.y = json_object_get_number(dock_obj, "size_y");
-			int status = json_object_get_number(dock_obj, "status");
-			switch (status)
-			{
-			case 0:
-				dock->status = Status_Docked;
-				break;
-			case 1:
-				dock->status = Status_Float;
-				break;
-			case 2:
-				dock->status = Status_Dragged;
-				break;
-			default :
-				break;
-			}
-			
-			dock->opened = json_object_get_boolean(dock_obj, "opened");
-			dock->first = json_object_get_boolean(dock_obj, "first");
-			dock->last_frame = json_object_get_number(dock_obj, "last_frame");
-			g_dock.m_docks.push_back(dock);
+			char dock_name[10];
+			sprintf(dock_name, "dock_%i", i);
+			dock_object = json_object_dotget_object(docks_start, dock_name);
+			g_dock.m_docks[i]->LoadHierarchy(dock_object);
 		}
-		*/
 	}
 	void DockContext::SaveDocks()
 	{
-		/*
-		JSON_Value* docks = json_parse_file("docks.json");
-		JSON_Object* obj = json_value_get_object(docks);
+		const JSON_Value* docks_configuration = json_parse_file("docks.json");
+		const JSON_Object* root_object = json_value_get_object(docks_configuration);
 
-		//TODO: IDK WHY can't create a root to put all the docks & the number of them.
-		JSON_Object* dock_root_obj = json_object_dotget_object(obj, "AllDocks");
-		JSON_Value* dock_root = json_value_init_object();
+		JSON_Object* docks_start = json_object_dotget_object(root_object, "Docking Config");
 
-		json_object_set_number(json_object(dock_root), "num_docks", g_dock.m_docks.size());
-		json_object_dotset_value(obj, "All Docks", dock_root);
-		//----
-		
-		for (int i = 0; i < g_dock.m_docks.size(); i++)
+		for (int i = 0; i < g_dock.m_docks.size(); ++i)
 		{
-			std::string temp = "Dock" + std::to_string(i);			
-			
-			JSON_Object* dock_obj = json_object_dotget_object(dock_root_obj, temp.c_str());
-			JSON_Value* dock = json_value_init_object(); 
-			
-			json_object_set_string(json_object(dock), "label", g_dock.m_docks[i]->label);
-			json_object_dotset_value(obj, temp.c_str(), dock);
+			char dock_name[10];
+			sprintf(dock_name, "dock_%i", i);
 
-			json_object_set_number(json_object(dock), "id", g_dock.m_docks[i]->id);
-			json_object_dotset_value(obj, temp.c_str(), dock);
+			json_object_set_value(docks_start, dock_name, json_value_init_object());
 
-			json_object_dotset_number(json_object(dock), "prev_tab", getDockIndex(g_dock.m_docks[i]->next_tab));
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "next_tab", getDockIndex(g_dock.m_docks[i]->prev_tab));
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "child_0", getDockIndex(g_dock.m_docks[i]->children[0]));
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "child_1", getDockIndex(g_dock.m_docks[i]->children[1]));
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "parent", getDockIndex(g_dock.m_docks[i]->parent));
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_boolean(json_object(dock), "active", g_dock.m_docks[i]->active);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "pos_x", g_dock.m_docks[i]->pos.x);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "pos_y", g_dock.m_docks[i]->pos.y);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "size_x", g_dock.m_docks[i]->size.x);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "size_y", g_dock.m_docks[i]->size.y);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "status", g_dock.m_docks[i]->status);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			//TODO: Location?
-
-			json_object_dotset_boolean(json_object(dock), "opened", g_dock.m_docks[i]->opened);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_boolean(json_object(dock), "first", g_dock.m_docks[i]->first);
-			json_object_dotset_value(obj, temp.c_str(), dock);
-
-			json_object_dotset_number(json_object(dock), "last_frame", g_dock.m_docks[i]->last_frame);
-			json_object_dotset_value(obj, temp.c_str(), dock);
+			JSON_Object* dock_object = json_object_dotget_object(docks_start, dock_name);
+			g_dock.m_docks[i]->Save(dock_object);
 		}
 
-		json_serialize_to_file(docks, "docks.json");
-		*/
+		json_object_dotset_number(docks_start, "docks_num", g_dock.m_docks.size());
+
+		json_serialize_to_file(docks_configuration, "docks.json");
+		json_value_free((JSON_Value *)docks_configuration);
 	}
 
 	DockContext::Dock::Dock() : id(0)
@@ -338,6 +297,52 @@ namespace ImGui
 		setChildrenPosSize(_pos, _size);
 	}
 
+	void DockContext::Dock::Save(JSON_Object * dock_object) const
+	{
+		json_object_dotset_string(dock_object, "label", label);
+		json_object_dotset_number(dock_object, "id", id);
+		json_object_dotset_number(dock_object, "next tab", g_dock.GetDockPos(next_tab));
+		json_object_dotset_number(dock_object, "prev tab", g_dock.GetDockPos(prev_tab));
+		json_object_dotset_number(dock_object, "first child", g_dock.GetDockPos(children[0]));
+		json_object_dotset_number(dock_object, "second child", g_dock.GetDockPos(children[1]));
+		json_object_dotset_number(dock_object, "parent", g_dock.GetDockPos(parent));
+		json_object_dotset_boolean(dock_object, "active", active);
+		json_object_dotset_number(dock_object, "position x", pos.x);
+		json_object_dotset_number(dock_object, "position y", pos.y);
+		json_object_dotset_number(dock_object, "size x", size.x);
+		json_object_dotset_number(dock_object, "size y", size.y);
+		json_object_dotset_number(dock_object, "status", status);
+		json_object_dotset_string(dock_object, "location", location);
+		json_object_dotset_boolean(dock_object, "opended", opened);
+		json_object_dotset_boolean(dock_object, "first", first);
+		json_object_dotset_number(dock_object, "last frame", last_frame);
+	}
+
+	void DockContext::Dock::Load(const JSON_Object * dock_object)
+	{
+		label = ImStrdup(json_object_get_string(dock_object, "label"));
+		id = json_object_get_number(dock_object, "id");
+		active = json_object_get_boolean(dock_object, "active");
+		pos.x = json_object_get_number(dock_object, "position x");
+		pos.y = json_object_get_number(dock_object, "position y");
+		size.x = json_object_get_number(dock_object, "size x");
+		size.y = json_object_get_number(dock_object, "size y");
+		status = (ImGui::Status_)(int)json_object_get_number(dock_object, "status");
+		sprintf(location, json_object_get_string(dock_object, "location"));
+		opened = json_object_get_boolean(dock_object, "opended");
+		first = json_object_get_boolean(dock_object, "first");
+		last_frame = json_object_get_number(dock_object, "last frame");
+	}
+
+	void DockContext::Dock::LoadHierarchy(const JSON_Object * dock_object)
+	{
+		next_tab = g_dock.GetDockbyPos(json_object_get_number(dock_object, "next tab"));
+		prev_tab = g_dock.GetDockbyPos(json_object_get_number(dock_object, "prev tab"));
+		children[0] = g_dock.GetDockbyPos(json_object_get_number(dock_object, "first child"));
+		children[1] = g_dock.GetDockbyPos(json_object_get_number(dock_object, "second child"));
+		parent = g_dock.GetDockbyPos(json_object_get_number(dock_object, "parent"));
+	}
+
 	DockContext::Dock & DockContext::getDock(const char * label, bool opened, const ImVec2 & default_size)
 	{
 		ImU32 id = ImHash(label, 0);
@@ -346,7 +351,6 @@ namespace ImGui
 			if (m_docks[i]->id == id) return *m_docks[i];
 		}
 
-		//TODO: LoadDock Their respective positioning if it exist, if not create new with the following:
 		Dock* new_dock = (Dock*)MemAlloc(sizeof(Dock));
 		IM_PLACEMENT_NEW(new_dock) Dock();
 		m_docks.push_back(new_dock);

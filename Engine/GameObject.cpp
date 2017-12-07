@@ -186,7 +186,7 @@ void GameObject::AddComponent(Component * component)
 
 void GameObject::Inspector()
 {
-	ImGui::Begin("Inspector");
+	App->BeginDockWindow("Inspector");
 	//Transform
 	if (local_transform->Inspector())
 	{
@@ -213,7 +213,7 @@ void GameObject::Inspector()
 
 		ImGui::TreePop();
 	}
-	ImGui::End();
+	App->EndDockWindow();
 }
 
 void GameObject::Reset()

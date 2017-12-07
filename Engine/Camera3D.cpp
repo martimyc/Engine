@@ -35,6 +35,8 @@ bool Camera3D::Init()
 	editor_camera_frustum.SetFrame(pos, vec(0, 0, -1), vec(0, 1, 0));
 	RecalculateFOV();
 
+	config_camera = false;
+
 	return true;
 }
 
@@ -81,12 +83,9 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 	}
 	App->EndDockWindow();
 
-	if (show_matrix_debug)
-	{
-		ImGui::Begin("Matrix Debug", &show_matrix_debug);
+	if (App->BeginDockWindow("Matrix Debug", &show_matrix_debug))
 		ShowMatrixDebug();
-		ImGui::End();
-	}
+	App->EndDockWindow();
 
 	return ret;
 }

@@ -29,7 +29,7 @@ public:
 	void OpenCloseConfigAudioWindow();
 
 private:
-	bool config_audio = true;
+	bool config_audio = false;
 
 	Mix_Music*			music;
 	std::vector<Mix_Chunk*>	fx;

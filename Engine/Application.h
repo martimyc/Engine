@@ -60,7 +60,7 @@ private:
 	char buf2[128] = "UPC CITM";
 
 	ImGui::DockContext* dock_context = nullptr;
-	bool config_app = true;
+	bool config_app = false;
 
 public:
 
@@ -76,7 +76,7 @@ public:
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
 	void OpenCloseConfigAppWindow();
-	void SetDockContextSize(const int width, const int height);
+	void SetDockContextSize(const int width, const int height, float width_difference = 1.0f, float height_difference = 1.0f);
 	bool BeginDockWindow(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0);
 	void EndDockWindow();
 

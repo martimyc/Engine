@@ -33,6 +33,8 @@ bool SceneManager::Init()
 
 	go_kdtree->AddGameObject(root);
 
+	config_scene = false;
+
 	return true;
 }
 
@@ -91,8 +93,6 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 		ImGui::Checkbox("Draw Game Objects' KDT", &draw_kdt);
 	}
 	App->EndDockWindow();
-
-	ImGui::ShowTestWindow();
 
 	Hirarchy();
 
@@ -232,12 +232,11 @@ void SceneManager::Hirarchy()
 {
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((focused == root) ? ImGuiTreeNodeFlags_Selected : 0);
 
-	if (ImGui::Begin("Hirarchy", &hirarchy_active))
+	if (App->BeginDockWindow("Hirarchy", &hirarchy_active))
 	{
 		root->Hirarchy(focused);
-
-		ImGui::End();
 	}
+	App->EndDockWindow();
 
 	if (focused != root)
 		focused->Inspector();

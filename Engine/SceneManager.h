@@ -24,7 +24,7 @@ class SceneManager : public Module
 {
 private:
 	DRAW_MODE draw_mode;
-	bool config_scene = true;
+	bool config_scene = false;
 	bool wireframe;
 	bool normals;
 	bool polygons;
