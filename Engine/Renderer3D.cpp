@@ -148,6 +148,8 @@ bool Renderer3D::Init()
 	play_buttons_size_x = 132;
 	play_buttons_size_y = 47;
 
+	config_renderer = false;
+
 	return ret;
 }
 
@@ -282,28 +284,28 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 	render_to_texture->UnBindFrameBuffer();
 
 	ImGuiWindowFlags flags_scene = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
-	App->BeginDockWindow("Scene", nullptr, flags_scene);
-	
-	mouse_on_scene_window = ImGui::IsWindowHovered();
+	if (App->BeginDockWindow("Scene", nullptr, flags_scene))
+	{
+		mouse_on_scene_window = ImGui::IsWindowHovered();
 
-	render_to_texture->SetPosX(ImGui::GetWindowPos().x);
-	render_to_texture->SetPosY(ImGui::GetWindowPos().y);
-	render_to_texture->SetWidth(ImGui::GetWindowWidth());
-	render_to_texture->SetHeight(ImGui::GetWindowHeight());
+		render_to_texture->SetPosX(ImGui::GetWindowPos().x);
+		render_to_texture->SetPosY(ImGui::GetWindowPos().y);
+		render_to_texture->SetWidth(ImGui::GetWindowWidth());
+		render_to_texture->SetHeight(ImGui::GetWindowHeight());
 
-	//Create Play/Pause/Play1Frame buttons
-	ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY()), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2(play_buttons_size_x, play_buttons_size_y), ImGuiCond_Always);
-	ImGuiWindowFlags flags_buttons = ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | 
-		ImGuiWindowFlags_ShowBorders;
-	ImGui::Begin("", nullptr, flags_buttons);
-	App->resource_manager->CreateButtons();
-	ImGui::End();
+		//Create Play/Pause/Play1Frame buttons
+		ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY()), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(play_buttons_size_x, play_buttons_size_y), ImGuiCond_Always);
+		ImGuiWindowFlags flags_buttons = ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
+			ImGuiWindowFlags_ShowBorders;
+		ImGui::Begin("", nullptr, flags_buttons);
+		App->resource_manager->CreateButtons();
+		ImGui::End();
 
-	ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth() - 15, render_to_texture->GetHeight() - 35), ImVec2(0, 1), ImVec2(1, 0));
-
+		ImGui::Image((void*)render_to_texture->GetTextureID(), ImVec2(render_to_texture->GetWidth() - 15, render_to_texture->GetHeight() - 35), ImVec2(0, 1), ImVec2(1, 0));
+	}
 	App->EndDockWindow();
 
 	ImGui::Render();
@@ -331,9 +333,32 @@ void Renderer3D::OpenCloseConfigRendererWindow()
 
 void Renderer3D::OnResize(int width, int height)
 {
+	float width_difference = ((float)width / (float)App->window->GetWidth());
+	float height_difference = ((float)height / (float)App->window->GetHeight());
+
 	App->window->WindowResize(width, height);
 
-	App->SetDockContextSize(width, height);
+	App->SetDockContextSize(width, height, width_difference, height_difference);
+
+	if (render_to_texture)
+	{
+		glDeleteTextures(1, &render_to_texture->GetTextureID());
+		glDeleteRenderbuffers(1, &render_to_texture->GetDepthID());
+		glDeleteFramebuffers(1, &render_to_texture->GetFrameBufferID());
+		render_to_texture->CreateFrameBuffer(width, height);
+	}
+
+	ChangeCameraMatrixView();
+}
+
+void Renderer3D::OnResize(int width, int height, int prev_width, int prev_height)
+{
+	float width_difference = ((float)width / (float)prev_width);
+	float height_difference = ((float)height / (float)prev_height);
+
+	App->window->WindowResize(width, height, false);
+
+	App->SetDockContextSize(width, height, width_difference, height_difference);
 
 	if (render_to_texture)
 	{

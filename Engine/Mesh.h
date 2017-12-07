@@ -186,6 +186,8 @@ public:
 	math::vec GetMaxYVertex() const;
 	math::vec GetMaxZVertex() const;
 
+	math::vec GetCenter() const;
+
 	//bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
 
 	void SetSource(MeshSource* source);

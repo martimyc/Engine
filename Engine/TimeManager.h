@@ -47,6 +47,8 @@ public:
 	//Getters
 	const float GetRealTimeSinceStart() const;
 	const float GetGameTimeSinceStart() const;
+
+	void OpenCloseTimers();
 };
 
 #endif // !TIME_MANAGER

@@ -81,6 +81,8 @@ bool HardwareSoftwareInfo::Start()
 	else
 		vram = (float)video_memory / (1024.f * 1024.f * 1024.f);
 
+	config_hardware_software = false;
+
 	return ret;
 }
 

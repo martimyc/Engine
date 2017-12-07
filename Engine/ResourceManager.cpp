@@ -152,14 +152,14 @@ bool ResourceManager::Init()
 
 UPDATE_STATUS ResourceManager::Update(float dt)
 {
-	if (ImGui::Begin("Assets"))
+	if (App->BeginDockWindow("Assets"))
 	{
 		ImGui::Columns(2);
 		root_dir->Hirarchy(current_dir);
 		ImGui::NextColumn();
 		current_dir->Inspector(selected);
 	}
-	ImGui::End();
+	App->EndDockWindow();
 	return UPDATE_CONTINUE;
 }
 

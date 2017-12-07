@@ -35,6 +35,8 @@ bool Camera3D::Init()
 	editor_camera_frustum.SetFrame(pos, vec(0, 0, -1), vec(0, 1, 0));
 	RecalculateFOV();
 
+	config_camera = false;
+
 	return true;
 }
 
@@ -64,7 +66,7 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 			{
 				ImGui::SliderFloat("WASD speed", &camera_speed, 2.0f, 15.0f);
 				ImGui::SliderFloat("Zoom speed", &camera_zoom_speed, 0.5f, 5.0f);
-				ImGui::SliderFloat("Rotation sensivility", &sensibility, 0.1f, 0.5f);
+				ImGui::SliderFloat("Rotation sensivility", &sensibility, 0.1f, 0.8f);
 
 				//ImGui::SliderFloat("Near Plane Distance", &near_plane_dist_editor_camera, 0.1f, 0.5f);
 				ImGui::SliderFloat("Far Plane Distance", &far_plane_dist_editor_camera, 250.0f, 1000.0f);
@@ -81,12 +83,9 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 	}
 	App->EndDockWindow();
 
-	if (show_matrix_debug)
-	{
-		ImGui::Begin("Matrix Debug", &show_matrix_debug);
+	if (App->BeginDockWindow("Matrix Debug", &show_matrix_debug))
 		ShowMatrixDebug();
-		ImGui::End();
-	}
+	App->EndDockWindow();
 
 	return ret;
 }
@@ -172,18 +171,15 @@ UPDATE_STATUS Camera3D::Update(float dt)
 
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
 		{
-			int dx = App->input->GetMouseXMotion();
-			int dy = App->input->GetMouseYMotion();
+			int dx = -App->input->GetMouseXMotion();
+			int dy = -App->input->GetMouseYMotion();
+			vec temp_pos = editor_camera_frustum.pos;
 
 			if (dx != 0)
 			{
-				vec temp_pos = editor_camera_frustum.pos;
 				float delta_x = (float)dx * sensibility;
 				rotation.SetFromAxisAngle(vec(0, 1, 0), delta_x * DEGTORAD);
-				editor_camera_frustum.TransformInverted(rotation);
-				editor_camera_frustum.pos = temp_pos;
-				editor_camera_frustum.WorldMatrixChanged();
-				camera_moved = true;
+				editor_camera_frustum.Transform(rotation);
 			}
 
 			if (dy != 0)
@@ -191,7 +187,11 @@ UPDATE_STATUS Camera3D::Update(float dt)
 				vec temp_pos = editor_camera_frustum.pos;
 				float delta_y = (float)dy * sensibility;
 				rotation.SetFromAxisAngle(math::Cross(editor_camera_frustum.front, vec(0, 1, 0)), delta_y * DEGTORAD);
-				editor_camera_frustum.TransformInverted(rotation);
+				editor_camera_frustum.Transform(rotation);
+			}
+
+			if (dx != 0 || dy != 0)
+			{
 				editor_camera_frustum.pos = temp_pos;
 				editor_camera_frustum.WorldMatrixChanged();
 				camera_moved = true;

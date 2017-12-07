@@ -124,6 +124,8 @@ bool Window::Init()
 		}
 	}
 
+	config_window = false;
+
 	return ret;
 }
 
@@ -170,6 +172,9 @@ UPDATE_STATUS Window::Configuration(float dt)
 			
 		if (ImGui::Combo("Window Size", &win_size, " 720 x 480\0 800 x 600\0 1024 x 768\0 1280 x 720\0 1280 x 1024\0 1600 x 900\0 1920 x 1080\0\0"))
 		{
+			int prev_width = screen_width * scale;
+			int prev_height = screen_height * scale;
+
 			switch (win_size)
 			{
 			case 0:
@@ -203,8 +208,8 @@ UPDATE_STATUS Window::Configuration(float dt)
 			default:
 				break;
 			}
-			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
-			App->renderer_3d->OnResize(screen_width*scale, screen_height*scale);
+			SDL_SetWindowSize(window, screen_width * scale, screen_height * scale);
+			App->renderer_3d->OnResize(screen_width * scale, screen_height * scale, prev_width, prev_height);
 		}
 
 		json_object_set_number(json_object(win), "screen_width", screen_width);
@@ -215,6 +220,9 @@ UPDATE_STATUS Window::Configuration(float dt)
 		win_size = scale - 1;
 		if (ImGui::Combo("Window Size Multiplier", &win_size, " 1\0 2\0\0"))
 		{
+			int prev_width = screen_width * scale;
+			int prev_height = screen_height * scale;
+
 			switch (win_size)
 			{
 			case 0:
@@ -226,8 +234,8 @@ UPDATE_STATUS Window::Configuration(float dt)
 			default:
 				break;
 			}
-			SDL_SetWindowSize(window, screen_width*scale, screen_height*scale);
-			App->SetDockContextSize(screen_width*scale, screen_height*scale);
+			SDL_SetWindowSize(window, screen_width * scale, screen_height * scale);
+			App->renderer_3d->OnResize(screen_width * scale, screen_height * scale, prev_width, prev_height);
 		}
 		json_object_set_number(json_object(win), "scale", scale);
 		json_object_dotset_value(obj, "Window", win);
@@ -328,11 +336,14 @@ void Window::SetTitle(const char* title)
 	SDL_SetWindowTitle(window, title);
 }
 
-void Window::WindowResize(uint w, uint h)
+void Window::WindowResize(uint w, uint h, bool change_w_h)
 {
 	glViewport(0, 0, w, h);
-	screen_width = w;
-	screen_height = h;
+	if (change_w_h)
+	{
+		screen_width = w;
+		screen_height = h;
+	}
 	aspect_ratio = (float)w / h;
 	App->camera->RecalculateFOV();
 }

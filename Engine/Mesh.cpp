@@ -468,7 +468,7 @@ math::vec MeshSource::GetMinXVertex() const
 	int min = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (min < vertices[i * 3])
+		if (vertices[min * 3] > vertices[i * 3])
 			min = i;
 
 	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
@@ -479,7 +479,7 @@ math::vec MeshSource::GetMinYVertex() const
 	int min = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (min < vertices[i * 3 + 1])
+		if (vertices[min * 3 + 1] > vertices[i * 3 + 1])
 			min = i;
 
 	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
@@ -490,7 +490,7 @@ math::vec MeshSource::GetMinZVertex() const
 	int min = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (min < vertices[i * 3 + 2])
+		if (vertices[min * 3 + 2] > vertices[i * 3 + 2])
 			min = i;
 
 	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
@@ -501,7 +501,7 @@ math::vec MeshSource::GetMaxXVertex() const
 	int max = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (max > vertices[i * 3])
+		if (vertices[max * 3] < vertices[i * 3])
 			max = i;
 
 	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
@@ -512,7 +512,7 @@ math::vec MeshSource::GetMaxYVertex() const
 	int max = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (max > vertices[i * 3 + 1])
+		if (vertices[max * 3 + 1] < vertices[i * 3 + 1])
 			max = i;
 
 	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
@@ -523,7 +523,7 @@ math::vec MeshSource::GetMaxZVertex() const
 	int max = 0.0f;
 
 	for (int i = 0; i < num_vertices; i++)
-		if (max > vertices[i * 3 + 2])
+		if (vertices[max * 3 + 2] < vertices[i * 3 + 2])
 			max = i;
 
 	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
@@ -918,6 +918,11 @@ math::vec Mesh::GetMaxZVertex() const
 		return source->GetMaxZVertex();
 	LOG("Trying to acces non loaded mesh");
 	return math::vec(0.0f, 0.0f, 0.0f);
+}
+
+math::vec Mesh::GetCenter() const
+{
+	return math::vec(GetMaxX() + GetMinX() / 2, GetMaxY() + GetMinY() / 2, GetMaxZ() + GetMinZ() / 2);
 }
 
 /*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const

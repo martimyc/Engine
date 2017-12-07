@@ -1,4 +1,5 @@
 #include "imgui\imgui.h"
+#include "Application.h"
 #include "TimeManager.h"
 
 TimeManager::TimeManager(const char* name, bool start_enabled) : Module(name, start_enabled)
@@ -11,7 +12,7 @@ TimeManager::~TimeManager()
 
 bool TimeManager::Start()
 {
-	show_timers = true;
+	show_timers = false;
 	game_clock_paused = false; 
 	can_pause = false; 
 	real_time_clock.Start();
@@ -22,16 +23,12 @@ bool TimeManager::Start()
 
 UPDATE_STATUS TimeManager::Update(float dt)
 {
-	if (show_timers)
+	if (App->BeginDockWindow("Timers", &show_timers))
 	{
-		ImGui::Begin("Timers");
 		ImGui::Text("Real Time: %.3f", real_time_clock.ReadSec());
 		ImGui::Text("Game Time: %.3f", game_clock.ReadSec());
-
-		ImGui::Asset("Test", ImVec2(100, 100), false, (void*)5);
-
-		ImGui::End();
 	}
+	App->EndDockWindow();
 
 	real_time_since_start = real_time_clock.ReadSec();
 	game_time_since_start = game_clock.ReadSec();
@@ -85,4 +82,9 @@ const float TimeManager::GetRealTimeSinceStart() const
 const float TimeManager::GetGameTimeSinceStart() const
 {
 	return game_time_since_start;
+}
+
+void TimeManager::OpenCloseTimers()
+{
+	show_timers = !show_timers;
 }
