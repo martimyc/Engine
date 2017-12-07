@@ -79,6 +79,7 @@ private:
 	Texture* LoadCheckers();
 
 	void LoadButtons();
+	void LoadFolderIcon();
 
 public:
 	bool Init();
@@ -107,6 +108,9 @@ public:
 
 	void SetRootDir(AssetDirectory* dir);
 	void SetCurrentDir(AssetDirectory* dir);
+
+	bool CopyFileToCurrentDir(const std::string& path) const;
+	const std::string& GetCurrentDirPath() const;
 };
 
 #endif // !RESOURCE_MANAGER

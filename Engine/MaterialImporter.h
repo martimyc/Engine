@@ -15,24 +15,25 @@ struct TextureImportConfiguration;
 struct TextureLoadConfiguration;
 struct Material;
 struct UID;
+class AssetDirectory;
 
 class MaterialImporter
 {
 private:
 	unsigned int GetTotalSize(const aiMaterial * material) const;
 
-	void ImportDiffuse(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportSpecular(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportAmbient(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportEmissive(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportHeight(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportNormals(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportShininess(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportOpacity(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportDisplacement(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportLightMap(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportReflection(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
-	void ImportUnknown(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const;
+	void ImportDiffuse(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportSpecular(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportAmbient(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportEmissive(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportHeight(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportNormals(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportShininess(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportOpacity(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportDisplacement(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportLightMap(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportReflection(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
+	void ImportUnknown(const std::string& scene_dir, const aiMaterial* material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir = nullptr) const;
 
 	void LoadDiffuse(Material* to_load, char** iterator) const;
 	void LoadSpecular(Material* to_load, char** iterator) const;
@@ -50,7 +51,7 @@ public:
 	MaterialImporter();
 	~MaterialImporter();
 
-	const UID Import(const std::string& scene_path, const aiMaterial* material, const MaterialImportConfiguration* config) const;
+	const UID Import(const std::string& scene_path, const aiMaterial* material, const MaterialImportConfiguration* config, AssetDirectory* dir = nullptr) const;
 	bool Load(Material* to_load, unsigned int priority, const MaterialLoadConfiguration* config) const;
 };
 

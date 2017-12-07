@@ -31,16 +31,12 @@ TextureImporter::TextureImporter()
 TextureImporter::~TextureImporter()
 {}
 
-const UID TextureImporter::Import(const std::string& file, const TextureImportConfiguration* config)
+const UID TextureImporter::Import(const std::string& full_path, const TextureImportConfiguration* config)
 {
 	UID uid;
 
-	std::string path(App->file_system->GetAssets());
-	path += "\\";
-	path += file;
-
 	char* buffer = nullptr;
-	unsigned int length = App->file_system->LoadFileBinary(path, &buffer);
+	unsigned int length = App->file_system->LoadFileBinary(full_path, &buffer);
 
 	if (buffer == nullptr || length == 0)
 		return uid;
@@ -91,13 +87,13 @@ const UID TextureImporter::Import(const std::string& file, const TextureImportCo
 			{
 				uid.Generate((char*)data, size);
 
-				if (App->file_system->SaveFile((const char*)data, size, LIBRARY_TEXTURES_FOLDER, uid.GetAsName().c_str(), "dds") == false)
+				if (App->file_system->SaveFile((const char*)data, size, App->file_system->GetTextures().c_str(), uid.GetAsName().c_str(), "dds") == false)
 				{
-					LOG("Could not save %s correctlly", file.c_str());
+					LOG("Could not save %s correctlly", full_path.c_str());
 					return UID();
 				}
 				else
-					LOG("Saved %s succesfully", file.c_str());
+					LOG("Saved %s succesfully", full_path.c_str());
 			}		
 			DELETE_ARRAY(data);
 		}

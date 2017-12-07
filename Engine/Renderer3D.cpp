@@ -20,6 +20,7 @@
 #include "Console.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
+#include "Input.h"
 #include "Application.h"
 #include "Renderer3D.h"
 

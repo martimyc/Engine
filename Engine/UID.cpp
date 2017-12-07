@@ -4,7 +4,9 @@
 #include "UID.h"
 
 UID::UID()
-{}
+{
+	memset(uid, 0, 16);
+}
 
 UID::UID(const UID & id)
 {

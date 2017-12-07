@@ -24,7 +24,7 @@
 
 GLuint AssetDirectory::icon = 0;
 
-AssetDirectory::AssetDirectory(const std::string& name): name(name)
+AssetDirectory::AssetDirectory(const std::string& path): path(path)
 {}
 
 AssetDirectory::~AssetDirectory()
@@ -43,9 +43,14 @@ void AssetDirectory::SetImage(GLuint id)
 	icon = id;
 }
 
-const std::string & AssetDirectory::GetName() const
+const std::string & AssetDirectory::GetPath() const
 {
-	return name;
+	return path;
+}
+
+std::string AssetDirectory::GetName() const
+{
+	return path.substr(path.find_last_of("\\") + 1);
 }
 
 void AssetDirectory::AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
@@ -110,7 +115,7 @@ void AssetDirectory::Inspector(unsigned int& selected)
 
 	for (std::vector<AssetDirectory*>::iterator it = directories.begin(); it != directories.end(); ++it)
 	{
-		if(ImGui::Asset((*it)->name.c_str(), image_size, i == selected ? true : false,(void*) icon))
+		if(ImGui::Asset((*it)->GetName().c_str(), image_size, i == selected ? true : false,(void*) icon))
 			App->resource_manager->SetCurrentDir(*it);
 
 		if (ImGui::IsItemClicked())
@@ -139,11 +144,11 @@ void AssetDirectory::Inspector(unsigned int& selected)
 	ImGui::EndGroup();
 }
 
-bool AssetDirectory::Hirarchy(AssetDirectory * focused)
+bool AssetDirectory::Hirarchy(AssetDirectory ** focused)
 {
 	bool ret = false;
 	bool has_childs = directories.size() != 0;
-	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((focused == this) ? ImGuiTreeNodeFlags_Selected : 0);
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((*focused == this) ? ImGuiTreeNodeFlags_Selected : 0);
 
 	if (!has_childs)
 	{
@@ -151,13 +156,11 @@ bool AssetDirectory::Hirarchy(AssetDirectory * focused)
 		node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	std::string dir_name(name.substr(name.find_last_of("\\") + 1));
-
-	bool node_open = ImGui::TreeNodeEx(this, node_flags, dir_name.c_str()); //TODO try with TreeNode*
+	bool node_open = ImGui::TreeNodeEx(this, node_flags, GetName().c_str()); //TODO try with TreeNode*
 
 	if (ImGui::IsItemClicked() && ret == false)
 	{
-		focused = this;
+		*focused = this;
 		ret = true;
 	}
 

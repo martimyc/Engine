@@ -24,6 +24,7 @@
 #include "AppliedMaterial.h"
 
 //Modules
+#include "FileSystem.h"
 #include "ImportManager.h"
 #include "SceneManager.h"
 #include "TimeManager.h"
@@ -140,22 +141,34 @@ void ResourceManager::SetCurrentDir(AssetDirectory * dir)
 	current_dir = dir;
 }
 
+bool ResourceManager::CopyFileToCurrentDir(const std::string & path) const
+{
+	return App->file_system->CopyTo(path, current_dir->GetPath());
+}
+
+const std::string & ResourceManager::GetCurrentDirPath() const
+{
+	return current_dir->GetPath();
+}
+
 bool ResourceManager::Init()
 {
 	debug_textures = LoadCheckers();
 	selected = 0;
 	current_dir = nullptr;
 	LoadButtons();
-
+	LoadFolderIcon();
 	return true;
 }
 
 UPDATE_STATUS ResourceManager::Update(float dt)
 {
+	ImGui::ShowTestWindow();
 	if (App->BeginDockWindow("Assets"))
 	{
 		ImGui::Columns(2);
-		root_dir->Hirarchy(current_dir);
+		ImGui::SetColumnWidth(0, 200);
+		root_dir->Hirarchy(&current_dir);
 		ImGui::NextColumn();
 		current_dir->Inspector(selected);
 	}
@@ -271,6 +284,11 @@ void ResourceManager::LoadButtons()
 	buttons.push_back(new Button(BT_PLAY, App->import_manager->GenerateButtonImage("Buttons\\PlayButton.png"), 25, 25));
 	buttons.push_back(new Button(BT_PAUSE, App->import_manager->GenerateButtonImage("Buttons\\PauseButton.png"), 25, 25));
 	buttons.push_back(new Button(BT_PLAY_ONE_FRAME, App->import_manager->GenerateButtonImage("Buttons\\PlayOneFrameButton.png"), 25, 25));
+}
+
+void ResourceManager::LoadFolderIcon()
+{
+	AssetDirectory::SetImage(App->import_manager->GenerateButtonImage("FolderIcon.png"));
 }
 
 unsigned int ResourceManager::GetNewMaterialPriority()

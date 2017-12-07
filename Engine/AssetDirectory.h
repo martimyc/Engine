@@ -23,17 +23,18 @@ class AssetDirectory
 {
 private:
 	static GLuint icon;
-	std::string name;
+	std::string path;
 	std::vector<Asset*> assets;
 	std::vector<AssetDirectory*> directories;
 
 public:
-	AssetDirectory(const std::string& name);
+	AssetDirectory(const std::string& path);
 	~AssetDirectory();
 
 	static void SetImage(GLuint id);
 
-	const std::string& GetName() const;
+	const std::string& GetPath() const;
+	std::string GetName() const;
 
 	void AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
 	void AddDir(AssetDirectory* new_directory);
@@ -42,7 +43,7 @@ public:
 	void RemoveDir(AssetDirectory* to_remove);
 
 	void Inspector(unsigned int& selected);
-	bool Hirarchy(AssetDirectory* focused);
+	bool Hirarchy(AssetDirectory** focused);
 
 	Material* UseMaterial(const UID& id, const GameObject* go) const;
 	Texture* UseTexture(const UID& id, const Material* material) const;

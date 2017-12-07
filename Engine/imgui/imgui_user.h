@@ -20,7 +20,7 @@ namespace ImGui
 	IMGUI_API bool          SliderInt3NoLabel(const char* label, int v[3], int v_min, int v_max, const char* display_format = "%.0f");
 	IMGUI_API bool          SliderInt4NoLabel(const char* label, int v[4], int v_min, int v_max, const char* display_format = "%.0f");
 
-	IMGUI_API bool 			Asset(const char * label, const ImVec2 size, bool selected, ImTextureID image_id, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1), const ImVec4& tint_col = ImVec4(1, 1, 1, 1), const ImVec4& border_col = ImVec4(0, 0, 0, 0));
+	IMGUI_API bool 			Asset(const char * label, const ImVec2 size, bool selected, ImTextureID image_id, const ImVec2& uv0 = ImVec2(0, 1), const ImVec2& uv1 = ImVec2(1, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1), const ImVec4& border_col = ImVec4(0, 0, 0, 0));
 }
 
 #endif //!IMGUI_USER

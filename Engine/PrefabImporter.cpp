@@ -210,7 +210,7 @@ const UID PrefabImporter::Import(const aiScene* scene, const std::vector<std::pa
 	uint length = iterator - buffer;
 	UID uid(buffer, length);
 
-	if (App->file_system->SaveFile(buffer, length, LIBRARY_PREFABS_FOLDER, uid.GetAsName(), "mm") == false)
+	if (App->file_system->SaveFile(buffer, length, App->file_system->GetPrefabs().c_str(), uid.GetAsName(), "mm") == false)
 	{
 		LOG("Could not save prefab correctlly");
 		return UID();

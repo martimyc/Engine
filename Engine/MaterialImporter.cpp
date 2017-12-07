@@ -54,7 +54,7 @@ unsigned int MaterialImporter::GetTotalSize(const aiMaterial * material) const
 	return total_size;
 }
 
-void MaterialImporter::ImportDiffuse(const std::string& scene_dir, const aiMaterial * material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportDiffuse(const std::string& scene_dir, const aiMaterial * material, char** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -77,7 +77,7 @@ void MaterialImporter::ImportDiffuse(const std::string& scene_dir, const aiMater
 			else
 				full_path += path.C_Str();
 			
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, new TextureImportConfiguration(*import_config), new TextureLoadConfiguration(*load_config));
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, new TextureImportConfiguration(*import_config), new TextureLoadConfiguration(*load_config), dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -97,7 +97,7 @@ void MaterialImporter::ImportDiffuse(const std::string& scene_dir, const aiMater
 	}
 }
 
-void MaterialImporter::ImportSpecular(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportSpecular(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -120,7 +120,7 @@ void MaterialImporter::ImportSpecular(const std::string& scene_dir, const aiMate
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -140,7 +140,7 @@ void MaterialImporter::ImportSpecular(const std::string& scene_dir, const aiMate
 	}
 }
 
-void MaterialImporter::ImportAmbient(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportAmbient(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -163,7 +163,7 @@ void MaterialImporter::ImportAmbient(const std::string& scene_dir, const aiMater
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -183,7 +183,7 @@ void MaterialImporter::ImportAmbient(const std::string& scene_dir, const aiMater
 	}
 }
 
-void MaterialImporter::ImportEmissive(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportEmissive(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -206,7 +206,7 @@ void MaterialImporter::ImportEmissive(const std::string& scene_dir, const aiMate
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -226,7 +226,7 @@ void MaterialImporter::ImportEmissive(const std::string& scene_dir, const aiMate
 	}
 }
 
-void MaterialImporter::ImportHeight(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportHeight(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -249,7 +249,7 @@ void MaterialImporter::ImportHeight(const std::string& scene_dir, const aiMateri
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -269,7 +269,7 @@ void MaterialImporter::ImportHeight(const std::string& scene_dir, const aiMateri
 	}
 }
 
-void MaterialImporter::ImportNormals(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportNormals(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -292,7 +292,7 @@ void MaterialImporter::ImportNormals(const std::string& scene_dir, const aiMater
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -312,7 +312,7 @@ void MaterialImporter::ImportNormals(const std::string& scene_dir, const aiMater
 	}
 }
 
-void MaterialImporter::ImportShininess(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportShininess(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -335,7 +335,7 @@ void MaterialImporter::ImportShininess(const std::string& scene_dir, const aiMat
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -355,7 +355,7 @@ void MaterialImporter::ImportShininess(const std::string& scene_dir, const aiMat
 	}
 }
 
-void MaterialImporter::ImportOpacity(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportOpacity(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -378,7 +378,7 @@ void MaterialImporter::ImportOpacity(const std::string& scene_dir, const aiMater
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -398,7 +398,7 @@ void MaterialImporter::ImportOpacity(const std::string& scene_dir, const aiMater
 	}
 }
 
-void MaterialImporter::ImportDisplacement(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportDisplacement(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -421,7 +421,7 @@ void MaterialImporter::ImportDisplacement(const std::string& scene_dir, const ai
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -441,7 +441,7 @@ void MaterialImporter::ImportDisplacement(const std::string& scene_dir, const ai
 	}
 }
 
-void MaterialImporter::ImportLightMap(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportLightMap(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -464,7 +464,7 @@ void MaterialImporter::ImportLightMap(const std::string& scene_dir, const aiMate
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -484,7 +484,7 @@ void MaterialImporter::ImportLightMap(const std::string& scene_dir, const aiMate
 	}
 }
 
-void MaterialImporter::ImportReflection(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportReflection(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -507,7 +507,7 @@ void MaterialImporter::ImportReflection(const std::string& scene_dir, const aiMa
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -527,7 +527,7 @@ void MaterialImporter::ImportReflection(const std::string& scene_dir, const aiMa
 	}
 }
 
-void MaterialImporter::ImportUnknown(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir) const
+void MaterialImporter::ImportUnknown(const std::string& scene_dir, const aiMaterial * material, char ** iterator, TextureImportConfiguration* import_config, TextureLoadConfiguration* load_config, bool all_textures_in_same_dir, AssetDirectory* dir) const
 {
 	std::vector<UID> uids;
 
@@ -550,7 +550,7 @@ void MaterialImporter::ImportUnknown(const std::string& scene_dir, const aiMater
 			else
 				full_path += path.C_Str();
 
-			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config);
+			UID texture_uid = ImportManager::ImportClient::Import(App->import_manager, full_path, RT_TEXTURE, import_config, load_config, dir);
 
 			if (texture_uid.IsNull())
 				LOG("Error importing texture '%s', it won't be aded to material", full_path.c_str());
@@ -786,7 +786,7 @@ MaterialImporter::MaterialImporter()
 MaterialImporter::~MaterialImporter()
 {}
 
-const UID MaterialImporter::Import(const std::string& scene_dir, const aiMaterial * material, const MaterialImportConfiguration* config) const
+const UID MaterialImporter::Import(const std::string& scene_dir, const aiMaterial * material, const MaterialImportConfiguration* config, AssetDirectory* dir) const
 {
 	bool ret = true;
 
@@ -805,18 +805,18 @@ const UID MaterialImporter::Import(const std::string& scene_dir, const aiMateria
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
 
-	 ImportDiffuse(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportSpecular(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportAmbient(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportEmissive(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportHeight(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportNormals(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportShininess(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportOpacity(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportDisplacement(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportLightMap(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportReflection(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
-	 ImportUnknown(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir);
+	 ImportDiffuse(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportSpecular(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportAmbient(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportEmissive(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportHeight(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportNormals(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportShininess(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportOpacity(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportDisplacement(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportLightMap(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportReflection(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
+	 ImportUnknown(scene_dir, material, &iterator, config->texture_import_config, config->texture_load_config, config->all_textures_in_same_dir, dir);
 
 	uint length = iterator - buffer;
 
@@ -824,7 +824,7 @@ const UID MaterialImporter::Import(const std::string& scene_dir, const aiMateria
 
 	UID id(buffer, length);
 
-	if (App->file_system->SaveFile(buffer, length, LIBRARY_MATERIALS_FOLDER, id.GetAsName(), "mm") == false)
+	if (App->file_system->SaveFile(buffer, length, App->file_system->GetMaterials().c_str(), id.GetAsName(), "mm") == false)
 	{
 		LOG("Could not save material correctlly");
 		return UID();

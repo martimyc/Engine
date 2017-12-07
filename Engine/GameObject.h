@@ -168,6 +168,8 @@ public:
 	void PickGameObject(const LineSegment* ray, float ray_distance) const;
 
 	bool AddChildsToKDT(KDTreeGO& kdt) const;
+
+	GameObject* GetParent() const;
 };
 
 #endif // !_GAME_OBJECT

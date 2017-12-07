@@ -17,7 +17,7 @@ struct TextureImporter
 	TextureImporter();
 	~TextureImporter();
 
-	const UID Import(const std::string& file, const TextureImportConfiguration* config);
+	const UID Import(const std::string& full_path, const TextureImportConfiguration* config);
 	bool Load(Texture* to_load, const TextureLoadConfiguration* config);
 
 	bool GenerateImage(const std::string& path, const TextureImportConfiguration* import_config, const TextureLoadConfiguration* load_config, GLuint& id, unsigned int& width, unsigned int& heigth);

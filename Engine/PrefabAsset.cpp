@@ -23,7 +23,7 @@ void PrefabAsset::SetImage(GLuint id)
 	image = id;
 }
 
-PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(true)
+PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(false)
 {}
 
 bool PrefabImportConfiguration::Config()

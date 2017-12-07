@@ -169,6 +169,13 @@ void SceneManager::UpdateKDT(const GameObject * go)
 	go_kdtree->UpdateGO(go);
 }
 
+void SceneManager::DeleteFocused()
+{
+	GameObject* to_delete = focused;
+	focused = focused->GetParent();
+	focused->Delete(to_delete);
+}
+
 void SceneManager::EmptyScene()
 {
 	delete root;

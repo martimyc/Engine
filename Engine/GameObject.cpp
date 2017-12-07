@@ -267,7 +267,7 @@ bool GameObject::Hirarchy(GameObject*& selected)
 {
 	bool ret = false;
 	bool has_childs = childs.size() != 0;
-	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected == this) ? ImGuiTreeNodeFlags_Selected : 0);
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selected == this) ? ImGuiTreeNodeFlags_Selected : 0);
 
 	if (!has_childs)
 	{
@@ -658,6 +658,11 @@ bool GameObject::AddChildsToKDT(KDTreeGO & kdt) const
 		if (kdt.AddGameObject(*it) == false)
 			ret = false;
 	return ret;
+}
+
+GameObject * GameObject::GetParent() const
+{
+	return parent;
 }
 
 void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)

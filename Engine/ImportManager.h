@@ -40,6 +40,8 @@ class Mesh;
 class Texture;
 class Prefab;
 
+class AssetDirectory;
+
 enum RESOURCE_TYPE;
 class Asset;
 
@@ -68,23 +70,25 @@ public:
 	class ImportClient
 	{
 	private:
-		static const UID Import(const ImportManager* importer, const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
+		static const UID Import(const ImportManager* importer, const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config, AssetDirectory* dir = nullptr);
+		static void StraightImport(const std::string& file_path, AssetDirectory* dir);
 
 		friend class MaterialImporter;
+		friend class FileSystem;
 	};
 
 	ImportManager(const char* name, bool start_enabled = true);
 	~ImportManager();
 
 private:
-	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const;
+	const UID Import(const std::string& path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config, AssetDirectory* dir = nullptr) const;
 
 	//Meta files
-	bool TextureMetaSave(const std::string& file, const UID& resource_id, const TextureImportConfiguration* import_config, const TextureLoadConfiguration* load_config) const;
-	bool SceneMetaSave(const std::string& file, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID& prefab_id, const SceneImportConfiguration* import_config) const;
+	bool TextureMetaSave(const std::string& full_path, const UID& resource_id, const TextureImportConfiguration* import_config, const TextureLoadConfiguration* load_config) const;
+	bool SceneMetaSave(const std::string& full_path, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID& prefab_id, const SceneImportConfiguration* import_config) const;
 
 	//Scene
-	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config) const;
+	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config, AssetDirectory* dir = nullptr) const;
 	void LoadScene(AssetDirectory* dir, char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const;
 
 	const std::string GetImportFileNameNoExtension() const;

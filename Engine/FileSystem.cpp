@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <stdio.h>
 #include <fstream>
 #include "Dirent\dirent.h"
 #include "AssetDirectory.h"
@@ -140,21 +141,11 @@ unsigned int FileSystem::LoadFileBinary(const std::string& path, char ** buffer)
 	return size;
 }
 
-unsigned int FileSystem::LoadMetaFile(const std::string & file, char ** buffer) const
-{
-	std::string path(GetAssets());
-	path += "\\";
-	path += file;
-
-	return LoadFileBinary(path, buffer);
-}
-
-bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * relative_path, const std::string& name, const char * format) const
+bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * path, const std::string& name, const char * format) const
 {
 	bool ret = true;
-
-	char full_path[512];
-	sprintf(full_path, "%s%s\\%s.%s", working_directory.c_str(), relative_path, name.c_str(), format);
+	char full_path[256];
+	sprintf(full_path, "%s\\%s.%s", path, name.c_str(), format);
 
 	std::ofstream outfile(full_path, std::ofstream::binary);
 
@@ -172,24 +163,29 @@ bool FileSystem::SaveFile(const char * buffer, unsigned int size, const char * r
 	return ret;
 }
 
-bool FileSystem::SaveMetaFile(const char * buffer, unsigned int size, const char * name) const
+bool FileSystem::SaveMetaFile(const char * buffer, unsigned int size, const char * name, const char* dir) const
 {
-	return SaveFile(buffer, size, ASSETS_FOLDER, name, "meta");
+	return SaveFile(buffer, size, dir, name, "meta");
 }
 
-bool FileSystem::CopyToAssets(const std::string& path) const
+bool FileSystem::CopyTo(const std::string& path, const std::string& dir) const
 {
+	std::string name_ext(path.substr(path.find_last_of("\\") + 1));
+	if (IsIn(name_ext, dir))
+	{
+		LOG("File %s already saved in %s", name.c_str(), dir.c_str());
+		return true;
+	}
+
 	bool ret = true;
 	std::string name;
 	std::string extension;
-	std::string dir;
 	
 	size_t bar = path.find_last_of("\\");
 	size_t dot = path.find_last_of(".");
 
 	if (bar != path.length() && dot != path.length())
 	{
-		dir = path.substr(0, bar);
 		size_t count = dot - bar - 1; // -1 to avoid dot
 		name = path.substr(bar + 1, count);  //and +1 to avoid "\\"
 		extension = path.substr(dot + 1); // +1 to avoid dot
@@ -201,7 +197,7 @@ bool FileSystem::CopyToAssets(const std::string& path) const
 	length = LoadFileBinary(path, &buffer);
 
 	if (length != 0 && buffer != nullptr)
-		ret = SaveFile(buffer, length, ASSETS_FOLDER, name.c_str(), extension.c_str());
+		ret = SaveFile(buffer, length, dir.c_str(), name.c_str(), extension.c_str());
 
 	delete[] buffer;
 
@@ -224,7 +220,8 @@ AssetDirectory* FileSystem::GenerateAssets(const std::string & directory) const
 
 			if (ent->d_type == DT_DIR && file != "." && file != "..")
 			{
-				AssetDirectory* child_dir = GenerateAssets(file);
+				std::string dir_path(directory + "\\" + file);
+				AssetDirectory* child_dir = GenerateAssets(dir_path);
 				if (child_dir != nullptr)
 					asset_dir->AddDir(child_dir);
 			}
@@ -234,6 +231,11 @@ AssetDirectory* FileSystem::GenerateAssets(const std::string & directory) const
 				{
 					App->import_manager->MetaLoad(file, asset_dir);
 					LOG("Generated asset from %s into folder %s", file.c_str(), asset_dir->GetName().c_str());
+				}
+				else if (HasMeta(file, directory) == false)
+				{
+					std::string file_path(directory + "\\" + file);
+					ImportManager::ImportClient::StraightImport(file_path, asset_dir);
 				}
 			}
 		}
@@ -298,4 +300,47 @@ const std::string FileSystem::GetPrefabs() const
 bool FileSystem::IsMeta(const std::string & file) const
 {
 	return file.substr(file.find_last_of(".")) == ".meta";
+}
+
+bool FileSystem::HasMeta(const std::string & file, const std::string& directory) const
+{
+	DIR* dir;
+	struct dirent* ent;
+
+	if ((dir = opendir(directory.c_str())) != NULL)
+	{
+		/* Create assets for all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			std::string file_in_dir(ent->d_name);
+			if (ent->d_type == DT_REG)
+				if (IsMeta(file_in_dir))
+					if (file_in_dir.substr(0, file_in_dir.find_last_of(".")) == file)
+						return true;
+		}
+		closedir(dir);
+	}
+
+	return false;
+}
+
+bool FileSystem::IsIn(const std::string & file, const std::string & directory) const
+{
+	DIR* dir;
+	struct dirent* ent;
+
+	if ((dir = opendir(directory.c_str())) != NULL)
+	{
+		/* Create assets for all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			std::string file_in_dir(ent->d_name);
+			if (ent->d_type == DT_REG)
+				if (file_in_dir == file)
+					return true;
+		}
+		closedir(dir);
+	}
+
+	return false;
 }

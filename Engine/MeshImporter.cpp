@@ -221,7 +221,7 @@ const UID MeshImporter::Import(const aiMesh * mesh, const MeshImportConfiguratio
 
 	UID id(buffer, length);
 
-	if (App->file_system->SaveFile(buffer, length, LIBRARY_MESHES_FOLDER, id.GetAsName(), "mm") == false)
+	if (App->file_system->SaveFile(buffer, length, App->file_system->GetMeshes().c_str(), id.GetAsName(), "mm") == false)
 	{
 		LOG("Could not save mesh correctlly");
 		return UID();

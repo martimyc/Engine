@@ -27,6 +27,7 @@
 
 //importers
 #include "TextureImporter.h"
+#include "Input.h"
 #include "MeshImporter.h"
 #include "MaterialImporter.h"
 #include "PrefabImporter.h"
@@ -253,33 +254,46 @@ GLuint ImportManager::GenerateButtonImage(const std::string & relative_path)
 	return ret;
 }
 
-const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config) const
+const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config, AssetDirectory* dir) const
 {
-	if (!App->file_system->CopyToAssets(path))
-	{
-		LOG("Could not copy %s to assets", path.c_str());
-		return UID();
-	}
-
+	std::string new_path;
 	UID uid;
-
 	std::string file_name_ext(path.substr(path.find_last_of("\\") + 1));
 	std::string file_name_no_ext(file_name_ext.substr(0, file_name_ext.find_last_of(".")));
+
+	if (dir == nullptr)
+	{
+		if (App->resource_manager->CopyFileToCurrentDir(path) == false)
+		{
+			LOG("Could not copy %s to current directory", path.c_str());
+			return UID();
+		}
+		new_path = App->resource_manager->GetCurrentDirPath() + "\\" + file_name_ext;
+	}
+	else
+	{
+		if(App->file_system->CopyTo(path, dir->GetPath()) == false)
+		{
+			LOG("Could not copy %s to current directory", path.c_str());
+			return UID();
+		}
+		new_path = dir->GetPath() + "\\" + file_name_ext;
+	}
 
 	switch (type)
 	{
 	case RT_TEXTURE:
-		uid = texture_importer->Import(file_name_ext, (TextureImportConfiguration*)import_config);
+		uid = texture_importer->Import(new_path, (TextureImportConfiguration*)import_config);
 		if (uid.IsNull())
 		{
 			LOG("Could not import texture from %s corectlly", path.c_str());
 			return UID();
 		}
-		if (TextureMetaSave(file_name_ext, uid, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config) == false)
+		if (TextureMetaSave(new_path, uid, (TextureImportConfiguration*)import_config, (TextureLoadConfiguration*)load_config) == false)
 			return UID();
 		break;
 	case RT_PREFAB:
-		uid = ImportScene(path, (SceneImportConfiguration*)import_config);
+		uid = ImportScene(path, (SceneImportConfiguration*)import_config, dir);
 		delete import_config;
 		if (uid.IsNull())
 		{
@@ -293,14 +307,17 @@ const UID ImportManager::Import(const std::string & path, RESOURCE_TYPE type, co
 	}
 
 	if(type != RT_PREFAB)
-		App->resource_manager->AddAsset(file_name_no_ext, uid, type, import_config, load_config);
+		if(dir == nullptr)
+			App->resource_manager->AddAsset(file_name_no_ext, uid, type, import_config, load_config);
+		else
+			dir->AddAsset(file_name_no_ext, uid, type, import_config, load_config);
 
 	return uid;
 }
 
-bool ImportManager::TextureMetaSave(const std::string & file, const UID & resource_id, const TextureImportConfiguration * import_config, const TextureLoadConfiguration * load_config) const
+bool ImportManager::TextureMetaSave(const std::string & full_path, const UID & resource_id, const TextureImportConfiguration * import_config, const TextureLoadConfiguration * load_config) const
 {
-	unsigned int buff_size = file.size() + 1;
+	unsigned int buff_size = full_path.size() + 1;
 	buff_size += SIZE_OF_UID;
 	buff_size += sizeof(RESOURCE_TYPE);
 	buff_size += import_config->GetMetaSize();
@@ -309,8 +326,8 @@ bool ImportManager::TextureMetaSave(const std::string & file, const UID & resour
 	char* buffer = new char[buff_size];
 	char* iterator = buffer;
 
-	memcpy(iterator, file.c_str(), file.length() + 1);
-	iterator += file.length() + 1;
+	memcpy(iterator, full_path.c_str(), full_path.length() + 1);
+	iterator += full_path.length() + 1;
 
 	memcpy(iterator, &resource_id, SIZE_OF_UID);
 	iterator += SIZE_OF_UID;
@@ -325,7 +342,10 @@ bool ImportManager::TextureMetaSave(const std::string & file, const UID & resour
 
 	int size = iterator - buffer;
 
-	if (App->file_system->SaveMetaFile(buffer, size, file.c_str()) == false)
+	std::string name(full_path.substr(full_path.find_last_of("\\") + 1));
+	std::string dir(full_path.substr(0, full_path.find_last_of("\\")));
+
+	if (App->file_system->SaveMetaFile(buffer, size, name.c_str(), dir.c_str()) == false)
 		return false;
 
 	delete[] buffer;
@@ -333,9 +353,9 @@ bool ImportManager::TextureMetaSave(const std::string & file, const UID & resour
 	return true;
 }
 
-bool ImportManager::SceneMetaSave(const std::string & file, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID & prefab_id, const SceneImportConfiguration * import_config) const
+bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID & prefab_id, const SceneImportConfiguration * import_config) const
 {
-	unsigned int buff_size = file.size() + 1;
+	unsigned int buff_size = full_path.size() + 1;
 	buff_size += SIZE_OF_UID;
 	buff_size += sizeof(RESOURCE_TYPE);
 	buff_size += import_config->GetMetaSize();
@@ -353,8 +373,8 @@ bool ImportManager::SceneMetaSave(const std::string & file, const std::vector<st
 	char* buffer = new char[buff_size];
 	char* iterator = buffer;
 
-	memcpy(iterator, file.c_str(), file.length() + 1);
-	iterator += file.length() + 1;
+	memcpy(iterator, full_path.c_str(), full_path.length() + 1);
+	iterator += full_path.length() + 1;
 
 	memcpy(iterator, &prefab_id, SIZE_OF_UID);
 	iterator += SIZE_OF_UID;
@@ -393,7 +413,10 @@ bool ImportManager::SceneMetaSave(const std::string & file, const std::vector<st
 
 	int size = iterator - buffer;
 
-	if (App->file_system->SaveMetaFile(buffer, size, file.c_str()) == false)
+	std::string name(full_path.substr(full_path.find_last_of("\\") + 1));
+	std::string dir(full_path.substr(0, full_path.find_last_of("\\")));
+
+	if (App->file_system->SaveMetaFile(buffer, size, name.c_str(), dir.c_str()) == false)
 		return false;
 
 	delete[] buffer;
@@ -404,15 +427,16 @@ bool ImportManager::SceneMetaSave(const std::string & file, const std::vector<st
 void ImportManager::MetaLoad(const std::string & file, AssetDirectory* dir) const
 {
 	char* buffer = nullptr;
-	unsigned int length = App->file_system->LoadMetaFile(file, &buffer);
+	unsigned int length = App->file_system->LoadFileBinary(dir->GetPath() + "\\" + file, &buffer);
 
 	if (buffer != nullptr && length != 0)
 	{
 		char* iterator = buffer;
-		std::string filename(iterator);
-		iterator += filename.length() + 1;
+		std::string file_path(iterator);
+		iterator += file_path.length() + 1;
 
-		std::string name(filename.substr(0, filename.find_first_of(".")));
+		size_t count = file_path.find_first_of(".") - 1 - file_path.find_last_of("\\");
+		std::string name(file_path.substr(file_path.find_last_of("\\") + 1, count));
 
 		UID uid(iterator);
 		iterator += SIZE_OF_UID;
@@ -441,16 +465,16 @@ void ImportManager::MetaLoad(const std::string & file, AssetDirectory* dir) cons
 		}
 	}
 	else
-		LOG("Metafile %s could not be loaded correctly", file.c_str());
+		LOG("Metafile %s could not be loaded correctly", name.c_str());
 
 	delete[] buffer;
 }
 
-const UID ImportManager::ImportScene(const std::string & path, const SceneImportConfiguration* import_config) const
+const UID ImportManager::ImportScene(const std::string & path, const SceneImportConfiguration* import_config, AssetDirectory* dir) const
 {
 	UID prefab_uid;
 
-	std::string scene_name(GetImportFileNameNoExtension());
+	std::string scene_name(path.substr(path.find_last_of("\\") + 1, path.find_last_of(".") - path.find_last_of("\\") -1));
 	std::string scene_dir(path.substr(0, path.find_last_of("\\") + 1)); // +1 to include \\
 
 	Assimp::Importer* importer = new Assimp::Importer;
@@ -561,13 +585,17 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 					sprintf(ptr, "Material_%s_%i", scene_name.c_str(), i);
 					std::string material_name(ptr);
 
-					UID uid(material_importer->Import(scene_dir, scene->mMaterials[i], import_config->material_import_config));
+					UID uid(material_importer->Import(scene_dir, scene->mMaterials[i], import_config->material_import_config, dir));
 
 					if (uid.IsNull() == false)
 					{
 						material_loads[i] = true;
 						scene_materials.push_back(std::make_pair(uid,ptr));
-						App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, new MaterialImportConfiguration(*import_config->material_import_config), new MaterialLoadConfiguration(*import_config->material_load_config));
+
+						if(dir == nullptr)
+							App->resource_manager->AddAsset(material_name, uid, RT_MATERIAL, new MaterialImportConfiguration(*import_config->material_import_config), new MaterialLoadConfiguration(*import_config->material_load_config));
+						else
+							dir->AddAsset(material_name, uid, RT_MATERIAL, new MaterialImportConfiguration(*import_config->material_import_config), new MaterialLoadConfiguration(*import_config->material_load_config));
 					}
 					else
 					{
@@ -609,7 +637,10 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				{
 					mesh_loads[i] = true;
 					scene_meshes.push_back(std::make_pair(uid, mesh_name.c_str()));
-					App->resource_manager->AddAsset(mesh_name, uid, RT_MESH, new MeshImportConfiguration(*import_config->mesh_import_config), new MeshLoadConfiguration(*import_config->mesh_load_config));
+					if(dir == nullptr)
+						App->resource_manager->AddAsset(mesh_name, uid, RT_MESH, new MeshImportConfiguration(*import_config->mesh_import_config), new MeshLoadConfiguration(*import_config->mesh_load_config));
+					else
+						dir->AddAsset(mesh_name, uid, RT_MESH, new MeshImportConfiguration(*import_config->mesh_import_config), new MeshLoadConfiguration(*import_config->mesh_load_config));
 				}
 				else
 				{
@@ -626,7 +657,12 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_name.c_str());
 
 			if (prefab_uid.IsNull() == false)
-				App->resource_manager->AddAsset(scene_name, prefab_uid, RT_PREFAB, import_config->prefab_import_config, import_config->prefab_load_config);
+			{
+				if(dir == nullptr)
+					App->resource_manager->AddAsset(scene_name, prefab_uid, RT_PREFAB, import_config->prefab_import_config, import_config->prefab_load_config);
+				else
+					dir->AddAsset(scene_name, prefab_uid, RT_PREFAB, import_config->prefab_import_config, import_config->prefab_load_config);
+			}
 			else
 			{
 				LOG("Scene could not be loaded as prefab");
@@ -634,7 +670,12 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 			}
 		}
 
-		SceneMetaSave(GetImportFileNameWithExtension(), scene_meshes, scene_materials, prefab_uid, import_config);
+		std::string file_name_ext(path.substr(path.find_last_of("\\")));
+
+		if(dir == nullptr)
+			SceneMetaSave(App->resource_manager->GetCurrentDirPath() + file_name_ext, scene_meshes, scene_materials, prefab_uid, import_config);
+		else
+			SceneMetaSave(dir->GetPath() + file_name_ext, scene_meshes, scene_materials, prefab_uid, import_config);
 
 		delete[] material_loads;
 		delete[] mesh_loads;
@@ -696,7 +737,43 @@ const std::string ImportManager::GetImportFileNameWithExtension() const
 	return import_path.substr(start + 1);
 }
 
-const UID ImportManager::ImportClient::Import(const ImportManager * importer, const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
+const UID ImportManager::ImportClient::Import(const ImportManager * importer, const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config, AssetDirectory* dir)
 {
-	return importer->Import(path, type, import_config, load_config);
+	return importer->Import(path, type, import_config, load_config, dir);
+}
+
+void ImportManager::ImportClient::StraightImport(const std::string & file_path, AssetDirectory* dir)
+{
+	std::string extension;
+	// find the last occurrence of '.'
+	size_t pos = file_path.find_last_of(".");
+	// make sure the poisition is valid
+	if (pos != file_path.length())
+		extension = file_path.substr(pos + 1);
+	else
+		LOG("Coud not find . in the droped file path");
+
+	//DevIL
+	if (App->input->IsImageFormat(extension))
+	{
+		std::string name(file_path.substr(file_path.find_last_of("\\") + 1));
+		TextureImportConfiguration import_config;
+		TextureLoadConfiguration load_config;
+		App->import_manager->Import(file_path, RT_TEXTURE, &import_config, &load_config, dir);
+	}
+	else if (extension == "fbx" || extension == "FBX")
+	{
+		SceneImportConfiguration* import_config = new SceneImportConfiguration;
+		App->import_manager->Import(file_path, RT_PREFAB, import_config, nullptr, dir);
+	}
+	else if (extension == ".mm")
+	{
+		/*size_t pos = full_path.find_last_of("\\");
+		size_t count = full_path.find_last_of(".") - pos;
+		std::string file_name(full_path.substr(pos + 1, count - 1));*/
+		//TODO should check path to se if in assets
+		//App->import_manager->Load(file_name);
+	}
+	else
+		LOG("Unknown file type");
 }

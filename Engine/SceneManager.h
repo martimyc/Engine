@@ -87,6 +87,8 @@ public:
 	void AddEmptyGO();
 
 	void UpdateKDT(const GameObject* go);
+
+	void DeleteFocused();
 };
 
 #endif // !_MODULE_SCENE_MANAGER
