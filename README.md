@@ -9,7 +9,7 @@ Created by [Marc Latorre](https://github.com/marclafr) and [Marti MajÃ³](https
 ## Innovation
 
 - Multitexturing (avaiable since version:Geometry Viewer)
-- Docking: We need to save/load the docking positions yet. For now you can dock the windows that are in the tabbar from the start inside your window, however if you restart the MARs Engine or resize the window, the docking windows will return in its original position. We will solve this issue in the next version.
+- Docking
 - Vertex KDTree.
 
 ## Incomplete/Problems:
