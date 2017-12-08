@@ -383,13 +383,10 @@ math::vec GameObject::GetMaxPos() const
 	if (mesh == nullptr)
 		return world_transform->GetTransformTranslation();
 
-	math::float4 max_mesh_point(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ(), 1.0f);
-	max_mesh_point = world_transform->GetTransformMatrix().Transposed() * max_mesh_point;
-
-	math::vec ret;
-	ret.x = std::round(max_mesh_point.x * DECIMAL_NUM) / DECIMAL_NUM;
-	ret.y = std::round(max_mesh_point.y * DECIMAL_NUM) / DECIMAL_NUM;
-	ret.z = std::round(max_mesh_point.z * DECIMAL_NUM) / DECIMAL_NUM;
+	math::vec ret(mesh->GetMaxWorldVec(world_transform->GetTransformMatrix()));
+	ret.x = std::round(ret.x * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.y = std::round(ret.y * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.z = std::round(ret.z * DECIMAL_NUM) / DECIMAL_NUM;
 
 	return ret;
 }
@@ -401,13 +398,10 @@ math::vec GameObject::GetMinPos() const
 	if (mesh == nullptr)
 		return world_transform->GetTransformTranslation();
 
-	math::float4 min_mesh_point(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ(), 1.0f);
-	min_mesh_point = world_transform->GetTransformMatrix().Transposed() * min_mesh_point;
-
-	math::vec ret;
-	ret.x = std::round(min_mesh_point.x * DECIMAL_NUM) / DECIMAL_NUM;
-	ret.y = std::round(min_mesh_point.y * DECIMAL_NUM) / DECIMAL_NUM;
-	ret.z = std::round(min_mesh_point.z * DECIMAL_NUM) / DECIMAL_NUM;
+	math::vec ret(mesh->GetMinWorldVec(world_transform->GetTransformMatrix()));
+	ret.x = std::round(ret.x * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.y = std::round(ret.y * DECIMAL_NUM) / DECIMAL_NUM;
+	ret.z = std::round(ret.z * DECIMAL_NUM) / DECIMAL_NUM;
 
 	return ret;
 }

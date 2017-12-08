@@ -1,4 +1,6 @@
 #include "imgui\imgui.h"
+#include "MathGeoLib\src\Math\float3.h"
+#include "MathGeoLib\src\Math\float4x4.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "MathGeoLib\src\Geometry\Triangle.h"
@@ -427,22 +429,41 @@ math::vec MeshSource::GetMinVec() const
 
 float MeshSource::GetWorldMinX(const math::float4x4 & world_transform) const
 {
-	return 0.0f;
+	return GetMinWorldVec(world_transform).x;
 }
 
 float MeshSource::GetWorldMinY(const math::float4x4 & world_transform) const
 {
-	return 0.0f;
+	return GetMinWorldVec(world_transform).y;
 }
 
 float MeshSource::GetWorldMinZ(const math::float4x4 & world_transform) const
 {
-	return 0.0f;
+	return GetMinWorldVec(world_transform).z;
 }
 
 math::vec MeshSource::GetMinWorldVec(const math::float4x4 & world_transform) const
 {
-	return math::vec();
+	math::vec min_vec(math::vec::inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		transformed.x = vertices[i * 3];
+		transformed.y = vertices[i * 3 + 1];
+		transformed.z = vertices[i * 3 + 2];
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.x < min_vec.x)
+			min_vec.x = transformed.x;
+		if (transformed.y < min_vec.y)
+			min_vec.y = transformed.y;
+		if (transformed.z < min_vec.z)
+			min_vec.z = transformed.z;
+	}
+
+	return min_vec;
 }
 
 float MeshSource::GetMaxX() const
@@ -500,7 +521,7 @@ float MeshSource::GetWorldMaxZ(const math::float4x4 & world_transform) const
 
 math::vec MeshSource::GetMaxWorldVec(const math::float4x4 & world_transform) const
 {
-	math::vec max = math::vec:: - inf;
+	math::vec max_vec(-inf, -inf, -inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
@@ -509,17 +530,17 @@ math::vec MeshSource::GetMaxWorldVec(const math::float4x4 & world_transform) con
 		transformed.y = vertices[i * 3 + 1];
 		transformed.z = vertices[i * 3 + 2];
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.x > max.x)
-			max.x = transformed.x;
-		if (transformed.y > may.y)
-			max.y = transformed.y;
-		if (transformed.z > maz.z)
-			max.z = transformed.z;
+		if (transformed.x > max_vec.x)
+			max_vec.x = transformed.x;
+		if (transformed.y > max_vec.y)
+			max_vec.y = transformed.y;
+		if (transformed.z > max_vec.z)
+			max_vec.z = transformed.z;
 	}
 
-	return max;
+	return max_vec;
 }
 
 math::vec MeshSource::GetMinXVertex() const
@@ -557,68 +578,68 @@ math::vec MeshSource::GetMinZVertex() const
 
 math::vec MeshSource::GetWorldMinXVertex(const math::float4x4 & world_transform) const
 {
-	math::vec min = math::vec:: inf;
+	math::vec min_vec(math::vec::inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.x < min.x)
+		if (transformed.x < min_vec.x)
 		{
-			min.x = transformed.x;
-			min.y = transformed.y;
-			min.z = transformed.z;
+			min_vec.x = transformed.x;
+			min_vec.y = transformed.y;
+			min_vec.z = transformed.z;
 		}
 	}
 
-	return min;
+	return min_vec;
 }
 
 math::vec MeshSource::GetWorldMinYVertex(const math::float4x4 & world_transform) const
 {
-	math::vec min = math::vec::inf;
+	math::vec min_vec(math::vec::inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.y < min.y)
+		if (transformed.y < min_vec.y)
 		{
-			min.x = transformed.x;
-			min.y = transformed.y;
-			min.z = transformed.z;
+			min_vec.x = transformed.x;
+			min_vec.y = transformed.y;
+			min_vec.z = transformed.z;
 		}
 	}
 
-	return min;
+	return min_vec;
 }
 
 math::vec MeshSource::GetWorldMinZVertex(const math::float4x4 & world_transform) const
 {
-	math::vec min = math::vec::inf;
+	math::vec min_vec(math::vec::inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.z < min.z)
+		if (transformed.z < min_vec.z)
 		{
-			min.x = transformed.x;
-			min.y = transformed.y;
-			min.z = transformed.z;
+			min_vec.x = transformed.x;
+			min_vec.y = transformed.y;
+			min_vec.z = transformed.z;
 		}
 	}
 
-	return min;
+	return min_vec;
 }
 
 math::vec MeshSource::GetMaxXVertex() const
@@ -656,68 +677,68 @@ math::vec MeshSource::GetMaxZVertex() const
 
 math::vec MeshSource::GetWorldMaxXVertex(const math::float4x4 & world_transform) const
 {
-	math::vec max = math::vec:: - inf;
+	math::vec max_vec(-inf, -inf, -inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.x > max.x)
+		if (transformed.x > max_vec.x)
 		{
-			max.x = transformed.x;
-			max.y = transformed.y;
-			max.z = transformed.z;
+			max_vec.x = transformed.x;
+			max_vec.y = transformed.y;
+			max_vec.z = transformed.z;
 		}
 	}
 
-	return max;
+	return max_vec;
 }
 
 math::vec MeshSource::GetWorldMaxYVertex(const math::float4x4 & world_transform) const
 {
-	math::vec max = math::vec:: - inf;
+	math::vec max_vec(-inf, -inf, -inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.y > max.y)
+		if (transformed.y > max_vec.y)
 		{
-			max.x = transformed.x;
-			max.y = transformed.y;
-			max.z = transformed.z;
+			max_vec.x = transformed.x;
+			max_vec.y = transformed.y;
+			max_vec.z = transformed.z;
 		}
 	}
 
-	return max;
+	return max_vec;
 }
 
 math::vec MeshSource::GetWorldMaxZVertex(const math::float4x4 & world_transform) const
 {
-	math::vec max = math::vec:: - inf;
+	math::vec max_vec(-inf, -inf, -inf);
 	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
 
-		tranformed = world_transform * transformed;
+		transformed = world_transform.Transposed() * transformed;
 
-		if (transformed.z > max.z)
+		if (transformed.z > max_vec.z)
 		{
-			max.x = transformed.x;
-			max.y = transformed.y;
-			max.z = transformed.z;
+			max_vec.x = transformed.x;
+			max_vec.y = transformed.y;
+			max_vec.z = transformed.z;
 		}
 	}
 
-	return max;
+	return max_vec;
 }
 
 float MeshSource::CheckTriangleCollision(const LineSegment * ray)
@@ -1066,7 +1087,7 @@ math::vec Mesh::GetMinWorldVec(const math::float4x4 & world_transform) const
 float Mesh::GetMaxX() const
 {
 	if (source != nullptr)
-		return source->GetWorldMinZ(world_transform);
+		return source->GetMaxX();
 	LOG("Trying to acces non loaded mesh");
 	return 0.0f;
 }
