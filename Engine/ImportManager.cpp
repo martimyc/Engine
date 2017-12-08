@@ -719,7 +719,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				LOG("Loading Mesh %i", i);
 
 				std::string mesh_name(scene->mMeshes[i]->mName.C_Str());
-				if (mesh_name.substr(0, mesh_name.find_first_of(".")) == "Untitled")
+				if (mesh_name.substr(0, mesh_name.find_first_of(".")) == "Untitled" || mesh_name == "")
 				{
 					char ptr[255];
 					sprintf(ptr, "%s_Mesh_%i", scene_name.c_str(), i);

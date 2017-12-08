@@ -263,4 +263,3 @@ void SceneManager::SetCameraFocused(Camera * camera)
 {
 	focused_camera = camera;
 }
-

@@ -770,10 +770,10 @@ void GameObject::UpdateBoundsParent()
 		for (std::vector<GameObject*>::iterator it = parent->childs.begin(); it != parent->childs.end(); ++it)
 		{
 			//Sphere
-			if ((*it)->bounds.sphere_bounding_box.r > EPSILON)
+			/*if ((*it)->bounds.sphere_bounding_box.r > EPSILON)
 				parent->bounds.sphere_bounding_box.Enclose((*it)->bounds.sphere_bounding_box);
 			else
-				parent->bounds.sphere_bounding_box.Enclose((*it)->bounds.sphere_bounding_box.pos);
+				parent->bounds.sphere_bounding_box.Enclose((*it)->bounds.sphere_bounding_box.pos);*/
 
 			//AABB
 			parent->bounds.aabb_bounding_box.Enclose((*it)->bounds.aabb_bounding_box);

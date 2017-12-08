@@ -129,7 +129,8 @@ void AssetDirectory::Inspector(unsigned int& selected)
 	ImVec2 image_size(50,50);
 	int i = 0;
 
-	ImGui::BeginGroup();
+	ImVec2 start_pos = ImGui::GetCursorPos();
+	float start_width = ImGui::GetColumnWidth();
 
 	for (std::vector<AssetDirectory*>::iterator it = directories.begin(); it != directories.end(); ++it)
 	{
@@ -140,8 +141,8 @@ void AssetDirectory::Inspector(unsigned int& selected)
 			selected = i;
 
 		i++;
-
-		if(ImGui::GetCursorPos().x + image_size.x > ImGui::GetWindowContentRegionMax().x == false)
+		
+		if((ImGui::GetItemRectMax().x > start_pos.x + ImGui::GetColumnWidth() - 200) == false) //TODO fix with dock size
 			ImGui::SameLine();
 	}
 
@@ -155,11 +156,9 @@ void AssetDirectory::Inspector(unsigned int& selected)
 
 		i++;
 		
-		if (ImGui::GetCursorPos().x + image_size.x > ImGui::GetWindowContentRegionMax().x == false)
+		if ((ImGui::GetItemRectMax().x > start_pos.x + ImGui::GetColumnWidth() - 200) == false)//TODO fix with dock size
 			ImGui::SameLine();
 	}
-
-	ImGui::EndGroup();
 }
 
 bool AssetDirectory::Hirarchy(AssetDirectory ** focused)
