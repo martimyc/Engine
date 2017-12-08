@@ -1,12 +1,10 @@
-#ifndef _GAME_OBJECT
-#define _GAME_OBJECT
+#ifndef GAME_OBJECT
+#define GAME_OBJECT
 
 #include <vector>
 #include <string>
 #include "glew\include\GL\glew.h"
-#include "MathGeoLib\src\Geometry\AABB.h"
-#include "MathGeoLib\src\Geometry\OBB.h"
-#include "MathGeoLib\src\Geometry\Sphere.h"
+#include "Bounds.h"
 
 class Component;
 class Transform;
@@ -21,35 +19,6 @@ namespace math
 {
 	class LineSegment;
 }
-
-struct Bounds
-{
-	Sphere sphere_bounding_box;
-	Sphere original_sphere_bounding_box;
-
-	AABB aabb_bounding_box;
-	math::vec original_aabb_bb_points[2];
-
-	OBB obb_bounding_box;
-	OBB original_obb_bounding_box;
-	
-	Bounds()
-	{
-		aabb_bounding_box.SetNegativeInfinity();
-		original_aabb_bb_points[0].zero;
-		original_aabb_bb_points[1].zero;
-		obb_bounding_box.SetNegativeInfinity();
-		obb_bounding_box.r = math::vec::zero;
-		original_obb_bounding_box.SetNegativeInfinity();
-		original_obb_bounding_box.r = math::vec::zero;
-	}
-
-	Bounds(const Bounds& copy): aabb_bounding_box(copy.aabb_bounding_box), obb_bounding_box(copy.obb_bounding_box), original_obb_bounding_box(copy.original_obb_bounding_box)
-	{
-		original_aabb_bb_points[0] = copy.original_aabb_bb_points[0];
-		original_aabb_bb_points[1] = copy.original_aabb_bb_points[1];
-	}
-};
 
 class GameObject
 {
@@ -172,4 +141,4 @@ public:
 	GameObject* GetParent() const;
 };
 
-#endif // !_GAME_OBJECT
+#endif // !GAME_OBJECT

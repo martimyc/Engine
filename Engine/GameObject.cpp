@@ -669,19 +669,19 @@ void GameObject::SetWorldTransform(const math::float4x4 & new_world_transform)
 
 void GameObject::CreateBounds(const Mesh* mesh)
 {
-	bounds.sphere_bounding_box.Enclose(math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
-	bounds.sphere_bounding_box.Enclose(math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
-	bounds.original_sphere_bounding_box.Enclose(math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
-	bounds.original_sphere_bounding_box.Enclose(math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
+	assert(mesh != nullptr && mesh->IsLoaded());
+	bounds.sphere_bounding_box.Enclose(mesh->GetMinWorldVec(world_transform->GetTransformMatrix()));
+	bounds.sphere_bounding_box.Enclose(mesh->GetMaxWorldVec(world_transform->GetTransformMatrix()));
+	bounds.original_sphere_bounding_box.Enclose(mesh->GetMinWorldVec(world_transform->GetTransformMatrix()));
+	bounds.original_sphere_bounding_box.Enclose(mesh->GetMaxWorldVec(world_transform->GetTransformMatrix()));
 
-	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint = (math::vec(mesh->GetMinX(), mesh->GetMinY(), mesh->GetMinZ()));
-	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (math::vec(mesh->GetMaxX(), mesh->GetMaxY(), mesh->GetMaxZ()));
+	bounds.original_aabb_bb_points[0] = bounds.aabb_bounding_box.minPoint = (mesh->GetMinWorldVec(world_transform->GetTransformMatrix()));
+	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (mesh->GetMaxWorldVec(world_transform->GetTransformMatrix()));
 
 	IncludeMeshInOBB(mesh);
 
 	//Set center
-	if (mesh != nullptr)
-		local_transform->SetTransformCenter(mesh->GetCenter());
+	local_transform->SetTransformCenter(mesh->GetCenter());
 }
 
 void GameObject::UpdateBoundsParents()
@@ -766,35 +766,26 @@ void GameObject::UpdateBoundsParent()
 
 void GameObject::IncludeMeshInOBB(const Mesh * mesh)
 {
-	if (mesh != nullptr)
-	{
-		bounds.obb_bounding_box.pos = mesh->GetCenter();
-		bounds.obb_bounding_box.Enclose(mesh->GetMaxXVertex());
-		bounds.obb_bounding_box.Enclose(mesh->GetMinXVertex());
-		bounds.obb_bounding_box.Enclose(mesh->GetMaxYVertex());
-		bounds.obb_bounding_box.Enclose(mesh->GetMinYVertex());
-		bounds.obb_bounding_box.Enclose(mesh->GetMaxZVertex());
-		bounds.obb_bounding_box.Enclose(mesh->GetMinZVertex());
+	bounds.obb_bounding_box.pos = mesh->GetWorldCenter(world_transform->GetTransformMatrix());
+	bounds.obb_bounding_box.Enclose(mesh->GetWorldMaxXVertex(world_transform->GetTransformMatrix()));
+	bounds.obb_bounding_box.Enclose(mesh->GetWorldMinXVertex(world_transform->GetTransformMatrix()));
+	bounds.obb_bounding_box.Enclose(mesh->GetWorldMaxYVertex(world_transform->GetTransformMatrix()));
+	bounds.obb_bounding_box.Enclose(mesh->GetWorldMinYVertex(world_transform->GetTransformMatrix()));
+	bounds.obb_bounding_box.Enclose(mesh->GetWorldMaxZVertex(world_transform->GetTransformMatrix()));
+	bounds.obb_bounding_box.Enclose(mesh->GetWorldMinZVertex(world_transform->GetTransformMatrix()));
 
-		bounds.original_obb_bounding_box.pos = mesh->GetCenter();
-		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxXVertex());
-		bounds.original_obb_bounding_box.Enclose(mesh->GetMinXVertex());
-		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxYVertex());
-		bounds.original_obb_bounding_box.Enclose(mesh->GetMinYVertex());
-		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxZVertex());
-		bounds.original_obb_bounding_box.Enclose(mesh->GetMinZVertex());
-	}
+	bounds.original_obb_bounding_box.pos = mesh->GetWorldCenter(world_transform->GetTransformMatrix());
+	bounds.original_obb_bounding_box.Enclose(mesh->GetWorldMaxXVertex(world_transform->GetTransformMatrix()));
+	bounds.original_obb_bounding_box.Enclose(mesh->GetWorldMinXVertex(world_transform->GetTransformMatrix()));
+	bounds.original_obb_bounding_box.Enclose(mesh->GetWorldMaxYVertex(world_transform->GetTransformMatrix()));
+	bounds.original_obb_bounding_box.Enclose(mesh->GetWorldMinYVertex(world_transform->GetTransformMatrix()));
+	bounds.original_obb_bounding_box.Enclose(mesh->GetWorldMaxZVertex(world_transform->GetTransformMatrix()));
+	bounds.original_obb_bounding_box.Enclose(mesh->GetWorldMinZVertex(world_transform->GetTransformMatrix()));
 }
 
 void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transform)
-{	
-/*	math::float4 world_position(world_transform->GetTransformTranslation(), 1);
-	world_position = parent_world_transform * world_position;
-
-	math::Quat world_rotation(world_transform->GetTransformRotation());
-	world_rotation = parent_world_transform * world_rotation;
-*/
-	world_transform->SetTransform(parent_world_transform * local_transform->GetTransformMatrix());
+{
+	world_transform->SetTransform(local_transform->GetTransformMatrix() * parent_world_transform);
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		(*it)->UpdateWorldTransform(world_transform->GetTransformMatrix());
@@ -805,7 +796,7 @@ void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transfo
 
 void GameObject::UpdateTransforms()
 {
-	local_transform->Update();			//new local transform
+	local_transform->Update();							//new local transform
 	UpdateWorldTransform(parent->GetWorldTransform());	//new world transform
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)

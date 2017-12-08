@@ -82,6 +82,7 @@
     <ClInclude Include="AppliedMaterial.h" />
     <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetDirectory.h" />
+    <ClInclude Include="Bounds.h" />
     <ClInclude Include="Dirent\dirent.h" />
     <ClInclude Include="imgui\ImGuizmo.h" />
     <ClInclude Include="imgui\imgui_user.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="AssetDirectory.cpp" />
     <ClCompile Include="BasicGeometry.cpp" />
+    <ClCompile Include="Bounds.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />

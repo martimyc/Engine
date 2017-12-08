@@ -216,6 +216,7 @@ public:
 	math::vec GetWorldMaxZVertex(const math::float4x4& world_transform) const;
 
 	math::vec GetCenter() const;
+	math::vec GetWorldCenter(const math::float4x4& world_transform) const;
 
 	//bool CheckTriangleCollision(const LineSegment* ray, float* distance) const;
 

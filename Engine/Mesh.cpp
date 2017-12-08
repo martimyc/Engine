@@ -1,5 +1,6 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Math\float3.h"
+#include "MathGeoLib\src\Math\float4.h"
 #include "MathGeoLib\src\Math\float4x4.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
@@ -1246,7 +1247,22 @@ math::vec Mesh::GetWorldMaxZVertex(const math::float4x4 & world_transform) const
 
 math::vec Mesh::GetCenter() const
 {
-	return math::vec((GetMaxX() + GetMinX()) / 2, (GetMaxY() + GetMinY()) / 2, (GetMaxZ() + GetMinZ()) / 2);
+	if (source != nullptr)
+		return math::vec((source->GetMaxX() + source->GetMinX()) / 2.0f, (source->GetMaxY() + source->GetMinY()) / 2.0f, (source->GetMaxZ() + source->GetMinZ()) / 2.0f);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;	
+}
+
+math::vec Mesh::GetWorldCenter(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+	{
+		math::float4 center(math::vec((source->GetMaxX() + source->GetMinX()) / 2.0f, (source->GetMaxY() + source->GetMinY()) / 2.0f, (source->GetMaxZ() + source->GetMinZ()) / 2.0f), 1.0f);
+		center = world_transform * center;
+		return math::vec(center.x, center.y, center.z);
+	}
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;	
 }
 
 /*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
