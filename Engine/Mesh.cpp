@@ -922,7 +922,7 @@ math::vec Mesh::GetMaxZVertex() const
 
 math::vec Mesh::GetCenter() const
 {
-	return math::vec(GetMaxX() + GetMinX() / 2, GetMaxY() + GetMinY() / 2, GetMaxZ() + GetMinZ() / 2);
+	return math::vec((GetMaxX() + GetMinX()) / 2, (GetMaxY() + GetMinY()) / 2, (GetMaxZ() + GetMinZ()) / 2);
 }
 
 /*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const

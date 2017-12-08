@@ -6,6 +6,8 @@
 #include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Math\float4x4.h"
 
+#define MIN_SCALE 0.001f
+
 class Transform
 {
 private:
@@ -20,6 +22,7 @@ private:
 
 	void Quat2Euler(const Quat q, float &roll, float &pitch, float &yaw);
 	void Euler2Quat(const float roll, const float pitch, const float yaw, Quat& q);
+	void MaintainScalePositive();
 
 public:
 	Transform(const char* name = "Transform");

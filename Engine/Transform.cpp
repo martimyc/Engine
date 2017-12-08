@@ -62,6 +62,13 @@ void Transform::Euler2Quat(const float roll, const float pitch, const float yaw,
 	q.w = sy * cr * cp - cy * sr * sp;
 }
 
+void Transform::MaintainScalePositive()
+{
+	if (scaling.x < MIN_SCALE)	scaling.x = MIN_SCALE;
+	if (scaling.y < MIN_SCALE)	scaling.y = MIN_SCALE;
+	if (scaling.z < MIN_SCALE)	scaling.z = MIN_SCALE;
+}
+
 const float4x4& Transform::GetTransformMatrix()
 {
 	return transform_matrix;
@@ -136,9 +143,11 @@ bool Transform::Inspector()
 
 		ImGui::Separator();
 
-		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f, 0.001f, 2500, "%.3f"))	ret = true;
-		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f, 0.001f, 2500, "%.3f"))	ret = true;
-		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f, 0.001f, 2500, "%.3f"))	ret = true;
+		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f, MIN_SCALE))	ret = true;
+		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f, MIN_SCALE))	ret = true;
+		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f, MIN_SCALE))	ret = true;
+
+		MaintainScalePositive();
 		
 		ImGui::TreePop();
 	}

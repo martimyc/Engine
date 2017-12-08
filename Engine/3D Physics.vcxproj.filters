@@ -91,6 +91,9 @@
     <Filter Include="Sources\3rd Party\Dirent">
       <UniqueIdentifier>{2e2a533d-b791-4a0c-aeea-17f0cf55e249}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3rd Party\ImGui\Guizmos">
+      <UniqueIdentifier>{1e56c203-8734-46aa-a62e-f18bdc20e4fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -612,6 +615,9 @@
     <ClInclude Include="AssetDirectory.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\ImGuizmo.h">
+      <Filter>Sources\3rd Party\ImGui\Guizmos</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -907,6 +913,9 @@
     </ClCompile>
     <ClCompile Include="AssetDirectory.cpp">
       <Filter>Sources\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\ImGuizmo.cpp">
+      <Filter>Sources\3rd Party\ImGui\Guizmos</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

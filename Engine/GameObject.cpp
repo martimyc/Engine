@@ -53,23 +53,6 @@ GameObject::GameObject(const GameObject & copy) : name(copy.name), parent(copy.p
 	local_transform->SetTransform(copy.local_transform->GetTransformMatrix());
 	world_transform->SetTransform(copy.world_transform->GetTransformMatrix());
 
-	bounds.sphere_bounding_box.SetNegativeInfinity();
-	bounds.sphere_bounding_box.r = 0.0f;
-	bounds.original_sphere_bounding_box.SetNegativeInfinity();
-	bounds.original_sphere_bounding_box.r = 0.0f;
-
-	bounds.aabb_bounding_box.SetNegativeInfinity();
-	bounds.original_aabb_bb_points[0] = vec(0.0f, 0.0f, 0.0f);
-	bounds.original_aabb_bb_points[1] = vec(0.0f, 0.0f, 0.0f);
-
-	bounds.obb_bounding_box.SetNegativeInfinity();
-	bounds.original_obb_bounding_box.SetNegativeInfinity();
-	bounds.obb_bounding_box.pos = bounds.original_obb_bounding_box.pos = math::vec::zero;
-	bounds.obb_bounding_box.r = bounds.original_obb_bounding_box.r = math::vec::zero;
-	bounds.obb_bounding_box.axis[0] = bounds.original_obb_bounding_box.axis[0] = math::vec(1, 0, 0);
-	bounds.obb_bounding_box.axis[1] = bounds.original_obb_bounding_box.axis[1] = math::vec(0, 1, 0);
-	bounds.obb_bounding_box.axis[2] = bounds.original_obb_bounding_box.axis[2] = math::vec(0, 0, 1);
-
 	for (std::vector<Component*>::const_iterator it = copy.components.begin(); it != copy.components.end(); ++it)
 	{
 		switch ((*it)->GetType())
@@ -791,14 +774,16 @@ void GameObject::IncludeMeshInOBB(const Mesh * mesh)
 {
 	if (mesh != nullptr)
 	{
-		bounds.obb_bounding_box.pos = mesh->GetMaxXVertex();
+		bounds.obb_bounding_box.pos = mesh->GetCenter();
+		bounds.obb_bounding_box.Enclose(mesh->GetMaxXVertex());
 		bounds.obb_bounding_box.Enclose(mesh->GetMinXVertex());
 		bounds.obb_bounding_box.Enclose(mesh->GetMaxYVertex());
 		bounds.obb_bounding_box.Enclose(mesh->GetMinYVertex());
 		bounds.obb_bounding_box.Enclose(mesh->GetMaxZVertex());
 		bounds.obb_bounding_box.Enclose(mesh->GetMinZVertex());
 
-		bounds.original_obb_bounding_box.pos = mesh->GetMaxXVertex();
+		bounds.original_obb_bounding_box.pos = mesh->GetCenter();
+		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxXVertex());
 		bounds.original_obb_bounding_box.Enclose(mesh->GetMinXVertex());
 		bounds.original_obb_bounding_box.Enclose(mesh->GetMaxYVertex());
 		bounds.original_obb_bounding_box.Enclose(mesh->GetMinYVertex());
@@ -809,6 +794,12 @@ void GameObject::IncludeMeshInOBB(const Mesh * mesh)
 
 void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transform)
 {	
+/*	math::float4 world_position(world_transform->GetTransformTranslation(), 1);
+	world_position = parent_world_transform * world_position;
+
+	math::Quat world_rotation(world_transform->GetTransformRotation());
+	world_rotation = parent_world_transform * world_rotation;
+*/
 	world_transform->SetTransform(parent_world_transform * local_transform->GetTransformMatrix());
 
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
@@ -820,10 +811,8 @@ void GameObject::UpdateWorldTransform(const math::float4x4& parent_world_transfo
 
 void GameObject::UpdateTransforms()
 {
-	math::float4x4 old_local = GetLocalTransform();
-	math::float4x4 parent_world = world_transform->GetTransformMatrix() * old_local.Inverted();
 	local_transform->Update();			//new local transform
-	UpdateWorldTransform(parent_world);	//new world transform
+	UpdateWorldTransform(parent->GetWorldTransform());	//new world transform
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_CAMERA)

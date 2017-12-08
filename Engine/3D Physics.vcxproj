@@ -83,6 +83,7 @@
     <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetDirectory.h" />
     <ClInclude Include="Dirent\dirent.h" />
+    <ClInclude Include="imgui\ImGuizmo.h" />
     <ClInclude Include="imgui\imgui_user.h" />
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MD5.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="gpudetect\DeviceId.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\ImGuizmo.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_dock.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
