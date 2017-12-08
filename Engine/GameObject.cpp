@@ -553,7 +553,7 @@ bool GameObject::HasAppliedMaterial() const
 	return false;
 }
 
-const AppliedMaterial * GameObject::GetAppliedMaterial() const
+AppliedMaterial * GameObject::GetAppliedMaterial() const
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
@@ -561,7 +561,7 @@ const AppliedMaterial * GameObject::GetAppliedMaterial() const
 	return nullptr;
 }
 
-const MeshFilter * GameObject::GetMeshFilter() const
+MeshFilter * GameObject::GetMeshFilter() const
 {
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_MESH_FILTER)

@@ -3,6 +3,9 @@
 
 #include <string>
 #include "Module.h"
+#include "Timer.h"
+
+#define UPDATE_TIME 2
 
 class AssetDirectory;
 
@@ -10,6 +13,7 @@ class FileSystem: public Module
 {
 private:
 	std::string working_directory;
+	Timer timer;
 
 public:
 	FileSystem(const char* name, bool start_enabled = true);
@@ -17,7 +21,7 @@ public:
 
 	bool Init();
 
-	bool Start();
+	UPDATE_STATUS Update(float dt);
 
 	bool CreateFolder(const char* name, bool hidden = false, const char* relative_path = nullptr) const;
 
@@ -44,6 +48,11 @@ public:
 	bool HasMeta(const std::string& file, const std::string& directory) const;
 
 	bool IsIn(const std::string& file, const std::string& directory) const;
+
+	bool EraseFile(const std::string& full_path) const;
+
+	time_t GetMetaTimeStamp(const std::string& file) const;
+	time_t GetTimeStamp(const std::string& file) const;
 };
 
 #endif //!MODULE_FILE_SYSTEM

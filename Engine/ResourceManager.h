@@ -44,7 +44,6 @@ class ResourceManager: public Module
 {
 private:
 	std::vector<Button*> buttons;
-	std::vector<Asset*> assets;
 	unsigned int selected;
 	AssetDirectory* current_dir;
 	AssetDirectory* root_dir;
@@ -82,7 +81,8 @@ private:
 	void LoadFolderIcon();
 
 public:
-	bool Init();
+
+	bool Start();
 
 	UPDATE_STATUS Update(float dt);
 
@@ -111,6 +111,8 @@ public:
 
 	bool CopyFileToCurrentDir(const std::string& path) const;
 	const std::string& GetCurrentDirPath() const;
+
+	void UpdateAssets();
 };
 
 #endif // !RESOURCE_MANAGER

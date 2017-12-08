@@ -4,20 +4,19 @@
 AppliedMaterial::AppliedMaterial(Material * material, bool enabled) : Component(CT_APPLIED_MATERIAL, enabled), material(material)
 {
 	unsigned int buff_size = material->GetNumAllTextures();
-	uv_channels = new unsigned int[buff_size];
-	memset(uv_channels, 0, buff_size * sizeof(unsigned int));
+	for (int i = 0; i < buff_size; i++)
+		uv_channels.push_back(0);
 }
 
 AppliedMaterial::AppliedMaterial(const AppliedMaterial & copy): Component(CT_APPLIED_MATERIAL, copy.enabled), material(copy.material)
 {
-	unsigned int buff_size = material->GetNumAllTextures();
-	uv_channels = new unsigned int[buff_size];
-	memcpy(uv_channels, copy.uv_channels, buff_size * sizeof(unsigned int));
+	for (std::vector<unsigned int>::const_iterator it = copy.uv_channels.begin(); it != copy.uv_channels.end(); ++it)
+		uv_channels.push_back(*it);
 }
 
 AppliedMaterial::~AppliedMaterial()
 {
-	delete[] uv_channels;
+	uv_channels.clear();
 }
 
 const unsigned int AppliedMaterial::GetUVChannel(const unsigned int num_texture) const
@@ -39,4 +38,10 @@ void AppliedMaterial::Inspector()
 const std::string & AppliedMaterial::GetName() const
 {
 	return material->GetName();
+}
+
+void AppliedMaterial::AddTexture(Texture * new_texture, unsigned int uv_channel)
+{
+	material->AddTexture(new_texture, TT_DIFFUSE);
+	uv_channels.push_back(uv_channel);
 }

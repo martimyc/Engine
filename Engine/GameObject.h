@@ -157,8 +157,8 @@ public:
 
 	bool HasMeshFilter() const;
 	bool HasAppliedMaterial() const;
-	const AppliedMaterial* GetAppliedMaterial() const;
-	const MeshFilter* GetMeshFilter() const;
+	AppliedMaterial* GetAppliedMaterial() const;
+	MeshFilter* GetMeshFilter() const;
 	void DrawBoundingBoxes() const;
 	
 	//Remove unique components

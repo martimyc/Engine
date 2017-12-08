@@ -1,12 +1,23 @@
 #include <windows.h>
 #include <stdio.h>
 #include <fstream>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#ifndef WIN32
+#include <unistd.h>
+#endif
+
 #include "Dirent\dirent.h"
 #include "AssetDirectory.h"
 #include "ImportManager.h"
 #include "ResourceManager.h"
 #include "Application.h"
 #include "FileSystem.h"
+
+#ifdef WIN32
+#define stat _stat
+#endif
 
 FileSystem::FileSystem(const char * name, bool start_enabled): Module(name, start_enabled)
 {}
@@ -62,17 +73,19 @@ bool FileSystem::Init()
 		if (!CreateFolder("Prefabs", false, LIBRARY_FOLDER))
 			LOG("Prefabs folder could not be created");
 
+	timer.Start();
+
 	return true;
 }
 
-bool FileSystem::Start()
+UPDATE_STATUS FileSystem::Update(float dt)
 {
-	AssetDirectory* assets = GenerateAssets(GetAssets());
-	if (assets != nullptr)
-		App->resource_manager->SetRootDir(assets);
-	else
-		LOG("Could not generate assets");
-	return true;
+	if (timer.ReadSec() >= UPDATE_TIME)
+	{
+		App->resource_manager->UpdateAssets();
+		timer.Start();
+	}
+	return UPDATE_CONTINUE;
 }
 
 bool FileSystem::CreateFolder(const char * name, bool hidden, const char * relative_path) const
@@ -213,6 +226,7 @@ AssetDirectory* FileSystem::GenerateAssets(const std::string & directory) const
 	if ((dir = opendir(directory.c_str())) != NULL)
 	{
 		asset_dir = new AssetDirectory(directory);
+		asset_dir->SetTimeStamp(GetTimeStamp(directory));
 		/* Create assets for all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL)
 		{
@@ -343,4 +357,35 @@ bool FileSystem::IsIn(const std::string & file, const std::string & directory) c
 	}
 
 	return false;
+}
+
+bool FileSystem::EraseFile(const std::string & full_path) const
+{
+	return remove(full_path.c_str()) == 0;
+}
+
+time_t FileSystem::GetMetaTimeStamp(const std::string & file) const
+{
+	char* buffer = nullptr;
+	char* iterator = nullptr;
+
+	LoadFileBinary(file, &buffer);
+
+	iterator = buffer;
+
+	time_t ret;
+	memcpy(&ret, iterator, sizeof(time_t));
+
+	delete[] buffer;
+
+	return ret;
+}
+
+time_t FileSystem::GetTimeStamp(const std::string & file) const
+{
+	struct stat result;
+	if (stat(file.c_str(), &result) == 0)
+		return result.st_mtime;
+
+	return 0;
 }

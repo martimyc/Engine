@@ -39,38 +39,22 @@ ResourceManager::~ResourceManager()
 
 Texture * ResourceManager::GetTexture(const UID & uid)
 {
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->GetUID() == uid)
-			return (Texture*)*it;
-
-	return nullptr;
+	return root_dir->GetTexture(uid);
 }
 
 Material * ResourceManager::GetMaterial(const UID & uid)
 {
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->GetUID() == uid)
-			return (Material*)*it;
-
-	return nullptr;
+	return root_dir->GetMaterial(uid);
 }
 
 Mesh * ResourceManager::GetMesh(const UID & uid)
 {
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->GetUID() == uid)
-			return (Mesh*)*it;
-
-	return nullptr;
+	return root_dir->GetMesh(uid);
 }
 
 Prefab * ResourceManager::GetPrefab(const UID & uid)
 {
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		if ((*it)->GetUID() == uid)
-			return (Prefab*)*it;
-
-	return nullptr;
+	return root_dir->GetPrefab(uid);
 }
 
 Material * ResourceManager::CreateEmptyMaterial(const char* name)
@@ -82,12 +66,12 @@ Material * ResourceManager::CreateEmptyMaterial(const char* name)
 		char new_name[255];
 		sprintf(new_name, "Material %i", num_materials);
 		new_material = new Material(new_name, new MaterialSource(++material_priority));
-		assets.push_back(new MaterialAsset(new_material, nullptr, nullptr));
+		current_dir->AddAsset(new MaterialAsset(new_material, nullptr, nullptr));
 	}
 	else
 	{
 		new_material = new Material(name, new MaterialSource(++material_priority));
-		assets.push_back(new MaterialAsset(new_material, nullptr, nullptr));
+		current_dir->AddAsset(new MaterialAsset(new_material, nullptr, nullptr));
 	}
 
 	return new_material;
@@ -100,19 +84,19 @@ void ResourceManager::LoadToScene(Asset* asset)
 	case RT_TEXTURE:
 		if (App->scene_manager->GetFocused()->HasMeshFilter())
 		{
+			//TODO fix
 			if (App->scene_manager->GetFocused()->GetMaterial() == nullptr)
 			{
 				Material* material = CreateEmptyMaterial();
 				Texture* texture = current_dir->UseTexture(asset->GetUID(), material);
 				material->AddTexture(texture, TT_DIFFUSE);
-				App->scene_manager->GetFocused()->ChangeMaterial(material);
+				App->scene_manager->GetFocused()->AddComponent(new AppliedMaterial(material));
 			}
 			else
 			{
-				UID uid(App->scene_manager->GetFocused()->GetMaterial()->GetUID());
-				Material* material = GetMaterial(uid);
-				Texture* texture = current_dir->UseTexture(asset->GetUID(), material);
-				material->AddTexture(texture, TT_DIFFUSE);
+				AppliedMaterial* material = App->scene_manager->GetFocused()->GetAppliedMaterial();
+				Texture* texture = current_dir->UseTexture(asset->GetUID(), material->GetMaterial());
+				material->AddTexture(texture);
 			}
 		}
 		else
@@ -151,13 +135,32 @@ const std::string & ResourceManager::GetCurrentDirPath() const
 	return current_dir->GetPath();
 }
 
-bool ResourceManager::Init()
+void ResourceManager::UpdateAssets()
 {
+	time_t mod = App->file_system->GetTimeStamp(root_dir->GetPath());
+	if (mod != root_dir->GetTimeStamp())
+	{
+		root_dir->SetTimeStamp(mod);
+		root_dir->Update();
+	}
+}
+
+bool ResourceManager::Start()
+{
+	AssetDirectory* assets = App->file_system->GenerateAssets(App->file_system->GetAssets());
+	if (assets != nullptr)
+	{
+		root_dir = assets;
+		current_dir = root_dir;
+	}
+	else
+		LOG("Could not generate assets");
+
 	debug_textures = LoadCheckers();
 	selected = 0;
-	current_dir = nullptr;
 	LoadButtons();
 	LoadFolderIcon();
+
 	return true;
 }
 
@@ -173,19 +176,13 @@ UPDATE_STATUS ResourceManager::Update(float dt)
 		current_dir->Inspector(selected);
 	}
 	App->EndDockWindow();
+
 	return UPDATE_CONTINUE;
 }
 
 bool ResourceManager::CleanUp()
 {
-	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); ++it)
-		DELETE_PTR(*it);
-	buttons.clear();
-	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
-		DELETE_PTR(*it);
-	assets.clear();
-
-	delete current_dir;
+	delete root_dir;
 
 	return true;
 }
@@ -193,19 +190,30 @@ bool ResourceManager::CleanUp()
 void ResourceManager::AddAsset(const std::string & name, const UID & uid, RESOURCE_TYPE type, const ImportConfiguration * import_config, const LoadConfiguration * load_config)
 {
 	current_dir->AddAsset( name, uid, type, import_config, load_config);
+	switch (type)
+	{
+	case RT_TEXTURE:num_textures++;	break;
+	case RT_MESH: num_meshes++;	break;
+	case RT_MATERIAL: num_materials++; break;
+	case RT_PREFAB: num_prefabs++;break;
+	}
 }
 
 void ResourceManager::DeleteAsset(Asset * to_delete)
 {
 	current_dir->RemoveAsset(to_delete);
+	switch (to_delete->GetType())
+	{
+	case RT_TEXTURE:num_textures--;	break;
+	case RT_MESH: num_meshes--;	break;
+	case RT_MATERIAL: num_materials--; break;
+	case RT_PREFAB: num_prefabs--; break;
+	}
 }
 
 bool ResourceManager::Exsists(const UID & id) const
 {
-	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
-		if (id == (*it)->GetUID())
-			return true;
-	return false;
+	return root_dir->Exsists(id);
 }
 
 Material * ResourceManager::UseMaterial(const UID & id, const GameObject * go) const
@@ -273,7 +281,7 @@ Texture* ResourceManager::LoadCheckers()
 	source->SetDimensions(CHECKERS_WIDTH, CHECKERS_HEIGHT);
 
 	Texture* new_texture = new Texture("Checkers", source);
-	assets.push_back(new TextureAsset(new_texture, nullptr, nullptr));
+	root_dir->AddAsset(new TextureAsset(new_texture, nullptr, nullptr));
 	num_textures++;
 
 	return new_texture;

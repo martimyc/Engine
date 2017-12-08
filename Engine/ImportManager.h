@@ -75,6 +75,7 @@ public:
 
 		friend class MaterialImporter;
 		friend class FileSystem;
+		friend class AssetDirectory;
 	};
 
 	ImportManager(const char* name, bool start_enabled = true);
@@ -94,6 +95,8 @@ private:
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;
 
+	void DeleteSceneFiles(char ** iterator) const;
+
 public:
 	bool Init();
 	bool CleanUp();
@@ -109,6 +112,8 @@ public:
 	GLuint GenerateButtonImage(const std::string &relative_path);
 
 	void MetaLoad(const std::string& file, AssetDirectory* dir) const;
+
+	void ReImportWithMeta(time_t file_last_mod, const std::string& meta_file, AssetDirectory* dir) const;
 };
 
 

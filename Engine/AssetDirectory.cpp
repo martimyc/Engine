@@ -1,6 +1,8 @@
 #include "glew/include/GL/glew.h"
 #include "imgui\imgui.h"
 
+#include "Dirent\dirent.h"
+
 #include "UID.h"
 
 //Resources
@@ -19,6 +21,7 @@
 
 #include "ImportManager.h"
 #include "ResourceManager.h"
+#include "FileSystem.h"
 #include "Application.h"
 #include "AssetDirectory.h"
 
@@ -53,6 +56,16 @@ std::string AssetDirectory::GetName() const
 	return path.substr(path.find_last_of("\\") + 1);
 }
 
+time_t AssetDirectory::GetTimeStamp() const
+{
+	return last_modified;
+}
+
+void AssetDirectory::SetTimeStamp(time_t new_mod_time)
+{
+	last_modified = new_mod_time;
+}
+
 void AssetDirectory::AddAsset(const std::string& name, const UID& uid, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config)
 {
 	Resource* new_resource = nullptr;
@@ -81,6 +94,11 @@ void AssetDirectory::AddAsset(const std::string& name, const UID& uid, RESOURCE_
 		LOG("Non standard import type");
 		break;
 	}
+	assets.push_back(new_asset);
+}
+
+void AssetDirectory::AddAsset(Asset * new_asset)
+{
 	assets.push_back(new_asset);
 }
 
@@ -242,4 +260,144 @@ Prefab * AssetDirectory::UsePrefab(const UID & id, const GameObject * go) const
 			return prefab;
 		}
 	return nullptr;
+}
+
+void AssetDirectory::Update()
+{
+	DIR* dir;
+	struct dirent* ent;
+
+	if ((dir = opendir(path.c_str())) != NULL)
+	{
+		/* Create assets for all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			std::string file(ent->d_name);
+
+			if (ent->d_type == DT_REG)
+			{
+				if (file == "." || file == ".." || file == "Thumbs.db")
+					continue;
+				if (App->file_system->IsMeta(file))
+				{
+					std::string real_file(path);
+					real_file += "\\" + file.substr(0, file.find_last_of("."));
+					time_t file_mod_time = App->file_system->GetTimeStamp(real_file);
+
+					App->import_manager->ReImportWithMeta(file_mod_time,path + "\\" + file, this);
+				}
+				else if (App->file_system->HasMeta(file, path) == false)
+				{
+					std::string file_path(path + "\\" + file);
+					ImportManager::ImportClient::StraightImport(file_path, this);
+				}
+			}
+		}
+		closedir(dir);
+	}
+	else
+		LOG("Directory %s could not be opened", path.c_str());
+
+	for (std::vector<AssetDirectory*>::iterator it = directories.begin(); it != directories.end(); ++it)
+	{
+		time_t mod = App->file_system->GetTimeStamp((*it)->GetPath());
+		if (mod != (*it)->last_modified)
+		{
+			(*it)->SetTimeStamp(mod);
+			(*it)->Update();
+		}
+	}
+
+}
+
+void AssetDirectory::DeleteAsset(const UID & uid)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (uid == (*it)->GetUID())
+		{
+			delete *it;
+			assets.erase(it);
+			break;
+		}
+}
+
+Texture * AssetDirectory::GetTexture(const UID & uid) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetUID() == uid)
+			return (Texture*)(*it)->GetResource();
+
+	Texture* ret = nullptr;
+	for (std::vector<AssetDirectory*>::const_iterator it = directories.begin(); it != directories.end(); ++it)
+	{
+		ret = (*it)->GetTexture(uid);
+		if (ret != nullptr)
+			break;
+	}
+	return ret;
+}
+
+Material * AssetDirectory::GetMaterial(const UID & uid) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetUID() == uid)
+			return (Material*)(*it)->GetResource();
+
+	Material* ret = nullptr;
+	for (std::vector<AssetDirectory*>::const_iterator it = directories.begin(); it != directories.end(); ++it)
+	{
+		ret = (*it)->GetMaterial(uid);
+		if (ret != nullptr)
+			break;
+	}
+	return ret;
+}
+
+Mesh * AssetDirectory::GetMesh(const UID & uid) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetUID() == uid)
+			return (Mesh*)(*it)->GetResource();
+
+	Mesh* ret = nullptr;
+	for (std::vector<AssetDirectory*>::const_iterator it = directories.begin(); it != directories.end(); ++it)
+	{
+		ret = (*it)->GetMesh(uid);
+		if (ret != nullptr)
+			break;
+	}
+	return ret;
+}
+
+Prefab * AssetDirectory::GetPrefab(const UID & uid) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetUID() == uid)
+			return (Prefab*)(*it)->GetResource();
+
+	Prefab* ret = nullptr;
+	for (std::vector<AssetDirectory*>::const_iterator it = directories.begin(); it != directories.end(); ++it)
+	{
+		ret = (*it)->GetPrefab(uid);
+		if (ret != nullptr)
+			break;
+	}
+	return ret;
+}
+
+
+bool AssetDirectory::Exsists(const UID & uid) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetUID() == uid)
+			return true;
+
+	bool ret = false;
+	for (std::vector<AssetDirectory*>::const_iterator it = directories.begin(); it != directories.end(); ++it)
+	{
+		ret = (*it)->Exsists(uid);
+		if (ret == true)
+			break;
+	}
+	return ret;
 }

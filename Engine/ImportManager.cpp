@@ -319,12 +319,17 @@ bool ImportManager::TextureMetaSave(const std::string & full_path, const UID & r
 {
 	unsigned int buff_size = full_path.size() + 1;
 	buff_size += SIZE_OF_UID;
+	buff_size += sizeof(time_t);
 	buff_size += sizeof(RESOURCE_TYPE);
 	buff_size += import_config->GetMetaSize();
 	buff_size += load_config->GetMetaSize();
 
 	char* buffer = new char[buff_size];
 	char* iterator = buffer;
+
+	time_t last_modified = App->file_system->GetTimeStamp(full_path);
+	memcpy(iterator, &last_modified, sizeof(time_t));
+	iterator += sizeof(time_t);
 
 	memcpy(iterator, full_path.c_str(), full_path.length() + 1);
 	iterator += full_path.length() + 1;
@@ -357,6 +362,7 @@ bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vect
 {
 	unsigned int buff_size = full_path.size() + 1;
 	buff_size += SIZE_OF_UID;
+	buff_size += sizeof(time_t);
 	buff_size += sizeof(RESOURCE_TYPE);
 	buff_size += import_config->GetMetaSize();
 
@@ -372,6 +378,10 @@ bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vect
 
 	char* buffer = new char[buff_size];
 	char* iterator = buffer;
+
+	time_t last_modified = App->file_system->GetTimeStamp(full_path);
+	memcpy(iterator, &last_modified, sizeof(time_t));
+	iterator += sizeof(time_t);
 
 	memcpy(iterator, full_path.c_str(), full_path.length() + 1);
 	iterator += full_path.length() + 1;
@@ -432,6 +442,9 @@ void ImportManager::MetaLoad(const std::string & file, AssetDirectory* dir) cons
 	if (buffer != nullptr && length != 0)
 	{
 		char* iterator = buffer;
+
+		iterator += sizeof(time_t);
+
 		std::string file_path(iterator);
 		iterator += file_path.length() + 1;
 
@@ -467,6 +480,88 @@ void ImportManager::MetaLoad(const std::string & file, AssetDirectory* dir) cons
 	else
 		LOG("Metafile %s could not be loaded correctly", name.c_str());
 
+	delete[] buffer;
+}
+
+void ImportManager::ReImportWithMeta(time_t file_last_mod, const std::string & meta_file, AssetDirectory* dir) const
+{
+	char* buffer = nullptr;
+	unsigned int length = App->file_system->LoadFileBinary(meta_file, &buffer);
+
+	if (buffer != nullptr && length != 0)
+	{
+		char* iterator = buffer;
+
+		time_t last_mod;
+		memcpy(&last_mod, iterator, sizeof(time_t));
+		iterator += sizeof(time_t);
+
+		if (last_mod != file_last_mod)
+		{
+			std::string file_path(iterator);
+			iterator += file_path.length() + 1;
+
+			size_t count = file_path.find_first_of(".") - 1 - file_path.find_last_of("\\");
+			std::string name(file_path.substr(file_path.find_last_of("\\") + 1, count));
+
+			UID uid(iterator);
+			iterator += SIZE_OF_UID;
+
+			dir->DeleteAsset(uid);
+
+			RESOURCE_TYPE type = *((RESOURCE_TYPE*)iterator);
+			iterator += sizeof(RESOURCE_TYPE);
+
+			ImportConfiguration* import_config = nullptr;
+			LoadConfiguration* load_config = nullptr;
+
+			std::string to_erase;
+			std::string real_file;
+
+			switch (type)
+			{
+			case RT_TEXTURE:
+				import_config = new TextureImportConfiguration;
+				import_config->MetaLoad(&iterator);
+
+				load_config = new TextureLoadConfiguration;
+				load_config->MetaLoad(&iterator);
+
+				to_erase = App->file_system->GetTextures() + "\\" + uid.GetAsName() + ".dds";
+				if (App->file_system->EraseFile(to_erase) == false)
+					LOG("Could not delete %s", to_erase.c_str());
+
+				real_file = meta_file.substr(0, meta_file.find_last_of("."));
+
+				if (App->file_system->EraseFile(meta_file) == false)
+					LOG("Could not delete %s", meta_file.c_str());
+
+				Import(real_file, RT_TEXTURE, import_config, load_config, dir);
+				break;
+
+			case RT_PREFAB:
+				import_config = new SceneImportConfiguration;
+				import_config->MetaLoad(&iterator);
+				DeleteSceneFiles(&iterator);
+
+				to_erase = App->file_system->GetPrefabs() + "\\" + uid.GetAsName() + ".mm";
+				if (App->file_system->EraseFile(to_erase) == false)
+					LOG("Could not delete %s", to_erase.c_str());
+
+				real_file = meta_file.substr(0, meta_file.find_last_of("."));
+
+				if (App->file_system->EraseFile(meta_file) == false)
+					LOG("Could not delete %s", meta_file.c_str());
+
+				ImportScene(real_file, (SceneImportConfiguration*)import_config, dir);
+				break;
+			}
+		}
+		else
+			return;
+	}
+	else
+		LOG("Metafile %s could not be loaded correctly", name.c_str());
 	delete[] buffer;
 }
 
@@ -735,6 +830,43 @@ const std::string ImportManager::GetImportFileNameWithExtension() const
 {
 	size_t start = import_path.find_last_of("\\");
 	return import_path.substr(start + 1);
+}
+
+void ImportManager::DeleteSceneFiles(char ** iterator) const
+{
+	unsigned int num_meshes;
+	memcpy(&num_meshes, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_meshes; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		std::string name(*iterator);
+		*iterator += name.size() + 1;
+
+		std::string to_delete(App->file_system->GetMeshes() + "\\" + uid.GetAsName());
+		App->file_system->EraseFile(to_delete);
+	}
+
+	unsigned int num_materials;
+	memcpy(&num_materials, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_materials; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		std::string name(*iterator);
+		*iterator += name.size() + 1;
+
+		std::string to_delete(App->file_system->GetMaterials() + "\\" + uid.GetAsName());
+		App->file_system->EraseFile(to_delete);
+	}
 }
 
 const UID ImportManager::ImportClient::Import(const ImportManager * importer, const std::string & path, RESOURCE_TYPE type, const ImportConfiguration* import_config, const LoadConfiguration* load_config, AssetDirectory* dir)
