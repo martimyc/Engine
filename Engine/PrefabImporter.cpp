@@ -80,7 +80,9 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 		*iterator += strlen(name) + 1;
 	}
 
-	memcpy(*iterator, &child->mTransformation, sizeof(float) * 16);
+	aiMatrix4x4 mat = child->mTransformation;
+	mat = mat.Transpose();
+	memcpy(*iterator, &mat.a1, sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
 
 	uint num_meshes = child->mNumMeshes - GetFailedBefore(child->mNumMeshes, mesh_loads);

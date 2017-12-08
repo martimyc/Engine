@@ -180,13 +180,15 @@ const UID MeshImporter::Import(const aiMesh * mesh, const MeshImportConfiguratio
 	memcpy(iterator, mesh->mNormals, sizeof(GLfloat) * num_vertices * 3);	
 	iterator += sizeof(GLfloat) * num_vertices * 3;
 
-	memcpy(iterator, &config->load_colors, sizeof(bool));
-	iterator += sizeof(bool);
+	int pos = iterator - buffer;
 
 	if (config->load_colors)
 	{
 		if (mesh->HasVertexColors(0))
 		{
+			memcpy(iterator, &config->load_colors, sizeof(bool));
+			iterator += sizeof(bool);
+
 			GLuint num_color_channels = mesh->GetNumColorChannels();
 			memcpy(iterator, &num_color_channels, sizeof(GLuint));
 			iterator += sizeof(GLuint);
@@ -198,7 +200,17 @@ const UID MeshImporter::Import(const aiMesh * mesh, const MeshImportConfiguratio
 			}
 		}
 		else
+		{
 			LOG("Mesh has no vertex colors");
+			bool has_colors = false;
+			memcpy(iterator, &has_colors, sizeof(bool));
+			iterator += sizeof(bool);
+		}
+	}
+	else
+	{
+		memcpy(iterator, &config->load_colors, sizeof(bool));
+		iterator += sizeof(bool);
 	}
 
 	if (config->kdt)

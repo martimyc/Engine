@@ -1,4 +1,6 @@
 #include "imgui\imgui.h"
+#include "MathGeoLib\src\Math\float3.h"
+#include "MathGeoLib\src\Math\float4x4.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "MathGeoLib\src\Geometry\Triangle.h"
@@ -420,9 +422,48 @@ float MeshSource::GetMinZ() const
 	return min;
 }
 
-math::vec MeshSource::GetMaxVec() const
+math::vec MeshSource::GetMinVec() const
 {
-	return math::vec(GetMaxX(), GetMaxY(), GetMaxZ());
+	return math::vec(GetMinX(), GetMinY(), GetMinZ());
+}
+
+float MeshSource::GetWorldMinX(const math::float4x4 & world_transform) const
+{
+	return GetMinWorldVec(world_transform).x;
+}
+
+float MeshSource::GetWorldMinY(const math::float4x4 & world_transform) const
+{
+	return GetMinWorldVec(world_transform).y;
+}
+
+float MeshSource::GetWorldMinZ(const math::float4x4 & world_transform) const
+{
+	return GetMinWorldVec(world_transform).z;
+}
+
+math::vec MeshSource::GetMinWorldVec(const math::float4x4 & world_transform) const
+{
+	math::vec min_vec(math::vec::inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		transformed.x = vertices[i * 3];
+		transformed.y = vertices[i * 3 + 1];
+		transformed.z = vertices[i * 3 + 2];
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.x < min_vec.x)
+			min_vec.x = transformed.x;
+		if (transformed.y < min_vec.y)
+			min_vec.y = transformed.y;
+		if (transformed.z < min_vec.z)
+			min_vec.z = transformed.z;
+	}
+
+	return min_vec;
 }
 
 float MeshSource::GetMaxX() const
@@ -458,9 +499,48 @@ float MeshSource::GetMaxZ() const
 	return max;
 }
 
-math::vec MeshSource::GetMinVec() const
+math::vec MeshSource::GetMaxVec() const
 {
-	return math::vec(GetMinX(), GetMinY(), GetMinZ());
+	return math::vec(GetMaxX(), GetMaxY(), GetMaxZ());
+}
+
+float MeshSource::GetWorldMaxX(const math::float4x4 & world_transform) const
+{
+	return GetMaxWorldVec(world_transform).x;
+}
+
+float MeshSource::GetWorldMaxY(const math::float4x4 & world_transform) const
+{
+	return GetMaxWorldVec(world_transform).y;
+}
+
+float MeshSource::GetWorldMaxZ(const math::float4x4 & world_transform) const
+{
+	return GetMaxWorldVec(world_transform).z;
+}
+
+math::vec MeshSource::GetMaxWorldVec(const math::float4x4 & world_transform) const
+{
+	math::vec max_vec(-inf, -inf, -inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		transformed.x = vertices[i * 3];
+		transformed.y = vertices[i * 3 + 1];
+		transformed.z = vertices[i * 3 + 2];
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.x > max_vec.x)
+			max_vec.x = transformed.x;
+		if (transformed.y > max_vec.y)
+			max_vec.y = transformed.y;
+		if (transformed.z > max_vec.z)
+			max_vec.z = transformed.z;
+	}
+
+	return max_vec;
 }
 
 math::vec MeshSource::GetMinXVertex() const
@@ -496,6 +576,72 @@ math::vec MeshSource::GetMinZVertex() const
 	return 	math::vec(vertices[min * 3], vertices[min * 3 + 1], vertices[min * 3 + 2]);
 }
 
+math::vec MeshSource::GetWorldMinXVertex(const math::float4x4 & world_transform) const
+{
+	math::vec min_vec(math::vec::inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.x < min_vec.x)
+		{
+			min_vec.x = transformed.x;
+			min_vec.y = transformed.y;
+			min_vec.z = transformed.z;
+		}
+	}
+
+	return min_vec;
+}
+
+math::vec MeshSource::GetWorldMinYVertex(const math::float4x4 & world_transform) const
+{
+	math::vec min_vec(math::vec::inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.y < min_vec.y)
+		{
+			min_vec.x = transformed.x;
+			min_vec.y = transformed.y;
+			min_vec.z = transformed.z;
+		}
+	}
+
+	return min_vec;
+}
+
+math::vec MeshSource::GetWorldMinZVertex(const math::float4x4 & world_transform) const
+{
+	math::vec min_vec(math::vec::inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.z < min_vec.z)
+		{
+			min_vec.x = transformed.x;
+			min_vec.y = transformed.y;
+			min_vec.z = transformed.z;
+		}
+	}
+
+	return min_vec;
+}
+
 math::vec MeshSource::GetMaxXVertex() const
 {
 	int max = 0.0f;
@@ -527,6 +673,72 @@ math::vec MeshSource::GetMaxZVertex() const
 			max = i;
 
 	return 	math::vec(vertices[max * 3], vertices[max * 3 + 1], vertices[max * 3 + 2]);
+}
+
+math::vec MeshSource::GetWorldMaxXVertex(const math::float4x4 & world_transform) const
+{
+	math::vec max_vec(-inf, -inf, -inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.x > max_vec.x)
+		{
+			max_vec.x = transformed.x;
+			max_vec.y = transformed.y;
+			max_vec.z = transformed.z;
+		}
+	}
+
+	return max_vec;
+}
+
+math::vec MeshSource::GetWorldMaxYVertex(const math::float4x4 & world_transform) const
+{
+	math::vec max_vec(-inf, -inf, -inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.y > max_vec.y)
+		{
+			max_vec.x = transformed.x;
+			max_vec.y = transformed.y;
+			max_vec.z = transformed.z;
+		}
+	}
+
+	return max_vec;
+}
+
+math::vec MeshSource::GetWorldMaxZVertex(const math::float4x4 & world_transform) const
+{
+	math::vec max_vec(-inf, -inf, -inf);
+	math::float4 transformed(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < num_vertices; i++)
+	{
+		memcpy(&transformed.x, &vertices[i * 3], sizeof(float) * 3);
+
+		transformed = world_transform.Transposed() * transformed;
+
+		if (transformed.z > max_vec.z)
+		{
+			max_vec.x = transformed.x;
+			max_vec.y = transformed.y;
+			max_vec.z = transformed.z;
+		}
+	}
+
+	return max_vec;
 }
 
 float MeshSource::CheckTriangleCollision(const LineSegment * ray)
@@ -837,7 +1049,39 @@ math::vec Mesh::GetMinVec() const
 	if (source != nullptr)
 		return source->GetMinVec();
 	LOG("Trying to acces non loaded mesh");
-	return math::vec::zero;
+	return math::vec::inf;
+}
+
+float Mesh::GetWorldMinX(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMinX(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetWorldMinY(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMinY(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetWorldMinZ(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMinZ(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+math::vec Mesh::GetMinWorldVec(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetMinWorldVec(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
 }
 
 float Mesh::GetMaxX() const
@@ -869,7 +1113,39 @@ math::vec Mesh::GetMaxVec() const
 	if (source != nullptr)
 		return source->GetMaxVec();
 	LOG("Trying to acces non loaded mesh");
-	return math::vec::zero;
+	return math::vec::inf;
+}
+
+float Mesh::GetWorldMaxX(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMaxX(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetWorldMaxY(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMaxY(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+float Mesh::GetWorldMaxZ(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMaxZ(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return 0.0f;
+}
+
+math::vec Mesh::GetMaxWorldVec(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetMaxWorldVec(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
 }
 
 math::vec Mesh::GetMinXVertex() const
@@ -896,6 +1172,30 @@ math::vec Mesh::GetMinZVertex() const
 	return math::vec(0.0f, 0.0f, 0.0f);
 }
 
+math::vec Mesh::GetWorldMinXVertex(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMinXVertex(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
+}
+
+math::vec Mesh::GetWorldMinYVertex(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMinYVertex(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
+}
+
+math::vec Mesh::GetWorldMinZVertex(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMinZVertex(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
+}
+
 math::vec Mesh::GetMaxXVertex() const
 {
 	if (source != nullptr)
@@ -918,6 +1218,30 @@ math::vec Mesh::GetMaxZVertex() const
 		return source->GetMaxZVertex();
 	LOG("Trying to acces non loaded mesh");
 	return math::vec(0.0f, 0.0f, 0.0f);
+}
+
+math::vec Mesh::GetWorldMaxXVertex(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMaxXVertex(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
+}
+
+math::vec Mesh::GetWorldMaxYVertex(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMaxYVertex(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
+}
+
+math::vec Mesh::GetWorldMaxZVertex(const math::float4x4 & world_transform) const
+{
+	if (source != nullptr)
+		return source->GetWorldMaxZVertex(world_transform);
+	LOG("Trying to acces non loaded mesh");
+	return math::vec::inf;
 }
 
 math::vec Mesh::GetCenter() const

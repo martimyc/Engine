@@ -102,20 +102,34 @@ struct MeshSource
 	float GetMinX() const;
 	float GetMinY() const;
 	float GetMinZ() const;
-	math::vec GetMaxVec() const;
+	math::vec GetMinVec() const;
+	float GetWorldMinX(const math::float4x4& world_transform) const;
+	float GetWorldMinY(const math::float4x4& world_transform) const;
+	float GetWorldMinZ(const math::float4x4& world_transform) const;
+	math::vec GetMinWorldVec(const math::float4x4& world_transform) const;
 
 	float GetMaxX() const;
 	float GetMaxY() const;
 	float GetMaxZ() const;
-	math::vec GetMinVec() const;
+	math::vec GetMaxVec() const;
+	float GetWorldMaxX(const math::float4x4& world_transform) const;
+	float GetWorldMaxY(const math::float4x4& world_transform) const;
+	float GetWorldMaxZ(const math::float4x4& world_transform) const;
+	math::vec GetMaxWorldVec(const math::float4x4& world_transform) const;
 
 	math::vec GetMinXVertex() const;
 	math::vec GetMinYVertex() const;
 	math::vec GetMinZVertex() const;
+	math::vec GetWorldMinXVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMinYVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMinZVertex(const math::float4x4& world_transform) const;
 
 	math::vec GetMaxXVertex() const;
 	math::vec GetMaxYVertex() const;
 	math::vec GetMaxZVertex() const;
+	math::vec GetWorldMaxXVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMaxYVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMaxZVertex(const math::float4x4& world_transform) const;
 };
 
 class Mesh : public Resource
@@ -172,19 +186,34 @@ public:
 	float GetMinY() const;
 	float GetMinZ() const;
 	math::vec GetMinVec() const;
+	float GetWorldMinX(const math::float4x4& world_transform) const;
+	float GetWorldMinY(const math::float4x4& world_transform) const;
+	float GetWorldMinZ(const math::float4x4& world_transform) const;
+	math::vec GetMinWorldVec(const math::float4x4& world_transform) const;
 
 	float GetMaxX() const;
 	float GetMaxY() const;
 	float GetMaxZ() const;
 	math::vec GetMaxVec() const;
+	float GetWorldMaxX(const math::float4x4& world_transform) const;
+	float GetWorldMaxY(const math::float4x4& world_transform) const;
+	float GetWorldMaxZ(const math::float4x4& world_transform) const;
+	math::vec GetMaxWorldVec(const math::float4x4& world_transform) const;
 
 	math::vec GetMinXVertex() const;
 	math::vec GetMinYVertex() const;
 	math::vec GetMinZVertex() const;
+	math::vec GetWorldMinXVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMinYVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMinZVertex(const math::float4x4& world_transform) const;
+
 
 	math::vec GetMaxXVertex() const;
 	math::vec GetMaxYVertex() const;
 	math::vec GetMaxZVertex() const;
+	math::vec GetWorldMaxXVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMaxYVertex(const math::float4x4& world_transform) const;
+	math::vec GetWorldMaxZVertex(const math::float4x4& world_transform) const;
 
 	math::vec GetCenter() const;
 
