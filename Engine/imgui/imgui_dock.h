@@ -87,6 +87,7 @@ namespace ImGui
 		void EndDock();
 
 		void SetWorkspacePosSize(ImVec2 pos_, ImVec2 size_, float width_difference = 1.0f, float height_difference = 1.0f);
+		bool GetDockSize(const char * str, float & x, float & y, float & w, float & h) const;
 
 		void LoadDocks();
 		void SaveDocks();

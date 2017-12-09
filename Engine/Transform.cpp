@@ -106,7 +106,7 @@ void Transform::Update()
 	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
 	float3x3 rotation_matrix(rotation);
 	transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
-	transform_matrix = float4x4::Scale(scaling, center) * transform_matrix;		//Scalate
+	transform_matrix = float4x4::Scale(scaling, center) * transform_matrix;				//Scalate
 }
 
 bool Transform::Inspector()

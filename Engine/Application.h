@@ -79,6 +79,7 @@ public:
 	void SetDockContextSize(const int width, const int height, float width_difference = 1.0f, float height_difference = 1.0f);
 	bool BeginDockWindow(const char* label, bool* opened = nullptr, ImGuiWindowFlags extra_flags = 0);
 	void EndDockWindow();
+	bool GetDockSize(const char* str, float& x, float& y, float& w, float& h) const;
 
 private:
 
