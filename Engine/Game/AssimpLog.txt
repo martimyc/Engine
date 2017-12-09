@@ -1,154 +1,91 @@
-Info,  T10448: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\BakerHouse\BakerHouse.fbx
-Info,  T10448: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T10448: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\BakerHouse\'
-Warn,  T10448: FBX-DOM (TOK_KEY, offset 0xd7b7) shading mode not recognized: Phong
-Info,  T10448: Entering post processing pipeline
-Info,  T10448: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T10448: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T10448: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T10448: JoinVerticesProcess finished | Verts in: 3075 out: 1532 | ~50.2%
-Info,  T10448: Cache relevant are 2 meshes (1025 faces). Average output ACMR is 1.522927
-Info,  T10448: Leaving post processing pipeline
-Info,  T10448: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Benches.fbx
-Info,  T10448: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T10448: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
-Warn,  T10448: FBX-DOM (TOK_KEY, offset 0x167d6) source object for connection does not exist
-Warn,  T10448: FBX-DOM (TOK_KEY, offset 0x136e7) shading mode not recognized: unknown
-Info,  T10448: FBX: generating full transformation chain for node: Bench
+Info,  T17624: Load C:\Users\Marti\Desktop\Assets\Street\Street environment_V01.FBX
+Info,  T17624: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T17624: Import root directory is 'C:\Users\Marti\Desktop\Assets\Street\'
+Warn,  T17624: FBX-DOM (TOK_KEY, offset 0x1c9c1b) failed to resolve target Model/NodeAttribute/Constraint for AnimationCurveNode
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
 Skipping one or more lines with the same contents
-Info,  T10448: Entering post processing pipeline
-Info,  T10448: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T10448: TriangulateProcess finished. All polygons have been triangulated.
-Info,  T10448: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T10448: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T10448: JoinVerticesProcess finished | Verts in: 4614 out: 3743 | ~18.9%
-Info,  T10448: Cache relevant are 4 meshes (2180 faces). Average output ACMR is 1.732569
-Info,  T10448: Leaving post processing pipeline
-Info,  T10448: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\CubeTest2.fbx
-Info,  T10448: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T10448: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
-Info,  T10448: FBX: ignoring empty AnimationStack (using IK?): Take 001
-Info,  T10448: Entering post processing pipeline
-Info,  T10448: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T10448: TriangulateProcess finished. All polygons have been triangulated.
-Info,  T10448: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T10448: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T10448: Cache relevant are 1 meshes (12 faces). Average output ACMR is 2.000000
-Info,  T10448: Leaving post processing pipeline
-Info,  T10448: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Soldier.FBX
-Info,  T10448: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T10448: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
-Info,  T10448: FBX: ignoring empty AnimationStack (using IK?): Take 001
-Info,  T10448: FBX: generating full transformation chain for node: Soldier UV LOW
-Info,  T10448: Entering post processing pipeline
-Info,  T10448: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T10448: TriangulateProcess finished. All polygons have been triangulated.
-Info,  T10448: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T10448: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T10448: JoinVerticesProcess finished | Verts in: 23444 out: 8354 | ~64.4%
-Info,  T10448: Cache relevant are 1 meshes (11584 faces). Average output ACMR is 0.920666
-Info,  T10448: Leaving post processing pipeline
-Info,  T10448: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Street\Street environment_V01.FBX
-Info,  T10448: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T10448: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Street\'
-Warn,  T10448: FBX-DOM (TOK_KEY, offset 0x1c9c1b) failed to resolve target Model/NodeAttribute/Constraint for AnimationCurveNode
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Warn,  T17624: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
+Warn,  T17624: FBX: ignoring node animation, did not find any transformation key frames
+Info,  T17624: FBX: generating full transformation chain for node: Sky001
+Info,  T17624: FBX: generating full transformation chain for node: Dummy001
+Info,  T17624: FBX: generating full transformation chain for node: Camera001
 Skipping one or more lines with the same contents
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T10448: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Info,  T10448: FBX: generating full transformation chain for node: Sky001
-Info,  T10448: FBX: generating full transformation chain for node: Dummy001
-Info,  T10448: FBX: generating full transformation chain for node: Camera001
+Info,  T17624: FBX: generating full transformation chain for node: Spot001
 Skipping one or more lines with the same contents
-Info,  T10448: FBX: generating full transformation chain for node: Spot001
+Info,  T17624: Entering post processing pipeline
+Info,  T17624: RemoveVCProcess finished. Data structure cleanup has been done.
+Info,  T17624: FindInstancesProcess finished. Found 13 instances
+Info,  T17624: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Error, T17624: Failed to compute tangents; need UV data in channel0
 Skipping one or more lines with the same contents
-Info,  T10448: Entering post processing pipeline
-Info,  T10448: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T10448: FindInstancesProcess finished. Found 13 instances
-Info,  T10448: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Error, T10448: Failed to compute tangents; need UV data in channel0
-Skipping one or more lines with the same contents
-Info,  T10448: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T10448: JoinVerticesProcess finished | Verts in: 81183 out: 37716 | ~53.5%
-Info,  T10448: Cache relevant are 17 meshes (27061 faces). Average output ACMR is 1.410628
-Info,  T10448: Leaving post processing pipeline
-Info,  T10448: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\warrior.FBX
-Info,  T10448: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T10448: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
-Warn,  T10448: FBX: ignoring node animation, did not find any transformation key frames
-Info,  T10448: FBX: generating full transformation chain for node: RPG-Character-Mesh
-Info,  T10448: FBX: generating full transformation chain for node: Motion
-Info,  T10448: Entering post processing pipeline
-Info,  T10448: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T10448: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Info,  T10448: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T10448: JoinVerticesProcess finished | Verts in: 3768 out: 3362 | ~10.8%
-Info,  T10448: Cache relevant are 1 meshes (1256 faces). Average output ACMR is 2.679140
-Info,  T10448: Leaving post processing pipeline
+Info,  T17624: CalcTangentsProcess finished. Tangents have been calculated
+Info,  T17624: JoinVerticesProcess finished | Verts in: 81183 out: 37716 | ~53.5%
+Info,  T17624: Cache relevant are 17 meshes (27061 faces). Average output ACMR is 1.410628
+Info,  T17624: Leaving post processing pipeline

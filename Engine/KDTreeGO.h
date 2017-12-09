@@ -4,7 +4,7 @@
 #include <vector>
 #include "MathGeoLib\src\Geometry\AABB.h"
 
-#define MAX_NUM_OBJECTS 5
+#define MAX_NUM_OBJECTS 9
 #define MAX_SUBDIVISIONS 5
 
 class GameObject;
@@ -39,8 +39,6 @@ private:
 	void SubDivideChilds(PARTITION_AXIS partition_axis, float median);
 
 	void SubDivide(PARTITION_AXIS partition_axis, float median);
-
-	float FindBestMedian(PARTITION_AXIS partition_axis, const GameObject* new_game_object) const;
 
 	float FindBestMedianX(const GameObject* new_game_object) const;
 
@@ -93,39 +91,5 @@ public:
 
 	void Draw() const;
 };
-
-namespace KDTGO
-{
-	//Subdivide priority queue operators
-	struct CompareMaxPositionsX
-	{
-		bool operator()(const GameObject * go1, const GameObject * go2);
-	};
-
-	struct CompareMaxPositionsY
-	{
-		bool operator()(const GameObject * go1, const GameObject * go2);
-	};
-
-	struct CompareMaxPositionsZ
-	{
-		bool operator()(const GameObject * go1, const GameObject * go2);
-	};
-
-	struct CompareMinPositionsX
-	{
-		bool operator()(const GameObject * go1, const GameObject * go2);
-	};
-
-	struct CompareMinPositionsY
-	{
-		bool operator()(const GameObject * go1, const GameObject * go2);
-	};
-
-	struct CompareMinPositionsZ
-	{
-		bool operator()(const GameObject * go1, const GameObject * go2);
-	};
-}
 
 #endif // !KDTREE_GO
