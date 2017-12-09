@@ -260,15 +260,16 @@ bool ImGui::Asset(const char * label, const ImVec2 image_size, bool selected, Im
 
 	RenderTextClipped(text_pos, bb.Max, label, label_end, &label_size);
 
-
 	ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 
 	ItemSize(bb);
 	if (!ItemAdd(bb, NULL))
 		return false;
 
-	if (g.IO.MouseDoubleClicked[0] && IsMouseHoveringRect(bb.Min, bb.Max))
+	if (g.IO.MouseDoubleClicked[0] && bb.Contains(g.IO.MouseClickedPos[0]))
 		return true;
+
+	return false;
 }
 
 /*
