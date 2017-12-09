@@ -267,7 +267,7 @@ bool ImGui::Asset(const char * label, const ImVec2 image_size, bool selected, Im
 	if (!ItemAdd(bb, NULL))
 		return false;
 
-	if (g.IO.MouseDoubleClicked[0] && IsHovered(bb, id))
+	if (g.IO.MouseDoubleClicked[0] && IsMouseHoveringRect(bb.Min, bb.Max))
 		return true;
 }
 

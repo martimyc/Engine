@@ -142,7 +142,7 @@ void AssetDirectory::Inspector(unsigned int& selected)
 
 		i++;
 		
-		if((ImGui::GetItemRectMax().x > start_pos.x + ImGui::GetColumnWidth() - 200) == false) //TODO fix with dock size
+		if((ImGui::GetItemRectMax().x > start_pos.x + ImGui::GetColumnWidth() - 150) == false) //TODO fix with dock size
 			ImGui::SameLine();
 	}
 
@@ -156,7 +156,7 @@ void AssetDirectory::Inspector(unsigned int& selected)
 
 		i++;
 		
-		if ((ImGui::GetItemRectMax().x > start_pos.x + ImGui::GetColumnWidth() - 200) == false)//TODO fix with dock size
+		if ((ImGui::GetItemRectMax().x > start_pos.x + ImGui::GetColumnWidth() - 150) == false)//TODO fix with dock size
 			ImGui::SameLine();
 	}
 }
