@@ -107,6 +107,23 @@ namespace ImGui
 		}
 	}
 
+	bool DockContext::GetDockSize(const char * str, float & x, float & y, float & w, float & h) const
+	{
+		for (int i = 0; i < g_dock.m_docks.size(); i++)
+		{
+			std::string name(g_dock.m_docks[i]->label);
+			if (name == str)
+			{
+				x = g_dock.m_docks[i]->pos.x;
+				y = g_dock.m_docks[i]->pos.y;
+				w = g_dock.m_docks[i]->size.x;
+				h = g_dock.m_docks[i]->size.y;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void DockContext::LoadDocks()
 	{
 		const JSON_Value* dock_configuration = json_parse_file("docks.json");

@@ -253,6 +253,11 @@ void Application::EndDockWindow()
 	dock_context->EndDock();
 }
 
+bool Application::GetDockSize(const char * str, float & x, float & y, float & w, float & h) const
+{
+	return dock_context->GetDockSize(str, x, y, w, h);
+}
+
 void Application::AddModule(Module* mod)
 {
 	modules.push_back(mod);
