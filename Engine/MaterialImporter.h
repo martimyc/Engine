@@ -10,12 +10,12 @@
 #include "glew\include\GL\glew.h"
 
 struct MaterialImportConfiguration;
-struct MaterialLoadConfiguration;
+struct MaterialLoadConfiguration;	
 struct TextureImportConfiguration;
-struct TextureLoadConfiguration;
+struct TextureLoadConfiguration;	
 struct Material;
 struct UID;
-class AssetDirectory;
+class AssetDirectory;	
 
 class MaterialImporter
 {

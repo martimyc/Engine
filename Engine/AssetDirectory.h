@@ -30,6 +30,7 @@ private:
 
 public:
 	AssetDirectory(const std::string& path);
+	AssetDirectory(const AssetDirectory& copy);
 	~AssetDirectory();
 
 	static void SetImage(GLuint id);

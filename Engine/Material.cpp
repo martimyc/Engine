@@ -579,6 +579,10 @@ Material::Material(const std::string name, const UID& uid) : Resource(RT_MATERIA
 Material::Material(const std::string name, MaterialSource * source) : Resource(RT_MATERIAL, name), source(source)
 {}
 
+Material::Material(const Material & copy) : Resource(RT_MATERIAL, copy.name), source(copy.source)
+{
+}
+
 Material::~Material() //Deleting a material does not delete its textures
 {
 	if (source != nullptr)

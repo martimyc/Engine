@@ -7,6 +7,9 @@ GLuint MeshAsset::image = 0;
 MeshImportConfiguration::MeshImportConfiguration():	load_tangents(false), gen_tangents(true), load_normals(false), gen_normals(false), gen_smooth_normals(true), load_colors(false), load_uvs(true), fix_inward_normals(true), kdt(false)
 {}
 
+MeshImportConfiguration::MeshImportConfiguration(const MeshImportConfiguration & copy): load_tangents(copy.load_tangents), gen_tangents(copy.gen_tangents), load_normals(copy.load_normals), gen_normals(copy.gen_normals), gen_smooth_normals(copy.gen_smooth_normals), load_colors(copy.load_colors), load_uvs(copy.load_uvs), fix_inward_normals(copy.fix_inward_normals), kdt(copy.kdt)
+{}
+
 bool MeshImportConfiguration::Config()
 {
 	bool ret = false;

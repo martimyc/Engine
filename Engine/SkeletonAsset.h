@@ -31,6 +31,7 @@ struct SkeletonImportConfiguration : public ImportConfiguration
 	float debone_threshold;
 
 	SkeletonImportConfiguration();
+	SkeletonImportConfiguration(const SkeletonImportConfiguration& copy);
 	~SkeletonImportConfiguration();
 
 	virtual bool Config();

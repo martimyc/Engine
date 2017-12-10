@@ -83,6 +83,7 @@ private:
 public:
 	Material(const std::string name, const UID& uid);
 	Material(const std::string name, MaterialSource* source);
+	Material(const Material& copy);
 	~Material();
 
 	void ChangePriority(unsigned int new_priority);

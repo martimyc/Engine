@@ -16,6 +16,9 @@ Asset::Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* 
 Asset::Asset(RESOURCE_TYPE type, Resource* resource): resource(resource), type(type), import_config(nullptr), load_config(nullptr)
 {}
 
+Asset::Asset(const Asset & copy) : resource(copy.resource), type(copy.type), import_config(copy.import_config), load_config(copy.load_config)
+{}
+
 Asset::~Asset()
 {
 	delete import_config;
