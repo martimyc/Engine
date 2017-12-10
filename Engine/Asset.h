@@ -97,6 +97,7 @@ struct SceneImportConfiguration : public ImportConfiguration
 	SkeletonLoadConfiguration* skeleton_load_config;
 
 	SceneImportConfiguration();
+	SceneImportConfiguration(const SceneImportConfiguration& copy);
 	~SceneImportConfiguration();
 
 	virtual bool Config();
