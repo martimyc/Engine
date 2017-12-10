@@ -105,7 +105,6 @@ public:
 	int GetSceneHeight() const;
 	bool IsSceneWindowHovered()const;
 	void ChangeCameraMatrixView();
-
 };
 
 #endif //_MODULE_RENDERER_3D

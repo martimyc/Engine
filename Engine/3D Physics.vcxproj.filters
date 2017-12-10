@@ -621,6 +621,12 @@
     <ClInclude Include="Bounds.h">
       <Filter>Sources\Game Objects</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationImporter.h">
+      <Filter>Sources\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -923,6 +929,10 @@
     <ClCompile Include="Bounds.cpp">
       <Filter>Sources\Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationImporter.cpp">
+      <Filter>Sources\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">
