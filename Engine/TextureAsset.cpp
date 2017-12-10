@@ -4,10 +4,10 @@
 #include "Texture.h"
 #include "TextureAsset.h"
 
-TextureImportConfiguration::TextureImportConfiguration() : format (TF_NORMAL_FORMATS), tga_stamp(false), selected_compresion(4), dxt_format(DXT5), copresion_menu(true), jpg_quality(99), interlaced(false), rle(false)
+TextureImportConfiguration::TextureImportConfiguration() : format (TF_NORMAL_FORMATS), tga_stamp(false), selected_compresion(4), dxt_format(DXT5), copresion_menu(true), jpg_quality(99), interlaced(false), rle(false), transform_uvs(true)
 {}
 
-TextureImportConfiguration::TextureImportConfiguration(const TextureImportConfiguration & copy): format(copy.format), tga_stamp(copy.tga_stamp), copresion_menu(copy.copresion_menu), selected_compresion (copy.selected_compresion), dxt_format (copy.dxt_format), jpg_quality (copy.jpg_quality), interlaced (copy.interlaced), rle (copy.rle)
+TextureImportConfiguration::TextureImportConfiguration(const TextureImportConfiguration & copy): format(copy.format), tga_stamp(copy.tga_stamp), copresion_menu(copy.copresion_menu), selected_compresion (copy.selected_compresion), dxt_format (copy.dxt_format), jpg_quality (copy.jpg_quality), interlaced (copy.interlaced), rle (copy.rle), transform_uvs(copy.transform_uvs)
 {}
 
 TextureImportConfiguration::TextureImportConfiguration(const std::string & format) : format(TF_NORMAL_FORMATS), tga_stamp(false), selected_compresion(4), dxt_format(DXT5), copresion_menu(true), jpg_quality(99), interlaced(false), rle(false)
@@ -82,6 +82,9 @@ bool TextureImportConfiguration::Config()
 	if (format == TF_BMP || format == TF_SGI || format == TF_TGA)
 		if(ImGui::Checkbox("RLE", &rle))
 			changed = true;
+	
+	if (ImGui::Checkbox("Transform UVs", &transform_uvs))
+		changed = true;	
 
 	return changed;
 }
@@ -111,6 +114,9 @@ void TextureImportConfiguration::MetaSave(char** iterator) const
 
 	memcpy(*iterator, &rle, sizeof(bool));
 	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &transform_uvs, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 void TextureImportConfiguration::MetaLoad(char** iterator)
@@ -138,6 +144,9 @@ void TextureImportConfiguration::MetaLoad(char** iterator)
 
 	memcpy(&rle, *iterator, sizeof(bool));
 	*iterator += sizeof(bool);
+
+	memcpy(&transform_uvs, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 unsigned int TextureImportConfiguration::GetMetaSize() const
@@ -148,6 +157,7 @@ unsigned int TextureImportConfiguration::GetMetaSize() const
 	ret += sizeof(int);
 	ret += sizeof(DXT);
 	ret += sizeof(int);
+	ret += sizeof(bool);
 	ret += sizeof(bool);
 	ret += sizeof(bool);
 	return ret;

@@ -935,6 +935,7 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationAsset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

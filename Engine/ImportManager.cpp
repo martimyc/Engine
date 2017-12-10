@@ -15,6 +15,8 @@
 #include "MaterialAsset.h"
 #include "PreFab.h"
 #include "PrefabAsset.h"
+#include "Animation.h"
+#include "AnimationAsset.h"
 #include "AssetDirectory.h"
 
 //Components
@@ -578,7 +580,6 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 	//Config
 	unsigned int flags =  aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_FindInvalidData | aiProcess_FindInstances;
 	//aiProcess_TransformUVCoords  as long as there are no uv transforms
-	//anim: aiProcess_LimitBoneWeights & aiProcess_SplitByBoneCount & aiProcess_Debone 
 	//aiProcess_FixInfacingNormals result might not always be correct
 
 	uint remove_components = 0;
@@ -588,16 +589,12 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 	if (import_config->mesh_import_config->load_tangents == false)
 		remove_components |= aiComponent_TANGENTS_AND_BITANGENTS;
 	if (import_config->mesh_import_config->load_normals == false)
-		remove_components |= aiComponent_NORMALS;
-	else
-		flags |= aiProcess_GenUVCoords | aiProcess_FixInfacingNormals;
-
+		remove_components |= aiComponent_NORMALS;		
 	if (import_config->mesh_import_config->load_uvs == false)
 		remove_components |= aiComponent_TEXCOORDS;
 	else
-		flags |= aiProcess_GenUVCoords | aiProcess_TransformUVCoords;
-
-	if (import_config->mesh_import_config->load_bone_weights == false)
+		flags |= aiProcess_GenUVCoords;
+	if (import_config->anim_import_config->load_bone_weights == false)
 		remove_components |= aiComponent_BONEWEIGHTS;
 	if (import_config->include_animations == false)
 		remove_components |= aiComponent_ANIMATIONS;
@@ -607,12 +604,10 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		remove_components |= aiComponent_LIGHTS;
 	if (import_config->include_cameras == false)
 		remove_components |= aiComponent_CAMERAS;
-
 	if (import_config->include_meshes == false)
 		remove_components |= aiComponent_MESHES;
 	else
 		flags |= aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
-
 	if (import_config->include_materials == false)
 		remove_components |= aiComponent_MATERIALS;
 	else
@@ -623,10 +618,28 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		flags |= aiProcess_RemoveComponent;
 		importer->SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, remove_components);
 	}
+	
+	if (import_config->material_import_config->include_textures && import_config->material_import_config->texture_import_config->transform_uvs)
+		flags |= aiProcess_TransformUVCoords;
+	//Mesh
 	if (import_config->mesh_import_config->gen_normals)
 		flags |= aiProcess_GenNormals;
 	if (import_config->mesh_import_config->gen_smooth_normals)
 		flags |= aiProcess_GenSmoothNormals;
+	if (import_config->mesh_import_config->load_normals && import_config->mesh_import_config->fix_inward_normals)
+		flags |= aiProcess_FixInfacingNormals;
+	//Animation
+	if (import_config->anim_import_config->limit_bone_weights)
+		flags |= aiProcess_LimitBoneWeights;
+	if (import_config->anim_import_config->split_by_bone_count)
+		flags |= aiProcess_SplitByBoneCount;
+	if (import_config->anim_import_config->debone)
+	{
+		flags |= aiProcess_Debone;
+		importer->SetPropertyInteger(AI_CONFIG_PP_DB_THRESHOLD, import_config->anim_import_config->debone_threshold);
+	}
+
+	//Prefab
 	if (import_config->prefab_import_config->split_large_meshes)
 		flags |= aiProcess_SplitLargeMeshes;
 	if (import_config->prefab_import_config->pre_transform)

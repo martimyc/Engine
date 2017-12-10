@@ -8,13 +8,15 @@ typedef unsigned int GLuint;
 
 struct UID;
 
-class MaterialImportConfiguration;
-class MeshImportConfiguration;
-class PrefabImportConfiguration;
+struct MaterialImportConfiguration;
+struct MeshImportConfiguration;
+struct PrefabImportConfiguration;
+struct AnimationImportConfiguration;
 
-class MaterialLoadConfiguration;
-class MeshLoadConfiguration;
-class PrefabLoadConfiguration;
+struct MaterialLoadConfiguration;
+struct MeshLoadConfiguration;
+struct PrefabLoadConfiguration;
+struct AnimationLoadConfiguration;
 
 class GameObject;
 class Resource;
@@ -81,10 +83,12 @@ struct SceneImportConfiguration : public ImportConfiguration
 	MaterialImportConfiguration* material_import_config;
 	MeshImportConfiguration* mesh_import_config;
 	PrefabImportConfiguration* prefab_import_config;
+	AnimationImportConfiguration* anim_import_config;
 
 	MaterialLoadConfiguration* material_load_config;
 	MeshLoadConfiguration* mesh_load_config;
 	PrefabLoadConfiguration* prefab_load_config;
+	AnimationLoadConfiguration* anim_load_config;
 
 	SceneImportConfiguration();
 	~SceneImportConfiguration();

@@ -42,6 +42,7 @@ struct TextureImportConfiguration : public ImportConfiguration
 	int  jpg_quality = 99; // 0 - 99
 	bool interlaced = false;
 	bool rle = false;
+	bool transform_uvs;
 
 	TextureImportConfiguration();
 	TextureImportConfiguration(const TextureImportConfiguration& copy);

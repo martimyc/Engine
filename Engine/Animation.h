@@ -7,6 +7,7 @@
 #include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Math\float3x4.h"
 #include "MathGeoLib\src\Math\float4x4.h"
+#include "glew\include\GL\glew.h"
 #include "Globals.h"
 #include "Resource.h"
 

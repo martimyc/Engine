@@ -14,7 +14,7 @@ struct MeshImportConfiguration : public ImportConfiguration
 	bool gen_smooth_normals;
 	bool load_colors;
 	bool load_uvs;
-	bool load_bone_weights;
+	bool fix_inward_normals;
 	bool kdt;
 
 	MeshImportConfiguration();

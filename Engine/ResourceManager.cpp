@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "PreFab.h"
+#include "Animation.h"
 
 //Assets
 #include "Asset.h"
@@ -16,6 +17,7 @@
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
+#include "AnimationAsset.h"
 
 #include "AssetDirectory.h"
 #include "GameObject.h"
@@ -300,6 +302,7 @@ void ResourceManager::LoadIcons()
 	MeshAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Mesh.png"));
 	MaterialAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Material.png"));
 	PrefabAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Scene.png"));
+	AnimationAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Animation.png"));
 }
 
 unsigned int ResourceManager::GetNewMaterialPriority()

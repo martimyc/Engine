@@ -1,4 +1,3 @@
-#include "glew\include\GL\glew.h"
 #include "Animation.h"
 
 void Animation::AnimationClip::AnimationSample::Draw(const GLfloat* opengl_view_matrix) const

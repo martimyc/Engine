@@ -669,7 +669,8 @@ void GameObject::SetWorldTransform(const math::float4x4 & new_world_transform)
 
 void GameObject::CreateBounds(const Mesh* mesh)
 {
-	assert(mesh == nullptr && mesh->IsLoaded() == false);
+	assert(!(mesh == nullptr));
+	assert(mesh->IsLoaded());
 	bounds.sphere_bounding_box.Enclose(mesh->GetMinWorldVec(world_transform->GetTransformMatrix()));
 	bounds.sphere_bounding_box.Enclose(mesh->GetMaxWorldVec(world_transform->GetTransformMatrix()));
 	bounds.original_sphere_bounding_box.Enclose(mesh->GetMinWorldVec(world_transform->GetTransformMatrix()));

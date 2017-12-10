@@ -4,7 +4,7 @@
 
 GLuint MeshAsset::image = 0;
 
-MeshImportConfiguration::MeshImportConfiguration():	load_tangents(false), gen_tangents(true), load_normals(false), gen_normals(false), gen_smooth_normals(true), load_colors(false), load_uvs(true), load_bone_weights(false), kdt(false)
+MeshImportConfiguration::MeshImportConfiguration():	load_tangents(false), gen_tangents(true), load_normals(false), gen_normals(false), gen_smooth_normals(true), load_colors(false), load_uvs(true), fix_inward_normals(true), kdt(false)
 {}
 
 bool MeshImportConfiguration::Config()
@@ -67,10 +67,10 @@ bool MeshImportConfiguration::Config()
 	if (ImGui::Checkbox("Load Texture Coordinates", &load_uvs))
 		ret = true;
 
-	if (ImGui::Checkbox("Load Bone Weights", &load_bone_weights))
+	if (ImGui::Checkbox("Fix Inward Facing Normals", &fix_inward_normals))
 		ret = true;
 	ImGui::SameLine();
-	ImGui::HelpMarker("Not suported yet");
+	ImGui::HelpMarker("Result might not always be correct");
 
 	return ret;
 }
@@ -98,7 +98,7 @@ void MeshImportConfiguration::MetaSave(char ** iterator) const
 	memcpy(*iterator, &load_uvs, sizeof(bool));
 	*iterator += sizeof(bool);
 
-	memcpy(*iterator, &load_bone_weights, sizeof(bool));
+	memcpy(*iterator, &fix_inward_normals, sizeof(bool));
 	*iterator += sizeof(bool);
 
 	memcpy(*iterator, &kdt, sizeof(bool));
@@ -128,7 +128,7 @@ void MeshImportConfiguration::MetaLoad(char ** iterator)
 	memcpy(&load_uvs, *iterator, sizeof(bool));
 	*iterator += sizeof(bool);
 
-	memcpy(&load_bone_weights, *iterator, sizeof(bool));
+	memcpy(&fix_inward_normals, *iterator, sizeof(bool));
 	*iterator += sizeof(bool);
 
 	memcpy(&kdt, *iterator, sizeof(bool));

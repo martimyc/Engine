@@ -6,6 +6,7 @@
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
 #include "TextureAsset.h"
+#include "AnimationAsset.h"
 #include "Asset.h"
 
 Asset::Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config) : resource(resource), type(type), import_config(import_config), load_config(load_config)
@@ -56,7 +57,7 @@ const std::string & Asset::GetName() const
 	return resource->GetName();
 }
 
-SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration),prefab_load_config(new PrefabLoadConfiguration)
+SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration),prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration)
 {}
 
 SceneImportConfiguration::~SceneImportConfiguration()
@@ -77,8 +78,6 @@ bool SceneImportConfiguration::Config()
 
 	if (ImGui::Checkbox("Include Animations", &include_animations))
 		ret = true;
-	ImGui::SameLine();
-	ImGui::HelpMarker("Not suported yet");
 
 	if (ImGui::Checkbox("Include Lights", &include_lights))
 		ret = true;
@@ -129,6 +128,19 @@ bool SceneImportConfiguration::Config()
 		}
 	}
 
+	if (include_animations)
+	{
+		if (ImGui::TreeNodeEx("Animations' Configuration", ImGuiTreeNodeFlags_Framed))
+		{
+			if (anim_import_config->Config())
+				ret = true;
+			if (anim_load_config->Config())
+				ret = true;
+
+			ImGui::TreePop();
+		}
+	}
+
 	return ret;
 }
 
@@ -155,10 +167,12 @@ void SceneImportConfiguration::MetaSave(char ** iterator) const
 	material_import_config->MetaSave(iterator);
 	mesh_import_config->MetaSave(iterator);
 	prefab_import_config->MetaSave(iterator);
+	anim_import_config->MetaSave(iterator);
 
 	material_load_config->MetaSave(iterator);
 	mesh_load_config->MetaSave(iterator);
 	prefab_load_config->MetaSave(iterator);
+	anim_load_config->MetaSave(iterator);
 }
 
 void SceneImportConfiguration::MetaLoad(char ** iterator)
@@ -184,10 +198,12 @@ void SceneImportConfiguration::MetaLoad(char ** iterator)
 	material_import_config->MetaLoad(iterator);
 	mesh_import_config->MetaLoad(iterator);
 	prefab_import_config->MetaLoad(iterator);
+	anim_import_config->MetaLoad(iterator);
 
 	material_load_config->MetaLoad(iterator);
 	mesh_load_config->MetaLoad(iterator);
 	prefab_load_config->MetaLoad(iterator);
+	anim_load_config->MetaLoad(iterator);
 }
 
 unsigned int SceneImportConfiguration::GetMetaSize() const
@@ -196,8 +212,10 @@ unsigned int SceneImportConfiguration::GetMetaSize() const
 	size += material_import_config->GetMetaSize();
 	size += mesh_import_config->GetMetaSize();
 	size += prefab_import_config->GetMetaSize();
+	size += anim_import_config->GetMetaSize();
 	size += material_load_config->GetMetaSize();
 	size += mesh_load_config->GetMetaSize();
 	size += prefab_load_config->GetMetaSize();
+	size += anim_load_config->GetMetaSize();
 	return size;
 }
