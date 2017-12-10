@@ -26,12 +26,6 @@ public:
 
 struct AnimationImportConfiguration: public ImportConfiguration
 {
-	bool load_bone_weights;
-	bool limit_bone_weights;
-	bool split_by_bone_count;
-	bool debone;
-	float debone_threshold;
-
 	AnimationImportConfiguration();
 	~AnimationImportConfiguration();
 

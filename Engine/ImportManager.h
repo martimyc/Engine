@@ -19,6 +19,7 @@ class MeshImporter;
 class MaterialImporter;
 class TextureImporter;
 class PrefabImporter;
+class AnimationImporter;
 
 class AssetDirectory;
 
@@ -61,12 +62,13 @@ private:
 	MaterialImporter* material_importer = nullptr;
 	TextureImporter* texture_importer = nullptr;
 	PrefabImporter* prefab_importer = nullptr;
+	AnimationImporter* anim_importer = nullptr;
 
 	friend class ImportClient;
 
 public:
 
-	//Give acces to private funct Import() to importers who need it
+	//Give acces to private funct Import() to importers who need it and to AssetDirectory
 	class ImportClient
 	{
 	private:

@@ -5,7 +5,6 @@
 #include <vector>
 #include "MathGeoLib\src\Math\float3.h"
 #include "MathGeoLib\src\Math\Quat.h"
-#include "MathGeoLib\src\Math\float3x4.h"
 #include "MathGeoLib\src\Math\float4x4.h"
 #include "glew\include\GL\glew.h"
 #include "Globals.h"
@@ -16,19 +15,7 @@ class Animation : public Resource
 {
 private:
 	struct AnimationClip
-	{
-		struct Skeleton
-		{
-			struct Joint
-			{
-				float3x4 inverse_bind_pose_transform;
-				std::string name;
-				uint parent_index;
-			};
-
-			std::vector<Joint> joints;
-		};
-
+	{	
 		struct JointPose
 		{
 			float3 position;
@@ -44,7 +31,6 @@ private:
 			void Draw(const GLfloat* opengl_view_matrix) const;
 		};
 
-		Skeleton* skeleton;
 		float fps;
 		uint frame_count;
 		std::vector<AnimationSample*> samples;
@@ -55,6 +41,7 @@ private:
 	};
 
 	AnimationClip* source;
+
 	friend class AnimationImporter;
 	
 public:

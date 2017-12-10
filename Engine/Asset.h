@@ -12,11 +12,13 @@ struct MaterialImportConfiguration;
 struct MeshImportConfiguration;
 struct PrefabImportConfiguration;
 struct AnimationImportConfiguration;
+struct SkeletonImportConfiguration;
 
 struct MaterialLoadConfiguration;
 struct MeshLoadConfiguration;
 struct PrefabLoadConfiguration;
 struct AnimationLoadConfiguration;
+struct SkeletonLoadConfiguration;
 
 class GameObject;
 class Resource;
@@ -79,16 +81,19 @@ struct SceneImportConfiguration : public ImportConfiguration
 	bool include_animations;
 	bool include_lights;
 	bool include_cameras;
+	bool include_bones;
 
 	MaterialImportConfiguration* material_import_config;
 	MeshImportConfiguration* mesh_import_config;
 	PrefabImportConfiguration* prefab_import_config;
 	AnimationImportConfiguration* anim_import_config;
+	SkeletonImportConfiguration* skeleton_import_config;
 
 	MaterialLoadConfiguration* material_load_config;
 	MeshLoadConfiguration* mesh_load_config;
 	PrefabLoadConfiguration* prefab_load_config;
 	AnimationLoadConfiguration* anim_load_config;
+	SkeletonLoadConfiguration* skeleton_load_config;
 
 	SceneImportConfiguration();
 	~SceneImportConfiguration();

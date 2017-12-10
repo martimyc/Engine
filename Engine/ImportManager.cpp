@@ -17,6 +17,8 @@
 #include "PrefabAsset.h"
 #include "Animation.h"
 #include "AnimationAsset.h"
+#include "Skeleton.h"
+#include "SkeletonAsset.h"
 #include "AssetDirectory.h"
 
 //Components
@@ -33,6 +35,7 @@
 #include "MeshImporter.h"
 #include "MaterialImporter.h"
 #include "PrefabImporter.h"
+#include "AnimationImporter.h"
 
 //Modules
 #include "Globals.h"
@@ -55,6 +58,7 @@ bool ImportManager::Init()
 	material_importer = new MaterialImporter();
 	mesh_importer = new MeshImporter();
 	prefab_importer = new PrefabImporter();
+	anim_importer = new AnimationImporter();
 	
 	Assimp::DefaultLogger* logger = (Assimp::DefaultLogger*)Assimp::DefaultLogger::get();
 	logger->create();
@@ -68,6 +72,7 @@ bool ImportManager::CleanUp()
 	delete material_importer;
 	delete mesh_importer;
 	delete prefab_importer;
+	delete anim_importer;
 
 	return true;
 }
@@ -594,7 +599,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		remove_components |= aiComponent_TEXCOORDS;
 	else
 		flags |= aiProcess_GenUVCoords;
-	if (import_config->anim_import_config->load_bone_weights == false)
+	if (import_config->skeleton_import_config->load_bone_weights == false)
 		remove_components |= aiComponent_BONEWEIGHTS;
 	if (import_config->include_animations == false)
 		remove_components |= aiComponent_ANIMATIONS;
@@ -629,14 +634,14 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 	if (import_config->mesh_import_config->load_normals && import_config->mesh_import_config->fix_inward_normals)
 		flags |= aiProcess_FixInfacingNormals;
 	//Animation
-	if (import_config->anim_import_config->limit_bone_weights)
+	if (import_config->skeleton_import_config->limit_bone_weights)
 		flags |= aiProcess_LimitBoneWeights;
-	if (import_config->anim_import_config->split_by_bone_count)
+	if (import_config->skeleton_import_config->split_by_bone_count)
 		flags |= aiProcess_SplitByBoneCount;
-	if (import_config->anim_import_config->debone)
+	if (import_config->skeleton_import_config->debone)
 	{
 		flags |= aiProcess_Debone;
-		importer->SetPropertyInteger(AI_CONFIG_PP_DB_THRESHOLD, import_config->anim_import_config->debone_threshold);
+		importer->SetPropertyInteger(AI_CONFIG_PP_DB_THRESHOLD, import_config->skeleton_import_config->debone_threshold);
 	}
 
 	//Prefab
@@ -684,6 +689,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 			scene_materials.reserve(scene->mNumMaterials);
 			material_loads = new bool[scene->mNumMaterials];
 
+			//Materials
 			for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 			{
 				if (scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE))
@@ -722,7 +728,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		else
 			LOG("Scene has no materials");
 
-		//Load meshes
+		//Meshes
 		if (scene->HasMeshes())
 		{
 			scene_meshes.reserve(scene->mNumMeshes);
@@ -761,6 +767,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		else
 			LOG("More than a single mesh in scene, will Import all as one Game Object");
 
+		//Hirarchy
 		if (scene->mRootNode != nullptr)
 		{
 			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_name.c_str());
@@ -777,6 +784,12 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				LOG("Scene could not be loaded as prefab");
 				prefab_uid = UID();
 			}
+		}
+
+		//Animations
+		if (scene->HasAnimations())
+		{
+			//UID uid(animation_importer->Import());
 		}
 
 		std::string file_name_ext(path.substr(path.find_last_of("\\")));

@@ -1,191 +1,100 @@
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-Kick-L1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-Kick-R1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-L3.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-R3.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Death1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Fall.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-B1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-F1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-F2.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-L1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-R1.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Idle.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Jump.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Backward.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Forward.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Left.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Right.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Run.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Backward.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Forward.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Left.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Right.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Stunned.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Walk-Slow.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Walk.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
-Error, T9108: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
-Info,  T9108: Load C:\Users\Marti\Desktop\Assets\Street\Street environment_V01.FBX
-Info,  T9108: Found a matching importer for this file format: Autodesk FBX Importer.
-Info,  T9108: Import root directory is 'C:\Users\Marti\Desktop\Assets\Street\'
-Warn,  T9108: FBX-DOM (TOK_KEY, offset 0x1c9c1b) failed to resolve target Model/NodeAttribute/Constraint for AnimationCurveNode
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Skipping one or more lines with the same contents
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Warn,  T9108: FBX: no animation curves assigned to AnimationCurveNode: AnimCurveNode::T
-Warn,  T9108: FBX: ignoring node animation, did not find any transformation key frames
-Info,  T9108: FBX: generating full transformation chain for node: Sky001
-Info,  T9108: FBX: generating full transformation chain for node: Dummy001
-Info,  T9108: FBX: generating full transformation chain for node: Camera001
-Skipping one or more lines with the same contents
-Info,  T9108: FBX: generating full transformation chain for node: Spot001
-Skipping one or more lines with the same contents
-Info,  T9108: Entering post processing pipeline
-Info,  T9108: RemoveVCProcess finished. Data structure cleanup has been done.
-Info,  T9108: FindInstancesProcess finished. Found 13 instances
-Info,  T9108: GenVertexNormalsProcess finished. Vertex normals have been calculated
-Error, T9108: Failed to compute tangents; need UV data in channel0
-Skipping one or more lines with the same contents
-Info,  T9108: CalcTangentsProcess finished. Tangents have been calculated
-Info,  T9108: JoinVerticesProcess finished | Verts in: 81183 out: 37716 | ~53.5%
-Info,  T9108: Cache relevant are 17 meshes (27061 faces). Average output ACMR is 1.410628
-Info,  T9108: Leaving post processing pipeline
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-Kick-L1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-Kick-R1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-L3.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Attack-R3.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Death1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Fall.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-B1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-F1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-F2.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-L1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-GetHit-R1.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Idle.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Jump.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Backward.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Forward.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Left.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Roll-Right.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Run.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Backward.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Forward.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Left.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Strafe-Right.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Stunned.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Walk-Slow.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote
+Info,  T15852: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\RPG-Character@Unarmed-Walk.FBX
+Info,  T15852: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T15852: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\Animation\'
+Error, T15852: FBX-Tokenize (line 6 <<  col 12) unexpected double-quote

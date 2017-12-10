@@ -627,6 +627,12 @@
     <ClInclude Include="AnimationAsset.h">
       <Filter>Sources\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletonAsset.h">
+      <Filter>Sources\Assets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -935,7 +941,15 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationAsset.cpp" />
+    <ClCompile Include="AnimationAsset.cpp">
+      <Filter>Sources\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletonAsset.cpp">
+      <Filter>Sources\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

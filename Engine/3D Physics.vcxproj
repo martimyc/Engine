@@ -247,6 +247,8 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="PrefabImporter.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="SkeletonAsset.h" />
     <ClInclude Include="SpherePrimitive.h" />
     <ClInclude Include="TextureAsset.h" />
     <ClInclude Include="Texture.h" />
@@ -348,6 +350,8 @@
     <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="SkeletonAsset.cpp" />
     <ClCompile Include="SpherePrimitive.cpp" />
     <ClCompile Include="TextureAsset.cpp" />
     <ClCompile Include="Texture.cpp" />

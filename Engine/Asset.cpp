@@ -7,6 +7,7 @@
 #include "PrefabAsset.h"
 #include "TextureAsset.h"
 #include "AnimationAsset.h"
+#include "SkeletonAsset.h"
 #include "Asset.h"
 
 Asset::Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config) : resource(resource), type(type), import_config(import_config), load_config(load_config)
@@ -57,11 +58,22 @@ const std::string & Asset::GetName() const
 	return resource->GetName();
 }
 
-SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration),prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration)
+SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), skeleton_import_config(new SkeletonImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration), prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration), skeleton_load_config(new SkeletonLoadConfiguration)
 {}
 
 SceneImportConfiguration::~SceneImportConfiguration()
-{}
+{
+	delete material_import_config;
+	delete mesh_import_config;
+	delete prefab_import_config;
+	delete anim_import_config;
+	delete skeleton_import_config;
+	delete material_load_config;
+	delete mesh_load_config;
+	delete prefab_load_config;
+	delete anim_load_config;
+	delete skeleton_load_config;
+}
 
 bool SceneImportConfiguration::Config()
 {
@@ -141,6 +153,32 @@ bool SceneImportConfiguration::Config()
 		}
 	}
 
+	if (include_animations)
+	{
+		if (ImGui::TreeNodeEx("Animations' Configuration", ImGuiTreeNodeFlags_Framed))
+		{
+			if (anim_import_config->Config())
+				ret = true;
+			if (anim_load_config->Config())
+				ret = true;
+
+			ImGui::TreePop();
+		}
+	}
+
+	if (include_bones)
+	{
+		if (ImGui::TreeNodeEx("Riggs' Configuration", ImGuiTreeNodeFlags_Framed))
+		{
+			if (skeleton_import_config->Config())
+				ret = true;
+			if (skeleton_load_config->Config())
+				ret = true;
+
+			ImGui::TreePop();
+		}
+	}
+
 	return ret;
 }
 
@@ -164,15 +202,20 @@ void SceneImportConfiguration::MetaSave(char ** iterator) const
 	memcpy(*iterator, &include_cameras, sizeof(bool));
 	*iterator += sizeof(bool);
 
+	memcpy(*iterator, &include_bones, sizeof(bool));
+	*iterator += sizeof(bool);
+
 	material_import_config->MetaSave(iterator);
 	mesh_import_config->MetaSave(iterator);
 	prefab_import_config->MetaSave(iterator);
 	anim_import_config->MetaSave(iterator);
+	skeleton_import_config->MetaSave(iterator);
 
 	material_load_config->MetaSave(iterator);
 	mesh_load_config->MetaSave(iterator);
 	prefab_load_config->MetaSave(iterator);
 	anim_load_config->MetaSave(iterator);
+	skeleton_load_config->MetaSave(iterator);
 }
 
 void SceneImportConfiguration::MetaLoad(char ** iterator)
@@ -195,27 +238,34 @@ void SceneImportConfiguration::MetaLoad(char ** iterator)
 	memcpy(&include_cameras, *iterator, sizeof(bool));
 	*iterator += sizeof(bool);
 
+	memcpy(&include_bones, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
 	material_import_config->MetaLoad(iterator);
 	mesh_import_config->MetaLoad(iterator);
 	prefab_import_config->MetaLoad(iterator);
 	anim_import_config->MetaLoad(iterator);
+	skeleton_import_config->MetaLoad(iterator);
 
 	material_load_config->MetaLoad(iterator);
 	mesh_load_config->MetaLoad(iterator);
 	prefab_load_config->MetaLoad(iterator);
 	anim_load_config->MetaLoad(iterator);
+	skeleton_load_config->MetaLoad(iterator);
 }
 
 unsigned int SceneImportConfiguration::GetMetaSize() const
 {
-	unsigned int size = sizeof(bool) * 6;
+	unsigned int size = sizeof(bool) * 7;
 	size += material_import_config->GetMetaSize();
 	size += mesh_import_config->GetMetaSize();
 	size += prefab_import_config->GetMetaSize();
 	size += anim_import_config->GetMetaSize();
+	size += skeleton_import_config->GetMetaSize();
 	size += material_load_config->GetMetaSize();
 	size += mesh_load_config->GetMetaSize();
 	size += prefab_load_config->GetMetaSize();
 	size += anim_load_config->GetMetaSize();
+	size += skeleton_load_config->GetMetaSize();
 	return size;
 }
