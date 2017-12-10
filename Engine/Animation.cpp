@@ -34,3 +34,23 @@ void Animation::AnimationClip::AnimationSample::Draw(const GLfloat* opengl_view_
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
+
+Animation::AnimationClip::AnimationClip()
+{
+}
+
+Animation::AnimationClip::~AnimationClip()
+{
+}
+
+Animation::Animation(const std::string & name, const UID & uid): Resource(RT_ANIMATION, name, uid)
+{}
+
+Animation::Animation(const std::string & name, AnimationClip * source): Resource(RT_ANIMATION, name)
+{}
+
+Animation::~Animation()
+{
+	if (source != nullptr)
+		delete source;
+}

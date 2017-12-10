@@ -4,6 +4,8 @@
 #include "TextureAsset.h"
 #include "MaterialAsset.h"
 
+GLuint MaterialAsset::image = 0;
+
 MaterialImportConfiguration::MaterialImportConfiguration(): include_textures(true), all_textures_in_same_dir(false), texture_import_config (new TextureImportConfiguration),texture_load_config (new TextureLoadConfiguration)
 {}
 
@@ -104,7 +106,7 @@ void MaterialAsset::AddInstance(const GameObject * go)
 
 GLuint MaterialAsset::GetImage() const
 {
-	return 0;
+	return image;
 }
 
 void MaterialAsset::SetImage(GLuint id)

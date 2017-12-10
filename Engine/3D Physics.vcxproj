@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationAsset.h" />
     <ClInclude Include="AnimationImporter.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppliedMaterial.h" />

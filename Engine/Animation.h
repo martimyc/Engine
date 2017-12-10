@@ -53,11 +53,12 @@ private:
 		~AnimationClip();
 	};
 
+	AnimationClip* source;
 	friend class AnimationImporter;
 	
 public:
 	Animation(const std::string& name, const UID& uid);
-	Animation(const std::string& name, AnimationClip* uid);
+	Animation(const std::string& name, AnimationClip* source);
 	~Animation();
 
 private:

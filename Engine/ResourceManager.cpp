@@ -159,7 +159,7 @@ bool ResourceManager::Start()
 	debug_textures = LoadCheckers();
 	selected = 0;
 	LoadButtons();
-	LoadFolderIcon();
+	LoadIcons();
 
 	return true;
 }
@@ -289,14 +289,17 @@ Texture* ResourceManager::LoadCheckers()
 
 void ResourceManager::LoadButtons()
 {
-	buttons.push_back(new Button(BT_PLAY, App->import_manager->GenerateButtonImage("Buttons\\PlayButton.png"), 25, 25));
-	buttons.push_back(new Button(BT_PAUSE, App->import_manager->GenerateButtonImage("Buttons\\PauseButton.png"), 25, 25));
-	buttons.push_back(new Button(BT_PLAY_ONE_FRAME, App->import_manager->GenerateButtonImage("Buttons\\PlayOneFrameButton.png"), 25, 25));
+	buttons.push_back(new Button(BT_PLAY, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PlayButton.png"), 25, 25));
+	buttons.push_back(new Button(BT_PAUSE, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PauseButton.png"), 25, 25));
+	buttons.push_back(new Button(BT_PLAY_ONE_FRAME, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PlayOneFrameButton.png"), 25, 25));
 }
 
-void ResourceManager::LoadFolderIcon()
+void ResourceManager::LoadIcons()
 {
-	AssetDirectory::SetImage(App->import_manager->GenerateButtonImage("FolderIcon.png"));
+	AssetDirectory::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\FolderIcon.png"));
+	MeshAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Mesh.png"));
+	MaterialAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Material.png"));
+	PrefabAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Scene.png"));
 }
 
 unsigned int ResourceManager::GetNewMaterialPriority()

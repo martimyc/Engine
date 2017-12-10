@@ -250,7 +250,8 @@ GLuint ImportManager::GenerateButtonImage(const std::string & relative_path)
 	l_config.anysotropy = false;
 	uint width = 0;
 	uint height = 0;
-	texture_importer->GenerateImage(path, &i_config, &l_config, ret, width, height);
+	if (texture_importer->GenerateImage(path, &i_config, &l_config, ret, width, height) == false)
+		LOG("Could not generate image %s", relative_path.c_str());
 	return ret;
 }
 

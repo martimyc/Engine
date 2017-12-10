@@ -2,6 +2,8 @@
 #include "Resource.h"
 #include "PrefabAsset.h"
 
+GLuint PrefabAsset::image = 0;
+
 PrefabAsset::PrefabAsset(Resource * resource, const ImportConfiguration * import_config, const LoadConfiguration * load_config): Asset(RT_PREFAB, resource, import_config, load_config)
 {}
 
@@ -15,7 +17,7 @@ void PrefabAsset::AddInstance(const GameObject * go)
 
 GLuint PrefabAsset::GetImage() const
 {
-	return 0;
+	return image;
 }
 
 void PrefabAsset::SetImage(GLuint id)

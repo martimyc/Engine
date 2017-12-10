@@ -73,9 +73,6 @@
     <Filter Include="Sources\3rd Party\ImGui\Docking">
       <UniqueIdentifier>{6a6005ab-8d72-455b-91d9-95ba9a3a8094}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Scene">
-      <UniqueIdentifier>{12492003-08c1-4dae-abfc-44e5caa5b7c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Importers">
       <UniqueIdentifier>{9784a0d9-f6e0-4c09-80b4-5319a5484d8a}</UniqueIdentifier>
     </Filter>
@@ -516,9 +513,6 @@
     <ClInclude Include="imgui\imgui_dock.h">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Sources\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="FileSystem.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -626,6 +620,12 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationAsset.h">
+      <Filter>Sources\Assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -818,9 +818,6 @@
     <ClCompile Include="imgui\imgui_dock.cpp">
       <Filter>Sources\3rd Party\ImGui\Docking</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Sources\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="FileSystem.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
@@ -932,7 +929,12 @@
     <ClCompile Include="AnimationImporter.cpp">
       <Filter>Sources\Importers</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Animation.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

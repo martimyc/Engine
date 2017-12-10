@@ -78,7 +78,7 @@ private:
 	Texture* LoadCheckers();
 
 	void LoadButtons();
-	void LoadFolderIcon();
+	void LoadIcons();
 
 public:
 

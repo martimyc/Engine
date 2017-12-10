@@ -37,7 +37,7 @@ class MeshAsset : public Asset
 {
 private:
 	std::vector<const GameObject*> instances;
-	GLuint image;
+	static GLuint image; //TODO one easch, render to texture
 
 public:
 	MeshAsset(Resource* resource, const ImportConfiguration* import_config, const LoadConfiguration* load_config);
@@ -46,7 +46,7 @@ public:
 	void AddInstance(const GameObject* go);
 
 	GLuint GetImage() const;
-	void SetImage(GLuint id);
+	static void SetImage(GLuint id); //TODO one easch, render to texture
 };
 #endif // !MESH_ASSET
 

@@ -2,6 +2,8 @@
 #include "Resource.h"
 #include "MeshAsset.h"
 
+GLuint MeshAsset::image = 0;
+
 MeshImportConfiguration::MeshImportConfiguration():	load_tangents(false), gen_tangents(true), load_normals(false), gen_normals(false), gen_smooth_normals(true), load_colors(false), load_uvs(true), load_bone_weights(false), kdt(false)
 {}
 
@@ -176,7 +178,7 @@ void MeshAsset::AddInstance(const GameObject * go)
 
 GLuint MeshAsset::GetImage() const
 {
-	return 0;
+	return image;
 }
 
 void MeshAsset::SetImage(GLuint id)
