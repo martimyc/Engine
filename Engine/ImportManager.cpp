@@ -1,5 +1,4 @@
 #include <memory>
-#include <tuple>
 
 #include "imgui\imgui.h"
 #include "Parson\parson.h"
@@ -370,7 +369,7 @@ bool ImportManager::TextureMetaSave(const std::string & full_path, const UID & r
 	return true;
 }
 
-bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID & prefab_id, const SceneImportConfiguration * import_config) const
+bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const std::vector<std::pair<UID, std::string>>& skeletons, const std::vector<std::pair<UID, std::string>>& animations, const UID & prefab_id, const SceneImportConfiguration * import_config) const
 {
 	unsigned int buff_size = full_path.size() + 1;
 	buff_size += SIZE_OF_UID;
@@ -386,6 +385,16 @@ bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vect
 	buff_size += sizeof(unsigned int);
 	buff_size += material_uids.size() * SIZE_OF_UID;
 	for (std::vector<std::pair<UID, std::string>>::const_iterator it = material_uids.begin(); it != material_uids.end(); ++it)
+		buff_size += it->second.size() + 1;
+
+	buff_size += sizeof(unsigned int);
+	buff_size += skeletons.size() * SIZE_OF_UID;
+	for (std::vector<std::pair<UID, std::string>>::const_iterator it = skeletons.begin(); it != skeletons.end(); ++it)
+		buff_size += it->second.size() + 1;
+
+	buff_size += sizeof(unsigned int);
+	buff_size += animations.size() * SIZE_OF_UID;
+	for (std::vector<std::pair<UID, std::string>>::const_iterator it = animations.begin(); it != animations.end(); ++it)
 		buff_size += it->second.size() + 1;
 
 	char* buffer = new char[buff_size];
@@ -432,6 +441,34 @@ bool ImportManager::SceneMetaSave(const std::string & full_path, const std::vect
 		memcpy(iterator, material_uids[i].second.c_str(), material_uids[i].second.size() + 1);
 		iterator += material_uids[i].second.size() + 1;
 	}
+
+	//---
+	unsigned int num_riggs = skeletons.size();
+	memcpy(iterator, &num_riggs, sizeof(unsigned int));
+	iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_riggs; i++)
+	{
+		memcpy(iterator, &skeletons[i].first, SIZE_OF_UID);
+		iterator += SIZE_OF_UID;
+
+		memcpy(iterator, skeletons[i].second.c_str(), skeletons[i].second.size() + 1);
+		iterator += skeletons[i].second.size() + 1;
+	}
+
+	unsigned int num_animations = animations.size();
+	memcpy(iterator, &num_animations, sizeof(unsigned int));
+	iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_animations; i++)
+	{
+		memcpy(iterator, &animations[i].first, SIZE_OF_UID);
+		iterator += SIZE_OF_UID;
+
+		memcpy(iterator, animations[i].second.c_str(), animations[i].second.size() + 1);
+		iterator += animations[i].second.size() + 1;
+	}
+	//---
 
 	int size = iterator - buffer;
 
@@ -689,7 +726,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 
 		std::vector<std::pair<UID, std::string>> scene_materials;
 		std::vector<std::pair<UID, std::string>> scene_meshes;
-		std::vector<std::tuple<UID, std::string, std::string>> scene_skeletons;
+		std::vector<std::pair<UID, std::string>> scene_skeletons;
 		std::vector<std::pair<UID, std::string>> scene_animations;
 
 		if (scene->HasMaterials())
@@ -740,7 +777,9 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		if (scene->HasMeshes())
 		{
 			scene_meshes.reserve(scene->mNumMeshes);
+			scene_skeletons.reserve(scene->mNumMeshes);
 			mesh_loads = new bool[scene->mNumMeshes];
+			skeleton_loads = new bool[scene->mNumMeshes];
 
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
@@ -768,7 +807,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				else
 				{
 					LOG("Mesh (%i) could not be imported correctly", i);
-					material_loads[i] = false;
+					mesh_loads[i] = false;
 				}
 
 				//Skeletons
@@ -778,20 +817,69 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 
 					char ptr[255];
 					sprintf(ptr, "%s_Rigg_%i", scene_name.c_str(), i);
-					std::string rigg_name (ptr);
+					std::string rigg_name(ptr);
 
 					UID uid(skeleton_importer->Import(scene->mMeshes[i]->mBones, scene->mMeshes[i]->mNumBones));
 
+					if (uid.IsNull() == false)
+					{
+						skeleton_loads[i] = true;
+						scene_skeletons.push_back(std::make_pair(uid, rigg_name.c_str()));
+						if (dir == nullptr)
+							App->resource_manager->AddAsset(rigg_name, uid, RT_SKELETON, new SkeletonImportConfiguration(*import_config->skeleton_import_config), new SkeletonLoadConfiguration(*import_config->skeleton_load_config));
+						else
+							dir->AddAsset(rigg_name, uid, RT_SKELETON, new SkeletonImportConfiguration(*import_config->skeleton_import_config), new SkeletonLoadConfiguration(*import_config->skeleton_load_config));
+					}
+					else
+					{
+						LOG("Skeleton (%s) could not be imported correctly", rigg_name.c_str());
+						skeleton_loads[i] = false;
+					}
 				}
+				else
+					skeleton_loads[i] = false;
 			}			
 		}
-		else
-			LOG("More than a single mesh in scene, will Import all as one Game Object");
+
+		//Animations
+		if (scene->HasAnimations())
+		{
+			animation_loads = new bool[scene->mNumAnimations];
+			for (unsigned int i = 0; i < scene->mNumAnimations; i++)
+			{
+				std::string anim_name(scene->mAnimations[i]->mName.C_Str());
+				if (anim_name.substr(0, anim_name.find_first_of(".")) == "Untitled" || anim_name == "")
+				{
+					char ptr[255];
+					sprintf(ptr, "%s_Animation_%i", scene_name.c_str(), i);
+					anim_name = ptr;
+				}
+
+				LOG("Loading Animation %s", anim_name.c_str());
+
+				UID uid(anim_importer->Import(scene->mAnimations[i], import_config->anim_import_config));
+
+				if (uid.IsNull() == false)
+				{
+					animation_loads[i] = true;
+					scene_animations.push_back(std::make_pair(uid, anim_name.c_str()));
+					if (dir == nullptr)
+						App->resource_manager->AddAsset(anim_name, uid, RT_ANIMATION, new AnimationImportConfiguration(*import_config->anim_import_config), new AnimationLoadConfiguration(*import_config->anim_load_config));
+					else
+						dir->AddAsset(anim_name, uid, RT_ANIMATION, new AnimationImportConfiguration(*import_config->anim_import_config), new AnimationLoadConfiguration(*import_config->anim_load_config));
+				}
+				else
+				{
+					LOG("Animation (%s) could not be imported correctly", anim_name.c_str());
+					animation_loads[i] = false;
+				}
+			}
+		}
 
 		//Hirarchy
 		if (scene->mRootNode != nullptr)
 		{
-			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_name.c_str());
+			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_skeletons, skeleton_loads, scene_name.c_str());
 
 			if (prefab_uid.IsNull() == false)
 			{
@@ -807,26 +895,24 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 			}
 		}
 
-		//Animations
-		if (scene->HasAnimations())
-		{
-			//UID uid(animation_importer->Import());
-		}
-
 		std::string file_name_ext(path.substr(path.find_last_of("\\")));
 
 		if(dir == nullptr)
-			SceneMetaSave(App->resource_manager->GetCurrentDirPath() + file_name_ext, scene_meshes, scene_materials, prefab_uid, import_config);
+			SceneMetaSave(App->resource_manager->GetCurrentDirPath() + file_name_ext, scene_meshes, scene_materials, scene_skeletons, scene_animations, prefab_uid, import_config);
 		else
-			SceneMetaSave(dir->GetPath() + file_name_ext, scene_meshes, scene_materials, prefab_uid, import_config);
+			SceneMetaSave(dir->GetPath() + file_name_ext, scene_meshes, scene_materials, scene_skeletons, scene_animations, prefab_uid, import_config);
 
 		delete[] material_loads;
 		delete[] mesh_loads;
+		delete[] skeleton_loads;
+		delete[] animation_loads;
 		delete importer;
 	}
 	else
 	{
 		LOG("Error %s loading scene %s", aiGetErrorString(), path.c_str());
+		std::string file_name(path.substr(path.find_last_of("\\") + 1));
+		App->file_system->EraseFile(App->resource_manager->GetCurrentDirPath() + "\\" + file_name);
 	}
 	
 	return prefab_uid;
@@ -864,6 +950,38 @@ void ImportManager::LoadScene(AssetDirectory* dir, char ** iterator, const Scene
 		*iterator += name.size() + 1;
 
 		dir->AddAsset(name, uid, RT_MATERIAL, config->mesh_import_config, config->mesh_load_config);
+	}
+
+	unsigned int num_riggs;
+	memcpy(&num_riggs, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_riggs; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		std::string name(*iterator);
+		*iterator += name.size() + 1;
+
+		dir->AddAsset(name, uid, RT_SKELETON, config->skeleton_import_config, config->skeleton_load_config);
+	}
+
+	unsigned int num_animations;
+	memcpy(&num_animations, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_animations; i++)
+	{
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		std::string name(*iterator);
+		*iterator += name.size() + 1;
+
+		dir->AddAsset(name, uid, RT_ANIMATION, config->anim_import_config, config->anim_load_config);
 	}
 }
 

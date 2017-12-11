@@ -16,24 +16,35 @@ class Animation : public Resource
 private:
 	struct AnimationClip
 	{	
-		struct JointPose
+		struct SamplePos
 		{
 			float3 position;
-			Quat rotation;
-			float scale;
+			double time;
 		};
 
-		struct AnimationSample
+		struct SampleRot
 		{
-			std::vector<JointPose> joint_poses; //maybe useless
-			std::vector<float4x4> global_joint_poses;
-
-			void Draw(const GLfloat* opengl_view_matrix) const;
+			Quat rotation;
+			double time;
 		};
 
-		float fps;
+		struct SampleScale
+		{
+			float3 scale;
+			double time;
+		};
+
+		struct Channel
+		{
+			std::string joint_name;
+			std::vector<SamplePos*> position_samples;
+			std::vector<SampleRot*> rotation_samples;
+			std::vector<SampleScale*> scale_samples;
+		};
+
+		double fps;
 		uint frame_count;
-		std::vector<AnimationSample*> samples;
+		std::vector<Channel*> chanels;
 		bool loop;
 
 		AnimationClip();
@@ -52,7 +63,11 @@ public:
 private:
 
 public:
-	
+	void SetAnimationClip(AnimationClip* new_clip);
+
+	bool Inspector();
+
+	bool IsLoaded() const;
 };
 
 #endif // !ANIMATION

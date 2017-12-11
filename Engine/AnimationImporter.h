@@ -25,7 +25,7 @@ private:
 	unsigned int GetTotalSize(const aiAnimation * animation) const;
 
 public:
-	const UID Import(const std::string& scene_path, const aiAnimation* animation, const AnimationImportConfiguration* config, AssetDirectory* dir = nullptr) const;
+	const UID Import(const aiAnimation* animation, const AnimationImportConfiguration* config) const;
 	bool Load(Animation* to_load, unsigned int priority, const AnimationLoadConfiguration* config) const;
 };
 

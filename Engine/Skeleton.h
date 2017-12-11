@@ -5,6 +5,8 @@
 #include "Globals.h"
 #include "Resource.h"
 
+typedef float GLfloat;
+
 class Skeleton : public Resource
 {
 private:
@@ -25,6 +27,8 @@ private:
 		};
 
 		std::vector<Joint> joints;
+
+		void Draw(const GLfloat* opengl_view_matrix) const;
 	};
 
 	Rigg* skeleton;
@@ -40,6 +44,11 @@ private:
 
 public:
 
+	void SetRigg(Rigg* new_rigg);
+
+	bool Inspector();
+
+	bool IsLoaded() const;
 };
 
 #endif // !SKELETON

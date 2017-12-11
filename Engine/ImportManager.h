@@ -89,7 +89,7 @@ private:
 
 	//Meta files
 	bool TextureMetaSave(const std::string& full_path, const UID& resource_id, const TextureImportConfiguration* import_config, const TextureLoadConfiguration* load_config) const;
-	bool SceneMetaSave(const std::string& full_path, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const UID& prefab_id, const SceneImportConfiguration* import_config) const;
+	bool SceneMetaSave(const std::string& full_path, const std::vector<std::pair<UID, std::string>>& mesh_uids, const std::vector<std::pair<UID, std::string>>& material_uids, const std::vector<std::pair<UID, std::string>>& skeletons, const std::vector<std::pair<UID, std::string>>& animations, const UID& prefab_id, const SceneImportConfiguration* import_config) const;
 
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config, AssetDirectory* dir = nullptr) const;

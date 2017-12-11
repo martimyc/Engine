@@ -11,6 +11,8 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "PreFab.h"
+#include "Skeleton.h"
+#include "Animation.h"
 
 //Assets
 #include "Asset.h"
@@ -18,6 +20,8 @@
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
+#include "SkeletonAsset.h"
+#include "AnimationAsset.h"
 
 #include "ImportManager.h"
 #include "ResourceManager.h"
@@ -93,6 +97,14 @@ void AssetDirectory::AddAsset(const std::string& name, const UID& uid, RESOURCE_
 	case RT_MATERIAL:
 		new_resource = new Material(name, uid);
 		new_asset = new MaterialAsset(new_resource, new MaterialImportConfiguration(*(MaterialImportConfiguration*)import_config), new MaterialLoadConfiguration(*(MaterialLoadConfiguration*)load_config));
+		break;
+	case RT_SKELETON:
+		new_resource = new Skeleton(name, uid);
+		new_asset = new SkeletonAsset((Skeleton*)new_resource, new SkeletonImportConfiguration(*(SkeletonImportConfiguration*)import_config), new SkeletonLoadConfiguration(*(SkeletonLoadConfiguration*)load_config));
+		break;
+	case RT_ANIMATION:
+		new_resource = new Animation(name, uid);
+		new_asset = new AnimationAsset((Animation*)new_resource, new AnimationImportConfiguration(*(AnimationImportConfiguration*)import_config), new AnimationLoadConfiguration(*(AnimationLoadConfiguration*)load_config));
 		break;
 	default:
 		LOG("Non standard import type");

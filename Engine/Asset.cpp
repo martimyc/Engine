@@ -61,10 +61,10 @@ const std::string & Asset::GetName() const
 	return resource->GetName();
 }
 
-SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), include_bones(true), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), skeleton_import_config(new SkeletonImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration), prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration), skeleton_load_config(new SkeletonLoadConfiguration)
+SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(true), include_lights(false), include_cameras(false), include_bones(true), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), skeleton_import_config(new SkeletonImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration), prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration), skeleton_load_config(new SkeletonLoadConfiguration)
 {}
 
-SceneImportConfiguration::SceneImportConfiguration(const SceneImportConfiguration & copy) : include_meshes(copy.include_meshes), include_materials(copy.include_materials), include_prefabs(copy.include_prefabs), include_animations(copy.include_animations), include_lights(copy.include_lights), include_cameras(copy.include_cameras), material_import_config(copy.material_import_config), mesh_import_config(copy.mesh_import_config), prefab_import_config(copy.prefab_import_config), anim_import_config(copy.anim_import_config), skeleton_import_config(copy.skeleton_import_config), material_load_config(copy.material_load_config), mesh_load_config(copy.mesh_load_config), prefab_load_config(copy.prefab_load_config), anim_load_config(copy.anim_load_config), skeleton_load_config(copy.skeleton_load_config)
+SceneImportConfiguration::SceneImportConfiguration(const SceneImportConfiguration & copy) : include_meshes(copy.include_meshes), include_materials(copy.include_materials), include_prefabs(copy.include_prefabs), include_animations(copy.include_animations), include_lights(copy.include_lights), include_cameras(copy.include_cameras), include_bones(copy.include_bones), material_import_config(copy.material_import_config), mesh_import_config(copy.mesh_import_config), prefab_import_config(copy.prefab_import_config), anim_import_config(copy.anim_import_config), skeleton_import_config(copy.skeleton_import_config), material_load_config(copy.material_load_config), mesh_load_config(copy.mesh_load_config), prefab_load_config(copy.prefab_load_config), anim_load_config(copy.anim_load_config), skeleton_load_config(copy.skeleton_load_config)
 {}
 
 SceneImportConfiguration::~SceneImportConfiguration()
@@ -95,6 +95,9 @@ bool SceneImportConfiguration::Config()
 		ret = true;
 
 	if (ImGui::Checkbox("Include Animations", &include_animations))
+		ret = true;
+
+	if (ImGui::Checkbox("Include Riggs", &include_bones))
 		ret = true;
 
 	if (ImGui::Checkbox("Include Lights", &include_lights))
@@ -147,19 +150,6 @@ bool SceneImportConfiguration::Config()
 	}
 
 	if (include_animations)
-	{
-		if (ImGui::TreeNodeEx("Animations' Configuration", ImGuiTreeNodeFlags_Framed))
-		{
-			if (anim_import_config->Config())
-				ret = true;
-			if (anim_load_config->Config())
-				ret = true;
-
-			ImGui::TreePop();
-		}
-	}
-
-	if (include_bones)
 	{
 		if (ImGui::TreeNodeEx("Animations' Configuration", ImGuiTreeNodeFlags_Framed))
 		{

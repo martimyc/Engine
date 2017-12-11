@@ -20,7 +20,7 @@ unsigned int SkeletonImporter::GetTotalSize(aiBone** bones, unsigned int num_bon
 	{ 
 		size += bones[i]->mName.length + 1;
 		size += sizeof(float) * 3 * 4 + sizeof(unsigned int);
-		size += bones[i]->mNumWeights * sizeof(unsigned int) + sizeof(float);
+		size += bones[i]->mNumWeights * (sizeof(unsigned int) + sizeof(float));
 	}
 
 	return size;
@@ -117,6 +117,8 @@ bool SkeletonImporter::Load(Skeleton * to_load, const SkeletonLoadConfiguration*
 			memcpy(&joint.weights[0], iterator, (sizeof(unsigned int) + sizeof(float)) * num_weights);
 			iterator += (sizeof(unsigned int) + sizeof(float)) * num_weights;
 		}
+
+		to_load->SetRigg(new_rigg);
 
 		return true;
 	}

@@ -34,18 +34,18 @@ struct SkeletonImportConfiguration : public ImportConfiguration
 	SkeletonImportConfiguration(const SkeletonImportConfiguration& copy);
 	~SkeletonImportConfiguration();
 
-	virtual bool Config();
-	virtual void MetaSave(char** iterator) const;
-	virtual void MetaLoad(char** iterator);
-	virtual unsigned int GetMetaSize() const;
+	bool Config();
+	void MetaSave(char** iterator) const;
+	void MetaLoad(char** iterator);
+	unsigned int GetMetaSize() const;
 };
 
 struct SkeletonLoadConfiguration : public LoadConfiguration
 {
-	virtual bool Config();
-	virtual void MetaSave(char** iterator) const;
-	virtual void MetaLoad(char** iterator);
-	virtual unsigned int GetMetaSize() const;
+	bool Config();
+	void MetaSave(char** iterator) const;
+	void MetaLoad(char** iterator);
+	unsigned int GetMetaSize() const;
 };
 
 #endif //!SKELETON_ASSET

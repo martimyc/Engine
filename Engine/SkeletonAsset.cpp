@@ -18,7 +18,7 @@ void SkeletonAsset::SetImage(GLuint id)
 
 GLuint SkeletonAsset::GetImage() const
 {
-	return GLuint();
+	return image;
 }
 
 void SkeletonAsset::AddInstance(const GameObject * go)

@@ -29,10 +29,10 @@ struct AnimationImportConfiguration: public ImportConfiguration
 	AnimationImportConfiguration();
 	~AnimationImportConfiguration();
 
-	virtual bool Config();
-	virtual void MetaSave(char** iterator) const;
-	virtual void MetaLoad(char** iterator);
-	virtual unsigned int GetMetaSize() const;
+	bool Config();
+	void MetaSave(char** iterator) const;
+	void MetaLoad(char** iterator);
+	unsigned int GetMetaSize() const;
 };
 
 struct AnimationLoadConfiguration: public LoadConfiguration
@@ -41,10 +41,10 @@ struct AnimationLoadConfiguration: public LoadConfiguration
 	AnimationLoadConfiguration();
 	~AnimationLoadConfiguration();
 
-	virtual bool Config();
-	virtual void MetaSave(char** iterator) const;
-	virtual void MetaLoad(char** iterator);
-	virtual unsigned int GetMetaSize() const;
+	bool Config();
+	void MetaSave(char** iterator) const;
+	void MetaLoad(char** iterator);
+	unsigned int GetMetaSize() const;
 };
 
 #endif // !ANIMATION_ASSET
