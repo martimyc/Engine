@@ -43,6 +43,8 @@ public:
 	const std::string GetMaterials() const;
 	const std::string GetMeshes() const;
 	const std::string GetPrefabs() const;
+	const std::string GetSkeletons() const;
+	const std::string GetAnimations() const;
 
 	bool IsMeta(const std::string& file) const;
 	bool HasMeta(const std::string& file, const std::string& directory) const;

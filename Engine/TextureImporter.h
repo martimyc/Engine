@@ -10,7 +10,7 @@
 class Texture;
 struct TextureImportConfiguration;
 struct TextureLoadConfiguration;
-struct UID;
+class UID;
 
 struct TextureImporter
 {

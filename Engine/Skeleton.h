@@ -13,9 +13,15 @@ private:
 	{
 		struct Joint
 		{
+			struct Weight
+			{
+				unsigned int vertex_id;
+				float influence;
+			};
+
 			float3x4 inverse_bind_pose_transform;
 			std::string name;
-			uint parent_index;
+			std::vector<Weight> weights;
 		};
 
 		std::vector<Joint> joints;
@@ -23,7 +29,7 @@ private:
 
 	Rigg* skeleton;
 
-	friend class RiggImporter;
+	friend class SkeletonImporter;
 
 public:
 	Skeleton(const std::string& name, const UID& uid);

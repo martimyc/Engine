@@ -58,7 +58,7 @@ const std::string & Asset::GetName() const
 	return resource->GetName();
 }
 
-SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), skeleton_import_config(new SkeletonImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration), prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration), skeleton_load_config(new SkeletonLoadConfiguration)
+SceneImportConfiguration::SceneImportConfiguration(): include_meshes(true), include_materials(true), include_prefabs(true), include_animations(false), include_lights(false), include_cameras(false), include_bones(true), material_import_config(new MaterialImportConfiguration), mesh_import_config (new MeshImportConfiguration), prefab_import_config(new PrefabImportConfiguration), anim_import_config(new AnimationImportConfiguration), skeleton_import_config(new SkeletonImportConfiguration), material_load_config(new MaterialLoadConfiguration), mesh_load_config(new MeshLoadConfiguration), prefab_load_config(new PrefabLoadConfiguration), anim_load_config(new AnimationLoadConfiguration), skeleton_load_config(new SkeletonLoadConfiguration)
 {}
 
 SceneImportConfiguration::~SceneImportConfiguration()
@@ -153,7 +153,7 @@ bool SceneImportConfiguration::Config()
 		}
 	}
 
-	if (include_animations)
+	if (include_bones)
 	{
 		if (ImGui::TreeNodeEx("Animations' Configuration", ImGuiTreeNodeFlags_Framed))
 		{

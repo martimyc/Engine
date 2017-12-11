@@ -788,13 +788,8 @@ MaterialImporter::~MaterialImporter()
 
 const UID MaterialImporter::Import(const std::string& scene_dir, const aiMaterial * material, const MaterialImportConfiguration* config, AssetDirectory* dir) const
 {
-	bool ret = true;
-
 	if (material->GetTextureCount(aiTextureType_NONE) != 0)
-	{
 		LOG("Found invalid textures");
-		ret = false;
-	}
 
 	char format[FORMAT_SIZE] = FORMAT_MATERIAL;
 	unsigned int buff_size = GetTotalSize(material);
@@ -866,7 +861,6 @@ bool MaterialImporter::Load(Material* to_load, unsigned int priority, const Mate
 		LoadDisplacement( to_load, &iterator);
 		LoadLightMap( to_load, &iterator);
 		LoadReflection( to_load, &iterator);	
-
 
 		return true;
 	}

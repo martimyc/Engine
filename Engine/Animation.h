@@ -25,7 +25,7 @@ private:
 
 		struct AnimationSample
 		{
-			std::vector<JointPose> joint_poses;
+			std::vector<JointPose> joint_poses; //maybe useless
 			std::vector<float4x4> global_joint_poses;
 
 			void Draw(const GLfloat* opengl_view_matrix) const;

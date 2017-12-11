@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "Assimp\include\cimport.h"
-#include "Assimp\include\cimport.h"
 #include "Assimp\include\config.h"
 #include "Assimp\include\Importer.hpp"
 #include "Assimp\include\types.h"
@@ -20,6 +19,7 @@ class MaterialImporter;
 class TextureImporter;
 class PrefabImporter;
 class AnimationImporter;
+class SkeletonImporter;
 
 class AssetDirectory;
 
@@ -63,6 +63,7 @@ private:
 	TextureImporter* texture_importer = nullptr;
 	PrefabImporter* prefab_importer = nullptr;
 	AnimationImporter* anim_importer = nullptr;
+	SkeletonImporter* skeleton_importer = nullptr;
 
 	friend class ImportClient;
 
@@ -119,4 +120,4 @@ public:
 };
 
 
-#endif //!MODULE_IMPORTER
+#endif // !MODULE_IMPORTER

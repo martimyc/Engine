@@ -73,6 +73,20 @@ bool FileSystem::Init()
 		if (!CreateFolder("Prefabs", false, LIBRARY_FOLDER))
 			LOG("Prefabs folder could not be created");
 
+	std::string animations = working_directory;
+	animations += LIBRARY_ANIMATIONS_FOLDER;
+
+	if (!Exsists(animations))
+		if (!CreateFolder("Animations", false, LIBRARY_FOLDER))
+			LOG("Animations folder could not be created");
+
+	std::string skeletons = working_directory;
+	skeletons += LIBRARY_SKELETONS_FOLDER;
+
+	if (!Exsists(skeletons))
+		if (!CreateFolder("Skeletons", false, LIBRARY_FOLDER))
+			LOG("Skeletons folder could not be created");
+
 	timer.Start();
 
 	return true;
@@ -309,6 +323,16 @@ const std::string FileSystem::GetMeshes() const
 const std::string FileSystem::GetPrefabs() const
 {
 	return working_directory + LIBRARY_PREFABS_FOLDER;
+}
+
+const std::string FileSystem::GetSkeletons() const
+{
+	return working_directory + LIBRARY_SKELETONS_FOLDER;
+}
+
+const std::string FileSystem::GetAnimations() const
+{
+	return working_directory + LIBRARY_ANIMATIONS_FOLDER;
 }
 
 bool FileSystem::IsMeta(const std::string & file) const

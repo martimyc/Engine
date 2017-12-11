@@ -74,7 +74,6 @@ private:
 	Prefab* GetPrefab(const UID& uid);
 	Material* CreateEmptyMaterial(const char* name = nullptr);
 
-	//Textures
 	Texture* LoadCheckers();
 
 	void LoadButtons();

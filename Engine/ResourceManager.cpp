@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "PreFab.h"
 #include "Animation.h"
+#include "Skeleton.h"
 
 //Assets
 #include "Asset.h"
@@ -18,6 +19,7 @@
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
 #include "AnimationAsset.h"
+#include "SkeletonAsset.h"
 
 #include "AssetDirectory.h"
 #include "GameObject.h"
@@ -303,6 +305,7 @@ void ResourceManager::LoadIcons()
 	MaterialAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Material.png"));
 	PrefabAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Scene.png"));
 	AnimationAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Animation.png"));
+	SkeletonAsset::SetImage(App->import_manager->GenerateButtonImage("..\\Icons\\Rigg.png"));
 }
 
 unsigned int ResourceManager::GetNewMaterialPriority()
@@ -320,7 +323,7 @@ void ResourceManager::DebugTextures() const
 		float hsize = 6.0f; // Vertical size of the quad
 		float vsize = 4.0f; // Vertical size of the quad
 
-							// Draw our texture
+		// Draw our texture
 		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
 

@@ -1,4 +1,5 @@
 #include <memory>
+#include <tuple>
 
 #include "imgui\imgui.h"
 #include "Parson\parson.h"
@@ -36,6 +37,7 @@
 #include "MaterialImporter.h"
 #include "PrefabImporter.h"
 #include "AnimationImporter.h"
+#include "SkeletonImporter.h"
 
 //Modules
 #include "Globals.h"
@@ -59,6 +61,7 @@ bool ImportManager::Init()
 	mesh_importer = new MeshImporter();
 	prefab_importer = new PrefabImporter();
 	anim_importer = new AnimationImporter();
+	skeleton_importer = new SkeletonImporter();
 	
 	Assimp::DefaultLogger* logger = (Assimp::DefaultLogger*)Assimp::DefaultLogger::get();
 	logger->create();
@@ -73,6 +76,7 @@ bool ImportManager::CleanUp()
 	delete mesh_importer;
 	delete prefab_importer;
 	delete anim_importer;
+	delete skeleton_importer;
 
 	return true;
 }
@@ -680,9 +684,13 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 
 		bool* material_loads = nullptr;
 		bool* mesh_loads = nullptr;
+		bool* skeleton_loads = nullptr;
+		bool* animation_loads = nullptr;
 
 		std::vector<std::pair<UID, std::string>> scene_materials;
 		std::vector<std::pair<UID, std::string>> scene_meshes;
+		std::vector<std::tuple<UID, std::string, std::string>> scene_skeletons;
+		std::vector<std::pair<UID, std::string>> scene_animations;
 
 		if (scene->HasMaterials())
 		{
@@ -761,6 +769,19 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 				{
 					LOG("Mesh (%i) could not be imported correctly", i);
 					material_loads[i] = false;
+				}
+
+				//Skeletons
+				if (scene->mMeshes[i]->HasBones())
+				{
+					LOG("Loading Rigg for mesh %s", mesh_name.c_str());
+
+					char ptr[255];
+					sprintf(ptr, "%s_Rigg_%i", scene_name.c_str(), i);
+					std::string rigg_name (ptr);
+
+					UID uid(skeleton_importer->Import(scene->mMeshes[i]->mBones, scene->mMeshes[i]->mNumBones));
+
 				}
 			}			
 		}
