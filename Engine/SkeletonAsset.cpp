@@ -29,6 +29,9 @@ void SkeletonAsset::AddInstance(const GameObject * go)
 SkeletonImportConfiguration::SkeletonImportConfiguration() : load_bone_weights(true), limit_bone_weights(false), split_by_bone_count(false), debone(false), debone_threshold(1.0f)
 {}
 
+SkeletonImportConfiguration::SkeletonImportConfiguration(const SkeletonImportConfiguration & copy) : load_bone_weights(copy.load_bone_weights), limit_bone_weights(copy.limit_bone_weights), split_by_bone_count(copy.split_by_bone_count), debone(copy.debone), debone_threshold(copy.debone_threshold)
+{}
+
 SkeletonImportConfiguration::~SkeletonImportConfiguration()
 {}
 

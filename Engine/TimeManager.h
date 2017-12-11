@@ -2,7 +2,7 @@
 #define TIME_MANAGER
 
 #include "Module.h"
-#include "Timer.h"
+#include "PerfTimer.h"
 
 class TimeManager : public Module
 {
@@ -15,8 +15,10 @@ class TimeManager : public Module
 ○ Real_Time_Delta_Time: last frame time expressed in seconds (Real Time Clock)
 	*/
 private:
-	Timer real_time_clock;
-	Timer game_clock;
+	PerfTimer real_time_clock;
+	PerfTimer game_clock;
+
+	PerfTimer frame_time;
 
 	uint64 frame_count = 0;
 

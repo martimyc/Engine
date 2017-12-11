@@ -28,6 +28,10 @@ void PrefabAsset::SetImage(GLuint id)
 PrefabImportConfiguration::PrefabImportConfiguration(): pre_transform(false), split_large_meshes(false), sort_by_type(false), optimize_graph(false), optimize_meshes(false)
 {}
 
+PrefabImportConfiguration::PrefabImportConfiguration(const PrefabImportConfiguration & copy) : pre_transform(copy.pre_transform), split_large_meshes(copy.split_large_meshes), sort_by_type(copy.sort_by_type), optimize_graph(copy.optimize_graph), optimize_meshes(copy.optimize_meshes)
+{
+}
+
 bool PrefabImportConfiguration::Config()
 {
 	bool ret = false;

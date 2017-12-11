@@ -30,6 +30,10 @@ GLuint AssetDirectory::icon = 0;
 AssetDirectory::AssetDirectory(const std::string& path): path(path)
 {}
 
+AssetDirectory::AssetDirectory(const AssetDirectory& copy) : path(copy.path), last_modified(copy.last_modified), assets(copy.assets), directories(copy.directories)
+{
+}
+
 AssetDirectory::~AssetDirectory()
 {
 	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)

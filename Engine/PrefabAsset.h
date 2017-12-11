@@ -13,6 +13,7 @@ struct PrefabImportConfiguration : public ImportConfiguration
 	bool optimize_meshes;
 
 	PrefabImportConfiguration();
+	PrefabImportConfiguration(const PrefabImportConfiguration& copy);
 
 	virtual bool Config();
 	virtual void MetaSave(char** iterator) const;

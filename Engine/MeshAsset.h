@@ -18,6 +18,7 @@ struct MeshImportConfiguration : public ImportConfiguration
 	bool kdt;
 
 	MeshImportConfiguration();
+	MeshImportConfiguration(const MeshImportConfiguration& copy);
 
 	virtual bool Config();
 	virtual void MetaSave(char** iterator) const;

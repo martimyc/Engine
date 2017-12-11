@@ -10,7 +10,7 @@ struct UID;
 
 struct MaterialImportConfiguration;
 struct MeshImportConfiguration;
-struct PrefabImportConfiguration;
+struct PrefabImportConfiguration;	
 struct AnimationImportConfiguration;
 struct SkeletonImportConfiguration;
 
@@ -53,6 +53,7 @@ protected:
 	
 	Asset(RESOURCE_TYPE type, Resource* resource, const ImportConfiguration* import_config, const  LoadConfiguration* load_config);
 	Asset(RESOURCE_TYPE type, Resource* resource);
+	Asset(const Asset& copy);
 
 public:
 	~Asset();
@@ -96,6 +97,7 @@ struct SceneImportConfiguration : public ImportConfiguration
 	SkeletonLoadConfiguration* skeleton_load_config;
 
 	SceneImportConfiguration();
+	SceneImportConfiguration(const SceneImportConfiguration& copy);
 	~SceneImportConfiguration();
 
 	virtual bool Config();
