@@ -18,6 +18,7 @@ bool TimeManager::Start()
 	real_time_clock.Start();
 	game_clock.Start();
 	game_clock.Pause();
+	frame_time.Start();
 	return true;
 }
 
@@ -27,11 +28,27 @@ UPDATE_STATUS TimeManager::Update(float dt)
 	{
 		ImGui::Text("Real Time: %.3f", real_time_clock.ReadSec());
 		ImGui::Text("Game Time: %.3f", game_clock.ReadSec());
+		ImGui::Separator();
+		ImGui::Text("Real Time dt: %.3f", real_time_dt);
+		ImGui::Text("Game Time dt: %.3f", game_dt);
+		ImGui::Separator();
+		ImGui::Text("Frame Count: %.3f", (double)frame_count);
 	}
 	App->EndDockWindow();
 
 	real_time_since_start = real_time_clock.ReadSec();
 	game_time_since_start = game_clock.ReadSec();
+
+	frame_count = real_time_clock.ReadTicks();
+
+	//dt
+	real_time_dt = frame_time.ReadSec();
+	if(!game_clock_paused && can_pause)
+		game_dt = frame_time.ReadSec();
+	else 
+		game_dt = 0.0f;
+	frame_time.Start();
+	//--
 
 	return UPDATE_CONTINUE;
 }
