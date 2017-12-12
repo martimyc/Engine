@@ -86,6 +86,7 @@
     <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetDirectory.h" />
     <ClInclude Include="Bounds.h" />
+    <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Dirent\dirent.h" />
     <ClInclude Include="imgui\ImGuizmo.h" />
     <ClInclude Include="imgui\imgui_user.h" />
@@ -133,7 +134,6 @@
     <ClInclude Include="assimp\include\vector3.h" />
     <ClInclude Include="assimp\include\version.h" />
     <ClInclude Include="BasicGeometry.h" />
-    <ClInclude Include="Brofiler\Brofiler.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
