@@ -99,7 +99,7 @@ private:
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config, AssetDirectory* dir = nullptr) const;
 	void LoadScene(AssetDirectory* dir, char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const;
-	void EraseDummyNodes(aiNode* root_node) const;
+	void EraseDummyNodes(aiNode* node) const;
 
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;

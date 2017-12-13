@@ -1005,9 +1005,36 @@ void ImportManager::LoadScene(AssetDirectory* dir, char ** iterator, const Scene
 	}
 }
 
-void ImportManager::EraseDummyNodes(aiNode * root_node) const
+void ImportManager::EraseDummyNodes(aiNode * node) const
 {
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		std::string node_name(node->mChildren[i]->mName.C_Str());
+		if (node_name.find_first_of("_$Assimp") != node_name.size())
+		{
+			aiNode* iterator = node->mChildren[i];
+			std::string child_name(iterator->mChildren[0]->mName.C_Str());
 
+			aiMatrix4x4 transform(node->mTransformation);
+
+			while (child_name.find_first_of("_$Assimp") != child_name.size())
+			{
+				transform = iterator->mTransformation * transform;
+
+				iterator = node->mChildren[0];
+				child_name = iterator->mChildren[0]->mName.C_Str();
+			}
+
+			transform = iterator->mTransformation * transform;
+			iterator->mTransformation = transform;
+
+			iterator->mParent = node;
+			node->mChildren[i] = iterator;
+		}
+	}
+	
+	for (int i = 0; i < node->mNumChildren; i++)
+		EraseDummyNodes(node->mChildren[i]);
 }
 
 const std::string ImportManager::GetImportFileNameNoExtension() const
