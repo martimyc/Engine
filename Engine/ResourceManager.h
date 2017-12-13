@@ -12,6 +12,8 @@ class Material;
 class Texture;
 class Mesh;
 class Prefab;
+class Skeleton;
+class Animation;
 class Asset;
 class UID;
 class GameObject;
@@ -95,6 +97,8 @@ public:
 	Texture* UseTexture(const UID& id, const Material* material) const;
 	Mesh* UseMesh(const UID& id, const GameObject* go) const;
 	Prefab* UsePrefab(const UID& id, const GameObject* go) const;
+	Skeleton* UseSkeleton(const UID& id, const GameObject* go) const;
+	Animation* UseAnimation(const UID& id, const GameObject* go) const;
 
 	//Materials
 	unsigned int GetNewMaterialPriority();

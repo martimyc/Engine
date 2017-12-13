@@ -636,6 +636,9 @@
     <ClInclude Include="SkeletonImporter.h">
       <Filter>Sources\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log.cpp">
@@ -881,9 +884,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
     <ClCompile Include="MaterialAsset.cpp">
       <Filter>Sources\Assets</Filter>
     </ClCompile>
@@ -956,6 +956,7 @@
     <ClCompile Include="SkeletonImporter.cpp">
       <Filter>Sources\Importers</Filter>
     </ClCompile>
+    <ClCompile Include="Animator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

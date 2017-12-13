@@ -235,6 +235,11 @@ GameObject * SceneManager::GetRoot() const
 	return root;
 }
 
+GameObject * SceneManager::GetGO(const std::string & name) const
+{
+	return root->GetChild(name);
+}
+
 void SceneManager::Hirarchy()
 {
 	if (App->BeginDockWindow("Hirarchy", &hirarchy_active))

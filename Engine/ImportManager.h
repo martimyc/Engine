@@ -31,8 +31,11 @@ struct MaterialLoadConfiguration;
 struct MeshLoadConfiguration;
 struct PrefabImportConfiguration;
 struct PrefabLoadConfiguration;
+struct SkeletonImportConfiguration;
+struct SkeletonLoadConfiguration;
+struct AnimationImportConfiguration;
+struct AnimationLoadConfiguration;
 struct SceneImportConfiguration;
-struct SceneLoadConfiguration;
 
 struct UID;
 
@@ -40,6 +43,8 @@ class Material;
 class Mesh;
 class Texture;
 class Prefab;
+class Skeleton;
+class Animation;
 
 class AssetDirectory;
 
@@ -94,6 +99,7 @@ private:
 	//Scene
 	const UID ImportScene(const std::string& file, const SceneImportConfiguration* load_config, AssetDirectory* dir = nullptr) const;
 	void LoadScene(AssetDirectory* dir, char ** iterator, const SceneImportConfiguration* config, const std::string& scene_name) const;
+	void EraseDummyNodes(aiNode* root_node) const;
 
 	const std::string GetImportFileNameNoExtension() const;
 	const std::string GetImportFileNameWithExtension() const;
@@ -112,6 +118,9 @@ public:
 	bool LoadTexture(Texture * to_load, const TextureLoadConfiguration * load_config) const;
 	bool LoadMesh(Mesh * to_load, const MeshLoadConfiguration* load_config) const;
 	bool LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration* load_config) const;
+	bool LoadSkeleton(Skeleton * to_load, const SkeletonLoadConfiguration* load_config) const;
+	bool LoadAnimation(Animation * to_load, const AnimationLoadConfiguration* load_config) const;
+
 	GLuint GenerateButtonImage(const std::string &relative_path);
 
 	void MetaLoad(const std::string& file, AssetDirectory* dir) const;

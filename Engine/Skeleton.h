@@ -1,9 +1,12 @@
 #ifndef SKELETON
 #define SKELETON
 
-#include "MathGeoLib\src\Math\float3x4.h"
+#include "MathGeoLib\src\Math\float4x4.h"
+#include "MathGeoLib\src\Geometry\Sphere.h"
 #include "Globals.h"
 #include "Resource.h"
+
+#define JOINT_SPHERE_RADIUS 1.0f
 
 typedef float GLfloat;
 
@@ -21,12 +24,19 @@ private:
 				float influence;
 			};
 
-			float3x4 inverse_bind_pose_transform;
+			float4x4 inverse_bind_pose_transform;
+			Sphere sphere;
 			std::string name;
 			std::vector<Weight> weights;
+			std::vector<Joint> child_joints;
+
+			Joint();
+
+			void Draw(const float4x4& skeleton_transform) const;
 		};
 
-		std::vector<Joint> joints;
+		Joint root_joint;
+		float4x4 skeleton_transform;
 
 		void Draw(const GLfloat* opengl_view_matrix) const;
 	};
@@ -49,6 +59,8 @@ public:
 	bool Inspector();
 
 	bool IsLoaded() const;
+
+	void Draw(const GLfloat* opengl_view_matrix) const;
 };
 
 #endif // !SKELETON

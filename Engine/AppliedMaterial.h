@@ -14,8 +14,8 @@ private:
 	std::vector<unsigned int> uv_channels;
 
 public:
-	AppliedMaterial( Material* material, bool enabled = true);
-	AppliedMaterial(const AppliedMaterial& copy);
+	AppliedMaterial( Material* material, const GameObject* const go, bool enabled = true);
+	AppliedMaterial(const AppliedMaterial& copy, const GameObject* const go);
 	~AppliedMaterial();
 
 	const unsigned int GetUVChannel(const unsigned int num_texture) const;

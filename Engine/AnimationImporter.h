@@ -26,7 +26,7 @@ private:
 
 public:
 	const UID Import(const aiAnimation* animation, const AnimationImportConfiguration* config) const;
-	bool Load(Animation* to_load, unsigned int priority, const AnimationLoadConfiguration* config) const;
+	bool Load(Animation* to_load, const AnimationLoadConfiguration* config) const;
 };
 
 #endif //!ANIMATION_IMPORTER

@@ -23,7 +23,7 @@ public:
 
 private:
 	unsigned int GetFailedBefore(unsigned int pos, bool* loads) const;
-	unsigned int GetNodeSize(const aiNode* node, bool* mesh_loads, const char* name = nullptr) const;
+	unsigned int GetNodeSize(const aiScene* scene, const aiNode* node, bool* mesh_loads, bool* material_loads, bool* skeleton_loads, const char* name = nullptr) const;
 	void ImportNode(const aiNode* child, char** iterator, const aiScene* scene, const std::vector<std::pair<UID, std::string>>& materials, bool* material_loads, const std::vector<std::pair<UID, std::string>>& meshes, bool* mesh_loads, const std::vector<std::pair<UID, std::string>> skeletons, bool* skeleton_loads, const char* name = nullptr);
 	GameObject* LoadChild(char** iterator);
 

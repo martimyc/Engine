@@ -13,6 +13,8 @@ class MeshFilter;
 class Material;
 class Mesh;
 class Camera;
+class Animator;
+class Skeleton;
 class KDTreeGO;
 
 namespace math
@@ -80,6 +82,8 @@ public:
 	void AddChild(GameObject* child);
 	GameObject* CreateCamera();
 
+	GameObject* GetChild(const std::string& name) const;
+
 	//Gets
 	const unsigned int GetNumComponents() const;
 	const std::string& GetName() const;
@@ -128,6 +132,8 @@ public:
 	bool HasAppliedMaterial() const;
 	AppliedMaterial* GetAppliedMaterial() const;
 	MeshFilter* GetMeshFilter() const;
+	Animator* GetAnimator() const;
+
 	void DrawBoundingBoxes() const;
 	
 	//Remove unique components

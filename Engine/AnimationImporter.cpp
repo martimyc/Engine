@@ -100,7 +100,7 @@ const UID AnimationImporter::Import(const aiAnimation * animation, const Animati
 	return id;
 }
 
-bool AnimationImporter::Load(Animation * to_load, unsigned int priority, const AnimationLoadConfiguration * config) const
+bool AnimationImporter::Load(Animation * to_load, const AnimationLoadConfiguration * config) const
 {
 	char* buffer = nullptr;
 	char* iterator = nullptr;

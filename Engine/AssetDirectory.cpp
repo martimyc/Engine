@@ -277,6 +277,40 @@ Prefab * AssetDirectory::UsePrefab(const UID & id, const GameObject * go) const
 	return nullptr;
 }
 
+Skeleton * AssetDirectory::UseSkeleton(const UID & id, const GameObject * go) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->GetUID())
+		{
+			Skeleton* skeleton = (Skeleton*)(*it)->GetResource();
+
+			if (skeleton->IsLoaded() == false)
+				if (App->import_manager->LoadSkeleton(skeleton, (SkeletonLoadConfiguration*)(*it)->GetLoadConfig()) == false)
+					LOG("Could not load source for skeleton %s correctly", (*it)->GetName().c_str());
+
+			((SkeletonAsset*)(*it))->AddInstance(go);
+			return skeleton;
+		}
+	return nullptr;
+}
+
+Animation * AssetDirectory::UseAnimation(const UID & id, const GameObject * go) const
+{
+	for (std::vector<Asset*>::const_iterator it = assets.begin(); it != assets.end(); ++it)
+		if (id == (*it)->GetUID())
+		{
+			Animation* animation = (Animation*)(*it)->GetResource();
+
+			if (animation->IsLoaded() == false)
+				if (App->import_manager->LoadAnimation(animation, (AnimationLoadConfiguration*)(*it)->GetLoadConfig()) == false)
+					LOG("Could not load source for prefab %s correctly", (*it)->GetName().c_str());
+
+			((AnimationAsset*)(*it))->AddInstance(go);
+			return animation;
+		}
+	return nullptr;
+}
+
 void AssetDirectory::Update()
 {
 	DIR* dir;

@@ -10,7 +10,8 @@ enum COMPONENT_TYPE
 	CT_NO_TYPE = 0,
 	CT_MESH_FILTER,
 	CT_APPLIED_MATERIAL,
-	CT_CAMERA
+	CT_CAMERA,
+	CT_ANIMATOR
 };
 
 class Component
@@ -20,10 +21,10 @@ private:
 
 protected:
 	bool enabled;
-	GameObject* game_object;
+	const GameObject* const game_object;
 
 public:	
-	Component(COMPONENT_TYPE type, bool enabled = true) : type(type), enabled(enabled)
+	Component(COMPONENT_TYPE type, const GameObject* const go, bool enabled = true) : type(type), game_object(go), enabled(enabled)
 	{}
 	~Component()
 	{}
@@ -52,8 +53,6 @@ public:
 	{
 		enabled = false;
 	}
-
-	void SetGameObject(GameObject* go);
 
 	//Get
 	const COMPONENT_TYPE GetType() const

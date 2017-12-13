@@ -8,10 +8,13 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "PreFab.h"
+#include "Animation.h"
+#include "Skeleton.h"
 
 //Components
 #include "MeshFilter.h"
 #include "AppliedMaterial.h"
+#include "Animator.h"
 
 #include "GameObject.h"
 
@@ -36,7 +39,7 @@ unsigned int PrefabImporter::GetFailedBefore(unsigned int pos, bool* loads) cons
 	return ret;
 }
 
-unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads, const char* name) const
+unsigned int PrefabImporter::GetNodeSize(const aiScene* scene, const aiNode * node, bool* mesh_loads, bool* material_loads, bool* skeleton_loads, const char* name) const
 {
 	// name + transform  + mesh + material + num_childs + childs
 	uint ret = 0;
@@ -53,7 +56,13 @@ unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads, 
 		if (mesh_loads[node->mMeshes[i]])
 		{
 			ret += SIZE_OF_UID; //mesh
-			ret += sizeof(bool) + SIZE_OF_UID; //material
+			ret += sizeof(bool) * 2;
+
+			if (material_loads[scene->mMeshes[node->mMeshes[i]]->mMaterialIndex] == true)
+				ret += SIZE_OF_UID; //material
+
+			if (skeleton_loads[node->mMeshes[i]] == true)
+				ret += SIZE_OF_UID; //bones
 		}
 	}
 
@@ -62,7 +71,7 @@ unsigned int PrefabImporter::GetNodeSize(const aiNode * node, bool* mesh_loads, 
 	ret += sizeof(uint);
 
 	for (int i = 0; i < node->mNumChildren; i++)
-		ret += GetNodeSize(node->mChildren[i], mesh_loads);
+		ret += GetNodeSize(scene, node->mChildren[i], mesh_loads, material_loads, skeleton_loads);
 
 	return ret;
 }
@@ -85,7 +94,11 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 	memcpy(*iterator, &mat.a1, sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
 
-	uint num_meshes = child->mNumMeshes - GetFailedBefore(child->mNumMeshes, mesh_loads);
+	uint num_meshes = child->mNumMeshes;
+	for (int i = 0; i < num_meshes; i++)
+		if (mesh_loads[child->mMeshes[i]] == false)
+			num_meshes--;
+
 	memcpy(*iterator, &num_meshes, sizeof(uint));
 	*iterator += sizeof(uint);
 
@@ -115,7 +128,7 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 			if (has_bones)
 			{
 				unsigned int num_rigg = child->mMeshes[i] - GetFailedBefore(child->mMeshes[i], skeleton_loads);
-				memcpy(*iterator, &std::get<0>(skeletons[num_rigg]), SIZE_OF_UID);
+				memcpy(*iterator, &skeletons[num_rigg].first, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
 			}
 		}
@@ -149,9 +162,10 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 		memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
 		*iterator += SIZE_OF_UID;
 		Mesh* mesh = App->resource_manager->UseMesh(mesh_uid, new_game_object);
-		new_game_object->AddComponent(new MeshFilter(mesh));
+		new_game_object->AddComponent(new MeshFilter(mesh, new_game_object));
 
-		bool has_material = **iterator;
+		bool has_material;
+		memcpy(&has_material, *iterator, sizeof(bool));
 		*iterator += sizeof(bool);
 
 		if (has_material)
@@ -160,7 +174,20 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 			memcpy(&material_uid, *iterator, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 			Material* material = App->resource_manager->UseMaterial(material_uid, new_game_object);
-			new_game_object->AddComponent(new AppliedMaterial(material));
+			new_game_object->AddComponent(new AppliedMaterial(material, new_game_object));
+		}
+
+		bool has_bones;
+		memcpy(&has_bones, *iterator, sizeof(bool));
+		*iterator += sizeof(bool);
+
+		if (has_bones)
+		{
+			UID skeleton_uid;
+			memcpy(&skeleton_uid, *iterator, SIZE_OF_UID);
+			*iterator += SIZE_OF_UID;
+			Skeleton* skeleton = App->resource_manager->UseSkeleton(skeleton_uid, new_game_object);
+			new_game_object->AddComponent(new Animator(skeleton, new_game_object));
 		}
 	}
 	else
@@ -176,7 +203,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 			memcpy(&mesh_uid, *iterator, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 			Mesh* mesh = App->resource_manager->UseMesh(mesh_uid, new_child);
-			new_child->AddComponent(new MeshFilter(mesh));
+			new_child->AddComponent(new MeshFilter(mesh, new_child));
 
 			bool has_material;
 			memcpy(&has_material, *iterator, sizeof(bool));
@@ -188,7 +215,20 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 				memcpy(&material_uid, *iterator, SIZE_OF_UID);
 				*iterator += SIZE_OF_UID;
 				Material* material = App->resource_manager->UseMaterial(material_uid, new_child);
-				new_child->AddComponent(new AppliedMaterial(material));
+				new_child->AddComponent(new AppliedMaterial(material, new_child));
+			}
+
+			bool has_bones;
+			memcpy(&has_bones, *iterator, sizeof(bool));
+			*iterator += sizeof(bool);
+
+			if (has_bones)
+			{
+				UID skeleton_uid;
+				memcpy(&skeleton_uid, *iterator, SIZE_OF_UID);
+				*iterator += SIZE_OF_UID;
+				Skeleton* skeleton = App->resource_manager->UseSkeleton(skeleton_uid, new_child);
+				new_child->AddComponent(new Animator(skeleton, new_child));
 			}
 			
 			new_game_object->AddChild(new_child);
@@ -199,9 +239,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 	*iterator += sizeof(uint);
 
 	for (int i = 0; i < num_childs; i++)
-	{
 		new_game_object->AddChild(LoadChild(iterator));
-	}
 
 	return new_game_object;
 }
@@ -211,7 +249,7 @@ const UID PrefabImporter::Import(const aiScene* scene, const std::vector<std::pa
 	aiNode* root_node = scene->mRootNode;
 
 	char format[FORMAT_SIZE] = FORMAT_PREFAB;
-	char* buffer = new char[FORMAT_SIZE + GetNodeSize(root_node, mesh_loads, name)];
+	char* buffer = new char[FORMAT_SIZE + GetNodeSize(scene, root_node, mesh_loads, material_loads, skeleton_loads, name)];
 	char* iterator = buffer;
 
 	//First specify format

@@ -72,6 +72,7 @@ public:
 
 	void CreateCamera();
 	GameObject* GetRoot() const;
+	GameObject* GetGO(const std::string& name) const;
 
 	void DrawCamera();
 	void SetCameraFocused(Camera* camera);

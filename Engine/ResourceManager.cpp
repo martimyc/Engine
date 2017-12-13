@@ -94,7 +94,7 @@ void ResourceManager::LoadToScene(Asset* asset)
 				Material* material = CreateEmptyMaterial();
 				Texture* texture = current_dir->UseTexture(asset->GetUID(), material);
 				material->AddTexture(texture, TT_DIFFUSE);
-				App->scene_manager->GetFocused()->AddComponent(new AppliedMaterial(material));
+				App->scene_manager->GetFocused()->AddComponent(new AppliedMaterial(material, App->scene_manager->GetFocused()));
 			}
 			else
 			{
@@ -238,6 +238,16 @@ Mesh * ResourceManager::UseMesh(const UID & id, const GameObject * go) const
 Prefab * ResourceManager::UsePrefab(const UID & id, const GameObject * go) const
 {
 	return current_dir->UsePrefab(id, go);
+}
+
+Skeleton * ResourceManager::UseSkeleton(const UID & id, const GameObject * go) const
+{
+	return current_dir->UseSkeleton(id, go);;
+}
+
+Animation * ResourceManager::UseAnimation(const UID & id, const GameObject * go) const
+{
+	return current_dir->UseAnimation(id, go);;
 }
 
 Texture* ResourceManager::LoadCheckers()

@@ -249,6 +249,26 @@ bool ImportManager::LoadPrefab(Prefab * to_load, const PrefabLoadConfiguration* 
 	return prefab_importer->Load(to_load, load_config);
 }
 
+bool ImportManager::LoadSkeleton(Skeleton * to_load, const SkeletonLoadConfiguration * load_config) const
+{
+	if (to_load->IsLoaded() == true)
+	{
+		LOG("Allready loaded this resource");
+		return false;
+	}
+	return skeleton_importer->Load(to_load, load_config);
+}
+
+bool ImportManager::LoadAnimation(Animation * to_load, const AnimationLoadConfiguration * load_config) const
+{
+	if (to_load->IsLoaded() == true)
+	{
+		LOG("Allready loaded this resource");
+		return false;
+	}
+	return anim_importer->Load(to_load, load_config);
+}
+
 GLuint ImportManager::GenerateButtonImage(const std::string & relative_path)
 {
 	std::string path(App->file_system->GetAssets());
@@ -816,10 +836,10 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 					LOG("Loading Rigg for mesh %s", mesh_name.c_str());
 
 					char ptr[255];
-					sprintf(ptr, "%s_Rigg_%i", scene_name.c_str(), i);
+					sprintf(ptr, "%s_Rigg", mesh_name.c_str());
 					std::string rigg_name(ptr);
-
-					UID uid(skeleton_importer->Import(scene->mMeshes[i]->mBones, scene->mMeshes[i]->mNumBones));
+					
+					UID uid(skeleton_importer->Import(scene->mMeshes[i]->mBones, scene->mRootNode, scene->mMeshes[i]->mNumBones));
 
 					if (uid.IsNull() == false)
 					{
@@ -879,7 +899,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		//Hirarchy
 		if (scene->mRootNode != nullptr)
 		{
-			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_skeletons, skeleton_loads, scene_name.c_str());
+			prefab_uid = prefab_importer->Import(scene, scene_materials, material_loads, scene_meshes, mesh_loads, scene_skeletons, skeleton_loads);
 
 			if (prefab_uid.IsNull() == false)
 			{
@@ -983,6 +1003,11 @@ void ImportManager::LoadScene(AssetDirectory* dir, char ** iterator, const Scene
 
 		dir->AddAsset(name, uid, RT_ANIMATION, config->anim_import_config, config->anim_load_config);
 	}
+}
+
+void ImportManager::EraseDummyNodes(aiNode * root_node) const
+{
+
 }
 
 const std::string ImportManager::GetImportFileNameNoExtension() const

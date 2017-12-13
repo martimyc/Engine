@@ -15,6 +15,8 @@
 #include "Texture.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Animator.h"
+#include "Skeleton.h"
 #include "Camera.h"
 
 //modules
@@ -58,13 +60,17 @@ GameObject::GameObject(const GameObject & copy) : name(copy.name), parent(copy.p
 		switch ((*it)->GetType())
 		{
 		case CT_MESH_FILTER:
-			components.push_back(new MeshFilter(*((MeshFilter*)(*it))));
+			components.push_back(new MeshFilter(*((MeshFilter*)(*it)), this));
 			CreateBounds(((MeshFilter*)(*it))->GetMesh());
 			break;
 		case CT_APPLIED_MATERIAL:
-			components.push_back(new AppliedMaterial(*((AppliedMaterial*)(*it))));
+			components.push_back(new AppliedMaterial(*((AppliedMaterial*)(*it)), this));
 			break;
 		case CT_CAMERA:
+			break;
+		case CT_ANIMATOR:
+			Animator* animator_copy = (Animator*)(*it);
+			components.push_back(new Animator(*animator_copy, this));
 			break;
 		}
 	}
@@ -135,8 +141,6 @@ void GameObject::AddComponent(Component * component)
 {
 	bool add = true;
 
-	component->SetGameObject(this);
-
 	switch (component->GetType())
 	{
 	case CT_MESH_FILTER:
@@ -155,6 +159,10 @@ void GameObject::AddComponent(Component * component)
 			ChangeMaterial((Material*)component);
 			add = false;
 		}
+		break;
+	
+	case CT_ANIMATOR:
+
 		break;
 
 	default:
@@ -233,7 +241,7 @@ void GameObject::ChangeMaterial(Material * new_material)
 	if (applied_material != nullptr)
 		RemoveAppliedMaterial();
 	
-	AddComponent(new AppliedMaterial(new_material));	
+	AddComponent(new AppliedMaterial(new_material, this));	
 }
 
 void GameObject::ChangeMesh(Mesh * new_mesh)
@@ -243,7 +251,7 @@ void GameObject::ChangeMesh(Mesh * new_mesh)
 	if(mesh_filter != nullptr)
 		RemoveMeshFilter();
 
-	AddComponent(new MeshFilter(new_mesh));
+	AddComponent(new MeshFilter(new_mesh, this));
 }
 
 bool GameObject::Hirarchy(GameObject*& selected)
@@ -316,12 +324,25 @@ void GameObject::AddChild(GameObject* child)
 GameObject* GameObject::CreateCamera()
 {
 	GameObject* new_child = CreateChild("New Camera");
-	Camera* cam = new Camera("Camera");
+	Camera* cam = new Camera("Camera", this);
 	new_child->AddComponent(cam);
 	new_child->is_camera = true;
 	App->scene_manager->SetCameraFocused(cam);
 	return new_child;
 }
+
+GameObject * GameObject::GetChild(const std::string & name) const
+{
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		if (name == (*it)->name)
+			return *it;
+
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+			return (*it)->GetChild(name);
+
+	return nullptr;
+}
+
 
 const unsigned int GameObject::GetNumComponents() const
 {
@@ -543,6 +564,14 @@ MeshFilter * GameObject::GetMeshFilter() const
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_MESH_FILTER)
 			return (MeshFilter*)*it;
+	return nullptr;
+}
+
+Animator * GameObject::GetAnimator() const
+{
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		if ((*it)->GetType() == CT_ANIMATOR)
+			return (Animator*)*it;
 	return nullptr;
 }
 

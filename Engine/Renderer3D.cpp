@@ -13,6 +13,7 @@
 #include "AppliedMaterial.h"
 #include "MeshFilter.h"
 #include "Texture.h"
+#include "Animator.h"
 
 //Modules
 #include "Window.h"
@@ -248,11 +249,16 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 				if (App->camera->DoFrustumCulling(to_draw))
 				{
+					//Probablly should all go in one go funct
 					math::float4x4 transform(to_draw->GetWorldTransform());
 					glMultMatrixf(&transform.At(0, 0));
 
 					to_draw->GetMesh()->Draw(to_draw->GetAppliedMaterial());
 					to_draw->GetMesh()->DrawKDT();
+
+					const Animator* animator = to_draw->GetAnimator();
+					if (animator != nullptr)
+						animator->DrawSkeleton(opengl_view_matrix);
 				}
 				draw_queue.pop();
 				glPopMatrix();

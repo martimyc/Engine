@@ -139,7 +139,7 @@ UPDATE_STATUS Input::PreUpdate(float dt)
 				if (IsImageFormat(extension))
 					App->import_manager->SentToImport(full_path, RT_TEXTURE);//LoadTextureStraightFromPath(full_path);
 				//Assimp
-				else if (extension == "fbx" || extension == "FBX")
+				else if (extension == "fbx" || extension == "FBX" || extension == "dae" || extension == "DAE")
 				{
 					App->import_manager->SentToImport(full_path, RT_PREFAB);
 					//App->camera->CenterToObj();
