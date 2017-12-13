@@ -5,7 +5,7 @@
 #include "Globals.h"
 #include "Transform.h"
 
-Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), center(0, 0, 0)
+Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), euler_rotation(0, 0, 0), center(0, 0, 0)
 {
 	transform_matrix = transform_matrix.identity;
 }
@@ -20,8 +20,12 @@ void Transform::SetTransform(const math::float4x4& new_transform)
 	translation = transform_matrix.Transposed().TranslatePart();
 	float3x3 rotation_matrix = transform_matrix.RotatePart();
 	rotation_matrix.Orthonormalize(0, 1, 2);
-	rotation = rotation_matrix.ToQuat();
-	scaling = transform_matrix.GetScale();	
+	if (rotation_matrix.IsOrthonormal())
+		rotation.Set(rotation_matrix);
+	else rotation.Set(0, 0, 0, 1);
+	euler_rotation = rotation.ToEulerXYZ();
+	euler_rotation *= RADTODEG;
+	scaling = transform_matrix.GetScale();
 }
 
 void Transform::SetTransformCenter(const math::vec center_)
@@ -103,10 +107,17 @@ Quat Transform::TransformEuler2Quat(const vec euler)
 
 void Transform::Update()
 {
-	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
-	float3x3 rotation_matrix(rotation);
-	transform_matrix.Set3x3Part(rotation_matrix);										//Rotate
+	euler_rotation *= DEGTORAD;
+
+	rotation = Quat::FromEulerXYZ(euler_rotation.x, euler_rotation.y, euler_rotation.z);
+
+	transform_matrix = float4x4::FromQuat(rotation);									//Rotate
+
+	euler_rotation *= RADTODEG;
+
+
 	transform_matrix = float4x4::Scale(scaling, center) * transform_matrix;				//Scalate
+	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
 }
 
 bool Transform::Inspector()
@@ -114,41 +125,24 @@ bool Transform::Inspector()
 	bool ret = false;
 	if (ImGui::TreeNode("Transform"))
 	{
-		if (ImGui::DragFloat("Pos x", &translation.x))	ret = true;
-		if (ImGui::DragFloat("Pos y", &translation.y))	ret = true;
-		if (ImGui::DragFloat("Pos z", &translation.z))	ret = true;
+		if (ImGui::DragFloat("Pos x", &translation.x, 1.0f, 0.0f, 0.0f, "%.2f"))	ret = true;
+		if (ImGui::DragFloat("Pos y", &translation.y, 1.0f, 0.0f, 0.0f, "%.2f"))	ret = true;
+		if (ImGui::DragFloat("Pos z", &translation.z, 1.0f, 0.0f, 0.0f, "%.2f"))	ret = true;
 
 		ImGui::Separator();
 
-		Quat2Euler(rotation, roll, pitch, yaw);
-
-		roll *= RADTODEG;
-		pitch *= RADTODEG;
-		yaw *= RADTODEG;
-
-		//It's the same, but visually better for the user
-		if (roll == -180)	roll = 180;
-		if (pitch == -180)	pitch = 180;
-		if (yaw == -180)	yaw = 180;
-
-		if (ImGui::DragFloat("Rotation x", &yaw))	ret = true;
-		if (ImGui::DragFloat("Rotation y", &pitch))	ret = true;
-		if (ImGui::DragFloat("Rotation z", &roll))	ret = true;
-		
-		roll *= DEGTORAD;
-		pitch *= DEGTORAD;
-		yaw *= DEGTORAD;
-
-		Euler2Quat(roll, pitch, yaw, rotation);
+		if (ImGui::DragFloat("Rotation x", &euler_rotation.x, 1.0f, 0.0f, 0.0f, "%.2f"))	ret = true;
+		if (ImGui::DragFloat("Rotation y", &euler_rotation.y, 1.0f, 0.0f, 0.0f, "%.2f"))	ret = true;
+		if (ImGui::DragFloat("Rotation z", &euler_rotation.z, 1.0f, 0.0f, 0.0f, "%.2f"))	ret = true;
 
 		ImGui::Separator();
 
-		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f, MIN_SCALE))	ret = true;
-		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f, MIN_SCALE))	ret = true;
-		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f, MIN_SCALE))	ret = true;
+		if (ImGui::DragFloat("Scale x", &scaling.x, 0.1f, MIN_SCALE, 0.0f, "%.2f"))	ret = true;
+		if (ImGui::DragFloat("Scale y", &scaling.y, 0.1f, MIN_SCALE, 0.0f, "%.2f"))	ret = true;
+		if (ImGui::DragFloat("Scale z", &scaling.z, 0.1f, MIN_SCALE, 0.0f, "%.2f"))	ret = true;
 
 		MaintainScalePositive();
-		
+
 		ImGui::TreePop();
 	}
 	return ret;

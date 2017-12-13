@@ -14,8 +14,9 @@ private:
 	std::string name;
 	float3 translation;
 	float3 scaling;
-	float3 center;
+	float3 euler_rotation;
 	Quat rotation;
+	float3 center;
 	float roll, pitch, yaw;	// roll (x-axis rotation)	// pitch (y-axis rotation)	// yaw (z-axis rotation)
 	
 	float4x4 transform_matrix;
