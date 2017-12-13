@@ -176,6 +176,7 @@ UPDATE_STATUS Application::EndConfigMenu()
 // Call PreUpdate, Update and PostUpdate on all modules
 UPDATE_STATUS Application::Update()
 {
+	BROFILER_FRAME("MARs Engine 3D");
 	BROFILER_CATEGORY("Aplication Update", Profiler::Color::LightYellow)
 
 	UPDATE_STATUS ret = UPDATE_CONTINUE;

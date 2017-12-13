@@ -108,9 +108,6 @@
     <ClInclude Include="Light.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Brofiler\Brofiler.h">
-      <Filter>Sources\3rd Party\Brofiller</Filter>
-    </ClInclude>
     <ClInclude Include="mmgr.h">
       <Filter>Sources\3rd Party\mmgr</Filter>
     </ClInclude>
@@ -638,6 +635,9 @@
     </ClInclude>
     <ClInclude Include="Animator.h">
       <Filter>Sources\Game Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Brofiler\Brofiler.h">
+      <Filter>Sources\3rd Party\Brofiller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

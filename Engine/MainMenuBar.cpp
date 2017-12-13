@@ -145,10 +145,10 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.0f, 0.8f, 0.8f));
 
-			if (ImGui::Button("Marc Latorre"))
+			if (ImGui::Button("Marc Latorre Freixes"))
 				App->OpenWebsite("https://github.com/marclafr");
 
-			if (ImGui::Button("Marti Majo"))
+			if (ImGui::Button("Marti Majo Ylla-Catala"))
 				App->OpenWebsite("https://github.com/martimyc");
 
 			ImGui::PopStyleColor(3);
@@ -160,15 +160,15 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.57f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.57f, 0.8f, 0.8f));
 
-			if (ImGui::Button("ImGui V:1.51"))
+			if (ImGui::Button("ImGui 1.51"))
 				App->OpenWebsite("https://github.com/ocornut/imgui/releases/tag/v1.51");
 
 			ImGui::SameLine();
-			if (ImGui::Button("Brofiler V:1.1.2"))
+			if (ImGui::Button("Brofiler 1.1.2"))
 				App->OpenWebsite("http://brofiler.com/");
 
 			ImGui::SameLine();
-			if (ImGui::Button("Math Geo Lib V.1.5"))
+			if (ImGui::Button("Math Geo Lib 1.5"))
 				App->OpenWebsite("https://github.com/juj/MathGeoLib/releases/tag/v1.5");
 
 
@@ -176,16 +176,33 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 				App->OpenWebsite("https://www.libsdl.org/download-2.0.php");
 
 			ImGui::SameLine();
-			if (ImGui::Button("OPENGL Version 4"))
+			if (ImGui::Button("OpenGL 4.0"))
 				App->OpenWebsite("https://www.opengl.org/");
 
 			ImGui::SameLine();
-			if (ImGui::Button("Glew V.2.1.0"))
+			if (ImGui::Button("Glew 2.1.0"))
 				App->OpenWebsite("https://github.com/nigels-com/glew/releases/tag/glew-2.1.0");
 
 			ImGui::SameLine();
 			if (ImGui::Button("MMGR"))
 				App->OpenWebsite("https://github.com/martimyc/Engine/blob/master/Engine/mmgr/README.txt");
+
+
+			if (ImGui::Button("Assimp"))
+				App->OpenWebsite("http://www.assimp.org/");
+
+			ImGui::SameLine();
+			if (ImGui::Button("DeviL"))
+				App->OpenWebsite("http://openil.sourceforge.net/");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Dirent"))
+				App->OpenWebsite("https://github.com/tronkko/dirent");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Parson"))
+				App->OpenWebsite("http://kgabis.github.io/parson/");
+
 
 			ImGui::PopStyleColor(3);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.7f, 0.6f, 0.6f));
