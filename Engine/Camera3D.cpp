@@ -3,6 +3,7 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Geometry\AABB.h"
 #include "MathGeoLib\src\Geometry\LineSegment.h"
+#include "MathGeoLib\src\Math\float3x3.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Window.h"
@@ -18,7 +19,6 @@
 Camera3D::Camera3D(const char* name, bool start_enabled) : Module(name, start_enabled),
 near_plane_dist_editor_camera(0.5f),
 far_plane_dist_editor_camera(500.0f),
-pos(0.0f, 1.0f, 3.0f),
 vertical_fov_editor_camera(80)
 {}
 
@@ -32,7 +32,7 @@ bool Camera3D::Init()
 	editor_camera_frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	editor_camera_frustum.SetType(math::FrustumType::PerspectiveFrustum);
 	editor_camera_frustum.SetViewPlaneDistances(near_plane_dist_editor_camera, far_plane_dist_editor_camera);
-	editor_camera_frustum.SetFrame(pos, vec(0, 0, -1), vec(0, 1, 0));
+	editor_camera_frustum.SetFrame(CAMERA_INITIAL_POS, vec(0, 0, -1), vec(0, 1, 0));
 	RecalculateFOV();
 
 	config_camera = false;
@@ -168,7 +168,6 @@ UPDATE_STATUS Camera3D::Update(float dt)
 		}
 
 		// Mouse motion ----------------
-
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
 		{
 			int dx = -App->input->GetMouseXMotion();
@@ -177,17 +176,15 @@ UPDATE_STATUS Camera3D::Update(float dt)
 
 			if (dx != 0)
 			{
-				float delta_x = (float)dx * sensibility;
-				rotation.SetFromAxisAngle(vec(0, 1, 0), delta_x * DEGTORAD);
-				editor_camera_frustum.Transform(rotation);
+				float delta_x = (float)dx * sensibility * DEGTORAD;
+				editor_camera_frustum.Transform(math::float3x3::RotateAxisAngle(vec(0, 1, 0), delta_x));
 			}
-
+			
 			if (dy != 0)
 			{
-				vec temp_pos = editor_camera_frustum.pos;
-				float delta_y = (float)dy * sensibility;
-				rotation.SetFromAxisAngle(math::Cross(editor_camera_frustum.front, vec(0, 1, 0)), delta_y * DEGTORAD);
-				editor_camera_frustum.Transform(rotation);
+				float delta_y = (float)dy * sensibility * DEGTORAD;
+				float3 axis(-editor_camera_frustum.front.z, 0, editor_camera_frustum.front.x);
+				editor_camera_frustum.Transform(math::float3x3::RotateAxisAngle(axis, delta_y));
 			}
 
 			if (dx != 0 || dy != 0)
@@ -197,7 +194,6 @@ UPDATE_STATUS Camera3D::Update(float dt)
 				camera_moved = true;
 			}
 		}
-
 		if (camera_moved)
 			ResetFrustumPlanes();
 
