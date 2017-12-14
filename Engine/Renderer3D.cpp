@@ -255,13 +255,13 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 					to_draw->GetMesh()->Draw(to_draw->GetAppliedMaterial());
 					to_draw->GetMesh()->DrawKDT();
-
-					const Animator* animator = to_draw->GetAnimator();
-					if (animator != nullptr)
-						animator->DrawSkeleton(opengl_view_matrix);
 				}
 				draw_queue.pop();
 				glPopMatrix();
+
+				const Animator* animator = to_draw->GetAnimator();
+				if (animator != nullptr)
+					animator->DrawSkeleton();
 
 				if (draw_queue.size() == 0)
 					break;

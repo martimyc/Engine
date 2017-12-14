@@ -16,6 +16,7 @@ private:
 
 	//debug
 	bool draw_skeleton;
+	bool draw_bind_pos;
 
 public:
 	Animator(Skeleton* skeleton, const GameObject* const go, bool enabled = true);
@@ -34,7 +35,7 @@ public:
 
 	const Skeleton* GetSkeleton() const;
 
-	void DrawSkeleton(const GLfloat* opengl_view_matrix) const;
+	void DrawSkeleton() const;
 };
 
 

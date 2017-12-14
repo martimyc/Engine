@@ -24,15 +24,17 @@ public:
 
 private:
 	unsigned int GetTotalSize(aiBone** bones, unsigned int num_bones) const;
-	const aiNode* FindEsqueletonNode(const aiNode* node, aiBone** bones, unsigned int num_bones) const;
-	const aiBone* FindEsqueletonBone(const aiString& name, aiBone** bones, unsigned int num_bones) const;
+	aiNode* FindEsqueletonNode(aiNode* node, aiBone** bones, unsigned int num_bones) const;
+	aiBone* FindEsqueletonBone(const aiString& name, aiBone** bones, unsigned int num_bones) const;
 	bool IsBone(const aiString& name, aiBone ** bones, unsigned int num_bones) const;
+	void ColapseUselesNodes(aiNode* skeleton_root) const;
+	aiMatrix4x4 GetGlobalTransform(const aiNode* node) const;
 
-	void ImportJoint(char** iterator, const aiBone* bone, const aiNode* node, aiBone** bones, unsigned int num_bones) const;
+	void ImportJoint(char** iterator, const aiBone* bone, const aiNode* node, aiBone** bones, unsigned int num_bones, const aiMatrix4x4& parent_global_transform) const;
 	Skeleton::Rigg::Joint LoadJoint(char** iterator) const;
 
 public:
-	const UID Import(aiBone** bones, aiNode* scene_root_node, unsigned int num_bones) const;
+	const UID Import(aiBone** bones, aiNode* scene_root_node, aiNode* mesh_node, unsigned int num_bones) const;
 	bool Load(Skeleton* to_load, const SkeletonLoadConfiguration* config) const;
 };
 

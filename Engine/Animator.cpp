@@ -6,10 +6,10 @@
 #include "Application.h"
 #include "Animator.h"
 
-Animator::Animator(Skeleton * skeleton, const GameObject* const go, bool enabled): Component(CT_ANIMATOR, go, enabled), skeleton(skeleton), draw_skeleton(false)
+Animator::Animator(Skeleton * skeleton, const GameObject* const go, bool enabled): Component(CT_ANIMATOR, go, enabled), skeleton(skeleton), draw_skeleton(false), draw_bind_pos(false)
 {}
 
-Animator::Animator(const Animator & copy, const GameObject* const go): Component(CT_ANIMATOR, go, copy.enabled), draw_skeleton(copy.draw_skeleton)
+Animator::Animator(const Animator & copy, const GameObject* const go): Component(CT_ANIMATOR, go, copy.enabled), draw_skeleton(copy.draw_skeleton), draw_bind_pos(copy.draw_bind_pos)
 {
 	skeleton = App->resource_manager->UseSkeleton(copy.skeleton->GetUID(), game_object);
 }
@@ -27,6 +27,7 @@ void Animator::Inspector()
 	if (ImGui::TreeNode("Animator"))
 	{
 		ImGui::Checkbox("Draw Skeleton", &draw_skeleton);
+		ImGui::Checkbox("Draw Bind Position", &draw_bind_pos);
 		ImGui::TreePop();
 	}
 }
@@ -52,8 +53,10 @@ const Skeleton * Animator::GetSkeleton() const
 	return skeleton;
 }
 
-void Animator::DrawSkeleton(const GLfloat* opengl_view_matrix) const
+void Animator::DrawSkeleton() const
 {
 	if(draw_skeleton)
-		skeleton->Draw(opengl_view_matrix);
+		skeleton->Draw(game_object->GetWorldTransform());
+	if (draw_bind_pos)
+		skeleton->DrawBindPos(game_object->GetWorldTransform());
 }
