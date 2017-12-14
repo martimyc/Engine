@@ -103,6 +103,18 @@ UPDATE_STATUS SceneManager::Update(float dt)
 {
 	UpdateGameObjects();
 
+	float4 vec(1.0f, 1.0f, 1.0f, 1.0f);
+	float4x4 mat(focused->GetWorldTransform());
+	//mat.Inverse();
+	vec = vec * mat;
+
+	if (ImGui::Begin("Create"))
+	{
+		if (ImGui::Button("New GO"))
+			AddEmptyGO();
+	}
+	ImGui::End();
+
 	return UPDATE_CONTINUE;
 }
 

@@ -6,7 +6,7 @@
 #include "Globals.h"
 #include "Resource.h"
 
-#define JOINT_SPHERE_RADIUS 1.0f
+#define JOINT_SPHERE_RADIUS 0.5f
 
 typedef float GLfloat;
 
@@ -25,20 +25,28 @@ private:
 			};
 
 			float4x4 inverse_bind_pose_transform;
+			float4x4 current_inverse_transform;
 			Sphere sphere;
 			std::string name;
 			std::vector<Weight> weights;
 			std::vector<Joint> child_joints;
 
+			//mayebe better to work with world coordinates and not mesh
+
 			Joint();
 
-			void Draw(const float4x4& skeleton_transform) const;
+			void UpdateSpherePos();
+
+			void Draw(const float4x4& mesh_global_transform) const;
+			void DrawBindPos(const float4x4& mesh_global_transform) const;
 		};
 
 		Joint root_joint;
-		float4x4 skeleton_transform;
 
-		void Draw(const GLfloat* opengl_view_matrix) const;
+		void Draw(const float4x4& mesh_global_transform) const;
+		void DrawBindPos(const float4x4& mesh_global_transform) const;
+
+		void UpdateJointSpheres();
 	};
 
 	Rigg* skeleton;
@@ -60,7 +68,10 @@ public:
 
 	bool IsLoaded() const;
 
-	void Draw(const GLfloat* opengl_view_matrix) const;
+	void Draw(const float4x4& mesh_global_transform) const;
+	void DrawBindPos(const float4x4& mesh_global_transform) const;
+
+	void UpdateJointSpheres();
 };
 
 #endif // !SKELETON

@@ -749,6 +749,9 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 		std::vector<std::pair<UID, std::string>> scene_skeletons;
 		std::vector<std::pair<UID, std::string>> scene_animations;
 
+		//Delete assimp's dummy nodes
+		CollapseDummyNodes(scene->mRootNode);
+
 		if (scene->HasMaterials())
 		{
 			scene_materials.reserve(scene->mNumMaterials);
@@ -839,7 +842,7 @@ const UID ImportManager::ImportScene(const std::string & path, const SceneImport
 					sprintf(ptr, "%s_Rigg", mesh_name.c_str());
 					std::string rigg_name(ptr);
 					
-					UID uid(skeleton_importer->Import(scene->mMeshes[i]->mBones, scene->mRootNode, scene->mMeshes[i]->mNumBones));
+					UID uid(skeleton_importer->Import(scene->mMeshes[i]->mBones, scene->mRootNode, GetMeshNode(scene->mRootNode, i), scene->mMeshes[i]->mNumBones));
 
 					if (uid.IsNull() == false)
 					{
@@ -1005,28 +1008,30 @@ void ImportManager::LoadScene(AssetDirectory* dir, char ** iterator, const Scene
 	}
 }
 
-void ImportManager::EraseDummyNodes(aiNode * node) const
+void ImportManager::CollapseDummyNodes(aiNode * node) const
 {
 	for (int i = 0; i < node->mNumChildren; i++)
 	{
 		std::string node_name(node->mChildren[i]->mName.C_Str());
-		if (node_name.find_first_of("_$Assimp") != node_name.size())
+
+		if (node_name.find_first_of("$") < node_name.size())
 		{
 			aiNode* iterator = node->mChildren[i];
+			aiMatrix4x4 transform(node->mChildren[i]->mTransformation);
 			std::string child_name(iterator->mChildren[0]->mName.C_Str());
 
-			aiMatrix4x4 transform(node->mTransformation);
-
-			while (child_name.find_first_of("_$Assimp") != child_name.size())
+			while (child_name.find_first_of("$") < child_name.size())
 			{
 				transform = iterator->mTransformation * transform;
 
-				iterator = node->mChildren[0];
+				iterator = iterator->mChildren[0];
 				child_name = iterator->mChildren[0]->mName.C_Str();
 			}
 
 			transform = iterator->mTransformation * transform;
-			iterator->mTransformation = transform;
+			iterator = iterator->mChildren[0];
+
+			iterator->mTransformation = iterator->mTransformation * transform;
 
 			iterator->mParent = node;
 			node->mChildren[i] = iterator;
@@ -1034,7 +1039,24 @@ void ImportManager::EraseDummyNodes(aiNode * node) const
 	}
 	
 	for (int i = 0; i < node->mNumChildren; i++)
-		EraseDummyNodes(node->mChildren[i]);
+		CollapseDummyNodes(node->mChildren[i]);
+}
+
+aiNode * ImportManager::GetMeshNode(aiNode * root, int num_mesh) const
+{
+	for (int i = 0; i < root->mNumChildren; i++)
+		for (int j = 0; j < root->mChildren[i]->mNumMeshes; j++)
+			if (root->mChildren[i]->mMeshes[j] == num_mesh)
+				return root->mChildren[i];
+	
+	aiNode* ret = nullptr;
+	for (int i = 0; i < root->mNumChildren; i++)
+	{
+		ret = GetMeshNode(root->mChildren[i], num_mesh);
+		if (ret != nullptr)
+			break;
+	}
+	return ret;
 }
 
 const std::string ImportManager::GetImportFileNameNoExtension() const
