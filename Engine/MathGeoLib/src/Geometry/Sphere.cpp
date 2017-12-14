@@ -105,6 +105,17 @@ void Sphere::Draw(float red, float green, float blue, float alpha, int num_segme
 	}
 	glEnd();
 
+	// X/Y circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x = r * cosf(theta);
+		float y = r * sinf(theta);
+		glVertex3f(x + pos.x, y + pos.y, pos.z);
+	}
+	glEnd();
+
 	// X/Z circle
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < num_segments; ++i)
@@ -113,6 +124,17 @@ void Sphere::Draw(float red, float green, float blue, float alpha, int num_segme
 		float x = r * cosf(theta);
 		float z = r * sinf(theta);
 		glVertex3f(x + pos.x, pos.y, z + pos.z);
+	}
+	glEnd();
+
+	// Y/Z circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float y = r * cosf(theta);
+		float z = r * sinf(theta);
+		glVertex3f(pos.x, y + pos.y, z + pos.z);
 	}
 	glEnd();
 
@@ -710,6 +732,8 @@ void Sphere::Enclose(const vec &point, float epsilon)
 		// Nudge this Sphere towards the target point. Add half the missing distance to radius,
 		// and the other half to position. This gives a tighter enclosure, instead of if
 		// the whole missing distance were just added to radius.
+		if (dist == 0.0f)
+			dist = epsilon;
 		pos += d * halfDist / dist;
 		r += halfDist + 1e-4f; // Use a fixed epsilon deliberately, the param is a squared epsilon, so different order of magnitude.
 #ifdef MATH_ASSERT_CORRECTNESS
