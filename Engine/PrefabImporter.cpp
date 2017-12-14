@@ -78,7 +78,6 @@ unsigned int PrefabImporter::GetNodeSize(const aiScene* scene, const aiNode * no
 
 void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const aiScene * scene, const std::vector<std::pair<UID, std::string>>& materials, bool* material_loads, const std::vector<std::pair<UID, std::string>>& meshes, bool* mesh_loads, const std::vector<std::pair<UID, std::string>> skeletons, bool* skeleton_loads, const char* name)
 {
-	char* start = *iterator;
 	if (name == nullptr)
 	{
 		memcpy(*iterator, child->mName.C_Str(), child->mName.length + 1);
@@ -111,7 +110,6 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 			memcpy(*iterator, &meshes[num_mesh].first, SIZE_OF_UID);
 			*iterator += SIZE_OF_UID;
 
-			int test1 = *iterator - start;
 			bool has_material = material_loads[scene->mMeshes[child->mMeshes[i]]->mMaterialIndex];
 			memcpy(*iterator, &has_material, sizeof(bool));
 			*iterator += sizeof(bool);
@@ -123,7 +121,6 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 				*iterator += SIZE_OF_UID;
 			}
 
-			int test2 = *iterator - start;
 			bool has_bones = skeleton_loads[child->mMeshes[i]];
 			memcpy(*iterator, &has_bones, sizeof(bool));
 			*iterator += sizeof(bool);
@@ -146,7 +143,6 @@ void PrefabImporter::ImportNode(const aiNode * child, char ** iterator, const ai
 
 GameObject* PrefabImporter::LoadChild(char ** iterator)
 {
-	char* start = *iterator;
 	std::string name (*iterator);
 	*iterator += name.length() + 1;
 
@@ -171,7 +167,6 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 		Mesh* mesh = App->resource_manager->UseMesh(mesh_uid, new_game_object);
 		new_game_object->AddComponent(new MeshFilter(mesh, new_game_object));
 
-		int test1 = *iterator - start;
 		bool has_material;
 		memcpy(&has_material, *iterator, sizeof(bool));
 		*iterator += sizeof(bool);
@@ -184,7 +179,6 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 			Material* material = App->resource_manager->UseMaterial(material_uid, new_game_object);
 			new_game_object->AddComponent(new AppliedMaterial(material, new_game_object));
 		}
-		int test2 = *iterator - start;
 		bool has_bones;
 		memcpy(&has_bones, *iterator, sizeof(bool));
 		*iterator += sizeof(bool);

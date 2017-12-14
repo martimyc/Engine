@@ -5,7 +5,7 @@
 #include "Globals.h"
 #include "Transform.h"
 
-Transform::Transform(const char * name) : name(name), pitch(0), roll(0), yaw(0), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), euler_rotation(0, 0, 0), center(0, 0, 0)
+Transform::Transform(const char * name) : name(name), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), euler_rotation(0, 0, 0), center(0, 0, 0)
 {
 	transform_matrix = transform_matrix.identity;
 }
@@ -95,7 +95,7 @@ const Quat& Transform::GetTransformRotation()
 
 const vec & Transform::GetTransformRotationAngles()
 {
-	return vec(roll, pitch, yaw);
+	return euler_rotation;
 }
 
 Quat Transform::TransformEuler2Quat(const vec euler)
