@@ -22,7 +22,8 @@ void Transform::SetTransform(const math::float4x4& new_transform)
 	rotation_matrix.Orthonormalize(0, 1, 2);
 	if (rotation_matrix.IsOrthonormal())
 		rotation.Set(rotation_matrix);
-	else rotation.Set(0, 0, 0, 1);
+	else
+		rotation.Set(0, 0, 0, 1);
 	euler_rotation = rotation.ToEulerXYZ();
 	euler_rotation *= RADTODEG;
 	scaling = transform_matrix.GetScale();
@@ -114,7 +115,6 @@ void Transform::Update()
 	transform_matrix = float4x4::FromQuat(rotation);									//Rotate
 
 	euler_rotation *= RADTODEG;
-
 
 	transform_matrix = float4x4::Scale(scaling, center) * transform_matrix;				//Scalate
 	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate

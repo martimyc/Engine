@@ -20,7 +20,7 @@ unsigned int SkeletonImporter::GetTotalSize(aiBone** bones, unsigned int num_bon
 		size += bones[i]->mNumWeights * (sizeof(unsigned int) + sizeof(float));
 	}
 
-	size += (2 * sizeof(float) * 4 * 4 + sizeof(unsigned int)) * num_bones ;
+	size += (sizeof(float) * 4 * 3 + sizeof(unsigned int)) * num_bones ;
 	size += sizeof(unsigned int) * num_bones;
 
 	return size;
@@ -87,28 +87,21 @@ aiMatrix4x4 SkeletonImporter::GetGlobalTransform(const aiNode * node) const
 	
 	while (iterator->mParent != nullptr)
 	{
-		aiMatrix4x4 inverse(iterator->mParent->mTransformation);
-		transform = transform * inverse;
+		transform = iterator->mTransformation * transform;
 		iterator = iterator->mParent;
 	}
 
 	return transform;
 }
 
-void SkeletonImporter::ImportJoint(char** iterator, const aiBone * bone, const aiNode* node, aiBone** bones, unsigned int num_bones,const aiMatrix4x4& parent_global_transform) const
+void SkeletonImporter::ImportJoint(char** iterator, const aiBone * bone, const aiNode* node, aiBone** bones, unsigned int num_bones, const aiMatrix4x4& parent_global_transform) const
 {
 	memcpy(*iterator, bone->mName.C_Str(), bone->mName.length + 1);
 	*iterator += bone->mName.length + 1;
 
 	aiMatrix4x4 offset(bone->mOffsetMatrix);
-	offset.Transpose();
-	memcpy(*iterator, &offset.a1, sizeof(float) * 4 * 4);
-	*iterator += sizeof(float) * 4 * 4;
-
-	aiMatrix4x4 transform = node->mTransformation * parent_global_transform;
-	transform.Transpose();
-	memcpy(*iterator, &transform.a1, sizeof(float) * 4 * 4);
-	*iterator += sizeof(float) * 4 * 4;
+	memcpy(*iterator, &offset.a1, sizeof(float) * 4 * 3);
+	*iterator += sizeof(float) * 4 * 3;
 
 	memcpy(*iterator, &bone->mNumWeights, sizeof(unsigned int));
 	*iterator += sizeof(unsigned int);
@@ -132,7 +125,7 @@ void SkeletonImporter::ImportJoint(char** iterator, const aiBone * bone, const a
 		if (IsBone(node->mChildren[i]->mName, bones, num_bones))
 		{
 			const aiBone* child_bone = FindEsqueletonBone(node->mChildren[i]->mName, bones, num_bones);
-			ImportJoint(iterator, child_bone, node->mChildren[i], bones, num_bones, node->mTransformation * parent_global_transform);
+			ImportJoint(iterator, child_bone, node->mChildren[i], bones, num_bones, parent_global_transform * node->mTransformation);
 		}
 }
 
@@ -143,22 +136,15 @@ Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator) const
 	joint.name = *iterator;
 	*iterator += joint.name.length() + 1;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		memcpy(&joint.inverse_bind_pose_transform[i][0], *iterator, sizeof(float) * 4);
 		*iterator += sizeof(float) * 4;
 	}
+
+	joint.SetTransform(joint.inverse_bind_pose_transform);
 	
 	if (joint.inverse_bind_pose_transform.Inverse() == false)
-		LOG("Could not inverse joint transform");
-
-	for (int i = 0; i < 4; i++)
-	{
-		memcpy(&joint.current_inverse_transform[i][0], *iterator, sizeof(float) * 4);
-		*iterator += sizeof(float) * 4;
-	}
-
-	if (joint.current_inverse_transform.Inverse() == false)
 		LOG("Could not inverse joint transform");
 
 	unsigned int num_weights;
@@ -192,11 +178,9 @@ const UID SkeletonImporter::Import(aiBone ** bones, aiNode* scene_root_node, aiN
 	aiNode* root_node = FindEsqueletonNode(scene_root_node, bones, num_bones);
 	aiBone* root_joint = FindEsqueletonBone(root_node->mName, bones, num_bones);
 
-	aiMatrix4x4 global_mesh(GetGlobalTransform(mesh_node));
 	aiMatrix4x4 global_root_joint_parent(GetGlobalTransform(root_node->mParent));
-	aiMatrix4x4 root_joint_parent_in_mesh_cords = global_root_joint_parent * global_mesh.Inverse();
 
-	ImportJoint(&iterator, root_joint, root_node, bones, num_bones, root_joint_parent_in_mesh_cords);
+	ImportJoint(&iterator, root_joint, root_node, bones, num_bones, global_root_joint_parent);
 
 	ColapseUselesNodes(root_node);
 
@@ -251,6 +235,8 @@ bool SkeletonImporter::Load(Skeleton * to_load, const SkeletonLoadConfiguration*
 		Skeleton::Rigg* new_rigg = new Skeleton::Rigg;
 
 		new_rigg->root_joint = LoadJoint(&iterator);
+
+		new_rigg->selected_joint = &new_rigg->root_joint;
 
 		to_load->SetRigg(new_rigg);
 

@@ -1,3 +1,6 @@
+#include "MathGeoLib\src\Math\float3x3.h"
+#include "MathGeoLib\src\Math\float3x4.h"
+#include "MathGeoLib\src\Math\float4x4.h"
 #include "imgui\imgui.h"
 #include "GameObject.h"
 #include "Animation.h"
@@ -28,6 +31,14 @@ void Animator::Inspector()
 	{
 		ImGui::Checkbox("Draw Skeleton", &draw_skeleton);
 		ImGui::Checkbox("Draw Bind Position", &draw_bind_pos);
+
+		if (skeleton->Inspector())
+		{
+			float4x4 world_transform(game_object->GetWorldTransform().Transposed());
+			float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
+			skeleton->UpdateJointTransforms(mesh_world_transform);
+		}
+
 		ImGui::TreePop();
 	}
 }
@@ -55,8 +66,17 @@ const Skeleton * Animator::GetSkeleton() const
 
 void Animator::DrawSkeleton() const
 {
-	if(draw_skeleton)
-		skeleton->Draw(game_object->GetWorldTransform());
+	if (draw_skeleton)
+	{
+		float4x4 world_transform(game_object->GetWorldTransform().Transposed());
+		float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
+		skeleton->Draw(mesh_world_transform);
+	}
+
 	if (draw_bind_pos)
-		skeleton->DrawBindPos(game_object->GetWorldTransform());
+	{
+		float4x4 world_transform(game_object->GetWorldTransform().Transposed());
+		float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
+		skeleton->DrawBindPos(mesh_world_transform);
+	}
 }

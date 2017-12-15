@@ -1022,17 +1022,14 @@ void ImportManager::CollapseDummyNodes(aiNode * node) const
 
 			while (child_name.find_first_of("$") < child_name.size())
 			{
-				transform = iterator->mTransformation * transform;
+				transform = transform * iterator->mChildren[0]->mTransformation;
 
 				iterator = iterator->mChildren[0];
 				child_name = iterator->mChildren[0]->mName.C_Str();
 			}
 
-			transform = iterator->mTransformation * transform;
 			iterator = iterator->mChildren[0];
-
-			iterator->mTransformation = iterator->mTransformation * transform;
-
+			iterator->mTransformation = transform * iterator->mTransformation;
 			iterator->mParent = node;
 			node->mChildren[i] = iterator;
 		}
