@@ -6,19 +6,11 @@
 
 class TimeManager : public Module
 {
-	/*	TODO:
-○ Frame_Count: app graphics frames since game start
-○ Time: second since game start (Game Clock)
-○ Time_Scale: scale at which time is passing (Game Clock)
-○ Delta_Time: last frame time expressed in seconds (Game Clock)
-○ Real_Time_Since_Startup: seconds since game start (Real Time Clock)
-○ Real_Time_Delta_Time: last frame time expressed in seconds (Real Time Clock)
-	*/
 private:
 	PerfTimer real_time_clock;
 	PerfTimer game_clock;
 
-	PerfTimer frame_time;
+	PerfTimer dt_timer;
 
 	uint64 frame_count = 0;
 

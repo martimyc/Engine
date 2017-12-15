@@ -203,6 +203,10 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			if (ImGui::Button("Parson"))
 				App->OpenWebsite("http://kgabis.github.io/parson/");
 
+			ImGui::SameLine();
+			if (ImGui::Button("MD5 (UUIDs)"))
+				App->OpenWebsite("https://rosettacode.org/wiki/MD5#C");
+					
 
 			ImGui::PopStyleColor(3);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.7f, 0.6f, 0.6f));

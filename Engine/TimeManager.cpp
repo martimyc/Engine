@@ -18,7 +18,8 @@ bool TimeManager::Start()
 	real_time_clock.Start();
 	game_clock.Start();
 	game_clock.Pause();
-	frame_time.Start();
+	dt_timer.Start();
+	frame_count = 0;
 	return true;
 }
 
@@ -39,15 +40,15 @@ UPDATE_STATUS TimeManager::Update(float dt)
 	real_time_since_start = real_time_clock.ReadSec();
 	game_time_since_start = game_clock.ReadSec();
 
-	frame_count = real_time_clock.ReadTicks();
+	frame_count++;
 
 	//dt
-	real_time_dt = frame_time.ReadSec();
+	real_time_dt = dt_timer.ReadSec();
 	if(!game_clock_paused && can_pause)
-		game_dt = frame_time.ReadSec();
+		game_dt = dt_timer.ReadSec();
 	else 
 		game_dt = 0.0f;
-	frame_time.Start();
+	dt_timer.Start();
 	//--
 
 	return UPDATE_CONTINUE;
@@ -57,6 +58,7 @@ void TimeManager::PlayGame()
 {
 	if (!game_clock.IsRunning())
 	{
+		//SaveScene
 		game_clock.Start();
 		game_clock_paused = false;
 		can_pause = true;
@@ -66,6 +68,7 @@ void TimeManager::PlayGame()
 		game_clock.Start();
 		game_clock.Pause();
 		can_pause = false;
+		//Load Previous Scene
 	}
 }
 
