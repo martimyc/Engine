@@ -750,7 +750,7 @@ float MeshSource::CheckTriangleCollision(const LineSegment * ray)
 	raycast_checks_log[KDT_GRAPH_SIZE - 1] = 0.0f;
 
 	float shortest_distance = ray->Length();
-	float distance = 0.0f;
+	float distance = inf;
 
 	unsigned int num_triangles = num_indices / 3;
 	math::Triangle triangle_to_test;
@@ -761,9 +761,9 @@ float MeshSource::CheckTriangleCollision(const LineSegment * ray)
 		unsigned int index_2 = indices[i * 3 + 1];
 		unsigned int index_3 = indices[i * 3 + 2];
 
-		memcpy(&triangle_to_test.a, &vertices[index_1], sizeof(float) * 3);
-		memcpy(&triangle_to_test.b, &vertices[index_2], sizeof(float) * 3);
-		memcpy(&triangle_to_test.c, &vertices[index_3], sizeof(float) * 3);
+		memcpy(&triangle_to_test.a, &vertices[index_1 * 3], sizeof(float) * 3.0f);
+		memcpy(&triangle_to_test.b, &vertices[index_2 * 3], sizeof(float) * 3.0f);
+		memcpy(&triangle_to_test.c, &vertices[index_3 * 3], sizeof(float) * 3.0f);
 
 		//Check all mesh triangles
 		if (ray->Intersects(triangle_to_test, &distance, nullptr))
@@ -780,7 +780,7 @@ float MeshSource::RayCollision(const LineSegment * ray)
 {
 	Timer timer;
 
-	float ret = 0.0f;
+	float ret = inf;
 
 	if (raycast == RC_BRUTE_FORCE)
 		ret = CheckTriangleCollision(ray);
