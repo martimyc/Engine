@@ -123,9 +123,7 @@ void ResourceManager::LoadToScene(Asset* asset)
 		if (animator != nullptr)
 			animator->ChangeSkeleton(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()));
 		else
-		{
 			App->scene_manager->GetFocused()->AddComponent(new Animator(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()), App->scene_manager->GetFocused()));
-		}
 		break;
 	case RT_ANIMATION:
 		animator = App->scene_manager->GetFocused()->GetAnimator();

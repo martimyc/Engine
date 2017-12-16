@@ -48,24 +48,33 @@ void Animator::Inspector()
 			skeleton->UpdateJointTransforms(mesh_world_transform);
 		}
 
+		ImGui::Text("Num Animations: %i", animations.size());
+
+		for (std::multimap<double,Animation*>::iterator it = animations.begin(); it != animations.end(); ++it)
+		{
+			it->second->Inspector();
+			float insert(it->first);
+
+			if (ImGui::DragFloat("Start Time", &insert))
+			{
+				Animation* anim = it->second;
+				animations.erase(it);
+				animations.insert(std::make_pair(double(insert), anim));
+			}
+		}
+
 		ImGui::TreePop();
 	}
 }
 
-void Animator::AddAnimation(Animation * new_anim, double start_time)
+void Animator::AddAnimation(Animation * new_anim, float start_time)
 {
-	animations.push_back(std::make_pair(new_anim, start_time));
+	animations.insert(std::make_pair(double(start_time),new_anim));
 }
 
 void Animator::SetSkeleton(Skeleton * new_skeleton)
 {
 	skeleton = new_skeleton;
-}
-
-void Animator::GetAnimations(std::vector<const Animation*>& vec_to_fill) const
-{
-	for (std::vector<std::pair<Animation*, double>>::const_iterator it = animations.begin(); it != animations.end(); ++it)
-		vec_to_fill.push_back(it->first);
 }
 
 const Skeleton * Animator::GetSkeleton() const
@@ -99,9 +108,9 @@ bool Animator::Update()
 	//TODO animation blending
 	if (animations.size() != 0)
 	{
-		if (animations[0].second > time && animations[0].second < time + animations[0].first->GetLength())
+		if (animations.begin()->first > time && animations.begin()->first < time + animations.begin()->second->GetLength())
 		{
-			animations[0].first->GetSkeletonPositions(time, joint_transforms);
+			animations.begin()->second->GetSkeletonPositions(time, joint_transforms);
 			skeleton->ChangeJointTransforms(joint_transforms);
 		}
 	}

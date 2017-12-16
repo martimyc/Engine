@@ -1,7 +1,7 @@
 #ifndef ANIMATOR
 #define ANIMATOR
 
-#include <vector>
+#include <map>
 #include <utility>
 #include "Component.h"
 
@@ -12,7 +12,7 @@ class Animator : public Component
 {
 private:
 	Skeleton* skeleton;
-	std::vector<std::pair<Animation*, double>> animations;
+	std::multimap<double,Animation*> animations;
 
 	//debug
 	bool draw_skeleton;
@@ -27,11 +27,9 @@ public:
 
 	void Inspector();
 
-	void AddAnimation(Animation* new_anim, double start_time);
+	void AddAnimation(Animation* new_anim, float start_time);
 
 	void SetSkeleton(Skeleton* new_skeleton);
-
-	void GetAnimations( std::vector<const Animation*>& vec_to_fill) const;
 
 	const Skeleton* GetSkeleton() const;
 

@@ -2,7 +2,7 @@
 #define ANIMATION
 
 #include <string>
-#include <vector>
+#include <map>
 #include "MathGeoLib\src\Math\float3.h"
 #include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Math\float4x4.h"
@@ -15,30 +15,12 @@ class Animation : public Resource
 private:
 	struct AnimationClip
 	{	
-		struct SamplePos
-		{
-			float3 position;
-			double time;
-		};
-
-		struct SampleRot
-		{
-			Quat rotation;
-			double time;
-		};
-
-		struct SampleScale
-		{
-			float3 scale;
-			double time;
-		};
-
 		struct Channel
 		{
 			std::string joint_name;
-			std::vector<SamplePos*> position_samples;
-			std::vector<SampleRot*> rotation_samples;
-			std::vector<SampleScale*> scale_samples;
+			std::vector<std::pair<double,float3>> position_samples;
+			std::vector<std::pair<double,Quat>> rotation_samples;
+			std::vector<std::pair<double,float3>> scale_samples;
 
 			void GetTransform(double time, float3x4& transform, bool interpolation) const;
 		};

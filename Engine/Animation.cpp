@@ -1,5 +1,6 @@
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Math\float3x4.h"
+#include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Math\float3.h"
 #include "Animation.h"
 
@@ -7,10 +8,17 @@ Animation::AnimationClip::AnimationClip()
 {}
 
 Animation::AnimationClip::~AnimationClip()
-{}
+{
+	for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+		delete *it;
+	channels.clear();
+}
 
 bool Animation::AnimationClip::Inspector()
 {
+	ImGui::Text("FPS: %f\nFrame Count:%i\nNum Channels: %i", fps, frame_count, channels.size());
+	ImGui::Checkbox("Loop",&loop);
+
 	return false;
 }
 
@@ -33,10 +41,10 @@ double Animation::AnimationClip::GetLength() const
 	return frame_count / fps;
 }
 
-Animation::Animation(const std::string & name, const UID & uid): Resource(RT_ANIMATION, name, uid)
+Animation::Animation(const std::string & name, const UID & uid): Resource(RT_ANIMATION, name, uid), source(nullptr)
 {}
 
-Animation::Animation(const std::string & name, AnimationClip * source): Resource(RT_ANIMATION, name)
+Animation::Animation(const std::string & name, AnimationClip * source): Resource(RT_ANIMATION, name), source(source)
 {}
 
 Animation::~Animation()
@@ -53,7 +61,15 @@ void Animation::SetAnimationClip(AnimationClip * new_clip)
 bool Animation::Inspector()
 {
 	if (source != nullptr)
-		return source->Inspector();
+	{
+		bool ret = false;
+		if (ImGui::TreeNodeEx(name.c_str()))
+		{
+			ret = source->Inspector();
+			ImGui::TreePop();
+		}
+		return ret;
+	}
 	LOG("Source not loaded");
 	return false;
 }
@@ -82,48 +98,69 @@ double Animation::GetLength() const
 void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & transform, bool interpolation) const
 {
 	transform.SetIdentity();
-
+	
 	//Position
-	for(int i = 0; i < position_samples.size(); i++)
-		if (position_samples[i]->time > time && position_samples[i + 1]->time < time)
-		{
-			if (interpolation == false)
-				transform.SetTranslatePart(position_samples[i]->position);
-			else
+	std::vector<std::pair<double, float3>>::const_iterator upper_bound;
+	std::vector<std::pair<double, float3>>::const_iterator lower_bound;
+
+	if(position_samples.size() != 0)
+	{
+		for (lower_bound = position_samples.begin(); lower_bound != position_samples.end(); ++lower_bound)
+			if ((lower_bound + 1)->first > time && lower_bound->first < time)
 			{
-				float weight = (time - position_samples[i]->time) / (position_samples[i + 1]->time - position_samples[i]->time);
-				transform.SetTranslatePart(position_samples[i]->position.Lerp(position_samples[i + 1]->position, weight));
+				upper_bound = lower_bound + 1;
+				break;
 			}
-			break;
+
+		if (interpolation == false)
+			transform.SetTranslatePart(lower_bound->second);
+		else
+		{
+			float weight = (time - lower_bound->first) / (upper_bound->first - lower_bound->first);
+			transform.SetTranslatePart(lower_bound->second.Lerp(upper_bound->second, weight));
 		}
+	}
 
 	//Rotation
-	for (int i = 0; i < rotation_samples.size(); i++)
-		if (rotation_samples[i]->time > time && rotation_samples[i + 1]->time < time)
-		{
-			if (interpolation == false)
-				transform.SetRotatePart(rotation_samples[i]->rotation);
-			else
+	if (rotation_samples.size() != 0)
+	{
+		std::vector<std::pair<double, Quat>>::const_iterator upper_bound_rot;
+		std::vector<std::pair<double, Quat>>::const_iterator lower_bound_rot;
+
+		for (lower_bound_rot = rotation_samples.begin(); lower_bound_rot != rotation_samples.end(); ++lower_bound_rot)
+			if ((lower_bound_rot + 1)->first > time && lower_bound_rot->first < time)
 			{
-				float weight = (time - rotation_samples[i]->time) / (rotation_samples[i + 1]->time - rotation_samples[i]->time);
-				transform.SetRotatePart(rotation_samples[i]->rotation.Slerp(rotation_samples[i + 1]->rotation, weight));
+				upper_bound_rot = lower_bound_rot + 1;
+				break;
 			}
-			break;
+
+		if (interpolation == false)
+			transform.SetRotatePart(lower_bound_rot->second);
+		else
+		{
+			float weight = (time - lower_bound_rot->first) / (upper_bound_rot->first - lower_bound_rot->first);
+			transform.SetRotatePart(lower_bound_rot->second.Slerp(upper_bound_rot->second, weight));
 		}
+	}
 
 	//Scaling
-	for (int i = 0; i < scale_samples.size(); i++)
-		if (scale_samples[i]->time > time && scale_samples[i + 1]->time < time)
-		{
-			if (interpolation == false)
-				transform.SetTranslatePart(scale_samples[i]->scale);
-			else
+	if (scale_samples.size() != 0)
+	{
+		for (lower_bound = scale_samples.begin(); lower_bound != scale_samples.end(); ++lower_bound)
+			if ((lower_bound + 1)->first > time && lower_bound->first < time)
 			{
-				float weight = (time - scale_samples[i]->time) / (scale_samples[i + 1]->time - scale_samples[i]->time);
-				transform.Scale(scale_samples[i]->scale.Lerp(scale_samples[i + 1]->scale, weight), transform.TranslatePart());
+				upper_bound = lower_bound + 1;
+				break;
 			}
-			break;
+
+		if (interpolation == false)
+			transform.Scale(lower_bound->second, transform.TranslatePart());
+		else
+		{
+			float weight = (time - lower_bound->first) / (upper_bound->first - lower_bound->first);
+			transform.Scale(lower_bound->second.Lerp(upper_bound->second, weight), transform.TranslatePart());
 		}
+	}
 }
 
 void Animation::UnLoad()

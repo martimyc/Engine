@@ -29,4 +29,14 @@ public:
 	bool Load(Animation* to_load, const AnimationLoadConfiguration* config) const;
 };
 
+struct CompareVec
+{
+	bool operator() (std::pair<double, float3> i, std::pair<double, float3> j) { return (i.first < j.first); }
+};
+
+struct CompareQuat
+{
+	bool operator() (std::pair<double, Quat> i, std::pair<double, Quat> j) { return (i.first < j.first); }
+};
+
 #endif //!ANIMATION_IMPORTER

@@ -1,0 +1,12 @@
+Info,  T8908: Load C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\aniTest.fbx
+Info,  T8908: Found a matching importer for this file format: Autodesk FBX Importer.
+Info,  T8908: Import root directory is 'C:\Users\Marti\Desktop\Github\Engine\Engine\Game\Assets\'
+Info,  T8908: Entering post processing pipeline
+Info,  T8908: RemoveVCProcess finished. Data structure cleanup has been done.
+Warn,  T8908: Simplified dummy tracks with just one key
+Skipping one or more lines with the same contents
+Info,  T8908: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Info,  T8908: CalcTangentsProcess finished. Tangents have been calculated
+Info,  T8908: JoinVerticesProcess finished | Verts in: 4362 out: 1134 | ~74.0%
+Info,  T8908: Cache relevant are 1 meshes (1454 faces). Average output ACMR is 0.938790
+Info,  T8908: Leaving post processing pipeline

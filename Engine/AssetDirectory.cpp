@@ -303,7 +303,7 @@ Animation * AssetDirectory::UseAnimation(const UID & id, const GameObject * go) 
 
 			if (animation->IsLoaded() == false)
 				if (App->import_manager->LoadAnimation(animation, (AnimationLoadConfiguration*)(*it)->GetLoadConfig()) == false)
-					LOG("Could not load source for prefab %s correctly", (*it)->GetName().c_str());
+					LOG("Could not load source for animation %s correctly", (*it)->GetName().c_str());
 
 			((AnimationAsset*)(*it))->AddInstance(go);
 			return animation;

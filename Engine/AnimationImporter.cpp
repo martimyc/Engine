@@ -51,8 +51,17 @@ const UID AnimationImporter::Import(const aiAnimation * animation, const Animati
 		memcpy(iterator, animation->mChannels[i]->mNodeName.C_Str(), animation->mChannels[i]->mNodeName.length + 1);
 		iterator += animation->mChannels[i]->mNodeName.length + 1;
 
-		memcpy(iterator, &animation->mChannels[i]->mNumPositionKeys, sizeof(unsigned int) * 3);
-		iterator += sizeof(unsigned int) * 3;
+		memcpy(iterator, &animation->mChannels[i]->mNumPositionKeys, sizeof(unsigned int));
+		iterator += sizeof(unsigned int);
+
+		memcpy(iterator, &animation->mChannels[i]->mNumRotationKeys, sizeof(unsigned int));
+		iterator += sizeof(unsigned int);
+
+		memcpy(iterator, &animation->mChannels[i]->mNumScalingKeys, sizeof(unsigned int));
+		iterator += sizeof(unsigned int);
+
+		size_t test = iterator - buffer;
+		int hello = 0 - 3;
 
 		//Positions
 		for (int j = 0; j < animation->mChannels[i]->mNumPositionKeys; j++)
@@ -70,8 +79,8 @@ const UID AnimationImporter::Import(const aiAnimation * animation, const Animati
 			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mTime, sizeof(double));
 			iterator += sizeof(double);
 
-			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mValue.w, sizeof(float) * 3);
-			iterator += sizeof(float) * 3;
+			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mValue.w, sizeof(float) * 4);
+			iterator += sizeof(float) * 4;
 		}
 
 		//Scaling
@@ -106,7 +115,7 @@ bool AnimationImporter::Load(Animation * to_load, const AnimationLoadConfigurati
 	char* iterator = nullptr;
 	uint length = 0;
 
-	std::string path(App->file_system->GetSkeletons());
+	std::string path(App->file_system->GetAnimations());
 	path += "\\";
 	path += to_load->GetUID().GetAsName();
 	path += ".mm";
@@ -126,9 +135,12 @@ bool AnimationImporter::Load(Animation * to_load, const AnimationLoadConfigurati
 		memcpy(&new_clip->fps, iterator, sizeof(double));
 		iterator += sizeof(double);
 
+		new_clip->channels.reserve(num_channels);
+		Animation::AnimationClip::Channel* new_channel;
+
 		for (unsigned int i = 0; i < num_channels; i++)
 		{
-			Animation::AnimationClip::Channel* new_channel = new Animation::AnimationClip::Channel;
+			new_channel = new Animation::AnimationClip::Channel;
 
 			new_channel->joint_name = iterator;
 			iterator += new_channel->joint_name.length() + 1;
@@ -138,22 +150,31 @@ bool AnimationImporter::Load(Animation * to_load, const AnimationLoadConfigurati
 			iterator += sizeof(unsigned int) * 3;
 
 			//Positions
+			size_t test = iterator - buffer;
+
 			new_channel->position_samples.resize(num_keys[0]);
-			memcpy(new_channel->position_samples[0], iterator, (sizeof(double) + sizeof(float) * 3) * num_keys[0]);
+			memcpy(&new_channel->position_samples[0].first, iterator, (sizeof(double) + sizeof(float) * 3) * num_keys[0]);
 			iterator += (sizeof(double) + sizeof(float) * 3) * num_keys[0];
+			std::sort(new_channel->position_samples.begin(), new_channel->position_samples.end(), CompareVec());
 
 			//Rotations
-			new_channel->position_samples.resize(num_keys[1]);
-			memcpy(new_channel->position_samples[0], iterator, (sizeof(double) + sizeof(float) * 4) * num_keys[1]);
+			new_channel->rotation_samples.resize(num_keys[1]);
+			memcpy(&new_channel->rotation_samples[0].first, iterator, (sizeof(double) + sizeof(float) * 4) * num_keys[1]);
 			iterator += (sizeof(double) + sizeof(float) * 4) * num_keys[1];
+			std::sort(new_channel->rotation_samples.begin(), new_channel->rotation_samples.end(), CompareQuat());
 
 			//Scaling
-			new_channel->position_samples.resize(num_keys[2]);
-			memcpy(new_channel->position_samples[0], iterator, (sizeof(double) + sizeof(float) * 3) * num_keys[2]);
+			new_channel->scale_samples.resize(num_keys[2]);
+			memcpy(&new_channel->scale_samples[0].first, iterator, (sizeof(double) + sizeof(float) * 3) * num_keys[2]);
 			iterator += (sizeof(double) + sizeof(float) * 3) * num_keys[2];
+			std::sort(new_channel->scale_samples.begin(), new_channel->scale_samples.end(), CompareVec());
+
+			new_clip->channels.push_back(new_channel);
 		}
 
 		to_load->SetAnimationClip(new_clip);
+
+		delete[] buffer;
 		return true;
 	}
 	LOG("Could not read %s", path.c_str());
