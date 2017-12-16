@@ -27,6 +27,10 @@ enum TEXTURE_TYPE
 
 struct MaterialSource
 {
+private:
+	std::vector<int> textures_to_remove;
+
+public:
 	std::vector<Texture*> diffuse_textures;
 	std::vector<Texture*> specular_textures;
 	std::vector<Texture*> ambient_textures;

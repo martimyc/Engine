@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Application.h"
+#include "Brofiler\Brofiler.h"
 #include "Texture.h"
 
 MaterialSource::MaterialSource(unsigned int priority): priority(priority)
@@ -162,29 +163,31 @@ void MaterialSource::DisableDraw() const
 
 void MaterialSource::Inspector()
 {
-	ImGui::Text("Difuse textures: %i", diffuse_textures.size());
-	ImGui::Text("Specular textures: %i", specular_textures.size());
-	ImGui::Text("Ambient textures: %i", ambient_textures.size());
-	ImGui::Text("Emissive textures: %i", emissive_textures.size());
-	ImGui::Text("Height textures: %i", height_textures.size());
-	ImGui::Text("Normals textures: %i", normals_textures.size());
-	ImGui::Text("Shininess textures: %i", shininess_textures.size());
-	ImGui::Text("Opacity textures: %i", opacity_textures.size());
-	ImGui::Text("Displacement textures: %i", displacement_textures.size());
-	ImGui::Text("Light Map textures: %i", lightmap_textures.size());
-	ImGui::Text("Reflection textures: %i", reflection_textures.size());
+	BROFILER_CATEGORY("Materials Inspector", Profiler::Color::Khaki)
 
-	 InspectorDiffuse();
-	 InspectorSpecular();
-	 InspectorAmbient();
-	 InspectorEmissive();
-	 InspectorHeight();
-	 InspectorNormals();
-	 InspectorShininess();
-	 InspectorOpacity();
-	 InspectorDisplacement();
-	 InspectorLightMap();
-	 InspectorReflection();
+	ImGui::Text("Difuse textures:       %i", diffuse_textures.size());
+	ImGui::Text("Specular textures:     %i", specular_textures.size());
+	ImGui::Text("Ambient textures:      %i", ambient_textures.size());
+	ImGui::Text("Emissive textures:     %i", emissive_textures.size());
+	ImGui::Text("Height textures:       %i", height_textures.size());
+	ImGui::Text("Normals textures:      %i", normals_textures.size());
+	ImGui::Text("Shininess textures:    %i", shininess_textures.size());
+	ImGui::Text("Opacity textures:      %i", opacity_textures.size());
+	ImGui::Text("Displacement textures: %i", displacement_textures.size());
+	ImGui::Text("Light Map textures:    %i", lightmap_textures.size());
+	ImGui::Text("Reflection textures:   %i", reflection_textures.size());
+
+	InspectorDiffuse();
+	InspectorSpecular();
+	InspectorAmbient();
+	InspectorEmissive();
+	InspectorHeight();
+	InspectorNormals();
+	InspectorShininess();
+	InspectorOpacity();
+	InspectorDisplacement();
+	InspectorLightMap();
+	InspectorReflection();
 }
 
 void MaterialSource::InspectorDiffuse()
@@ -196,7 +199,6 @@ void MaterialSource::InspectorDiffuse()
 
 	if (ImGui::TreeNodeEx("Difuse Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < diffuse_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -218,6 +220,10 @@ void MaterialSource::InspectorDiffuse()
 		{
 			diffuse_textures.erase(diffuse_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -231,7 +237,6 @@ void MaterialSource::InspectorSpecular()
 
 	if (ImGui::TreeNodeEx("Specular Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < specular_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -253,6 +258,10 @@ void MaterialSource::InspectorSpecular()
 		{
 			specular_textures.erase(specular_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -266,7 +275,6 @@ void MaterialSource::InspectorAmbient()
 
 	if (ImGui::TreeNodeEx("Ambient Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < ambient_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -288,6 +296,10 @@ void MaterialSource::InspectorAmbient()
 		{
 			ambient_textures.erase(ambient_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -301,7 +313,6 @@ void MaterialSource::InspectorEmissive()
 
 	if (ImGui::TreeNodeEx("Emissive Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < emissive_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -323,6 +334,10 @@ void MaterialSource::InspectorEmissive()
 		{
 			emissive_textures.erase(emissive_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -336,7 +351,6 @@ void MaterialSource::InspectorHeight()
 
 	if (ImGui::TreeNodeEx("Height Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < height_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -358,6 +372,10 @@ void MaterialSource::InspectorHeight()
 		{
 			height_textures.erase(height_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -371,7 +389,6 @@ void MaterialSource::InspectorNormals()
 
 	if (ImGui::TreeNodeEx("Normals Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < normals_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -393,6 +410,10 @@ void MaterialSource::InspectorNormals()
 		{
 			normals_textures.erase(normals_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -406,7 +427,6 @@ void MaterialSource::InspectorShininess()
 
 	if (ImGui::TreeNodeEx("Shinines Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < shininess_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -428,6 +448,10 @@ void MaterialSource::InspectorShininess()
 		{
 			shininess_textures.erase(shininess_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -441,7 +465,6 @@ void MaterialSource::InspectorOpacity()
 
 	if (ImGui::TreeNodeEx("Opacity Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < opacity_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -463,6 +486,10 @@ void MaterialSource::InspectorOpacity()
 		{
 			opacity_textures.erase(opacity_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -476,7 +503,6 @@ void MaterialSource::InspectorDisplacement()
 
 	if (ImGui::TreeNodeEx("Displacement Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < displacement_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -498,6 +524,10 @@ void MaterialSource::InspectorDisplacement()
 		{
 			displacement_textures.erase(displacement_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -511,7 +541,6 @@ void MaterialSource::InspectorLightMap()
 
 	if (ImGui::TreeNodeEx("Light Map Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < lightmap_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -533,6 +562,10 @@ void MaterialSource::InspectorLightMap()
 		{
 			lightmap_textures.erase(lightmap_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
@@ -546,7 +579,6 @@ void MaterialSource::InspectorReflection()
 
 	if (ImGui::TreeNodeEx("Reflection Textures", flags))
 	{
-		std::vector<int> textures_to_remove;
 		for (int i = 0; i < reflection_textures.size(); i++)
 		{
 			ImVec2 size(50, 50);
@@ -568,6 +600,10 @@ void MaterialSource::InspectorReflection()
 		{
 			reflection_textures.erase(reflection_textures.begin() + (*it));
 		}
+
+		if (textures_to_remove.size() > 0)
+			textures_to_remove.clear();
+
 		ImGui::TreePop();
 	}
 }
