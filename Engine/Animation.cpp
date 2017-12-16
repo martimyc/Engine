@@ -125,3 +125,9 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 			break;
 		}
 }
+
+void Animation::UnLoad()
+{
+	delete source;
+	source = nullptr;
+}

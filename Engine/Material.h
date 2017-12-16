@@ -104,6 +104,8 @@ public:
 
 	bool IsLoaded() const;
 
+	void UnLoad();
+
 	void SetSource(MaterialSource* source);
 };
 

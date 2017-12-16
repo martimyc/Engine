@@ -38,6 +38,8 @@ public:
 
 	virtual bool IsLoaded() const = 0;
 
+	virtual void UnLoad() = 0;
+
 	RESOURCE_TYPE GetType() const
 	{
 		return type;

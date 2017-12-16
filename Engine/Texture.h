@@ -46,6 +46,8 @@ public:
 
 	bool IsLoaded() const;
 
+	void UnLoad();
+
 	void SetSource(TextureSource* source);
 };
 #endif // !TEXTURE

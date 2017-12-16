@@ -98,6 +98,12 @@ bool Texture::IsLoaded() const
 	return source != nullptr;
 }
 
+void Texture::UnLoad()
+{
+	delete source;
+	source = nullptr;
+}
+
 void Texture::SetSource(TextureSource* source)
 {
 	this->source = source;

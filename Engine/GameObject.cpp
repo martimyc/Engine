@@ -26,7 +26,7 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const char name_[128], bool draw) : draw(draw), parent(nullptr)
+GameObject::GameObject(const char name_[128], bool draw) : draw(draw), parent(nullptr), to_delete(false)
 {
 	memcpy(name, name_, 128);
 	local_transform = new Transform("Local Transform");
@@ -50,7 +50,7 @@ GameObject::GameObject(const char name_[128], bool draw) : draw(draw), parent(nu
 	bounds.obb_bounding_box.axis[2] = bounds.original_obb_bounding_box.axis[2] = math::vec(0, 0, 1);
 }
 
-GameObject::GameObject(const GameObject & copy) : parent(copy.parent), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds)
+GameObject::GameObject(const GameObject & copy) : parent(copy.parent), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds), to_delete(copy.to_delete)
 {
 	memcpy(name, copy.name, 128);
 	local_transform->SetTransform(copy.local_transform->GetTransformMatrix());
@@ -238,6 +238,14 @@ void GameObject::Delete(GameObject * to_delete)
 			childs.erase(it);
 			return;
 		}
+}
+
+void GameObject::EraseFromKDTree(KDTreeGO * kdtree)
+{
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->EraseFromKDTree(kdtree);
+
+	kdtree->RemoveGameObject(this);
 }
 
 void GameObject::ChangeMaterial(Material * new_material)
@@ -663,6 +671,18 @@ bool GameObject::AddChildsToKDT(KDTreeGO & kdt) const
 GameObject * GameObject::GetParent() const
 {
 	return parent;
+}
+
+void GameObject::SetToDelete()
+{
+	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->SetToDelete();
+	to_delete = true;
+}
+
+bool GameObject::IsSetToDelete() const
+{
+	return to_delete;
 }
 
 void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)

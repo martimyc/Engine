@@ -16,6 +16,7 @@
 #include "GameObject.h"
 #include "ImportManager.h"
 #include "Application.h"
+#include "Input.h"
 #include "SceneManager.h"
 
 SceneManager::SceneManager(const char * name, bool start_enabled) : Module(name, start_enabled), draw_mode(DM_NORMAL), wireframe(false), normals(false), polygons(true)
@@ -96,6 +97,14 @@ UPDATE_STATUS SceneManager::Configuration(float dt)
 
 	Hirarchy();
 
+	if (focused->IsSetToDelete())
+	{
+		GameObject* parent_focused = focused->GetParent();
+		focused->EraseFromKDTree(go_kdtree);
+		parent_focused->Delete(focused);
+		focused = parent_focused;
+	}
+
 	return ret;
 }
 
@@ -106,7 +115,6 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	float4 vec(0.0f, 0.0f, 1.0f, 1.0f);
 	float4x4 mat(focused->GetWorldTransform());
 	mat.Transpose();
-	//mat.Inverse();
 	vec = mat * vec;
 
 	if (ImGui::Begin("Create"))
@@ -115,6 +123,12 @@ UPDATE_STATUS SceneManager::Update(float dt)
 			AddEmptyGO();
 	}
 	ImGui::End();
+
+	if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
+	{
+		if (focused != root)
+			focused->SetToDelete();
+	}
 
 	return UPDATE_CONTINUE;
 }

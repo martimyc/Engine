@@ -79,6 +79,8 @@ public:
 	void GetSkeletonPositions(double time, std::vector<std::pair<std::string, float3x4>>& transforms, bool interpolation = true) const;
 
 	double GetLength() const;
+
+	void UnLoad();
 };
 
 #endif // !ANIMATION

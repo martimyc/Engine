@@ -98,6 +98,8 @@ public:
 
 	bool IsLoaded() const;
 
+	void UnLoad();
+
 	void Draw(const float3x4& mesh_global_transform) const;
 	void DrawBindPos(const float3x4& mesh_global_transform) const;
 
