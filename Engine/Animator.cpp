@@ -10,11 +10,19 @@
 #include "Animator.h"
 
 Animator::Animator(Skeleton * skeleton, const GameObject* const go, bool enabled): Component(CT_ANIMATOR, go, enabled), skeleton(skeleton), draw_skeleton(false), draw_bind_pos(false)
-{}
+{
+	float4x4 world_transform(game_object->GetWorldTransform().Transposed());
+	float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
+	skeleton->SetWorldPositions(mesh_world_transform);
+}
 
 Animator::Animator(const Animator & copy, const GameObject* const go): Component(CT_ANIMATOR, go, copy.enabled), draw_skeleton(copy.draw_skeleton), draw_bind_pos(copy.draw_bind_pos)
 {
 	skeleton = App->resource_manager->UseSkeleton(copy.skeleton->GetUID(), game_object);
+
+	float4x4 world_transform(game_object->GetWorldTransform().Transposed());
+	float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
+	skeleton->SetWorldPositions(mesh_world_transform); //No time, this makes more than one of a skeleton instance imposible to handle
 }
 
 Animator::~Animator()

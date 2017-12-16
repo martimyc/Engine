@@ -141,11 +141,11 @@ Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator) const
 		memcpy(&joint.inverse_bind_pose_transform[i][0], *iterator, sizeof(float) * 4);
 		*iterator += sizeof(float) * 4;
 	}
-
-	joint.SetTransform(joint.inverse_bind_pose_transform);
 	
 	if (joint.inverse_bind_pose_transform.Inverse() == false)
 		LOG("Could not inverse joint transform");
+
+	joint.SetTransform(joint.inverse_bind_pose_transform);
 
 	unsigned int num_weights;
 	memcpy(&num_weights, *iterator, sizeof(unsigned int));
