@@ -10,7 +10,6 @@
 #include "Globals.h"
 #include "Resource.h"
 
-
 class Animation : public Resource
 {
 private:
@@ -40,15 +39,23 @@ private:
 			std::vector<SamplePos*> position_samples;
 			std::vector<SampleRot*> rotation_samples;
 			std::vector<SampleScale*> scale_samples;
+
+			void GetTransform(double time, float3x4& transform, bool interpolation) const;
 		};
 
 		double fps;
-		uint frame_count;
-		std::vector<Channel*> chanels;
+		unsigned int frame_count;
+		std::vector<Channel*> channels;
 		bool loop;
 
 		AnimationClip();
 		~AnimationClip();
+
+		bool Inspector();
+
+		void GetSkeletonPositions(double time, std::vector<std::pair<std::string, float3x4>>& transforms, bool interpolation) const;
+
+		double GetLength() const;
 	};
 
 	AnimationClip* source;
@@ -68,6 +75,10 @@ public:
 	bool Inspector();
 
 	bool IsLoaded() const;
+
+	void GetSkeletonPositions(double time, std::vector<std::pair<std::string, float3x4>>& transforms, bool interpolation = true) const;
+
+	double GetLength() const;
 };
 
 #endif // !ANIMATION

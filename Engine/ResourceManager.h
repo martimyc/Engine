@@ -100,6 +100,13 @@ public:
 	Skeleton* UseSkeleton(const UID& id, const GameObject* go) const;
 	Animation* UseAnimation(const UID& id, const GameObject* go) const;
 
+	void StopUsingMaterial(Material* material, const GameObject* go);
+	void StopUsingTexture(Texture* text, const Material* material);
+	void StopUsingMesh(Mesh* mesh, const GameObject* go);
+	void StopUsingPrefab(Prefab* prefab, const GameObject* go);
+	void StopUsingSkeleton(Skeleton* skeleton, const GameObject* go);
+	void StopUsingAnimation(Animation* aniim, const GameObject* go);
+
 	//Materials
 	unsigned int GetNewMaterialPriority();
 

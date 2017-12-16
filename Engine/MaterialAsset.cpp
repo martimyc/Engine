@@ -104,6 +104,19 @@ void MaterialAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
+void MaterialAsset::DeleteInstance(const GameObject * go)
+{
+	for (std::vector<const GameObject*>::iterator it = instances.begin(); it != instances.end(); ++it)
+		if (go == *it)
+		{
+			instances.erase(it);
+			break;
+		}
+
+	if (instances.size() == 0)
+		resource->Unload();
+}
+
 GLuint MaterialAsset::GetImage() const
 {
 	return image;

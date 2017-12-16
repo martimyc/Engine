@@ -26,6 +26,19 @@ void SkeletonAsset::AddInstance(const GameObject * go)
 	instances.push_back(go);
 }
 
+void SkeletonAsset::DeleteInstance(const GameObject * go)
+{
+	for (std::vector<const GameObject*>::iterator it = instances.begin(); it != instances.end(); ++it)
+		if (go == *it)
+		{
+			instances.erase(it);
+			break;
+		}
+
+	if (instances.size() == 0)
+		resource->Unload();
+}
+
 SkeletonImportConfiguration::SkeletonImportConfiguration() : load_bone_weights(true), limit_bone_weights(false), split_by_bone_count(false), debone(false), debone_threshold(1.0f)
 {}
 

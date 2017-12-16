@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include "Skeleton.h"
 #include "ResourceManager.h"
+#include "TimeManager.h"
 #include "Application.h"
 #include "Animator.h"
 
@@ -87,4 +88,27 @@ void Animator::DrawSkeleton() const
 		float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
 		skeleton->DrawBindPos(mesh_world_transform);
 	}
+}
+
+bool Animator::Update()
+{
+	std::vector<std::pair<std::string, float3x4>> joint_transforms;
+
+	float time = App->time_manager->GetGameTimeSinceStart();
+
+	//TODO animation blending
+	if (animations.size() != 0)
+	{
+		if (animations[0].second > time && animations[0].second < time + animations[0].first->GetLength())
+		{
+			animations[0].first->GetSkeletonPositions(time, joint_transforms);
+			skeleton->ChangeJointTransforms(joint_transforms);
+		}
+	}
+	return true;
+}
+
+void Animator::ChangeSkeleton()
+{
+	App->resource_manager->
 }

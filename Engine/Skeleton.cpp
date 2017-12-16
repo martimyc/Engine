@@ -69,6 +69,14 @@ void Skeleton::SetWorldPositions(const float3x4 & mesh_world_transform)
 		LOG("Skeleton Rigg not loaded yet");
 }
 
+void Skeleton::ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms)
+{
+	if (skeleton != nullptr)
+		skeleton->ChangeJointTransforms(joint_transforms);
+	else
+		LOG("Skeleton Rigg not loaded yet");
+}
+
 Skeleton::Rigg::Rigg(): skeleton_hirarchy(false), selected_joint(nullptr)
 {}
 
@@ -112,6 +120,11 @@ void Skeleton::Rigg::UpdateJointSpheres()
 void Skeleton::Rigg::SetWorldPositions(const float3x4 & mesh_world_transform)
 {
 	root_joint.SetWorldPositions(mesh_world_transform);
+}
+
+void Skeleton::Rigg::ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms)
+{
+	root_joint.ChangeTransforms(joint_transforms);
 }
 
 Skeleton::Rigg::Joint::Joint(): sphere(vec::zero, JOINT_SPHERE_RADIUS)
@@ -392,4 +405,18 @@ void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & mesh_world_transf
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->SetWorldPositions(mesh_world_transform);
+}
+
+void Skeleton::Rigg::Joint::ChangeTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms)
+{
+	for(std::vector<std::pair<std::string, float3x4>>::iterator it = joint_transforms.begin(); it != joint_transforms.end(); ++it)
+		if (name == it->first)
+		{
+			SetTransform(it->second);
+			joint_transforms.erase(it);
+			break;
+		}
+
+	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
+		it->ChangeTransforms(joint_transforms);
 }

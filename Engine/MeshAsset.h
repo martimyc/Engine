@@ -45,6 +45,7 @@ public:
 	~MeshAsset();
 
 	void AddInstance(const GameObject* go);
+	void DeleteInstance(const GameObject* go);
 
 	GLuint GetImage() const;
 	static void SetImage(GLuint id); //TODO one easch, render to texture

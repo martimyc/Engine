@@ -36,6 +36,10 @@ public:
 	const Skeleton* GetSkeleton() const;
 
 	void DrawSkeleton() const;
+
+	bool Update();
+
+	void ChangeSkeleton();
 };
 
 

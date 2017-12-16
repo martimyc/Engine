@@ -311,6 +311,48 @@ Animation * AssetDirectory::UseAnimation(const UID & id, const GameObject * go) 
 	return nullptr;
 }
 
+void AssetDirectory::StopUsingMaterial(Material * material, const GameObject * go) 
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (material == (Material*)*it)
+			((MaterialAsset*)(*it))->DeleteInstance(go);
+}
+
+void AssetDirectory::StopUsingTexture(Texture * text, const Material * material)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (text == (Texture*)*it)
+			((TextureAsset*)(*it))->DeleteInstance(material);
+}
+
+void AssetDirectory::StopUsingMesh(Mesh * mesh, const GameObject * go)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (mesh == (Mesh*)*it)
+			((MeshAsset*)(*it))->DeleteInstance(go);
+}
+
+void AssetDirectory::StopUsingPrefab(Prefab * prefab, const GameObject * go)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (prefab == (Prefab*)*it)
+			((PrefabAsset*)(*it))->DeleteInstance(go);
+}
+
+void AssetDirectory::StopUsingSkeleton(Skeleton * skeleton, const GameObject * go)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (skeleton == (Skeleton*)*it)
+			((SkeletonAsset*)(*it))->DeleteInstance(go);
+}
+
+void AssetDirectory::StopUsingAnimation(Animation * anim, const GameObject * go)
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if (anim == (Animation*)*it)
+			((AnimationAsset*)(*it))->DeleteInstance(go);
+}
+
 void AssetDirectory::Update()
 {
 	DIR* dir;

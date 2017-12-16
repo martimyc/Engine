@@ -53,6 +53,8 @@ private:
 			void DrawBindPos(const float3x4& mesh_global_transform) const;
 
 			void SetWorldPositions(const float3x4& mesh_world_transform);
+
+			void ChangeTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms);
 		};
 
 		Joint root_joint;
@@ -73,6 +75,8 @@ private:
 		void UpdateJointSpheres();
 
 		void SetWorldPositions(const float3x4& mesh_world_transform);
+
+		void ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms);
 	};
 
 	Rigg* skeleton;
@@ -101,6 +105,8 @@ public:
 	void UpdateJointSpheres();
 
 	void SetWorldPositions(const float3x4& mesh_world_transform);
+
+	void ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms);
 };
 
 #endif // !SKELETON

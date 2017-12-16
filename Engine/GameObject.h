@@ -58,7 +58,6 @@ private:
 
 	bool RayBoundsCollision(const LineSegment* ray, std::map<float, GameObject*>& collisions)const;
 
-
 public:
 
 	bool Update();

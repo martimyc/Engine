@@ -908,9 +908,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Sources\Game Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Sources\Game Objects\Components</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_user.cpp">
       <Filter>Sources\3rd Party\ImGui</Filter>
     </ClCompile>
@@ -956,7 +953,9 @@
     <ClCompile Include="SkeletonImporter.cpp">
       <Filter>Sources\Importers</Filter>
     </ClCompile>
-    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="Animator.cpp">
+      <Filter>Sources\Game Objects\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\src\Math\float2.inl">

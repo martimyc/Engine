@@ -120,6 +120,7 @@ public:
 	~TextureAsset();
 
 	void AddInstance(const Material* material);
+	void DeleteInstance(const Material* material);
 
 	GLuint GetImage() const;
 };

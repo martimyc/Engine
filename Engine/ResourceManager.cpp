@@ -23,6 +23,7 @@
 
 #include "AssetDirectory.h"
 #include "GameObject.h"
+#include "Animator.h"
 
 //Components
 #include "AppliedMaterial.h"
@@ -114,6 +115,22 @@ void ResourceManager::LoadToScene(Asset* asset)
 		break;
 	case RT_MATERIAL:
 		App->scene_manager->GetFocused()->ChangeMaterial(current_dir->UseMaterial(asset->GetUID(), App->scene_manager->GetFocused()));
+		break;
+	case RT_SKELETON:
+		Animator* animator = App->scene_manager->GetFocused()->GetAnimator();
+		if (animator != nullptr)
+			animator->ChangeSkeleton(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()), 0.0);
+		else
+		{
+			App->scene_manager->GetFocused()->AddComponent(new Animator(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()), App->scene_manager->GetFocused()));
+		}
+		break;
+	case RT_ANIMATION:
+		Animator* animator = App->scene_manager->GetFocused()->GetAnimator();
+		if (animator != nullptr)
+			animator->AddAnimation(current_dir->UseAnimation(asset->GetUID(), App->scene_manager->GetFocused()), 0.0);
+		else
+			LOG("No animator in game object, please create one by giving it a skeleton");
 		break;
 	}
 }
@@ -242,12 +259,42 @@ Prefab * ResourceManager::UsePrefab(const UID & id, const GameObject * go) const
 
 Skeleton * ResourceManager::UseSkeleton(const UID & id, const GameObject * go) const
 {
-	return current_dir->UseSkeleton(id, go);;
+	return current_dir->UseSkeleton(id, go);
 }
 
 Animation * ResourceManager::UseAnimation(const UID & id, const GameObject * go) const
 {
-	return current_dir->UseAnimation(id, go);;
+	return current_dir->UseAnimation(id, go);
+}
+
+void ResourceManager::StopUsingMaterial(Material * material, const GameObject * go)
+{
+	current_dir->StopUsingMaterial(material, go);
+}
+
+void ResourceManager::StopUsingTexture(Texture * text, const Material * material) 
+{
+	current_dir->StopUsingTexture(text, material);
+}
+
+void ResourceManager::StopUsingMesh(Mesh * mesh, const GameObject * go) 
+{
+	current_dir->StopUsingMesh(mesh, go);
+}
+
+void ResourceManager::StopUsingPrefab(Prefab * prefab, const GameObject * go) 
+{
+	current_dir->StopUsingPrefab(prefab, go);
+}
+
+void ResourceManager::StopUsingSkeleton(Skeleton * skeleton, const GameObject * go)
+{
+	current_dir->StopUsingSkeleton(skeleton, go);
+}
+
+void ResourceManager::StopUsingAnimation(Animation * aniim, const GameObject * go) 
+{
+	current_dir->StopUsingAnimation(aniim, go);
 }
 
 Texture* ResourceManager::LoadCheckers()

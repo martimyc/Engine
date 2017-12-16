@@ -21,6 +21,8 @@ public:
 	virtual GLuint GetImage() const;
 
 	void AddInstance(const GameObject* go);
+
+	void DeleteInstance(const GameObject* go);
 };
 
 

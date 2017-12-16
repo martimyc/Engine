@@ -654,6 +654,19 @@ void TextureAsset::AddInstance(const Material * material)
 	instances.push_back(material);
 }
 
+void TextureAsset::DeleteInstance(const Material * material)
+{
+	for (std::vector<const Material*>::iterator it = instances.begin(); it != instances.end(); ++it)
+		if (material == *it)
+		{
+			instances.erase(it);
+			break;
+		}
+
+	if (instances.size() == 0)
+		resource->Unload();
+}
+
 GLuint TextureAsset::GetImage() const
 {
 	return ((Texture*)resource)->GetTextureID();
