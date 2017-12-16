@@ -49,8 +49,8 @@ private:
 			void UpdateTransform(const float3x4& mesh_world_transform);
 			void UpdateChildTransform(const float3x4 & old_parent_inverse, const float3x4 & new_parent);
 
-			void Draw(const float4x4& mesh_global_transform, const Joint* selected) const;
-			void DrawBindPos(const float4x4& mesh_global_transform) const;
+			void Draw(const float3x4& mesh_global_transform, const Joint* selected) const;
+			void DrawBindPos(const float3x4& mesh_global_transform) const;
 
 			void SetWorldPositions(const float3x4& mesh_world_transform);
 		};

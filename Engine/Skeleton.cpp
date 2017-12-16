@@ -130,16 +130,11 @@ void Skeleton::Rigg::Joint::SetTransform(const float3x4 & new_transform)
 	position = current_transform.TranslatePart();
 
 	float3x3 rotation_matrix = current_transform.RotatePart();
-	rotation_matrix.Orthonormalize(0, 1, 2);
 
-	Quat rotation;
-	if (rotation_matrix.IsOrthonormal())
-		rotation.Set(rotation_matrix);
-	else
-		rotation.Set(0, 0, 0, 1);
-
-	angles = rotation.ToEulerXYZ();
+	angles = rotation_matrix.ToEulerXYZ();
 	angles *= RADTODEG;
+
+	float* test = &angles.x;
 
 	scaling = current_transform.GetScale();
 }
@@ -230,23 +225,15 @@ void Skeleton::Rigg::Joint::UpdateSpherePos()
 
 void Skeleton::Rigg::Joint::UpdateTransform(const float3x4& mesh_world_transform)
 {
-	Quat rotation;
-
 	angles *= DEGTORAD;
-	rotation = Quat::FromEulerXYX(angles.x, angles.y, angles.z);
+	float3x4 new_transform(float3x4::FromTRS(position, float3x4::FromEulerXYZ(angles.x, angles.y, angles.z), scaling));
 	angles *= RADTODEG;
-
-	float3x4 new_transform(float3x4::FromTRS(position, float3x4::FromQuat(rotation), scaling));
 
 	new_transform = mesh_world_transform.Inverted() * new_transform;
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 	{
-		float3x4 old_parent_inverse(current_transform);
-		if (old_parent_inverse.Inverse() == false)
-			LOG("Could not inverse matrix in joint inspector");
-
-		it->UpdateChildTransform(old_parent_inverse, new_transform);
+		it->UpdateChildTransform(current_transform.Inverted(), new_transform);
 		it->SetWorldPositions(mesh_world_transform);
 	}
 
@@ -255,7 +242,6 @@ void Skeleton::Rigg::Joint::UpdateTransform(const float3x4& mesh_world_transform
 
 void Skeleton::Rigg::Joint::UpdateChildTransform(const float3x4 & old_parent_inverse, const float3x4 & new_parent)
 {
-	new_parent.Inverted();
 	float3x4 local(old_parent_inverse * current_transform);
 	current_transform = new_parent * local;
 
@@ -263,7 +249,7 @@ void Skeleton::Rigg::Joint::UpdateChildTransform(const float3x4 & old_parent_inv
 		it->UpdateChildTransform(old_parent_inverse, new_parent);
 }
 
-void Skeleton::Rigg::Joint::Draw(const float4x4& mesh_global_transform, const Joint* selected) const
+void Skeleton::Rigg::Joint::Draw(const float3x4& mesh_global_transform, const Joint* selected) const
 {
 	glBegin(GL_LINES);
 
@@ -272,11 +258,7 @@ void Skeleton::Rigg::Joint::Draw(const float4x4& mesh_global_transform, const Jo
 	float4 y(0.0f, 1.0f, 0.0f, 1.0f);
 	float4 z(0.0f, 0.0f, 1.0f, 1.0f);
 
-	float4x4 inverse_current_transform(current_transform);
-	if (inverse_current_transform.Inverse() == false)
-		LOG("Could not inverse transform in joint draw");
-
-	float4x4 transform(mesh_global_transform * current_transform);
+	float3x4 transform(mesh_global_transform * current_transform);
 
 	pos = transform * pos;
 	
@@ -314,11 +296,7 @@ void Skeleton::Rigg::Joint::Draw(const float4x4& mesh_global_transform, const Jo
 	{
 		float4 child_vec(0.0f, 0.0f, 0.0f, 1.0f);
 
-		float4x4 inverse_child(it->current_transform);
-		if (inverse_child.Inverse() == false)
-			LOG("Could not inverse transform in joint draw");
-
-		float4x4 child_world_transform(mesh_global_transform * it->current_transform);
+		float3x4 child_world_transform(mesh_global_transform * it->current_transform);
 		child_vec = child_world_transform * child_vec;
 
 		glVertex3f(pos.x, pos.y, pos.z);
@@ -341,7 +319,7 @@ void Skeleton::Rigg::Joint::Draw(const float4x4& mesh_global_transform, const Jo
 		it->Draw(mesh_global_transform, selected);
 }
 
-void Skeleton::Rigg::Joint::DrawBindPos(const float4x4 & mesh_global_transform) const
+void Skeleton::Rigg::Joint::DrawBindPos(const float3x4 & mesh_global_transform) const
 {
 	glBegin(GL_LINES);
 
@@ -350,7 +328,7 @@ void Skeleton::Rigg::Joint::DrawBindPos(const float4x4 & mesh_global_transform) 
 	float4 y(0.0f, 1.0f, 0.0f, 1.0f);
 	float4 z(0.0f, 0.0f, 1.0f, 1.0f);
 
-	float4x4 transform(mesh_global_transform * inverse_bind_pose_transform);
+	float3x4 transform(mesh_global_transform * inverse_bind_pose_transform);
 
 	pos = transform * pos;
 
@@ -412,15 +390,8 @@ void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & mesh_world_transf
 	position = world_transform.TranslatePart();
 
 	float3x3 rotation_matrix = world_transform.RotatePart();
-	rotation_matrix.Orthonormalize(0, 1, 2);
-
-	Quat rotation;
-	if (rotation_matrix.IsOrthonormal())
-		rotation.Set(rotation_matrix);
-	else
-		rotation.Set(0, 0, 0, 1);
-
-	angles = rotation.ToEulerXYZ();
+	
+	angles = rotation_matrix.ToEulerXYZ();
 	angles *= RADTODEG;
 
 	scaling = world_transform.GetScale();
