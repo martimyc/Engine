@@ -189,7 +189,7 @@ void MeshAsset::DeleteInstance(const GameObject * go)
 		}
 
 	if (instances.size() == 0)
-		resource->Unload();
+		resource->UnLoad();
 }
 
 GLuint MeshAsset::GetImage() const

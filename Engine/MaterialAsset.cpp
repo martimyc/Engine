@@ -114,7 +114,7 @@ void MaterialAsset::DeleteInstance(const GameObject * go)
 		}
 
 	if (instances.size() == 0)
-		resource->Unload();
+		resource->UnLoad();
 }
 
 GLuint MaterialAsset::GetImage() const

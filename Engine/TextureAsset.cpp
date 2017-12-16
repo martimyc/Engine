@@ -664,7 +664,7 @@ void TextureAsset::DeleteInstance(const Material * material)
 		}
 
 	if (instances.size() == 0)
-		resource->Unload();
+		resource->UnLoad();
 }
 
 GLuint TextureAsset::GetImage() const

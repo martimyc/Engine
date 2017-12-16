@@ -37,7 +37,7 @@ void AnimationAsset::DeleteInstance(const GameObject* go)
 		}
 
 	if (instances.size() == 0)
-		resource->Unload();
+		resource->UnLoad();
 }
 
 AnimationLoadConfiguration::AnimationLoadConfiguration()

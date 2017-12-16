@@ -36,7 +36,7 @@ void SkeletonAsset::DeleteInstance(const GameObject * go)
 		}
 
 	if (instances.size() == 0)
-		resource->Unload();
+		resource->UnLoad();
 }
 
 SkeletonImportConfiguration::SkeletonImportConfiguration() : load_bone_weights(true), limit_bone_weights(false), split_by_bone_count(false), debone(false), debone_threshold(1.0f)

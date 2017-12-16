@@ -108,7 +108,8 @@ bool Animator::Update()
 	return true;
 }
 
-void Animator::ChangeSkeleton()
+void Animator::ChangeSkeleton(Skeleton* new_skeleton)
 {
-	App->resource_manager->
+	App->resource_manager->StopUsingSkeleton(skeleton, game_object);
+	skeleton = new_skeleton;
 }

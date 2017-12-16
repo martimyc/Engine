@@ -39,7 +39,7 @@ public:
 
 	bool Update();
 
-	void ChangeSkeleton();
+	void ChangeSkeleton(Skeleton* new_skeleton);
 };
 
 

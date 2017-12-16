@@ -84,6 +84,8 @@ Material * ResourceManager::CreateEmptyMaterial(const char* name)
 
 void ResourceManager::LoadToScene(Asset* asset)
 {
+	Animator* animator = nullptr;
+
 	switch (asset->GetType())
 	{
 	case RT_TEXTURE:
@@ -117,16 +119,16 @@ void ResourceManager::LoadToScene(Asset* asset)
 		App->scene_manager->GetFocused()->ChangeMaterial(current_dir->UseMaterial(asset->GetUID(), App->scene_manager->GetFocused()));
 		break;
 	case RT_SKELETON:
-		Animator* animator = App->scene_manager->GetFocused()->GetAnimator();
+		animator = App->scene_manager->GetFocused()->GetAnimator();
 		if (animator != nullptr)
-			animator->ChangeSkeleton(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()), 0.0);
+			animator->ChangeSkeleton(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()));
 		else
 		{
 			App->scene_manager->GetFocused()->AddComponent(new Animator(current_dir->UseSkeleton(asset->GetUID(), App->scene_manager->GetFocused()), App->scene_manager->GetFocused()));
 		}
 		break;
 	case RT_ANIMATION:
-		Animator* animator = App->scene_manager->GetFocused()->GetAnimator();
+		animator = App->scene_manager->GetFocused()->GetAnimator();
 		if (animator != nullptr)
 			animator->AddAnimation(current_dir->UseAnimation(asset->GetUID(), App->scene_manager->GetFocused()), 0.0);
 		else
