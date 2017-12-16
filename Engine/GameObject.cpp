@@ -180,10 +180,10 @@ void GameObject::Inspector()
 {
 	App->BeginDockWindow("Inspector");
 
-	//ImGui::Text("Name: %s", name.c_str());
+	ImGui::Text("Game Object:");
 	char buf1[64];
-	ImGui::InputText("Game Object: ", name, 64);
-		//name = buf1;
+	ImGui::InputText("", name, 64);
+
 	//Transform
 	if (local_transform->Inspector())
 	{
@@ -703,9 +703,6 @@ void GameObject::CreateBounds(const Mesh* mesh)
 	bounds.original_aabb_bb_points[1] = bounds.aabb_bounding_box.maxPoint = (mesh->GetMaxVec());
 
 	IncludeMeshInOBB(mesh);
-
-	//Set center
-	local_transform->SetTransformCenter(mesh->GetCenter());
 }
 
 void GameObject::UpdateBoundsParents()

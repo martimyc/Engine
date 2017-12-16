@@ -1265,14 +1265,6 @@ math::vec Mesh::GetWorldCenter(const math::float4x4 & world_transform) const
 	return math::vec::inf;	
 }
 
-/*bool Mesh::CheckTriangleCollision(const LineSegment * ray, float* distance) const
-{
-	if (source != nullptr)
-		return source->CheckTriangleCollision(ray, distance);
-	LOG("Trying to acces non loaded mesh");
-	return false;
-}*/
-
 void Mesh::SetSource(MeshSource * source)
 {
 	this->source = source;

@@ -77,12 +77,6 @@ bool Application::Init()
 {
 	bool ret = true;
 	
-	JSON_Value* config = json_parse_file("config.json");
-	JSON_Object* obj = json_value_get_object(config);
-	JSON_Object* app = json_object_dotget_object(obj, "App"); 
-	title = json_object_get_string(app, "title");
-	organization = json_object_get_string(app, "organization");
-
 	std::vector<Module*>::const_iterator it = modules.begin();
 
 	dock_context = new ImGui::DockContext();	//Don't need to LoadDocks, as the OnResize will do it when creating the window
@@ -123,22 +117,14 @@ UPDATE_STATUS Application::CreateConfigApp()
 	
 	if (BeginDockWindow("Application", &config_app))
 	{
-		JSON_Value* config = json_parse_file("config.json");
-		JSON_Object* obj = json_value_get_object(config);
-		JSON_Object* app_obj = json_object_dotget_object(obj, "App");
-		JSON_Value* app = json_value_init_object();
+		ImGui::Text("Engine name:  %s", engine_name.c_str());
+		ImGui::Text("Organization: %s", organization.c_str());
+		ImGui::Text("Creators:");
+		if (ImGui::Button("     Marc Latorre Freixes     "))
+			App->OpenWebsite("https://github.com/marclafr");
 
-		if (ImGui::InputText("Engine name", buf1, 128))
-			title = buf1;
-		json_object_set_string(json_object(app), "title", title.c_str());
-		json_object_dotset_value(obj, "App", app);
-
-		if (ImGui::InputText("Organization", buf2, 128))
-			organization = buf2;
-		json_object_set_string(json_object(app), "organization", organization.c_str());
-		json_object_dotset_value(obj, "App", app);
-
-		json_serialize_to_file(config, "config.json");
+		if (ImGui::Button("    Marti Majo Ylla-Catala    "))
+			App->OpenWebsite("https://github.com/martimyc");
 
 		//FPS graphic
 		for (uint i = 0; i < FPS_GRAPH_SIZE; i++)
@@ -226,7 +212,7 @@ void Application::OpenWebsite(const char * url)
 
 const char* Application::GetTitle() const
 {
-	return title.c_str();
+	return engine_name.c_str();
 }
 
 const char* Application::GetOrganization() const
