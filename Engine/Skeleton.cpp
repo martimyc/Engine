@@ -144,6 +144,8 @@ void Skeleton::Rigg::Joint::SetTransform(const float3x4 & new_transform)
 
 	float3x3 rotation_matrix = current_transform.RotatePart();
 
+	rotation_matrix.Orthonormalize(0, 1, 2);
+
 	angles = rotation_matrix.ToEulerXYZ();
 	angles *= RADTODEG;
 
@@ -239,7 +241,9 @@ void Skeleton::Rigg::Joint::UpdateSpherePos()
 void Skeleton::Rigg::Joint::UpdateTransform(const float3x4& mesh_world_transform)
 {
 	angles *= DEGTORAD;
+
 	float3x4 new_transform(float3x4::FromTRS(position, float3x4::FromEulerXYZ(angles.x, angles.y, angles.z), scaling));
+	
 	angles *= RADTODEG;
 
 	new_transform = mesh_world_transform.Inverted() * new_transform;
@@ -404,6 +408,8 @@ void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & mesh_world_transf
 
 	float3x3 rotation_matrix = world_transform.RotatePart();
 	
+	rotation_matrix.Orthonormalize(0, 1, 2);
+
 	angles = rotation_matrix.ToEulerXYZ();
 	angles *= RADTODEG;
 
