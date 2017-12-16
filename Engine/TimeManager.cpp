@@ -37,8 +37,8 @@ UPDATE_STATUS TimeManager::Update(float dt)
 	}
 	App->EndDockWindow();
 
-	real_time_since_start = real_time_clock.ReadSec();
-	game_time_since_start = game_clock.ReadSec();
+	real_time = real_time_clock.ReadSec();
+	game_time = game_clock.ReadSec();
 
 	frame_count++;
 
@@ -94,14 +94,14 @@ void TimeManager::DoOneUpdate()
 	//TODO
 }
 
-const float TimeManager::GetRealTimeSinceStart() const
+double TimeManager::GetRealTimeSinceStart() const
 {
-	return real_time_since_start;
+	return real_time;
 }
 
-const float TimeManager::GetGameTimeSinceStart() const
+double TimeManager::GetGameTimeSinceStart() const
 {
-	return game_time_since_start;
+	return game_time;
 }
 
 void TimeManager::OpenCloseTimers()

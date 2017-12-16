@@ -21,6 +21,12 @@ bool Prefab::IsLoaded() const
 	return source != nullptr;
 }
 
+void Prefab::UnLoad()
+{
+	delete source;
+	source = nullptr;
+}
+
 bool Prefab::Inspector()
 {
 	return false;

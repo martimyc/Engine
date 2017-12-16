@@ -35,6 +35,12 @@ bool Skeleton::IsLoaded() const
 	return skeleton != nullptr;
 }
 
+void Skeleton::UnLoad()
+{
+	delete skeleton;
+	skeleton = nullptr;
+}
+
 void Skeleton::Draw(const float3x4& mesh_global_transform) const
 {
 	if (skeleton != nullptr)

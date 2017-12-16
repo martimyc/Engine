@@ -40,6 +40,8 @@ private:
 	bool draw_aabbs = false;
 	bool draw_obbs = false;
 
+	bool to_delete = false;
+
 public:
 	GameObject(const char name_[128], bool draw = true);
 	GameObject(const GameObject& copy);
@@ -74,6 +76,7 @@ public:
 	void ReserveComponentSpace(const GLuint& num_components);
 
 	void Delete(GameObject* to_delete);
+	void EraseFromKDTree(KDTreeGO* kdtree);
 
 	void ChangeMaterial(Material* new_material);
 	void ChangeMesh(Mesh * new_mesh);
@@ -149,6 +152,9 @@ public:
 	bool AddChildsToKDT(KDTreeGO& kdt) const;
 
 	GameObject* GetParent() const;
+
+	void SetToDelete();
+	bool IsSetToDelete() const;
 };
 
 #endif // !GAME_OBJECT

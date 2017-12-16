@@ -373,7 +373,7 @@ void MeshSource::RecalculateKDT()
 
 float MeshSource::RayCollisionKDT(const LineSegment* ray)
 {
-	float ret = ray->Length();
+	float ret = inf;
 
 	if (triangle_kdt != nullptr)
 	{
@@ -834,6 +834,12 @@ bool Mesh::Inspector()
 bool Mesh::IsLoaded() const
 {
 	return source != nullptr;
+}
+
+void Mesh::UnLoad()
+{
+	delete source;
+	source = nullptr;
 }
 
 const GLuint Mesh::GetVerticesID() const

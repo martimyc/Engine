@@ -147,6 +147,8 @@ public:
 
 	bool IsLoaded() const;
 
+	void UnLoad();
+
 	//Getters
 		//Vertices
 	const GLuint GetVerticesID() const;

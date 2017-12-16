@@ -34,3 +34,9 @@ bool Animation::IsLoaded() const
 {
 	return source != nullptr;
 }
+
+void Animation::UnLoad()
+{
+	delete source;
+	source = nullptr;
+}

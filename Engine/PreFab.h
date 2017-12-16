@@ -29,6 +29,8 @@ public:
 
 	bool IsLoaded() const;
 
+	void UnLoad();
+
 	bool Inspector();
 
 	void SetSource(PrefabSource* source);

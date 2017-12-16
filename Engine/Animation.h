@@ -68,6 +68,8 @@ public:
 	bool Inspector();
 
 	bool IsLoaded() const;
+
+	void UnLoad();
 };
 
 #endif // !ANIMATION

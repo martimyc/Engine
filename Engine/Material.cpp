@@ -687,6 +687,12 @@ bool Material::IsLoaded() const
 	return source != nullptr;
 }
 
+void Material::UnLoad()
+{
+	delete source;
+	source = nullptr;
+}
+
 void Material::SetSource(MaterialSource * source)
 {
 	this->source = source;

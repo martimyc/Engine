@@ -14,11 +14,11 @@ private:
 
 	uint64 frame_count = 0;
 
-	float game_time_since_start = 0;
+	double game_time = 0;
 	float game_time_scale = 0;
 	float game_dt = 0;
 
-	float real_time_since_start = 0;
+	double real_time = 0;
 	float real_time_dt = 0;
 
 	bool game_clock_paused = true;
@@ -39,8 +39,8 @@ public:
 	void DoOneUpdate();
 
 	//Getters
-	const float GetRealTimeSinceStart() const;
-	const float GetGameTimeSinceStart() const;
+	double GetRealTimeSinceStart() const;
+	double GetGameTimeSinceStart() const;
 
 	void OpenCloseTimers();
 };

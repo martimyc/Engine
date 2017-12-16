@@ -992,7 +992,7 @@ void KDTreeTriangle::Draw() const
 
 float KDTreeTriangle::RayCollisionKDT(const LineSegment * ray, unsigned int& num_checks) const
 {
-	float shortest_distance = ray->Length();
+	float shortest_distance = inf;
 	if (root->RayCollisionKDT(ray, shortest_distance, num_checks) == false)
 		LOG("Ray did not collide");
 	return shortest_distance;
