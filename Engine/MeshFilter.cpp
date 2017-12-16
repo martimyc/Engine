@@ -41,3 +41,8 @@ const std::string & MeshFilter::GetName() const
 {
 	return mesh->GetName();
 }
+
+void MeshFilter::StopUsingMesh(const GameObject * go)
+{
+	App->resource_manager->StopUsingMesh(mesh, go);
+}

@@ -25,6 +25,8 @@ public:
 	void Inspector();
 
 	const std::string& GetName() const;
+
+	void StopUsingMesh(const GameObject* go);
 };
 
 #endif // !MESH_FILTER

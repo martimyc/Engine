@@ -113,3 +113,9 @@ void Animator::ChangeSkeleton(Skeleton* new_skeleton)
 	App->resource_manager->StopUsingSkeleton(skeleton, game_object);
 	skeleton = new_skeleton;
 }
+
+void Animator::StopUsingAnimation(const GameObject * go)
+{
+	App->resource_manager->StopUsingSkeleton(skeleton, go);
+	//App->resource_manager->StopUsingAnimation(animations, go);
+}

@@ -107,6 +107,8 @@ public:
 	void UnLoad();
 
 	void SetSource(MaterialSource* source);
+
+	void StopUsingMaterial(const GameObject* go);
 };
 
 #endif // !MATERIAL

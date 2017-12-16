@@ -245,6 +245,21 @@ void GameObject::EraseFromKDTree(KDTreeGO * kdtree)
 	for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
 		(*it)->EraseFromKDTree(kdtree);
 
+	//Stop Using Components
+	/*
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+	{
+		if ((*it)->GetType() == CT_MESH_FILTER)
+			return ((MeshFilter*)(*it))->StopUsingMesh(this);
+
+		if ((*it)->GetType() == CT_APPLIED_MATERIAL)
+			return ((Material*)(*it))->StopUsingMaterial(this);
+
+		if ((*it)->GetType() == CT_ANIMATOR)
+			return ((Animator*)(*it))->StopUsingAnimation(this);		
+	}
+	*/
+
 	kdtree->RemoveGameObject(this);
 }
 

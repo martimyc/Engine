@@ -697,3 +697,8 @@ void Material::SetSource(MaterialSource * source)
 {
 	this->source = source;
 }
+
+void Material::StopUsingMaterial(const GameObject * go)
+{
+	App->resource_manager->StopUsingMaterial(this, go);
+}
