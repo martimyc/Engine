@@ -16,7 +16,6 @@ private:
 	float3 scaling;
 	float3 euler_rotation;
 	Quat rotation;
-	float3 center;
 	
 	float4x4 transform_matrix;
 
@@ -29,7 +28,6 @@ public:
 	~Transform();
 
 	void SetTransform(const math::float4x4& new_transform);
-	void SetTransformCenter(const math::vec center);
 
 	const float4x4& GetTransformMatrix();
 	const vec& GetTransformTranslation();

@@ -50,14 +50,12 @@ public:
 	TimeManager*			time_manager = nullptr;
 
 private:
-	std::string title;
-	std::string organization;
+	std::string engine_name = "MARs Engine";
+	std::string organization = "UPC CITM";
 	float	dt;
 	std::vector<Module*> modules;
 	float fps_log[FPS_GRAPH_SIZE];
 	float ms_log[FPS_GRAPH_SIZE];
-	char buf1[128] = "Engine 3D - Marc Latorre && Marti Majo";
-	char buf2[128] = "UPC CITM";
 
 	ImGui::DockContext* dock_context = nullptr;
 	bool config_app = false;

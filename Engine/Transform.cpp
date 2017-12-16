@@ -5,7 +5,7 @@
 #include "Globals.h"
 #include "Transform.h"
 
-Transform::Transform(const char * name) : name(name), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), euler_rotation(0, 0, 0), center(0, 0, 0)
+Transform::Transform(const char * name) : name(name), translation(0, 0, 0), scaling(1, 1, 1), rotation(0, 0, 0, 1), euler_rotation(0, 0, 0)
 {
 	transform_matrix = transform_matrix.identity;
 }
@@ -27,11 +27,6 @@ void Transform::SetTransform(const math::float4x4& new_transform)
 	euler_rotation = rotation.ToEulerXYZ();
 	euler_rotation *= RADTODEG;
 	scaling = transform_matrix.GetScale();
-}
-
-void Transform::SetTransformCenter(const math::vec center_)
-{
-	center = center_;
 }
 
 void Transform::Quat2Euler(const Quat q, float & roll, float & pitch, float & yaw)
@@ -113,10 +108,9 @@ void Transform::Update()
 	rotation = Quat::FromEulerXYZ(euler_rotation.x, euler_rotation.y, euler_rotation.z);
 
 	transform_matrix = float4x4::FromQuat(rotation);									//Rotate
-
 	euler_rotation *= RADTODEG;
 
-	transform_matrix = float4x4::Scale(scaling, center) * transform_matrix;				//Scalate
+	transform_matrix = float4x4::Scale(scaling, vec(0, 0, 0)) * transform_matrix;		//Scalate
 	transform_matrix.SetRow(3, float4(translation.x, translation.y, translation.z, 1));	//Translate
 }
 
