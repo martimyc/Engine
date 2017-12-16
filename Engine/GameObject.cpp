@@ -1,4 +1,3 @@
-#include <map>
 #include "imgui\imgui.h"
 #include "MathGeoLib\src\Math\float3.h"
 #include "MathGeoLib\src\Math\float3x3.h"
@@ -27,8 +26,9 @@
 #include "Application.h"
 #include "GameObject.h"
 
-GameObject::GameObject(const std::string& name, bool draw) : name(name), draw(draw), parent(nullptr)
+GameObject::GameObject(const char name_[128], bool draw) : draw(draw), parent(nullptr)
 {
+	memcpy(name, name_, 128);
 	local_transform = new Transform("Local Transform");
 	world_transform = new Transform("World Transform");
 
@@ -50,8 +50,9 @@ GameObject::GameObject(const std::string& name, bool draw) : name(name), draw(dr
 	bounds.obb_bounding_box.axis[2] = bounds.original_obb_bounding_box.axis[2] = math::vec(0, 0, 1);
 }
 
-GameObject::GameObject(const GameObject & copy) : name(copy.name), parent(copy.parent), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds)
+GameObject::GameObject(const GameObject & copy) : parent(copy.parent), local_transform(new Transform("Local Transform")), world_transform(new Transform("World Transform")), draw(copy.draw), bounds(copy.bounds)
 {
+	memcpy(name, copy.name, 128);
 	local_transform->SetTransform(copy.local_transform->GetTransformMatrix());
 	world_transform->SetTransform(copy.world_transform->GetTransformMatrix());
 
@@ -105,7 +106,7 @@ bool GameObject::Update()
 		ret = (*it)->Update();
 		if (ret == false)
 		{
-			LOG("Error updating component -%s- in game object -%s-", (*it)->GetName().c_str(), name.c_str());
+			LOG("Error updating component -%s- in game object -%s-", (*it)->GetName().c_str(), name);
 			break;
 		}
 	}
@@ -178,6 +179,11 @@ void GameObject::AddComponent(Component * component)
 void GameObject::Inspector()
 {
 	App->BeginDockWindow("Inspector");
+
+	//ImGui::Text("Name: %s", name.c_str());
+	char buf1[64];
+	ImGui::InputText("Game Object: ", name, 64);
+		//name = buf1;
 	//Transform
 	if (local_transform->Inspector())
 	{
@@ -266,7 +272,7 @@ bool GameObject::Hirarchy(GameObject*& selected)
 		node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	bool node_open = ImGui::TreeNodeEx(this, node_flags, name.c_str()); //TODO try with TreeNode*
+	bool node_open = ImGui::TreeNodeEx(this, node_flags, name); //TODO try with TreeNode*
 
 	if (ImGui::IsItemClicked() && ret == false)
 	{
@@ -580,9 +586,9 @@ void GameObject::DrawBoundingBoxes() const
 	if (draw_spheres)
 		bounds.sphere_bounding_box.Draw(0.0f, 1.0f, 0.0f, 1.0f); 
 	if (draw_aabbs)
-		bounds.aabb_bounding_box.Draw(1.0f, 1.0f, 0.0f, 1.0f);
+		bounds.aabb_bounding_box.Draw(1.0f, 0.0f, 0.0f, 1.0f);
 	if (draw_obbs)
-		bounds.obb_bounding_box.Draw(0.0f, 1.0f, 1.0f, 1.0f);
+		bounds.obb_bounding_box.Draw(0.0f, 0.0f, 1.0f, 1.0f);
 
 	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
 		(*it)->DrawBoundingBoxes();
@@ -612,42 +618,30 @@ void GameObject::RemoveAppliedMaterial()
 
 void GameObject::PickGameObject(const LineSegment* ray, float ray_distance) const
 {
-	//TODO both trough kdt and without it
+	//Reset
+	App->scene_manager->SetFocused(App->scene_manager->GetRoot());
+	
+	std::map<float, GameObject*> collisions;
 
-	std::map<float, GameObject*> aabb_collisions;
-	LineSegment ray_local_space(*ray);
-
-	//Check AABBs
-	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
-	{
-		ray_local_space.Transform((*it)->GetLocalTransform());
-
-		if (ray_local_space.Intersects((*it)->bounds.aabb_bounding_box))
-		{
-			float d = (*it)->bounds.aabb_bounding_box.Distance(ray->GetPoint(0));
-			aabb_collisions.insert(std::pair<float, GameObject*>(d, *it));
-		}
-
-		(*it)->PickGameObject(ray, ray_distance);
-	}
-
-	if (aabb_collisions.size() == 0)
-		App->scene_manager->SetFocused(App->scene_manager->GetRoot());
-	else
+	//Check Bounds
+	if (RayBoundsCollision(ray, collisions))
 	{
 		//Check triangles
 		GameObject* go = nullptr;
-		float shortest_distance = ray->Length();
+		float distance = 0.0f;
+		float min_distance = ray->Length();
 
-		for (std::map<float, GameObject*>::iterator it = aabb_collisions.begin(); it != aabb_collisions.end(); ++it)
+		for (std::map<float, GameObject*>::iterator it = collisions.begin(); it != collisions.end(); ++it)
 		{
+			LineSegment ray_local_space(*ray);
+			//Set to mesh coordinates
+			ray_local_space.Transform(((*it).second->GetWorldTransform()).Transposed().Inverted());
 			if ((*it).second->HasMeshFilter())
 			{
-				float distance = (*it).second->GetMesh()->RayCollision(ray);
-
-				if (distance < shortest_distance)
+				distance = (*it).second->GetMesh()->RayCollision(&ray_local_space);
+				if (distance < min_distance)
 				{
-					shortest_distance = distance;
+					min_distance = distance;
 					go = (*it).second;
 				}
 			}
@@ -832,4 +826,32 @@ void GameObject::UpdateTransforms()
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		if ((*it)->GetType() == CT_CAMERA)
 			((Camera*)(*it))->TransformCamera();
+}
+
+bool GameObject::RayBoundsCollision(const LineSegment* ray, std::map<float, GameObject*>& collisions) const
+{
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+	{
+		if (ray->Intersects((*it)->bounds.sphere_bounding_box))			//first sphere
+			if (ray->Intersects((*it)->bounds.aabb_bounding_box))		//second aabb
+				if (ray->Intersects((*it)->bounds.obb_bounding_box))	//finally obb
+				{
+					float d = (*it)->bounds.obb_bounding_box.Distance(ray->GetPoint(0));
+					//if the aabbs of a parent and a child are exactly the same (which is perfectly possible) the insert won't be done, so we 
+					//change the distance just a bit so it won't have any visual effect, but the gameobject is added into the collisions map.
+					std::pair<std::map<float, GameObject*>::iterator, bool> ret = collisions.insert(std::pair<float, GameObject*>(d, *it));
+					int i = 0;
+					while (ret.second == false)
+					{
+						ret = collisions.insert(std::pair<float, GameObject*>((d - (EPSILON * i)), *it));
+						i++;
+					}
+				}
+
+		(*it)->RayBoundsCollision(ray, collisions);
+	}
+
+	if (collisions.size() > 0)
+		return true;
+	return false;
 }

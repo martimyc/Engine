@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "glew\include\GL\glew.h"
 #include "Bounds.h"
 
@@ -25,7 +26,7 @@ namespace math
 class GameObject
 {
 private:
-	std::string name;
+	char name[128];
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
 	GameObject* parent = nullptr;
@@ -40,7 +41,7 @@ private:
 	bool draw_obbs = false;
 
 public:
-	GameObject(const std::string& name, bool draw = true);
+	GameObject(const char name_[128], bool draw = true);
 	GameObject(const GameObject& copy);
 	~GameObject();
 
@@ -54,6 +55,9 @@ private:
 	void IncludeMeshInOBB(const Mesh* mesh);
 	void UpdateWorldTransform(const math::float4x4& parent_world_transform);
 	void UpdateTransforms();
+
+	bool RayBoundsCollision(const LineSegment* ray, std::map<float, GameObject*>& collisions)const;
+
 
 public:
 

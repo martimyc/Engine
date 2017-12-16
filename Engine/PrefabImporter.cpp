@@ -146,7 +146,7 @@ GameObject* PrefabImporter::LoadChild(char ** iterator)
 	std::string name (*iterator);
 	*iterator += name.length() + 1;
 
-	GameObject* new_game_object = new GameObject(name);
+	GameObject* new_game_object = new GameObject(name.c_str());
 
 	math::float4x4 transform;
 	for (int i = 0; i < 4; i++)

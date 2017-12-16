@@ -19,7 +19,8 @@
 Camera3D::Camera3D(const char* name, bool start_enabled) : Module(name, start_enabled),
 near_plane_dist_editor_camera(0.5f),
 far_plane_dist_editor_camera(500.0f),
-vertical_fov_editor_camera(80)
+vertical_fov_editor_camera(80),
+camera_dragging(false)
 {}
 
 Camera3D::~Camera3D()
@@ -58,27 +59,19 @@ UPDATE_STATUS Camera3D::Configuration(float dt)
 
 	if (App->BeginDockWindow("Camera 3D", &config_camera))
 	{
-		const GameObject* focused_game_object = App->scene_manager->GetFocused();
+		ImGui::SliderFloat("WASD speed", &camera_speed, 2.0f, 15.0f);
+		ImGui::SliderFloat("Zoom speed", &camera_zoom_speed, 0.5f, 5.0f);
+		ImGui::SliderFloat("Rotation sensivility", &sensibility, 0.1f, 0.8f);
 
-		if (focused_game_object != nullptr)
+		//ImGui::SliderFloat("Near Plane Distance", &near_plane_dist_editor_camera, 0.1f, 0.5f);
+		ImGui::SliderFloat("Far Plane Distance", &far_plane_dist_editor_camera, 250.0f, 1000.0f);
+		ImGui::SliderFloat("Field of View", &vertical_fov_editor_camera, 60.0f, 103.0f);
+
+		if (ImGui::Button("Apply"))
 		{
-			if (focused_game_object->GetNumComponents() <= 1)
-			{
-				ImGui::SliderFloat("WASD speed", &camera_speed, 2.0f, 15.0f);
-				ImGui::SliderFloat("Zoom speed", &camera_zoom_speed, 0.5f, 5.0f);
-				ImGui::SliderFloat("Rotation sensivility", &sensibility, 0.1f, 0.8f);
-
-				//ImGui::SliderFloat("Near Plane Distance", &near_plane_dist_editor_camera, 0.1f, 0.5f);
-				ImGui::SliderFloat("Far Plane Distance", &far_plane_dist_editor_camera, 250.0f, 1000.0f);
-				ImGui::SliderFloat("Field of View", &vertical_fov_editor_camera, 60.0f, 103.0f);
-
-				if (ImGui::Button("Apply"))
-				{
-					//editor_camera_frustum.SetNearPlaneDistance(near_plane_dist_editor_camera);
-					editor_camera_frustum.SetFarPlaneDistance(far_plane_dist_editor_camera);
-					RecalculateFOV();
-				}
-			}
+			//editor_camera_frustum.SetNearPlaneDistance(near_plane_dist_editor_camera);
+			editor_camera_frustum.SetFarPlaneDistance(far_plane_dist_editor_camera);
+			RecalculateFOV();
 		}
 	}
 	App->EndDockWindow();
@@ -170,6 +163,7 @@ UPDATE_STATUS Camera3D::Update(float dt)
 		// Mouse motion ----------------
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_LALT))
 		{
+			camera_dragging = true;
 			int dx = -App->input->GetMouseXMotion();
 			int dy = -App->input->GetMouseYMotion();
 			vec temp_pos = editor_camera_frustum.pos;
@@ -199,14 +193,17 @@ UPDATE_STATUS Camera3D::Update(float dt)
 
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
 		{
-			//Transform position to range [-1,1] for UnProjectLineSegment
-			float raycast_x = (float)(((float)(App->input->GetMouseX() - App->renderer_3d->GetScenePosX()) / (float)App->renderer_3d->GetSceneWidth()) * 2.0f) - 1;
-			float raycast_y = (float)(((float)(App->input->GetMouseY() - App->renderer_3d->GetScenePosY()) / (float)(App->renderer_3d->GetSceneHeight())) * 2.0f) - 1;
-			picking_ray = editor_camera_frustum.UnProjectLineSegment(raycast_x, -raycast_y);
-			App->scene_manager->GetRoot()->PickGameObject(&picking_ray, editor_camera_frustum.FarPlaneDistance());
+			if (!camera_dragging)
+			{
+				//Transform position to range [-1,1] for UnProjectLineSegment
+				float raycast_x = (float)(((float)(App->input->GetMouseX() - App->renderer_3d->GetScenePosX()) / (float)App->renderer_3d->GetSceneWidth()) * 2.0f) - 1;
+				float raycast_y = (float)(((float)(App->input->GetMouseY() - App->renderer_3d->GetScenePosY()) / (float)(App->renderer_3d->GetSceneHeight())) * 2.0f) - 1;
+				picking_ray = editor_camera_frustum.UnProjectLineSegment(raycast_x, -raycast_y);
+				App->scene_manager->GetRoot()->PickGameObject(&picking_ray, editor_camera_frustum.FarPlaneDistance());
+			}
+			camera_dragging = false;
 		}
 	}
-
 	return UPDATE_CONTINUE;
 }
 
@@ -342,7 +339,7 @@ const float * Camera3D::GetWorldMatrix() const
 
 void Camera3D::CenterToGameObject(const GameObject* game_object)
 {
-	vec center = game_object->GetWorldPosition();
+	vec center = game_object->GetAABB()->CenterPoint();
 	float distance = game_object->GetAABB()->Diagonal().Length();
 	if (distance == inf)
 		distance = 2.0f;	//Standard distance if the object has no AABB (i.e. camera)

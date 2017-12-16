@@ -21,6 +21,7 @@ private :
 	std::vector<Plane> frustum_planes;
 
 	bool config_camera = false;
+	bool camera_dragging = false;
 
 	float camera_speed = 5.0f;
 	float camera_zoom_speed = 1.75f;
@@ -54,8 +55,7 @@ public:
 	const float* GetViewProjMatrix()const;
 	const float * GetViewProjMatrixTransposed() const; 
 	const float4x4 GetViewMatrix()const;
-	const float* GetWorldMatrix()const;
-		
+	const float* GetWorldMatrix()const;		
 	
 	void CenterToGameObject(const GameObject* game_object);
 	void OpenCloseMatricesDebugWindow();
