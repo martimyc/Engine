@@ -105,7 +105,7 @@ public:
 	void StopUsingMesh(Mesh* mesh, const GameObject* go);
 	void StopUsingPrefab(Prefab* prefab, const GameObject* go);
 	void StopUsingSkeleton(Skeleton* skeleton, const GameObject* go);
-	void StopUsingAnimation(Animation* aniim, const GameObject* go);
+	void StopUsingAnimation(Animation* anim, const GameObject* go);
 
 	//Materials
 	unsigned int GetNewMaterialPriority();

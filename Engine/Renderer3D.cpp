@@ -255,6 +255,17 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 
 					to_draw->GetMesh()->Draw(to_draw->GetAppliedMaterial());
 					to_draw->GetMesh()->DrawKDT();
+
+					if (to_draw == App->scene_manager->GetFocused() && App->scene_manager->GetDrawMode() == DM_NORMAL)
+					{
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+						glColor4f(255.0f, 255.0f, 255.0f, 1.0f);
+						glLineWidth(2.0f);
+						to_draw->GetMesh()->Draw(to_draw->GetAppliedMaterial());
+						glLineWidth(1.0f);
+						glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					}
 				}
 				draw_queue.pop();
 				glPopMatrix();

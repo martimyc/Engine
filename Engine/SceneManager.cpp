@@ -150,6 +150,11 @@ void SceneManager::DrawMode() const
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+const DRAW_MODE SceneManager::GetDrawMode() const
+{
+	return draw_mode;
+}
+
 void SceneManager::SetFocused(GameObject* game_obj)
 {
 	focused = game_obj;

@@ -38,6 +38,8 @@ public:
 	bool Update();
 
 	void ChangeSkeleton(Skeleton* new_skeleton);
+
+	void StopUsingAnimation(const GameObject* go);
 };
 
 

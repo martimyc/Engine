@@ -59,6 +59,7 @@ public:
 	void OpenCloseConfigSceneWindow();
 
 	void DrawMode() const;
+	const DRAW_MODE GetDrawMode() const;
 
 	void EmptyScene();
 

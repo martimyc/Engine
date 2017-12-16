@@ -292,9 +292,9 @@ void ResourceManager::StopUsingSkeleton(Skeleton * skeleton, const GameObject * 
 	current_dir->StopUsingSkeleton(skeleton, go);
 }
 
-void ResourceManager::StopUsingAnimation(Animation * aniim, const GameObject * go) 
+void ResourceManager::StopUsingAnimation(Animation * anim, const GameObject * go) 
 {
-	current_dir->StopUsingAnimation(aniim, go);
+	current_dir->StopUsingAnimation(anim, go);
 }
 
 Texture* ResourceManager::LoadCheckers()
