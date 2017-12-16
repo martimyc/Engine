@@ -701,18 +701,11 @@ bool Material::Inspector()
 {
 	bool ret = true;
 
-
 	if (ImGui::TreeNode("Material"))
 	{
 		ImGui::Text("Name: %s", name.c_str());
 		source->Inspector();
 		ImGui::TreePop();
-	}
-
-	if (ImGui::Button("Delete"))
-	{
-		LOG("Deleting material");
-		ret = false;
 	}
 
 	return ret;
