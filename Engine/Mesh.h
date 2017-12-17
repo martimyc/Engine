@@ -54,8 +54,6 @@ struct MeshSource
 	float raycast_ticks_log[KDT_GRAPH_SIZE] = {};
 	float raycast_checks_log[KDT_GRAPH_SIZE] = {};
 
-	friend class Skeleton;
-
 	MeshSource();
 	MeshSource(const MeshSource& copy);
 	~MeshSource();
@@ -69,6 +67,7 @@ struct MeshSource
 
 	//Getters
 	//Vertices
+	float3 GetVertex(unsigned int vertex_id) const;
 	const GLuint GetVerticesID() const;
 	const GLuint GetNumVertices() const;
 	const GLfloat* GetVertices() const;
@@ -156,7 +155,8 @@ public:
 	void UnLoad();
 
 	//Getters
-		//Vertices
+	//Vertices
+	float3 GetVertex(unsigned int vertex_id) const;
 	const GLuint GetVerticesID() const;
 	const GLuint GetNumVertices() const;
 	const GLfloat* GetVertices() const;
