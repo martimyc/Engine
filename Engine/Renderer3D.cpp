@@ -312,13 +312,12 @@ UPDATE_STATUS Renderer3D::PostUpdate(float dt)
 		render_to_texture->SetHeight(ImGui::GetWindowHeight());
 
 		//Create Play/Pause/Play1Frame buttons
-		ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY()), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2((render_to_texture->GetPosX() + render_to_texture->GetWidth() / 2) - (play_buttons_size_x / 2), render_to_texture->GetPosY() - 25), ImGuiCond_Always);
 		ImGui::SetNextWindowSize(ImVec2(play_buttons_size_x, play_buttons_size_y), ImGuiCond_Always);
 		ImGuiWindowFlags flags_buttons = ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
-			ImGuiWindowFlags_ShowBorders;
-		ImGui::Begin("", nullptr, flags_buttons);
+			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+		ImGui::Begin("", nullptr, ImVec2(play_buttons_size_x, play_buttons_size_y), 0.0f, flags_buttons);
 		App->resource_manager->CreateButtons();
 		ImGui::End();
 

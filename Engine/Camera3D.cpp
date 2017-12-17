@@ -340,7 +340,7 @@ const float * Camera3D::GetWorldMatrix() const
 void Camera3D::CenterToGameObject(const GameObject* game_object)
 {
 	vec center = game_object->GetAABB()->CenterPoint();
-	float distance = game_object->GetAABB()->Diagonal().Length();
+	float distance = game_object->GetMaxDistanceAABB();
 	if (distance == inf)
 		distance = 2.0f;	//Standard distance if the object has no AABB (i.e. camera)
 	LookAt(center, distance);
