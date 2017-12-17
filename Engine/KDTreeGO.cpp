@@ -733,6 +733,7 @@ void KDTNodeGO::ReArrange()
 		if (game_objects[i] == nullptr && game_objects[i + 1] != nullptr)
 		{
 			game_objects[i] = game_objects[i + 1];
+			game_objects[i + 1] = nullptr;
 			i = 0;
 		}
 }

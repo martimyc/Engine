@@ -126,6 +126,7 @@ public:
 	const Sphere* GetBoundingSphere() const;
 	const AABB* GetAABB() const;
 	const OBB* GetOBB() const;
+	float GetMaxDistanceAABB()const;
 	bool IsCamera()const;
 	//-----
 

@@ -554,6 +554,12 @@ const OBB * GameObject::GetOBB() const
 	return &bounds.obb_bounding_box;
 }
 
+float GameObject::GetMaxDistanceAABB() const
+{
+	math::float3 aabb_distances = Abs(bounds.aabb_bounding_box.minPoint - bounds.aabb_bounding_box.maxPoint);
+	return max(aabb_distances.x, max(aabb_distances.y, aabb_distances.z));
+}
+
 bool GameObject::IsCamera() const
 {
 	return is_camera;

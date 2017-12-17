@@ -176,7 +176,7 @@ void SceneManager::AddPrefabAsNewGameObjects(GameObject * root)
 	if (AddToKDT(new_game_object) != false)
 		focused->AddChild(new_game_object);
 	else
-		LOG("%s could not be added to the KD-Tree", root->GetName().c_str());
+		LOG("Prefab could not be added to the KD-Tree");
 }
 
 void SceneManager::DrawBoundingBoxes() const
