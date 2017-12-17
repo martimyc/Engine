@@ -17,6 +17,7 @@ private:
 	//debug
 	bool draw_skeleton;
 	bool draw_bind_pos;
+	bool interpolation;
 
 public:
 	Animator(Skeleton* skeleton, const GameObject* const go, bool enabled = true);

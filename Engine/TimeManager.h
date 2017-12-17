@@ -12,14 +12,14 @@ private:
 
 	PerfTimer dt_timer;
 
-	uint64 frame_count = 0;
+	uint64 frame_count = 0.0000;
 
-	double game_time = 0;
-	float game_time_scale = 0;
-	float game_dt = 0;
+	double game_time = 0.0000;
+	float game_time_scale = 0.0000;
+	float game_dt = 0.0000;
 
-	double real_time = 0;
-	float real_time_dt = 0;
+	double real_time = 0.0000;
+	float real_time_dt = 0.0000;
 
 	bool game_clock_paused = true;
 	bool can_pause = false;

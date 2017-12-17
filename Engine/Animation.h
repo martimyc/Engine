@@ -22,11 +22,11 @@ private:
 			std::vector<std::pair<double,Quat>> rotation_samples;
 			std::vector<std::pair<double,float3>> scale_samples;
 
-			void GetTransform(double time, float3x4& transform, bool interpolation) const;
+			void GetTransform(double time, float3x4& transform, const float3x4 & inverse_bind_pos, bool interpolation) const;
 		};
 
-		double fps;
-		unsigned int frame_count;
+		double ticks_per_sec;
+		double duration;
 		std::vector<Channel*> channels;
 		bool loop;
 
@@ -35,9 +35,7 @@ private:
 
 		bool Inspector();
 
-		void GetSkeletonPositions(double time, std::vector<std::pair<std::string, float3x4>>& transforms, bool interpolation) const;
-
-		double GetLength() const;
+		void GetJointPos(const std::string& joint_name, float3x4& joint_transform, const float3x4 & inverse_bind_pos, double anim_time, bool interpolation = true);
 	};
 
 	AnimationClip* source;
@@ -58,11 +56,15 @@ public:
 
 	bool IsLoaded() const;
 
-	void GetSkeletonPositions(double time, std::vector<std::pair<std::string, float3x4>>& transforms, bool interpolation = true) const;
+	void GetJointPos(const std::string& joint_name, float3x4& joint_transform, const float3x4 & inverse_bind_pos, double anim_time, bool interpolation = true);
 
 	double GetLength() const;
 
 	void UnLoad();
+
+	bool GetLoop() const;
+
+	double GetTicksPerSecond() const;
 };
 
 #endif // !ANIMATION

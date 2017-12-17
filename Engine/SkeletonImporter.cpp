@@ -18,6 +18,7 @@ unsigned int SkeletonImporter::GetTotalSize(aiBone** bones, unsigned int num_bon
 	{ 
 		size += bones[i]->mName.length + 1;
 		size += bones[i]->mNumWeights * (sizeof(unsigned int) + sizeof(float));
+		size += bones[i]->mNumWeights * (sizeof(unsigned int) + sizeof(float));
 	}
 
 	size += (sizeof(float) * 4 * 3 + sizeof(unsigned int)) * num_bones ;
@@ -94,13 +95,15 @@ aiMatrix4x4 SkeletonImporter::GetGlobalTransform(const aiNode * node) const
 	return transform;
 }
 
-void SkeletonImporter::ImportJoint(char** iterator, const aiBone * bone, const aiNode* node, aiBone** bones, unsigned int num_bones, const aiMatrix4x4& parent_global_transform) const
+void SkeletonImporter::ImportJoint(char** iterator, const aiBone * bone, const aiNode* node, aiBone** bones, unsigned int num_bones) const
 {
 	memcpy(*iterator, bone->mName.C_Str(), bone->mName.length + 1);
 	*iterator += bone->mName.length + 1;
 
-	aiMatrix4x4 offset(bone->mOffsetMatrix);
-	memcpy(*iterator, &offset.a1, sizeof(float) * 4 * 3);
+	memcpy(*iterator, &bone->mOffsetMatrix.a1, sizeof(float) * 4 * 3);
+	*iterator += sizeof(float) * 4 * 3;
+
+	memcpy(*iterator, &node->mTransformation.a1, sizeof(float) * 4 * 3);
 	*iterator += sizeof(float) * 4 * 3;
 
 	memcpy(*iterator, &bone->mNumWeights, sizeof(unsigned int));
@@ -125,11 +128,11 @@ void SkeletonImporter::ImportJoint(char** iterator, const aiBone * bone, const a
 		if (IsBone(node->mChildren[i]->mName, bones, num_bones))
 		{
 			const aiBone* child_bone = FindEsqueletonBone(node->mChildren[i]->mName, bones, num_bones);
-			ImportJoint(iterator, child_bone, node->mChildren[i], bones, num_bones, parent_global_transform * node->mTransformation);
+			ImportJoint(iterator, child_bone, node->mChildren[i], bones, num_bones);
 		}
 }
 
-Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator) const
+Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator, const float3x4& parent_transform) const
 {
 	Skeleton::Rigg::Joint joint;
 
@@ -145,7 +148,11 @@ Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator) const
 	if (joint.inverse_bind_pose_transform.Inverse() == false)
 		LOG("Could not inverse joint transform");
 
-	joint.SetTransform(joint.inverse_bind_pose_transform);
+	for (int i = 0; i < 3; i++)
+	{
+		memcpy(&joint.current_transform[i][0], *iterator, sizeof(float) * 4);
+		*iterator += sizeof(float) * 4;
+	}
 
 	unsigned int num_weights;
 	memcpy(&num_weights, *iterator, sizeof(unsigned int));
@@ -159,7 +166,7 @@ Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator) const
 	*iterator += sizeof(unsigned int);
 
 	for (int i = 0; i < num_childs; i++)
-		joint.child_joints.push_back(LoadJoint(iterator));
+		joint.child_joints.push_back(LoadJoint(iterator, parent_transform * joint.current_transform));
 
 	return joint;
 }
@@ -179,8 +186,14 @@ const UID SkeletonImporter::Import(aiBone ** bones, aiNode* scene_root_node, aiN
 	aiBone* root_joint = FindEsqueletonBone(root_node->mName, bones, num_bones);
 
 	aiMatrix4x4 global_root_joint_parent(GetGlobalTransform(root_node->mParent));
+	aiMatrix4x4 global_mesh(GetGlobalTransform(mesh_node));
+	root_node->mTransformation = global_root_joint_parent * root_node->mTransformation;
+	root_node->mTransformation = global_mesh.Inverse() * root_node->mTransformation;
 
-	ImportJoint(&iterator, root_joint, root_node, bones, num_bones, global_root_joint_parent);
+	memcpy(iterator, &num_bones, sizeof(unsigned int));
+	iterator += sizeof(unsigned int);
+
+	ImportJoint(&iterator, root_joint, root_node, bones, num_bones);
 
 	ColapseUselesNodes(root_node);
 
@@ -234,7 +247,10 @@ bool SkeletonImporter::Load(Skeleton * to_load, const SkeletonLoadConfiguration*
 
 		Skeleton::Rigg* new_rigg = new Skeleton::Rigg;
 
-		new_rigg->root_joint = LoadJoint(&iterator);
+		memcpy(&new_rigg->num_joints, iterator, sizeof(unsigned int));
+		iterator += sizeof(unsigned int);
+
+		new_rigg->root_joint = LoadJoint(&iterator, float3x4::identity);
 
 		new_rigg->selected_joint = &new_rigg->root_joint;
 

@@ -4,6 +4,7 @@
 #include "MathGeoLib\src\Math\float3x3.h"
 #include "MathGeoLib\src\Math\float4x4.h"
 #include "MathGeoLib\src\Math\Quat.h"
+#include "Animation.h"
 #include "Skeleton.h"
 
 Skeleton::Skeleton(const std::string & name, const UID & uid) : Resource(RT_SKELETON, name, uid), skeleton(nullptr)
@@ -62,11 +63,6 @@ void Skeleton::UpdateJointTransforms(const float3x4 & mesh_world_transform)
 		LOG("Skeleton Rigg not loaded yet");
 }
 
-void Skeleton::UpdateJointSpheres()
-{
-	skeleton->UpdateJointSpheres();
-}
-
 void Skeleton::SetWorldPositions(const float3x4 & mesh_world_transform)
 {
 	if (skeleton != nullptr)
@@ -75,12 +71,20 @@ void Skeleton::SetWorldPositions(const float3x4 & mesh_world_transform)
 		LOG("Skeleton Rigg not loaded yet");
 }
 
-void Skeleton::ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms)
+void Skeleton::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation)
 {
 	if (skeleton != nullptr)
-		skeleton->ChangeJointTransforms(joint_transforms);
+		skeleton->ChangeJointTransforms(anim, anim_time, interpolation);
 	else
 		LOG("Skeleton Rigg not loaded yet");
+}
+
+unsigned int Skeleton::GetNumJoints() const
+{
+	if (skeleton != nullptr)
+		skeleton->GetNumJoints();
+	LOG("Skeleton Rigg not loaded yet");
+	return 0;
 }
 
 Skeleton::Rigg::Rigg(): skeleton_hirarchy(false), selected_joint(nullptr)
@@ -99,7 +103,7 @@ bool Skeleton::Rigg::Inspector()
 			root_joint.Hirarchy(&selected_joint);
 		ImGui::End();
 	}
-		
+
 	return selected_joint->Inspector();
 }
 
@@ -115,12 +119,8 @@ void Skeleton::Rigg::DrawBindPos(const float3x4 & mesh_global_transform) const
 
 void Skeleton::Rigg::UpdateJointTransforms(const float3x4 & mesh_world_transform)
 {
-	selected_joint->UpdateTransform(mesh_world_transform);
-}
-
-void Skeleton::Rigg::UpdateJointSpheres()
-{
-	root_joint.UpdateSpherePos();
+	root_joint.UpdateTransforms(mesh_world_transform, selected_joint);
+	root_joint.SetWorldPositions(mesh_world_transform);
 }
 
 void Skeleton::Rigg::SetWorldPositions(const float3x4 & mesh_world_transform)
@@ -128,31 +128,18 @@ void Skeleton::Rigg::SetWorldPositions(const float3x4 & mesh_world_transform)
 	root_joint.SetWorldPositions(mesh_world_transform);
 }
 
-void Skeleton::Rigg::ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms)
+void Skeleton::Rigg::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation)
 {
-	root_joint.ChangeTransforms(joint_transforms);
+	root_joint.ChangeTransforms(anim, anim_time, interpolation);
+}
+
+unsigned int Skeleton::Rigg::GetNumJoints() const
+{
+	return num_joints;
 }
 
 Skeleton::Rigg::Joint::Joint(): sphere(vec::zero, JOINT_SPHERE_RADIUS)
 {}
-
-void Skeleton::Rigg::Joint::SetTransform(const float3x4 & new_transform)
-{
-	current_transform = new_transform;
-
-	position = current_transform.TranslatePart();
-
-	float3x3 rotation_matrix = current_transform.RotatePart();
-
-	rotation_matrix.Orthonormalize(0, 1, 2);
-
-	angles = rotation_matrix.ToEulerXYZ();
-	angles *= RADTODEG;
-
-	float* test = &angles.x;
-
-	scaling = current_transform.GetScale();
-}
 
 bool Skeleton::Rigg::Joint::Inspector()
 {
@@ -226,47 +213,47 @@ void Skeleton::Rigg::Joint::Hirarchy(Joint ** selected)
 	}
 }
 
-void Skeleton::Rigg::Joint::UpdateSpherePos()
+void Skeleton::Rigg::Joint::UpdateTransforms(const float3x4& parent_global, const Joint* selected)
 {
-	float4 pos(0.0f, 0.0f, 0.0f, 1.0f);
-	pos = current_transform * pos;
-	sphere.pos.x = pos.x;
-	sphere.pos.y = pos.y;
-	sphere.pos.z = pos.z;
+	if (selected == this)
+	{
+		angles *= DEGTORAD;
 
-	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
-		it->UpdateSpherePos();
-}
+		float3x4 new_world_transform(float3x4::FromTRS(position, float3x4::FromEulerXYZ(angles.x, angles.y, angles.z), scaling));
 
-void Skeleton::Rigg::Joint::UpdateTransform(const float3x4& mesh_world_transform)
-{
-	angles *= DEGTORAD;
+		angles *= RADTODEG;
 
-	float3x4 new_transform(float3x4::FromTRS(position, float3x4::FromEulerXYZ(angles.x, angles.y, angles.z), scaling));
+		current_transform = parent_global.Inverted() * new_world_transform;
+	}
 	
+	float3x4 global(parent_global * current_transform);
+
+	//ImGui
+	position = global.TranslatePart();
+
+	float3x3 rotation_matrix = global.RotatePart();
+
+	rotation_matrix.Orthonormalize(0, 1, 2);
+
+	angles = rotation_matrix.ToEulerXYZ();
 	angles *= RADTODEG;
 
-	new_transform = mesh_world_transform.Inverted() * new_transform;
+	float* test = &angles.x;
+
+	scaling = global.GetScale();
+	//---
+
+	//Sphere
+	sphere.pos.x = position.x;
+	sphere.pos.y = position.y;
+	sphere.pos.z = position.z;
+	//---
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
-	{
-		it->UpdateChildTransform(current_transform.Inverted(), new_transform);
-		it->SetWorldPositions(mesh_world_transform);
-	}
-
-	current_transform = new_transform;
+		it->UpdateTransforms(global, selected);
 }
 
-void Skeleton::Rigg::Joint::UpdateChildTransform(const float3x4 & old_parent_inverse, const float3x4 & new_parent)
-{
-	float3x4 local(old_parent_inverse * current_transform);
-	current_transform = new_parent * local;
-
-	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
-		it->UpdateChildTransform(old_parent_inverse, new_parent);
-}
-
-void Skeleton::Rigg::Joint::Draw(const float3x4& mesh_global_transform, const Joint* selected) const
+void Skeleton::Rigg::Joint::Draw(const float3x4& global_transform, const Joint* selected) const
 {
 	glBegin(GL_LINES);
 
@@ -275,7 +262,7 @@ void Skeleton::Rigg::Joint::Draw(const float3x4& mesh_global_transform, const Jo
 	float4 y(0.0f, 1.0f, 0.0f, 1.0f);
 	float4 z(0.0f, 0.0f, 1.0f, 1.0f);
 
-	float3x4 transform(mesh_global_transform * current_transform);
+	float3x4 transform(global_transform * current_transform);
 
 	pos = transform * pos;
 	
@@ -313,7 +300,7 @@ void Skeleton::Rigg::Joint::Draw(const float3x4& mesh_global_transform, const Jo
 	{
 		float4 child_vec(0.0f, 0.0f, 0.0f, 1.0f);
 
-		float3x4 child_world_transform(mesh_global_transform * it->current_transform);
+		float3x4 child_world_transform(transform * it->current_transform);
 		child_vec = child_world_transform * child_vec;
 
 		glVertex3f(pos.x, pos.y, pos.z);
@@ -324,16 +311,14 @@ void Skeleton::Rigg::Joint::Draw(const float3x4& mesh_global_transform, const Jo
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//Sphere draw in world pos
-	Sphere world_sphere(pos.xyz(), JOINT_SPHERE_RADIUS);
-
+	//Sphere
 	if (this == selected)
-		world_sphere.Draw(1.0f, 0.65f, 1.0f, 1.0f);
+		sphere.Draw(1.0f, 0.65f, 1.0f, 1.0f);
 	else
-		world_sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
+		sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
 
 	for (std::vector<Joint>::const_iterator it = child_joints.begin(); it != child_joints.end(); ++it)
-		it->Draw(mesh_global_transform, selected);
+		it->Draw(transform, selected);
 }
 
 void Skeleton::Rigg::Joint::DrawBindPos(const float3x4 & mesh_global_transform) const
@@ -393,17 +378,16 @@ void Skeleton::Rigg::Joint::DrawBindPos(const float3x4 & mesh_global_transform) 
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//Sphere draw in world pos
-	Sphere world_sphere(pos.xyz(), JOINT_SPHERE_RADIUS);
-	world_sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
+	//Sphere
+	sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
 
 	for (std::vector<Joint>::const_iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->DrawBindPos(mesh_global_transform);
 }
 
-void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & mesh_world_transform)
+void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & parent_transform)
 {
-	float3x4 world_transform(mesh_world_transform * current_transform);
+	float3x4 world_transform(parent_transform * current_transform);
 	position = world_transform.TranslatePart();
 
 	float3x3 rotation_matrix = world_transform.RotatePart();
@@ -416,19 +400,14 @@ void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & mesh_world_transf
 	scaling = world_transform.GetScale();
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
-		it->SetWorldPositions(mesh_world_transform);
+		it->SetWorldPositions(world_transform);
 }
 
-void Skeleton::Rigg::Joint::ChangeTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms)
+void Skeleton::Rigg::Joint::ChangeTransforms(Animation* anim, double anim_time, bool interpolation)
 {
-	for(std::vector<std::pair<std::string, float3x4>>::iterator it = joint_transforms.begin(); it != joint_transforms.end(); ++it)
-		if (name == it->first)
-		{
-			SetTransform(it->second);
-			joint_transforms.erase(it);
-			break;
-		}
+	anim->GetJointPos(name, current_transform, inverse_bind_pose_transform, anim_time, interpolation);
+	//UpdateImGui(current_transform);
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
-		it->ChangeTransforms(joint_transforms);
+		it->ChangeTransforms(anim, anim_time, interpolation);
 }

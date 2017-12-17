@@ -30,8 +30,8 @@ private:
 	void ColapseUselesNodes(aiNode* skeleton_root) const;
 	aiMatrix4x4 GetGlobalTransform(const aiNode* node) const;
 
-	void ImportJoint(char** iterator, const aiBone* bone, const aiNode* node, aiBone** bones, unsigned int num_bones, const aiMatrix4x4& parent_global_transform) const;
-	Skeleton::Rigg::Joint LoadJoint(char** iterator) const;
+	void ImportJoint(char** iterator, const aiBone* bone, const aiNode* node, aiBone** bones, unsigned int num_bones) const;
+	Skeleton::Rigg::Joint LoadJoint(char** iterator, const float3x4& parent_transform) const;
 
 public:
 	const UID Import(aiBone** bones, aiNode* scene_root_node, aiNode* mesh_node, unsigned int num_bones) const;

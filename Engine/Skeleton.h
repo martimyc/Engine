@@ -9,6 +9,7 @@
 #define JOINT_SPHERE_RADIUS 0.5f
 
 typedef float GLfloat;
+class Animation;
 
 class Skeleton : public Resource
 {
@@ -40,27 +41,24 @@ private:
 
 			Joint();
 
-			void SetTransform(const float3x4& new_transform);
-
 			bool Inspector();
 			void Hirarchy(Joint** selected);
 
-			void UpdateSpherePos();
-			void UpdateTransform(const float3x4& mesh_world_transform);
-			void UpdateChildTransform(const float3x4 & old_parent_inverse, const float3x4 & new_parent);
+			void UpdateTransforms(const float3x4& parent_transform, const Joint* selected);
 
 			void Draw(const float3x4& mesh_global_transform, const Joint* selected) const;
 			void DrawBindPos(const float3x4& mesh_global_transform) const;
 
 			void SetWorldPositions(const float3x4& mesh_world_transform);
 
-			void ChangeTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms);
+			void ChangeTransforms(Animation* anim, double anim_time, bool interpolation = true);
 		};
 
 		Joint root_joint;
 
 		//inspector
 		Joint* selected_joint;
+		unsigned int num_joints;
 		bool skeleton_hirarchy;
 
 		Rigg();
@@ -72,11 +70,12 @@ private:
 		void DrawBindPos(const float3x4& mesh_global_transform) const;
 
 		void UpdateJointTransforms(const float3x4& mesh_world_transform);
-		void UpdateJointSpheres();
 
 		void SetWorldPositions(const float3x4& mesh_world_transform);
 
-		void ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms);
+		void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
+
+		unsigned int GetNumJoints() const;
 	};
 
 	Rigg* skeleton;
@@ -104,11 +103,12 @@ public:
 	void DrawBindPos(const float3x4& mesh_global_transform) const;
 
 	void UpdateJointTransforms(const float3x4& mesh_world_transform);
-	void UpdateJointSpheres();
 
 	void SetWorldPositions(const float3x4& mesh_world_transform);
 
-	void ChangeJointTransforms(std::vector<std::pair<std::string, float3x4>>& joint_transforms);
+	void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
+
+	unsigned int GetNumJoints() const;
 };
 
 #endif // !SKELETON

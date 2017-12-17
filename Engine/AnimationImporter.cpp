@@ -18,6 +18,7 @@ unsigned int AnimationImporter::GetTotalSize(const aiAnimation * animation) cons
 	unsigned int size = FORMAT_SIZE;
 	size += sizeof(unsigned int);
 	size += sizeof(double);
+	size += sizeof(double);
 
 	for (unsigned int i = 0; i < animation->mNumChannels; i++)
 	{
@@ -46,6 +47,9 @@ const UID AnimationImporter::Import(const aiAnimation * animation, const Animati
 	memcpy(iterator, &animation->mTicksPerSecond, sizeof(double));
 	iterator += sizeof(double);
 
+	memcpy(iterator, &animation->mDuration, sizeof(double));
+	iterator += sizeof(double);
+
 	for (unsigned int i = 0; i < animation->mNumChannels; i++)
 	{
 		memcpy(iterator, animation->mChannels[i]->mNodeName.C_Str(), animation->mChannels[i]->mNodeName.length + 1);
@@ -59,9 +63,6 @@ const UID AnimationImporter::Import(const aiAnimation * animation, const Animati
 
 		memcpy(iterator, &animation->mChannels[i]->mNumScalingKeys, sizeof(unsigned int));
 		iterator += sizeof(unsigned int);
-
-		size_t test = iterator - buffer;
-		int hello = 0 - 3;
 
 		//Positions
 		for (int j = 0; j < animation->mChannels[i]->mNumPositionKeys; j++)
@@ -132,7 +133,10 @@ bool AnimationImporter::Load(Animation * to_load, const AnimationLoadConfigurati
 		memcpy(&num_channels, iterator, sizeof(unsigned int));
 		iterator += sizeof(unsigned int);
 
-		memcpy(&new_clip->fps, iterator, sizeof(double));
+		memcpy(&new_clip->ticks_per_sec, iterator, sizeof(double));
+		iterator += sizeof(double);
+
+		memcpy(&new_clip->duration, iterator, sizeof(double));
 		iterator += sizeof(double);
 
 		new_clip->channels.reserve(num_channels);
@@ -150,23 +154,30 @@ bool AnimationImporter::Load(Animation * to_load, const AnimationLoadConfigurati
 			iterator += sizeof(unsigned int) * 3;
 
 			//Positions
-			size_t test = iterator - buffer;
-
 			new_channel->position_samples.resize(num_keys[0]);
-			memcpy(&new_channel->position_samples[0].first, iterator, (sizeof(double) + sizeof(float) * 3) * num_keys[0]);
-			iterator += (sizeof(double) + sizeof(float) * 3) * num_keys[0];
+			for (int i = 0; i < num_keys[0]; i++)
+			{
+				memcpy(&new_channel->position_samples[i], iterator, sizeof(double) + sizeof(float) * 3);
+				iterator += sizeof(double) + sizeof(float) * 3;
+			}
 			std::sort(new_channel->position_samples.begin(), new_channel->position_samples.end(), CompareVec());
 
 			//Rotations
 			new_channel->rotation_samples.resize(num_keys[1]);
-			memcpy(&new_channel->rotation_samples[0].first, iterator, (sizeof(double) + sizeof(float) * 4) * num_keys[1]);
-			iterator += (sizeof(double) + sizeof(float) * 4) * num_keys[1];
+			for (int i = 0; i < num_keys[1]; i++)
+			{
+				memcpy(&new_channel->rotation_samples[i], iterator, sizeof(double) + sizeof(float) * 4);
+				iterator += sizeof(double) + sizeof(float) * 4;
+			}
 			std::sort(new_channel->rotation_samples.begin(), new_channel->rotation_samples.end(), CompareQuat());
 
 			//Scaling
 			new_channel->scale_samples.resize(num_keys[2]);
-			memcpy(&new_channel->scale_samples[0].first, iterator, (sizeof(double) + sizeof(float) * 3) * num_keys[2]);
-			iterator += (sizeof(double) + sizeof(float) * 3) * num_keys[2];
+			for (int i = 0; i < num_keys[2]; i++)
+			{
+				memcpy(&new_channel->scale_samples[i], iterator, sizeof(double) + sizeof(float) * 3);
+				iterator += sizeof(double) + sizeof(float) * 3;
+			}
 			std::sort(new_channel->scale_samples.begin(), new_channel->scale_samples.end(), CompareVec());
 
 			new_clip->channels.push_back(new_channel);

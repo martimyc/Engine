@@ -10,11 +10,12 @@
 #include "Application.h"
 #include "Animator.h"
 
-Animator::Animator(Skeleton * skeleton, const GameObject* const go, bool enabled): Component(CT_ANIMATOR, go, enabled), skeleton(skeleton), draw_skeleton(false), draw_bind_pos(false)
+Animator::Animator(Skeleton * skeleton, const GameObject* const go, bool enabled): Component(CT_ANIMATOR, go, enabled), skeleton(skeleton), draw_skeleton(false), draw_bind_pos(false), interpolation(true)
 {
 	float4x4 world_transform(game_object->GetWorldTransform().Transposed());
 	float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
 	skeleton->SetWorldPositions(mesh_world_transform);
+	skeleton->UpdateJointTransforms(mesh_world_transform);
 }
 
 Animator::Animator(const Animator & copy, const GameObject* const go): Component(CT_ANIMATOR, go, copy.enabled), draw_skeleton(copy.draw_skeleton), draw_bind_pos(copy.draw_bind_pos)
@@ -23,7 +24,9 @@ Animator::Animator(const Animator & copy, const GameObject* const go): Component
 
 	float4x4 world_transform(game_object->GetWorldTransform().Transposed());
 	float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
-	skeleton->SetWorldPositions(mesh_world_transform); //No time, this makes more than one of a skeleton instance imposible to handle
+	//No time, this makes more than one of a skeleton instance imposible to handle
+	skeleton->SetWorldPositions(mesh_world_transform);
+	skeleton->UpdateJointTransforms(mesh_world_transform);
 }
 
 Animator::~Animator()
@@ -40,6 +43,7 @@ void Animator::Inspector()
 	{
 		ImGui::Checkbox("Draw Skeleton", &draw_skeleton);
 		ImGui::Checkbox("Draw Bind Position", &draw_bind_pos);
+		ImGui::Checkbox("Interpolation", &interpolation);
 
 		if (skeleton->Inspector())
 		{
@@ -101,17 +105,24 @@ void Animator::DrawSkeleton() const
 
 bool Animator::Update()
 {
-	std::vector<std::pair<std::string, float3x4>> joint_transforms;
-
 	float time = App->time_manager->GetGameTimeSinceStart();
 
 	//TODO animation blending
 	if (animations.size() != 0)
 	{
-		if (animations.begin()->first > time && animations.begin()->first < time + animations.begin()->second->GetLength())
+		double begin = animations.begin()->first;
+		double end = animations.begin()->first + animations.begin()->second->GetLength();
+
+		if (animations.begin()->second->GetLoop() == true)
 		{
-			animations.begin()->second->GetSkeletonPositions(time, joint_transforms);
-			skeleton->ChangeJointTransforms(joint_transforms);
+			double anim_time = time - (int)(time / animations.begin()->second->GetLength());
+			anim_time = anim_time - animations.begin()->first;
+			skeleton->ChangeJointTransforms(animations.begin()->second, anim_time, interpolation);
+		}
+		if (time >= begin && time <= end)
+		{
+			double tick = (time - animations.begin()->first) * animations.begin()->second->GetTicksPerSecond();
+			skeleton->ChangeJointTransforms(animations.begin()->second, tick, interpolation);
 		}
 	}
 	return true;
