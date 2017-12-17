@@ -4,44 +4,27 @@ This code is under the [GNU General Public License v3.0](https://github.com/mart
 
 Created by [Marc Latorre](https://github.com/marclafr) and [Marti MajÃ³](https://github.com/martimyc).
 
+[Webpage](http://marsengine3d.webnode.cat/)
+
 [Repository](https://github.com/martimyc/Engine).
 
 ## Innovation
 
 - Multitexturing (avaiable since version:Geometry Viewer)
-- Docking
+- Docking Finished!
 - Vertex KDTree.
-
-## Incomplete/Problems:
-
-### Not finished: 
-
-#### Time Manager: 
-
-Timers work (window Timers), imported scenes are serialitzated to be loaded later, but GameObjects don't Update acording.
-
-#### Resource manager (see below what is finished): 
-
-- You can't manage files and folders: create / remove / rename yet.
-- Upon start, all resources not managed inside Assets aren't generated in Library yet.
-- Importing options can't be changed from the editor from the inspector yet.
 
 ## Changes:
 
-- MD5 UIDs
+- Skeletal Animation
+- Game Objects can be deleted by pressing the key delete.
+- Most functionality optimized and working way better.
 
-- GameObjects follow a hierarchy that applies all transformations.
+## Skeletal Animation
 
-- Inspector show all properties for each component on selected GameObject.
-
-- You can pick objects by clicking the mouse, BUT: You must calculate the KDTree first, or it won't work.
-
-- Camera component created.
-
-- All meshes use a bounding volume (AABB) and can be discarded using Frustum Culling.
-
-- Meshes and Textures are saved to our own format (.mm) under “Library” folder.
-
+- To see the animations, put any mesh by double clicking them in the assets window. Then add the desired animations the same way and while the Game Object you want to put them into is selected, then click play.
+- The skeleton is also transformed with the animation, if you want to see it put the draw mode to: wireframe mode.
+- You can also check the bind pose with a button in the Animator component in the inspector.
 
 ### Resource Management:
 
