@@ -2,7 +2,7 @@
 #define ANIMATION
 
 #include <string>
-#include <map>
+#include <vector>
 #include "MathGeoLib\src\Math\float3.h"
 #include "MathGeoLib\src\Math\Quat.h"
 #include "MathGeoLib\src\Math\float4x4.h"

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "MathGeoLib\src\Math\float3x3.h"
 #include "MathGeoLib\src\Math\float3x4.h"
 #include "MathGeoLib\src\Math\float4x4.h"
@@ -65,17 +66,12 @@ void Animator::Inspector()
 
 		ImGui::Text("Num Animations: %i", animations.size());
 
-		for (std::multimap<double,Animation*>::iterator it = animations.begin(); it != animations.end(); ++it)
+		for (std::vector<std::pair<float,Animation*>>::iterator it = animations.begin(); it != animations.end(); ++it)
 		{
 			it->second->Inspector();
-			float insert(it->first);
 
-			if (ImGui::DragFloat("Start Time", &insert))
-			{
-				Animation* anim = it->second;
-				animations.erase(it);
-				animations.insert(std::make_pair(double(insert), anim));
-			}
+			if (ImGui::DragFloat("Start Time", &it->first))
+				std::sort(animations.begin(), animations.end(), CompareAnims());
 		}
 
 		ImGui::TreePop();
@@ -169,7 +165,8 @@ void Animator::SaveComponent(char ** iterator) const
 
 void Animator::AddAnimation(Animation * new_anim, float start_time)
 {
-	animations.insert(std::make_pair(double(start_time),new_anim));
+	animations.push_back(std::make_pair(start_time,new_anim));
+	std::sort(animations.begin(), animations.end(), CompareAnims());
 }
 
 void Animator::SetSkeleton(Skeleton * new_skeleton)
@@ -211,9 +208,10 @@ bool Animator::Update()
 
 		if (animations.begin()->second->GetLoop() == true)
 		{
-			double anim_time = time - (int)(time / animations.begin()->second->GetLength());
-			anim_time = anim_time - animations.begin()->first;
-			skeleton->ChangeJointTransforms(animations.begin()->second, anim_time, interpolation);
+			double anim_time = (int)(time / animations.begin()->second->GetLength());
+			anim_time = time - anim_time * animations.begin()->second->GetLength();
+			double tick = anim_time * animations.begin()->second->GetTicksPerSecond();
+			skeleton->ChangeJointTransforms(animations.begin()->second, tick, interpolation);
 
 			if (draw_skeleton)
 			{
@@ -224,7 +222,7 @@ bool Animator::Update()
 
 			skeleton->UpdateMesh(game_object->GetMesh());
 		}
-		if (time >= begin && time <= end)
+		else if (time >= begin && time <= end)
 		{
 			double tick = (time - animations.begin()->first) * animations.begin()->second->GetTicksPerSecond();
 			skeleton->ChangeJointTransforms(animations.begin()->second, tick, interpolation);
@@ -251,6 +249,6 @@ void Animator::ChangeSkeleton(Skeleton* new_skeleton)
 void Animator::StopUsingAnimation(const GameObject * go)
 {
 	App->resource_manager->StopUsingSkeleton(skeleton, go);
-	for (std::multimap<double, Animation*>::iterator it = animations.begin(); it != animations.end(); ++it)
-		App->resource_manager->StopUsingAnimation(it._Ptr->_Myval.second, go);
+	for (std::vector<std::pair<float, Animation*>>::iterator it = animations.begin(); it != animations.end(); ++it)
+		App->resource_manager->StopUsingAnimation(it->second, go);
 }

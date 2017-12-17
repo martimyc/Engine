@@ -243,6 +243,11 @@ void MeshSource::LoadKDT(char ** iterator)
 	triangle_kdt->Load(iterator);
 }
 
+float3 MeshSource::GetVertex(unsigned int vertex_id) const
+{
+	return float3(vertices[vertex_id * 3], vertices[vertex_id * 3 + 1], vertices[vertex_id * 3 + 2]);
+}
+
 const GLuint MeshSource::GetVerticesID() const
 {
 	return vertex_id;
@@ -886,6 +891,14 @@ void Mesh::UnLoad()
 {
 	delete source;
 	source = nullptr;
+}
+
+float3 Mesh::GetVertex(unsigned int vertex_id) const
+{
+	if (source != nullptr)
+		return source->GetVertex(vertex_id);
+	LOG("Trying to acces non loaded mesh");
+	return float3::nan;
 }
 
 const GLuint Mesh::GetVerticesID() const

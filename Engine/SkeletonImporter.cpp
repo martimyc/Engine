@@ -143,12 +143,9 @@ Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator, const float3
 
 	for (int i = 0; i < 3; i++)
 	{
-		memcpy(&joint.inverse_bind_pose_transform[i][0], *iterator, sizeof(float) * 4);
+		memcpy(&joint.offset[i][0], *iterator, sizeof(float) * 4);
 		*iterator += sizeof(float) * 4;
 	}
-	
-	/*if (joint.inverse_bind_pose_transform.Inverse() == false)
-		LOG("Could not inverse joint transform");*/
 
 	for (int i = 0; i < 3; i++)
 	{

@@ -4,7 +4,7 @@
 #include "MathGeoLib\src\Math\float3.h"
 #include "Animation.h"
 
-Animation::AnimationClip::AnimationClip()
+Animation::AnimationClip::AnimationClip(): loop(false)
 {}
 
 Animation::AnimationClip::~AnimationClip()

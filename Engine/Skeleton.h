@@ -27,7 +27,7 @@ private:
 				float influence;
 			};
 
-			float3x4 inverse_bind_pose_transform;
+			float3x4 offset;
 			float3x4 current_transform;
 			Sphere sphere;
 			std::string name;
@@ -55,7 +55,7 @@ private:
 
 			void ChangeTransforms(Animation* anim, double anim_time, bool interpolation = true);
 
-			void GetVertices(const MeshSource * original, GLfloat * vertices, const float3x4& parent_mesh);
+			void GetVertices(const Mesh * original, GLfloat * vertices, const float3x4& parent_mesh);
 		};
 
 		Joint root_joint;
@@ -82,11 +82,11 @@ private:
 
 		unsigned int GetNumJoints() const;
 
-		void GetVertices(const MeshSource* original, GLfloat* vertices);
+		void GetVertices(const Mesh* original, GLfloat* vertices);
 	};
 
 	Rigg* skeleton;
-	MeshSource* deformable_mesh;
+	GLfloat* deformable_vertices;
 
 	friend class SkeletonImporter;
 

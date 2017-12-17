@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Globals.h"
 #include "UID.h"
 #include "Animation.h"
