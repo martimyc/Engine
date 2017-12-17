@@ -103,9 +103,8 @@ void Animator::LoadComponent(char ** iterator, const GameObject* game_object)
 		UID uid;
 		memcpy(&uid, *iterator, SIZE_OF_UID);
 		*iterator += SIZE_OF_UID;
-		// = new Animation(name, uid);
-		 Animation* animation = App->resource_manager->UseAnimation(uid, game_object);
-		animations.insert(std::make_pair(d, animation));
+		Animation* animation = App->resource_manager->UseAnimation(uid, game_object);
+		animations.push_back(std::make_pair(d, animation));
 	}
 
 	//Bools
@@ -133,7 +132,7 @@ void Animator::SaveComponent(char ** iterator) const
 	memcpy(*iterator, &num_animations, sizeof(unsigned int));
 	*iterator += sizeof(unsigned int);
 
-	for (std::multimap<double, Animation*>::const_iterator it = animations.begin(); it != animations.end(); ++it)
+	for (std::vector<std::pair<float, Animation*>>::const_iterator it = animations.begin(); it != animations.end(); ++it)
 	{
 		memcpy(*iterator, &it->first, sizeof(double));
 		*iterator += sizeof(double);
