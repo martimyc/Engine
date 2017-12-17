@@ -1,6 +1,5 @@
 #include "imgui\imgui.h"
 #include "Application.h"
-#include "UID.h"
 #include "AssetDirectory.h"
 #include "ImportManager.h"
 #include "TimeManager.h"
@@ -23,6 +22,7 @@ bool TimeManager::Start()
 	game_clock.Pause();
 	dt_timer.Start();
 	frame_count = 0;
+	scene_uid = UID();
 	return true;
 }
 
@@ -61,7 +61,7 @@ void TimeManager::PlayGame()
 {
 	if (!game_clock.IsRunning())
 	{
-		UID scene_uid = App->import_manager->SaveScene();
+		scene_uid = App->import_manager->SaveScene();
 		game_clock.Start();
 		game_clock_paused = false;
 		can_pause = true;
@@ -71,8 +71,7 @@ void TimeManager::PlayGame()
 		game_clock.Start();
 		game_clock.Pause();
 		can_pause = false;
-		//Load Previous Scene
-		//App->import_manager->MetaLoad();
+		App->import_manager->LoadScene(scene_uid);
 	}
 }
 

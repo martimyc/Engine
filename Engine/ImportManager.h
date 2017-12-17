@@ -128,6 +128,7 @@ public:
 
 	void ReImportWithMeta(time_t file_last_mod, const std::string& meta_file, AssetDirectory* dir) const;
 
+	void LoadScene(const UID uid) const;
 	const UID SaveScene() const;
 };
 

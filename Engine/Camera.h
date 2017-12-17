@@ -30,6 +30,7 @@ public:
 
 	void Inspector();
 
+	void LoadComponent(char** iterator, const GameObject* game_object = nullptr);
 	void SaveComponent(char** iterator)const;
 
 	void TransformCamera();

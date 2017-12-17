@@ -81,8 +81,88 @@ void Animator::Inspector()
 	}
 }
 
+void Animator::LoadComponent(char ** iterator, const GameObject* game_object)
+{
+	//Animations	
+	unsigned int num_animations = 0;
+	memcpy(&num_animations, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (int i = 0; i < num_animations; ++i)
+	{
+		double d = 0.0f;
+		memcpy(&d, *iterator, sizeof(double));
+		*iterator += sizeof(double);
+
+		//Animation Name
+		unsigned int name_lenght = 0;
+		memcpy(&name_lenght, *iterator, sizeof(unsigned int));
+		*iterator += sizeof(unsigned int);
+
+		char name[128];
+		memcpy(name, *iterator, name_lenght);
+		*iterator += name_lenght;
+
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+		Animation* animation = App->resource_manager->UseAnimation(uid, game_object);
+		animations.push_back(std::make_pair(d, animation));
+	}
+
+	//Bools
+	memcpy(&draw_skeleton, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&draw_bind_pos, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&interpolation, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+}
+
 void Animator::SaveComponent(char ** iterator) const
 {
+	COMPONENT_TYPE component_type = CT_ANIMATOR;
+	memcpy(*iterator, &component_type, sizeof(COMPONENT_TYPE));
+	*iterator += sizeof(COMPONENT_TYPE);
+
+	memcpy(*iterator, &skeleton->GetUID(), SIZE_OF_UID);
+	*iterator += SIZE_OF_UID;
+
+	//Animations	
+	unsigned int num_animations = animations.size();
+	memcpy(*iterator, &num_animations, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	for (std::vector<std::pair<float, Animation*>>::const_iterator it = animations.begin(); it != animations.end(); ++it)
+	{
+		memcpy(*iterator, &it->first, sizeof(double));
+		*iterator += sizeof(double);
+
+		//Animation Name
+		std::string name(it->second->GetName().c_str());
+		unsigned int name_lenght = name.length() + 1;
+
+		memcpy(*iterator, &name_lenght, sizeof(unsigned int));
+		*iterator += sizeof(unsigned int);
+
+		memcpy(*iterator, name.c_str(), name_lenght);
+		*iterator += name_lenght;
+
+		memcpy(*iterator, &it->second->GetUID(), SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+	}
+
+	//Bools
+	memcpy(*iterator, &draw_skeleton, sizeof(bool));
+	*iterator += sizeof(bool);
+	
+	memcpy(*iterator, &draw_bind_pos, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &interpolation, sizeof(bool));
+	*iterator += sizeof(bool);
 }
 
 void Animator::AddAnimation(Animation * new_anim, float start_time)

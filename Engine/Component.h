@@ -64,6 +64,7 @@ public:
 
 	virtual void Inspector() = 0;
 
+	virtual void LoadComponent(char** iterator, const GameObject* game_object = nullptr) = 0;
 	virtual void SaveComponent(char** iterator)const = 0;
 
 };

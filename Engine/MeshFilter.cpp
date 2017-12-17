@@ -37,8 +37,19 @@ void MeshFilter::Inspector()
 	}
 }
 
+void MeshFilter::LoadComponent(char ** iterator, const GameObject* game_object)
+{
+	//Nothing needed to load
+}
+
 void MeshFilter::SaveComponent(char ** iterator) const
 {
+	COMPONENT_TYPE component_type = CT_MESH_FILTER;
+	memcpy(*iterator, &component_type, sizeof(COMPONENT_TYPE));
+	*iterator += sizeof(COMPONENT_TYPE);
+
+	memcpy(*iterator, &mesh->GetUID(), SIZE_OF_UID);
+	*iterator += SIZE_OF_UID;
 }
 
 const std::string & MeshFilter::GetName() const

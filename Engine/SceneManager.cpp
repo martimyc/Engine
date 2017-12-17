@@ -202,6 +202,11 @@ void SceneManager::DeleteFocused()
 	focused->Delete(to_delete);
 }
 
+void SceneManager::LoadGameObjects(char ** iterator)
+{
+	root->LoadGameObjects(iterator);
+}
+
 void SceneManager::SaveGameObjects(char ** iterator) const
 {
 	root->SaveGameObjects(iterator);
@@ -210,7 +215,10 @@ void SceneManager::SaveGameObjects(char ** iterator) const
 void SceneManager::EmptyScene()
 {
 	delete root;
+	delete go_kdtree;
 	root = new GameObject("Root");
+	go_kdtree = new KDTreeGO();
+	go_kdtree->AddGameObject(root);
 	focused = root;
 }
 
