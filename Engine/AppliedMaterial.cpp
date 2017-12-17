@@ -40,8 +40,19 @@ void AppliedMaterial::Inspector()
 	material->Inspector();
 }
 
+void AppliedMaterial::LoadComponent(char ** iterator, const GameObject* game_object)
+{
+	//Nothing needed to load
+}
+
 void AppliedMaterial::SaveComponent(char ** iterator) const
 {
+	COMPONENT_TYPE component_type = CT_APPLIED_MATERIAL;
+	memcpy(*iterator, &component_type, sizeof(COMPONENT_TYPE));
+	*iterator += sizeof(COMPONENT_TYPE);
+
+	memcpy(*iterator, &material->GetUID(), SIZE_OF_UID);
+	*iterator += SIZE_OF_UID;
 }
 
 const std::string & AppliedMaterial::GetName() const

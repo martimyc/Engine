@@ -1,6 +1,7 @@
 ﻿#ifndef TIME_MANAGER
 #define TIME_MANAGER
 
+#include "UID.h"
 #include "Module.h"
 #include "PerfTimer.h"
 
@@ -25,6 +26,7 @@ private:
 	bool can_pause = false;
 	bool show_timers;
 
+	UID scene_uid;
 
 public:
 	TimeManager(const char* name, bool start_enabled = true);

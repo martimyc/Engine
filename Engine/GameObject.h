@@ -154,8 +154,9 @@ public:
 	GameObject* GetParent() const;
 
 	void SetToDelete();
-	bool IsSetToDelete() const;
-
+	bool IsSetToDelete() const; 
+	
+	void LoadGameObjects(char** iterator);
 	void SaveGameObjects(char** iterator)const;
 };
 

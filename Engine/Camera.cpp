@@ -115,8 +115,32 @@ void Camera::Inspector()
 	}
 }
 
+void Camera::LoadComponent(char ** iterator, const GameObject* game_object)
+{
+	memcpy(&enabled, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	const char* name_ = name.c_str();
+	memcpy(&name_, *iterator, name.length() + 1);
+	*iterator += name.length() + 1;
+	name = name_;
+
+	memcpy(&vertical_fov, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&near_plane_dist, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(&far_plane_dist, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+}
+
 void Camera::SaveComponent(char ** iterator) const
 {
+	COMPONENT_TYPE component_type = CT_CAMERA;
+	memcpy(*iterator, &component_type, sizeof(COMPONENT_TYPE));
+	*iterator += sizeof(COMPONENT_TYPE);
+	
 	memcpy(*iterator, &enabled, sizeof(bool));
 	*iterator += sizeof(bool);
 

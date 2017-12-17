@@ -28,6 +28,7 @@ public:
 
 	void Inspector();
 
+	void LoadComponent(char** iterator, const GameObject* game_object = nullptr);
 	void SaveComponent(char** iterator)const;
 
 	void AddAnimation(Animation* new_anim, float start_time);

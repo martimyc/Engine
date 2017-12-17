@@ -87,11 +87,12 @@ public:
 	void DrawBoundingBoxes() const;
 
 	void AddEmptyGO();
-
+	
 	void UpdateKDT(const GameObject* go);
 
 	void DeleteFocused();
 
+	void LoadGameObjects(char** iterator);
 	void SaveGameObjects(char** iterator) const;
 };
 

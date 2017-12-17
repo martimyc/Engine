@@ -4,6 +4,7 @@
 #include "MathGeoLib\src\Geometry\LineSegment.h"
 #include "MathGeoLib\src\Geometry\Triangle.h"
 
+#include "UID.h"
 #include "KDTreeGO.h"
 
 //components
@@ -713,29 +714,164 @@ bool GameObject::IsSetToDelete() const
 	return to_delete;
 }
 
+void GameObject::LoadGameObjects(char ** iterator)
+{
+	unsigned int num_childs = 0;
+	memcpy(&num_childs, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	//Name
+	unsigned int name_lenght = 0;
+	memcpy(&name_lenght, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
+	memcpy(name, *iterator, name_lenght);
+	*iterator += name_lenght;
+
+	//Transformation Matrices
+		//Local
+	math::float4x4 matrix(math::float4x4::identity);
+	memcpy(&matrix[0][0], *iterator, sizeof(float) * 16);
+	*iterator += sizeof(float) * 16;
+	local_transform->SetTransform(matrix);
+
+		//World
+	memcpy(&matrix[0][0], *iterator, sizeof(float) * 16);
+	*iterator += sizeof(float) * 16;
+	world_transform->SetTransform(matrix);
+
+	//Bounds--------------------
+		//Sphere
+	memcpy(&bounds.original_sphere_bounding_box.pos.x, *iterator, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(&bounds.original_sphere_bounding_box.r, *iterator, sizeof(float));
+	*iterator += sizeof(float);
+
+		//AABB
+	memcpy(&bounds.original_aabb_bb_points[0].x, *iterator, sizeof(float) * 6);
+	*iterator += sizeof(float) * 6;
+
+		//OBB
+	memcpy(&bounds.original_obb_bounding_box.pos.x, *iterator, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(&bounds.original_obb_bounding_box.r.x, *iterator, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(&bounds.original_obb_bounding_box.axis[0], *iterator, sizeof(float) * 9);
+	*iterator += sizeof(float) * 9;
+	//--------------------------
+
+	//Bools
+	memcpy(&is_camera, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&draw, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&draw_spheres, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&draw_aabbs, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(&draw_obbs, *iterator, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	//Components
+	unsigned int num_components = 0;
+	memcpy(&num_components, *iterator, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+	for (int i = 0; i < num_components; ++i)
+	{
+		COMPONENT_TYPE type = CT_NO_TYPE;
+		memcpy(&type, *iterator, sizeof(COMPONENT_TYPE));
+		*iterator += sizeof(COMPONENT_TYPE);
+
+		UID uid;
+		memcpy(&uid, *iterator, SIZE_OF_UID);
+		*iterator += SIZE_OF_UID;
+
+		MeshFilter* new_mesh_filter  = nullptr;
+		AppliedMaterial* new_applied_material = nullptr;
+		Camera* camera = nullptr;
+		Animator* animator = nullptr;
+		switch (type)
+		{
+		case CT_MESH_FILTER:
+			new_mesh_filter = new MeshFilter(App->resource_manager->UseMesh(uid, this), this);
+			new_mesh_filter->LoadComponent(iterator);
+			AddComponent(new_mesh_filter);
+			break;
+
+		case CT_APPLIED_MATERIAL:
+			new_applied_material = new AppliedMaterial(App->resource_manager->UseMaterial(uid, this), this);
+			new_applied_material->LoadComponent(iterator);
+			AddComponent(new_applied_material);
+			break;
+
+		case CT_CAMERA:
+			camera = new Camera("Camera", this);
+			camera->LoadComponent(iterator);
+			AddComponent(camera);
+			break;
+
+		case CT_ANIMATOR:
+			animator = new Animator(App->resource_manager->UseSkeleton(uid, this), this);
+			animator->LoadComponent(iterator, this);
+			AddComponent(animator);
+			break;
+
+		case CT_NO_TYPE:
+		default:
+			LOG("Tryed to load a component without type");
+			break;
+		}
+	}
+	//Load Childs
+	for (int i = 0; i < num_childs; ++i)
+	{
+		childs.push_back(new GameObject("New_GO"));
+		childs[i]->parent = this;
+		childs[i]->LoadGameObjects(iterator);
+	}
+
+	//This way we don't have to save all the bounds, only the original position of them
+	UpdateBoundsSelf();
+	UpdateBoundsParents();
+}
+
 void GameObject::SaveGameObjects(char ** iterator) const
 {
 	//Save Game Object
+	unsigned int num_childs = childs.size();
+	memcpy(*iterator, &num_childs, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+	
+	//Name
 	std::string name_(name);
-	memcpy(*iterator, name_.c_str(), name_.length() + 1);
-	*iterator += name_.length() + 1;
+	unsigned int name_lenght = name_.length() + 1;
 
+	memcpy(*iterator, &name_lenght, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int); 
+	
+	memcpy(*iterator, name_.c_str(), name_lenght);
+	*iterator += name_lenght;
+
+	//Transformation Matrices
+		//Local
 	math::float4x4 matrix(local_transform->GetTransformMatrix());
 	memcpy(*iterator, &matrix[0][0], sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
 
+		//World
 	matrix = world_transform->GetTransformMatrix();
 	memcpy(*iterator, &matrix[0][0], sizeof(float) * 16);
 	*iterator += sizeof(float) * 16;
 	
 	//Bounds--------------------
-		//Spheres
-	memcpy(*iterator, &bounds.sphere_bounding_box.pos.x, sizeof(float) * 3);
-	*iterator += sizeof(float) * 3;
-
-	memcpy(*iterator, &bounds.sphere_bounding_box.r, sizeof(float));
-	*iterator += sizeof(float);
-
+		//Sphere
 	memcpy(*iterator, &bounds.original_sphere_bounding_box.pos.x, sizeof(float) * 3);
 	*iterator += sizeof(float) * 3;
 
@@ -743,24 +879,10 @@ void GameObject::SaveGameObjects(char ** iterator) const
 	*iterator += sizeof(float);
 
 		//AABB
-	memcpy(*iterator, &bounds.aabb_bounding_box.minPoint.x, sizeof(float) * 3);
-	*iterator += sizeof(float) * 3;
-
-	memcpy(*iterator, &bounds.aabb_bounding_box.maxPoint.x, sizeof(float) * 3);
-	*iterator += sizeof(float) * 3;
-
 	memcpy(*iterator, &bounds.original_aabb_bb_points[0].x, sizeof(float) * 6);
 	*iterator += sizeof(float) * 6;
+
 		//OBB
-	memcpy(*iterator, &bounds.obb_bounding_box.pos.x, sizeof(float) * 3);
-	*iterator += sizeof(float) * 3;
-
-	memcpy(*iterator, &bounds.obb_bounding_box.r.x, sizeof(float) * 3);
-	*iterator += sizeof(float) * 3;
-
-	memcpy(*iterator, &bounds.obb_bounding_box.axis[0].x, sizeof(float) * 9);
-	*iterator += sizeof(float) * 9;
-
 	memcpy(*iterator, &bounds.original_obb_bounding_box.pos.x, sizeof(float) * 3);
 	*iterator += sizeof(float) * 3;
 
@@ -771,6 +893,7 @@ void GameObject::SaveGameObjects(char ** iterator) const
 	*iterator += sizeof(float) * 9;
 	//--------------------------
 
+	//Bools
 	memcpy(*iterator, &is_camera, sizeof(bool));
 	*iterator += sizeof(bool);
 
@@ -787,6 +910,10 @@ void GameObject::SaveGameObjects(char ** iterator) const
 	*iterator += sizeof(bool);
 
 	//Save Components
+	unsigned int num_components = components.size();
+	memcpy(*iterator, &num_components, sizeof(unsigned int));
+	*iterator += sizeof(unsigned int);
+
 	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
 		(*it)->SaveComponent(iterator);
 
