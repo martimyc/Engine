@@ -350,9 +350,9 @@ Texture* ResourceManager::LoadCheckers()
 
 void ResourceManager::LoadButtons()
 {
-	buttons.push_back(new Button(BT_PLAY, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PlayButton.png"), 25, 25));
-	buttons.push_back(new Button(BT_PAUSE, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PauseButton.png"), 25, 25));
-	buttons.push_back(new Button(BT_PLAY_ONE_FRAME, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PlayOneFrameButton.png"), 25, 25));
+	buttons.push_back(new Button(BT_PLAY, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PlayButton.png"), 20, 20));
+	buttons.push_back(new Button(BT_PAUSE, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PauseButton.png"), 20, 20));
+	buttons.push_back(new Button(BT_PLAY_ONE_FRAME, App->import_manager->GenerateButtonImage("..\\Icons\\Buttons\\PlayOneFrameButton.png"), 20, 20));
 }
 
 void ResourceManager::LoadIcons()

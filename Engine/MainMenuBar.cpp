@@ -81,26 +81,12 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 			if (ImGui::MenuItem("Console"))
 				App->console->OpenCloseConsoleWindow();
 
-			//if (ImGui::BeginMenu("Tests"))
-			//{
-				//if (ImGui::MenuItem("Random number Test"))
-				//	Activate(UI_RAND_TEST);
-
-				//if (ImGui::MenuItem("Geometry collision Test"))
-				//	Activate(UI_GEOMETRY_COLLISION_TEST);
-
-				//if (ImGui::MenuItem("ImGui Demo"))
-				//	Activate(UI_TEST);
-
-				//ImGui::EndMenu();
-			//}
-
 			ImGui::EndMenu();
 		}
 
 		if (ImGui::BeginMenu("GameObject"))
 		{
-			if (ImGui::BeginMenu("3D Object"))
+			/*if (ImGui::BeginMenu("3D Object"))
 			{
 				if (ImGui::MenuItem("Cube"))
 					App->primitives->Create3DCube();
@@ -109,7 +95,9 @@ UPDATE_STATUS MainMenuBar::Update(float dt)
 					App->primitives->CreateSphere();
 
 				ImGui::EndMenu();
-			}
+			}*/
+			if(ImGui::MenuItem("Create Empty"))
+				App->scene_manager->AddEmptyGO();
 
 			if (ImGui::MenuItem("Camera"))
 				App->scene_manager->CreateCamera();

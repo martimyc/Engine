@@ -117,13 +117,6 @@ UPDATE_STATUS SceneManager::Update(float dt)
 	mat.Transpose();
 	vec = mat * vec;
 
-	if (ImGui::Begin("Create"))
-	{
-		if (ImGui::Button("New GO"))
-			AddEmptyGO();
-	}
-	ImGui::End();
-
 	if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 	{
 		if (focused != root)
