@@ -141,5 +141,6 @@ void Animator::ChangeSkeleton(Skeleton* new_skeleton)
 void Animator::StopUsingAnimation(const GameObject * go)
 {
 	App->resource_manager->StopUsingSkeleton(skeleton, go);
-	//App->resource_manager->StopUsingAnimation(animations, go);
+	for (std::multimap<double, Animation*>::iterator it = animations.begin(); it != animations.end(); ++it)
+		App->resource_manager->StopUsingAnimation(it._Ptr->_Myval.second, go);
 }
