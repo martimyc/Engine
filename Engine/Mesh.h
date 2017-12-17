@@ -45,6 +45,8 @@ struct MeshSource
 	GLuint* color_ids = nullptr;
 	GLfloat** colors = nullptr;
 
+	GLenum draw_type;
+
 	//-------
 	RAYCAST raycast = RC_BRUTE_FORCE;
 	int selected_raycast = 0;
@@ -53,6 +55,7 @@ struct MeshSource
 	float raycast_checks_log[KDT_GRAPH_SIZE] = {};
 
 	MeshSource();
+	MeshSource(const MeshSource& copy);
 	~MeshSource();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;
@@ -139,6 +142,7 @@ private:
 
 public:
 	Mesh(const std::string name,const UID& uid);
+	Mesh(const Mesh& copy);
 	~Mesh();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;

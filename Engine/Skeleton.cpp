@@ -5,6 +5,7 @@
 #include "MathGeoLib\src\Math\float4x4.h"
 #include "MathGeoLib\src\Math\Quat.h"
 #include "Animation.h"
+#include "Mesh.h"
 #include "Skeleton.h"
 
 Skeleton::Skeleton(const std::string & name, const UID & uid) : Resource(RT_SKELETON, name, uid), skeleton(nullptr)
@@ -16,6 +17,7 @@ Skeleton::Skeleton(const std::string & name, Rigg * source) : Resource(RT_SKELET
 Skeleton::~Skeleton()
 {
 	delete skeleton;
+	delete original_mesh;
 }
 
 void Skeleton::SetRigg(Rigg* new_rigg)
@@ -85,6 +87,11 @@ unsigned int Skeleton::GetNumJoints() const
 		skeleton->GetNumJoints();
 	LOG("Skeleton Rigg not loaded yet");
 	return 0;
+}
+
+void Skeleton::OriginalMesh(const Mesh * mesh)
+{
+	original_mesh = new Mesh(*mesh);
 }
 
 Skeleton::Rigg::Rigg(): skeleton_hirarchy(false), selected_joint(nullptr)
@@ -406,7 +413,6 @@ void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & parent_transform)
 void Skeleton::Rigg::Joint::ChangeTransforms(Animation* anim, double anim_time, bool interpolation)
 {
 	anim->GetJointPos(name, current_transform, inverse_bind_pose_transform, anim_time, interpolation);
-	//UpdateImGui(current_transform);
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->ChangeTransforms(anim, anim_time, interpolation);

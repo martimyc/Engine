@@ -10,6 +10,7 @@
 
 typedef float GLfloat;
 class Animation;
+class Mesh;
 
 class Skeleton : public Resource
 {
@@ -80,6 +81,7 @@ private:
 	};
 
 	Rigg* skeleton;
+	Mesh* original_mesh;
 
 	friend class SkeletonImporter;
 
@@ -91,7 +93,6 @@ public:
 private:
 
 public:
-
 	void SetRigg(Rigg* new_rigg);
 
 	bool Inspector();
@@ -110,6 +111,8 @@ public:
 	void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
 
 	unsigned int GetNumJoints() const;
+
+	void OriginalMesh(const Mesh* mesh);
 };
 
 #endif // !SKELETON
