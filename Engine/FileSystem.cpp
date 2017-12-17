@@ -87,6 +87,13 @@ bool FileSystem::Init()
 		if (!CreateFolder("Skeletons", false, LIBRARY_FOLDER))
 			LOG("Skeletons folder could not be created");
 
+	std::string scenes = working_directory;
+	scenes += LIBRARY_SCENES_FOLDER;
+
+	if (!Exsists(scenes))
+		if (!CreateFolder("Scenes", false, LIBRARY_FOLDER))
+			LOG("Scenes folder could not be created");
+
 	timer.Start();
 
 	return true;
@@ -333,6 +340,11 @@ const std::string FileSystem::GetSkeletons() const
 const std::string FileSystem::GetAnimations() const
 {
 	return working_directory + LIBRARY_ANIMATIONS_FOLDER;
+}
+
+const std::string FileSystem::GetScenes() const
+{
+	return working_directory + LIBRARY_SCENES_FOLDER;
 }
 
 bool FileSystem::IsMeta(const std::string & file) const

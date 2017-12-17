@@ -78,6 +78,10 @@ void Animator::Inspector()
 	}
 }
 
+void Animator::SaveComponent(char ** iterator) const
+{
+}
+
 void Animator::AddAnimation(Animation * new_anim, float start_time)
 {
 	animations.push_back(std::make_pair(start_time,new_anim));

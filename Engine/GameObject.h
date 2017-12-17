@@ -155,6 +155,8 @@ public:
 
 	void SetToDelete();
 	bool IsSetToDelete() const;
+
+	void SaveGameObjects(char** iterator)const;
 };
 
 #endif // !GAME_OBJECT

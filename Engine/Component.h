@@ -63,6 +63,9 @@ public:
 	virtual const std::string& GetName() const = 0;
 
 	virtual void Inspector() = 0;
+
+	virtual void SaveComponent(char** iterator)const = 0;
+
 };
 
 #endif // !COMPONENT

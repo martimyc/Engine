@@ -201,6 +201,11 @@ void SceneManager::DeleteFocused()
 	focused->Delete(to_delete);
 }
 
+void SceneManager::SaveGameObjects(char ** iterator) const
+{
+	root->SaveGameObjects(iterator);
+}
+
 void SceneManager::EmptyScene()
 {
 	delete root;

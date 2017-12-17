@@ -28,6 +28,8 @@ public:
 
 	void Inspector();
 
+	void SaveComponent(char** iterator)const;
+
 	void AddAnimation(Animation* new_anim, float start_time);
 
 	void SetSkeleton(Skeleton* new_skeleton);

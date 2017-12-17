@@ -64,7 +64,10 @@ bool Camera::FrustumCulling(const GameObject* game_object)
 	}	
 }
 
-Camera::Camera(const std::string& name, const GameObject* const go, bool enabled) : Component(CT_CAMERA, go, enabled), vertical_fov(90), far_plane_dist(500.0f), near_plane_dist(0.5f), name(name)
+Camera::Camera(const std::string& name, const GameObject* const game_object, bool enabled) : Component(CT_CAMERA, game_object, enabled), name(name), vertical_fov(90), near_plane_dist(0.5f), far_plane_dist(500.0f)
+{}
+
+Camera::Camera(const Camera & copy) : Component(CT_CAMERA, copy.game_object, copy.enabled), name(copy.name), vertical_fov(copy.vertical_fov), near_plane_dist(copy.near_plane_dist), far_plane_dist(copy.far_plane_dist)
 {}
 
 Camera::~Camera()
@@ -110,6 +113,24 @@ void Camera::Inspector()
 
 		ImGui::TreePop();
 	}
+}
+
+void Camera::SaveComponent(char ** iterator) const
+{
+	memcpy(*iterator, &enabled, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, name.c_str(), name.length() + 1);
+	*iterator += name.length() + 1;
+
+	memcpy(*iterator, &vertical_fov, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &near_plane_dist, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &far_plane_dist, sizeof(float));
+	*iterator += sizeof(float);
 }
 
 bool Camera::IsFrustumActive()

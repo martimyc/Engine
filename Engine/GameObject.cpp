@@ -713,6 +713,88 @@ bool GameObject::IsSetToDelete() const
 	return to_delete;
 }
 
+void GameObject::SaveGameObjects(char ** iterator) const
+{
+	//Save Game Object
+	std::string name_(name);
+	memcpy(*iterator, name_.c_str(), name_.length() + 1);
+	*iterator += name_.length() + 1;
+
+	math::float4x4 matrix(local_transform->GetTransformMatrix());
+	memcpy(*iterator, &matrix[0][0], sizeof(float) * 16);
+	*iterator += sizeof(float) * 16;
+
+	matrix = world_transform->GetTransformMatrix();
+	memcpy(*iterator, &matrix[0][0], sizeof(float) * 16);
+	*iterator += sizeof(float) * 16;
+	
+	//Bounds--------------------
+		//Spheres
+	memcpy(*iterator, &bounds.sphere_bounding_box.pos.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.sphere_bounding_box.r, sizeof(float));
+	*iterator += sizeof(float);
+
+	memcpy(*iterator, &bounds.original_sphere_bounding_box.pos.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.original_sphere_bounding_box.r, sizeof(float));
+	*iterator += sizeof(float);
+
+		//AABB
+	memcpy(*iterator, &bounds.aabb_bounding_box.minPoint.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.aabb_bounding_box.maxPoint.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.original_aabb_bb_points[0].x, sizeof(float) * 6);
+	*iterator += sizeof(float) * 6;
+		//OBB
+	memcpy(*iterator, &bounds.obb_bounding_box.pos.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.obb_bounding_box.r.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.obb_bounding_box.axis[0].x, sizeof(float) * 9);
+	*iterator += sizeof(float) * 9;
+
+	memcpy(*iterator, &bounds.original_obb_bounding_box.pos.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.original_obb_bounding_box.r.x, sizeof(float) * 3);
+	*iterator += sizeof(float) * 3;
+
+	memcpy(*iterator, &bounds.original_obb_bounding_box.axis[0], sizeof(float) * 9);
+	*iterator += sizeof(float) * 9;
+	//--------------------------
+
+	memcpy(*iterator, &is_camera, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &draw, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &draw_spheres, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &draw_aabbs, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	memcpy(*iterator, &draw_obbs, sizeof(bool));
+	*iterator += sizeof(bool);
+
+	//Save Components
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it)
+		(*it)->SaveComponent(iterator);
+
+	//Save Childs
+	for (std::vector<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->SaveGameObjects(iterator);
+}
+
 void GameObject::SetLocalTransform(const math::float4x4 & new_local_transform)
 {
 	math::float4x4 old_local = GetLocalTransform();

@@ -24,6 +24,8 @@ public:
 
 	void Inspector();
 
+	void SaveComponent(char** iterator)const;
+
 	const std::string& GetName() const;
 
 	void AddTexture( Texture* new_texture, unsigned int uv_channel = 0);

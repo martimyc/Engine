@@ -40,6 +40,10 @@ void AppliedMaterial::Inspector()
 	material->Inspector();
 }
 
+void AppliedMaterial::SaveComponent(char ** iterator) const
+{
+}
+
 const std::string & AppliedMaterial::GetName() const
 {
 	return material->GetName();

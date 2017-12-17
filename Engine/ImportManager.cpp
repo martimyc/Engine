@@ -1008,6 +1008,31 @@ void ImportManager::LoadScene(AssetDirectory* dir, char ** iterator, const Scene
 	}
 }
 
+const UID ImportManager::SaveScene() const
+{
+	char* buffer = new char[500000];
+	char* iterator = buffer;
+
+	char format[FORMAT_SIZE] = FORMAT_SCENE;
+	
+	memcpy(iterator, format, FORMAT_SIZE);
+	iterator += FORMAT_SIZE; 
+
+	App->scene_manager->SaveGameObjects(&iterator);
+
+	int size = iterator - buffer;
+	UID uid(buffer, size);
+
+	if (App->file_system->SaveFile(buffer, size, App->file_system->GetScenes().c_str(), uid.GetAsName(), "mm") == false)
+	{
+		LOG("Could not save scene correctlly");
+		return UID();
+	}
+	delete[] buffer;
+
+	return uid;
+}
+
 void ImportManager::CollapseDummyNodes(aiNode * node) const
 {
 	for (int i = 0; i < node->mNumChildren; i++)

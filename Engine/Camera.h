@@ -20,7 +20,8 @@ private:
 	void ResetFrustumPlanes();
 
 public:
-	Camera(const std::string& name, const GameObject* const go, bool enabled = true);
+	Camera(const std::string& name, const GameObject* const game_object, bool enabled = true);
+	Camera(const Camera& copy);
 	~Camera();
 
 	bool Start();
@@ -28,6 +29,8 @@ public:
 	bool Update();
 
 	void Inspector();
+
+	void SaveComponent(char** iterator)const;
 
 	void TransformCamera();
 	bool IsFrustumActive();

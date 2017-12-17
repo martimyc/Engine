@@ -24,6 +24,8 @@ public:
 
 	void Inspector();
 
+	void SaveComponent(char** iterator)const;
+
 	const std::string& GetName() const;
 
 	void StopUsingMesh(const GameObject* go);
