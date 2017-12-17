@@ -16,6 +16,7 @@ MeshImporter::~MeshImporter()
 unsigned int MeshImporter::GetTotalSize(const aiMesh * mesh, bool kdt, const KDTreeTriangle& tree) const
 {
 	unsigned int total_size = FORMAT_SIZE;
+	total_size += sizeof(GLenum);
 	total_size += sizeof(GLuint);
 
 	if (mesh->HasPositions())
@@ -124,6 +125,15 @@ const UID MeshImporter::Import(const aiMesh * mesh, const MeshImportConfiguratio
 	//First specify format
 	memcpy(iterator, format, FORMAT_SIZE);
 	iterator += FORMAT_SIZE;
+
+	GLenum draw;
+	if (mesh->HasBones())
+		draw = GL_DYNAMIC_DRAW;
+	else
+		draw = GL_STATIC_DRAW;
+		
+	memcpy(iterator, &draw, sizeof(GLenum));
+	iterator += sizeof(GLenum);
 
 	GLuint num_vertices = mesh->mNumVertices;
 	memcpy(iterator, &num_vertices, sizeof(GLuint));
@@ -263,6 +273,9 @@ bool MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 
 		MeshSource* new_mesh = new MeshSource();
 
+		memcpy(&new_mesh->draw_type, iterator, sizeof(GLenum));
+		iterator += sizeof(GLenum);
+
 		GLuint num_vertices;
 		memcpy(&num_vertices, iterator, sizeof(GLuint));
 		iterator += sizeof(GLuint);
@@ -279,7 +292,7 @@ bool MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 
 			glGenBuffers(1, &vertex_id);
 			glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* num_vertices * 3, vertices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* num_vertices * 3, vertices, new_mesh->draw_type);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			new_mesh->SetVertices(vertex_id, num_vertices, vertices);
@@ -354,7 +367,7 @@ bool MeshImporter::Load(Mesh* to_load, const MeshLoadConfiguration* config)
 
 		glGenBuffers(1, &normals_id);
 		glBindBuffer(GL_ARRAY_BUFFER, normals_id);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * 3, normals, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * num_vertices * 3, normals, new_mesh->draw_type);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		new_mesh->SetNormals(normals_id, normals);

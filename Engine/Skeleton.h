@@ -10,6 +10,8 @@
 
 typedef float GLfloat;
 class Animation;
+class Mesh;
+struct MeshSource;
 
 class Skeleton : public Resource
 {
@@ -52,6 +54,8 @@ private:
 			void SetWorldPositions(const float3x4& mesh_world_transform);
 
 			void ChangeTransforms(Animation* anim, double anim_time, bool interpolation = true);
+
+			void GetVertices(const MeshSource * original, GLfloat * vertices, const float3x4& parent_mesh);
 		};
 
 		Joint root_joint;
@@ -77,9 +81,12 @@ private:
 		void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
 
 		unsigned int GetNumJoints() const;
+
+		void GetVertices(const MeshSource* original, GLfloat* vertices);
 	};
 
 	Rigg* skeleton;
+	MeshSource* deformable_mesh;
 
 	friend class SkeletonImporter;
 
@@ -91,7 +98,6 @@ public:
 private:
 
 public:
-
 	void SetRigg(Rigg* new_rigg);
 
 	bool Inspector();
@@ -110,6 +116,10 @@ public:
 	void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
 
 	unsigned int GetNumJoints() const;
+
+	void DeformableMesh(const Mesh* mesh);
+
+	void UpdateMesh(const Mesh* original);
 };
 
 #endif // !SKELETON

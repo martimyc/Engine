@@ -21,10 +21,53 @@
 #include "Mesh.h"
 #include "Material.h"
 
-MeshSource::MeshSource(): vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0)
+MeshSource::MeshSource(): vertex_id(0), num_vertices(0), vertices(nullptr), indices_id(0), num_indices(0), indices(nullptr), normals_id(0), num_uv_channels(0), triangle_kdt(nullptr)
 {
 	memset(raycast_ticks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
 	memset(raycast_checks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
+}
+
+MeshSource::MeshSource(const MeshSource & copy): vertex_id(copy.vertex_id), num_vertices(copy.num_vertices), indices_id(copy.indices_id), num_indices(copy.num_indices), normals_id(copy.normals_id), has_uvs(copy.has_uvs), num_uv_channels(copy.num_uv_channels), has_vertex_colors(copy.has_vertex_colors), num_color_channels(copy.num_color_channels), raycast(copy.raycast), selected_raycast(0)
+{
+	vertices = new GLfloat[3 * num_vertices];
+	memcpy(vertices, copy.vertices, sizeof(GLfloat) * 3 * num_vertices);
+
+	indices = new GLuint[num_indices];
+	memcpy(indices, copy.indices, sizeof(GLuint) * num_indices);
+
+	normals = new GLfloat[3 * num_vertices];
+	memcpy(normals, copy.normals, sizeof(GLfloat) * 3 * num_vertices);
+
+	num_uv_components = new GLuint[num_uv_channels];
+	memcpy(num_uv_components, copy.num_uv_components, sizeof(GLuint) * num_uv_channels);
+
+	uv_ids = new GLuint[num_uv_channels];
+	memcpy(uv_ids, copy.uv_ids, sizeof(GLuint) * num_uv_channels);
+
+	uvs = new GLfloat*[num_uv_channels];
+	for (int i = 0; i < num_uv_channels; i++)
+	{
+		uvs[i] = new GLfloat[num_vertices * num_uv_components[i]];
+		memcpy(uvs[i], copy.uvs[i], sizeof(GLfloat) * num_vertices * num_uv_components[i]);
+	}
+
+	color_ids = new GLuint[num_color_channels];
+	memcpy(color_ids, copy.color_ids, sizeof(GLuint) * num_color_channels);
+
+	colors = new GLfloat*[num_color_channels];
+	for (int i = 0; i < num_color_channels; i++)
+	{
+		colors[i] = new GLfloat[4 * num_vertices];
+		memcpy(colors[i], copy.colors[i], sizeof(GLfloat) * 4 * num_vertices);
+	}
+
+	memset(raycast_ticks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
+	memset(raycast_checks_log, 0.0f, KDT_GRAPH_SIZE * sizeof(float));
+
+	if (copy.triangle_kdt != nullptr)
+		triangle_kdt = new KDTreeTriangle(*copy.triangle_kdt);
+	else
+		triangle_kdt = nullptr;
 }
 
 MeshSource::~MeshSource()
@@ -799,6 +842,9 @@ float MeshSource::RayCollision(const LineSegment * ray)
 Mesh::Mesh(const std::string name, const UID& uid):Resource(RT_MESH, name, uid), source(nullptr)
 {}
 
+Mesh::Mesh(const Mesh & copy): Resource(RT_MESH, copy.name, copy.uid), source(new MeshSource(*copy.source))
+{}
+
 Mesh::~Mesh()
 {
 	if (source != nullptr)
@@ -1274,4 +1320,9 @@ math::vec Mesh::GetWorldCenter(const math::float4x4 & world_transform) const
 void Mesh::SetSource(MeshSource * source)
 {
 	this->source = source;
+}
+
+const MeshSource * Mesh::GetSource() const
+{
+	return source;
 }

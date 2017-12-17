@@ -45,6 +45,8 @@ struct MeshSource
 	GLuint* color_ids = nullptr;
 	GLfloat** colors = nullptr;
 
+	GLenum draw_type;
+
 	//-------
 	RAYCAST raycast = RC_BRUTE_FORCE;
 	int selected_raycast = 0;
@@ -52,7 +54,10 @@ struct MeshSource
 	float raycast_ticks_log[KDT_GRAPH_SIZE] = {};
 	float raycast_checks_log[KDT_GRAPH_SIZE] = {};
 
+	friend class Skeleton;
+
 	MeshSource();
+	MeshSource(const MeshSource& copy);
 	~MeshSource();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;
@@ -139,6 +144,7 @@ private:
 
 public:
 	Mesh(const std::string name,const UID& uid);
+	Mesh(const Mesh& copy);
 	~Mesh();
 
 	void Draw(const AppliedMaterial* draw_material = nullptr) const;
@@ -221,6 +227,7 @@ public:
 	math::vec GetWorldCenter(const math::float4x4& world_transform) const;
 
 	void SetSource(MeshSource* source);
+	const MeshSource* GetSource() const;
 };
 
 #endif // !MESH

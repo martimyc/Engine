@@ -147,8 +147,8 @@ Skeleton::Rigg::Joint SkeletonImporter::LoadJoint(char ** iterator, const float3
 		*iterator += sizeof(float) * 4;
 	}
 	
-	if (joint.inverse_bind_pose_transform.Inverse() == false)
-		LOG("Could not inverse joint transform");
+	/*if (joint.inverse_bind_pose_transform.Inverse() == false)
+		LOG("Could not inverse joint transform");*/
 
 	for (int i = 0; i < 3; i++)
 	{
