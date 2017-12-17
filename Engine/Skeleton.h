@@ -54,6 +54,7 @@ private:
 			void SetWorldPositions(const float3x4& mesh_world_transform);
 
 			void ChangeTransforms(Animation* anim, double anim_time, bool interpolation = true);
+			void BlendTransforms(Animation* anim, double anim_time, Animation * blend, double blend_time, float weight, bool interpolation = true);
 
 			void GetVertices(const Mesh * original, GLfloat * vertices, const float3x4& parent_mesh);
 		};
@@ -79,6 +80,7 @@ private:
 		void SetWorldPositions(const float3x4& mesh_world_transform);
 
 		void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
+		void BlendJointTransforms(Animation* anim, double anim_time, Animation* blend, double blend_time, float weight, bool interpolation = true);
 
 		unsigned int GetNumJoints() const;
 
@@ -109,17 +111,18 @@ public:
 	void Draw(const float3x4& mesh_global_transform) const;
 	void DrawBindPos(const float3x4& mesh_global_transform) const;
 
-	void UpdateJointTransforms(const float3x4& mesh_world_transform);
+	void UpdateJointTransforms(const float3x4& mesh_world_transform) const;
 
-	void SetWorldPositions(const float3x4& mesh_world_transform);
+	void SetWorldPositions(const float3x4& mesh_world_transform) const;
 
-	void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true);
+	void ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation = true) const;
+	void BlendJointTransforms(Animation* anim, double anim_time, Animation* blend, double blend_time, float weight, bool interpolation = true) const;
 
 	unsigned int GetNumJoints() const;
 
 	void DeformableMesh(const Mesh* mesh);
 
-	void UpdateMesh(const Mesh* original);
+	void UpdateMesh(const Mesh* original) const;
 };
 
 #endif // !SKELETON

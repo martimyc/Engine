@@ -15,6 +15,7 @@
 #include "BasicGeometry.h"
 #include "GameObject.h"
 #include "ImportManager.h"
+#include "ResourceManager.h"
 #include "Application.h"
 #include "Input.h"
 #include "SceneManager.h"

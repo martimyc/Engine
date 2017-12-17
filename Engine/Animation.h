@@ -22,7 +22,8 @@ private:
 			std::vector<std::pair<double,Quat>> rotation_samples;
 			std::vector<std::pair<double,float3>> scale_samples;
 
-			void GetTransform(double time, float3x4& transform, const float3x4 & inverse_bind_pos, bool interpolation) const;
+			void GetTransform(double time, float3x4& transform, const float3x4 & offset, bool interpolation) const;
+			void GetTRS(float3& position, Quat& rotation, float3& scale, double time, const float3x4 & offset, bool interpolation) const;
 		};
 
 		double ticks_per_sec;
@@ -35,7 +36,8 @@ private:
 
 		bool Inspector();
 
-		void GetJointPos(const std::string& joint_name, float3x4& joint_transform, const float3x4 & inverse_bind_pos, double anim_time, bool interpolation = true);
+		void GetJointPos(const std::string& joint_name, float3x4& joint_transform, const float3x4 & offset, double anim_time, bool interpolation = true) const;
+		void GetTRS(float3& pos, Quat& rot, float3& scale, const std::string& joint_name, const float3x4 & offset, double anim_time, bool interpolation = true) const;
 	};
 
 	AnimationClip* source;
@@ -56,7 +58,8 @@ public:
 
 	bool IsLoaded() const;
 
-	void GetJointPos(const std::string& joint_name, float3x4& joint_transform, const float3x4 & inverse_bind_pos, double anim_time, bool interpolation = true);
+	void GetJointPos(const std::string& joint_name, float3x4& joint_transform, const float3x4 & offset, double anim_time, bool interpolation = true) const;
+	void GetTRS(float3& pos, Quat& rot, float3& scale, const std::string& joint_name, const float3x4 & offset, double anim_time, bool interpolation = true) const;
 
 	double GetLength() const;
 

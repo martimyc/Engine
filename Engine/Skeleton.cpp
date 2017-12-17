@@ -57,7 +57,7 @@ void Skeleton::DrawBindPos(const float3x4 & mesh_global_transform) const
 	skeleton->DrawBindPos(mesh_global_transform);
 }
 
-void Skeleton::UpdateJointTransforms(const float3x4 & mesh_world_transform)
+void Skeleton::UpdateJointTransforms(const float3x4 & mesh_world_transform) const
 {
 	if (skeleton != nullptr)
 		skeleton->UpdateJointTransforms(mesh_world_transform);
@@ -65,7 +65,7 @@ void Skeleton::UpdateJointTransforms(const float3x4 & mesh_world_transform)
 		LOG("Skeleton Rigg not loaded yet");
 }
 
-void Skeleton::SetWorldPositions(const float3x4 & mesh_world_transform)
+void Skeleton::SetWorldPositions(const float3x4 & mesh_world_transform) const
 {
 	if (skeleton != nullptr)
 		skeleton->SetWorldPositions(mesh_world_transform);
@@ -73,10 +73,18 @@ void Skeleton::SetWorldPositions(const float3x4 & mesh_world_transform)
 		LOG("Skeleton Rigg not loaded yet");
 }
 
-void Skeleton::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation)
+void Skeleton::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation) const
 {
 	if (skeleton != nullptr)
 		skeleton->ChangeJointTransforms(anim, anim_time, interpolation);
+	else
+		LOG("Skeleton Rigg not loaded yet");
+}
+
+void Skeleton::BlendJointTransforms(Animation * anim, double anim_time, Animation * blend, double blend_time, float weight, bool interpolation) const
+{
+	if (skeleton != nullptr)
+		skeleton->BlendJointTransforms(anim, anim_time, blend, blend_time, weight, interpolation);
 	else
 		LOG("Skeleton Rigg not loaded yet");
 }
@@ -94,7 +102,7 @@ void Skeleton::DeformableMesh(const Mesh * mesh)
 	deformable_vertices = new GLfloat[mesh->GetNumVertices() * 3];
 }
 
-void Skeleton::UpdateMesh(const Mesh* original)
+void Skeleton::UpdateMesh(const Mesh* original) const
 {
 	skeleton->GetVertices(original, deformable_vertices);
 
@@ -153,7 +161,12 @@ void Skeleton::Rigg::SetWorldPositions(const float3x4 & mesh_world_transform)
 
 void Skeleton::Rigg::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation)
 {
-	root_joint.ChangeTransforms(anim, anim_time, interpolation);
+		root_joint.ChangeTransforms(anim, anim_time, interpolation);
+}
+
+void Skeleton::Rigg::BlendJointTransforms(Animation * anim, double anim_time, Animation * blend, double blend_time, float weight, bool interpolation)
+{
+	root_joint.BlendTransforms(blend, anim_time, blend, blend_time, weight, interpolation);
 }
 
 unsigned int Skeleton::Rigg::GetNumJoints() const
@@ -440,6 +453,30 @@ void Skeleton::Rigg::Joint::ChangeTransforms(Animation* anim, double anim_time, 
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->ChangeTransforms(anim, anim_time, interpolation);
+}
+
+void Skeleton::Rigg::Joint::BlendTransforms(Animation* anim, double anim_time, Animation * blend, double blend_time, float weight, bool interpolation)
+{
+	float3 anim_pos;
+	Quat anim_rot;
+	float3 anim_scale;
+
+	anim->GetTRS(anim_pos, anim_rot, anim_scale, name, offset, anim_time, interpolation);
+
+	float3 blend_pos;
+	Quat blend_rot;
+	float3 blend_scale;
+
+	blend->GetTRS(blend_pos, blend_rot, blend_scale, name, offset, blend_time, interpolation);
+
+	anim_pos = anim_pos.Lerp(blend_pos, weight);
+	anim_rot = anim_rot.Slerp(blend_rot, weight);
+	anim_scale = anim_scale.Lerp(blend_scale, weight);
+
+	current_transform = float3x4::FromTRS(anim_pos, anim_rot, anim_scale);
+
+	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
+		it->BlendTransforms(anim, anim_time, blend, blend_time, weight, interpolation);
 }
 
 void Skeleton::Rigg::Joint::GetVertices(const Mesh* original, GLfloat * vertices, const float3x4& parent_mesh)

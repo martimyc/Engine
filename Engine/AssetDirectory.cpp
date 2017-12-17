@@ -492,3 +492,18 @@ bool AssetDirectory::Exsists(const UID & uid) const
 	}
 	return ret;
 }
+
+void AssetDirectory::LoadPresentation()
+{
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetName() == "Street")
+			App->resource_manager->LoadToScene(*it);
+
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetName() == "AA")
+			App->resource_manager->LoadToScene(*it);
+
+	for (std::vector<Asset*>::iterator it = assets.begin(); it != assets.end(); ++it)
+		if ((*it)->GetName() == "Take 001")
+			App->resource_manager->LoadToScene(*it);
+}

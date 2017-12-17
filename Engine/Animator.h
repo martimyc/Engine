@@ -18,6 +18,13 @@ private:
 	bool draw_skeleton;
 	bool draw_bind_pos;
 	bool interpolation;
+	bool in_place;
+	bool blend;
+
+	//presentation
+	bool attack = false;
+	bool walk = false;
+	float weight = 0.0f;
 
 public:
 	Animator(Skeleton* skeleton, const GameObject* const go, bool enabled = true);

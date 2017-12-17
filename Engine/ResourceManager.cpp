@@ -166,6 +166,11 @@ void ResourceManager::UpdateAssets()
 	}
 }
 
+void ResourceManager::LoadPresentation()
+{
+	root_dir->LoadPresentation();
+}
+
 bool ResourceManager::Start()
 {
 	AssetDirectory* assets = App->file_system->GenerateAssets(App->file_system->GetAssets());

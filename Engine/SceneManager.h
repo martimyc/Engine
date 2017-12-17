@@ -40,6 +40,9 @@ private:
 
 	Camera* focused_camera = nullptr;
 
+	//presentation loaded
+	bool presentation_loaded = false;
+
 	//GenerateGOVec() //for KDT
 	//RecalculateKDT(std::vector<GameObject*>);
 

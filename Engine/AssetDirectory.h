@@ -77,6 +77,8 @@ public:
 	Prefab* GetPrefab(const UID& uid) const;
 
 	bool Exsists(const UID& uid) const;
+
+	void LoadPresentation();
 };
 
 #endif // !ASSET_DIRECTORY

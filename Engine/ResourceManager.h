@@ -123,6 +123,8 @@ public:
 	const std::string& GetCurrentDirPath() const;
 
 	void UpdateAssets();
+
+	void LoadPresentation();
 };
 
 #endif // !RESOURCE_MANAGER
