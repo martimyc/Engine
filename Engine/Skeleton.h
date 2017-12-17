@@ -27,7 +27,7 @@ private:
 				float influence;
 			};
 
-			float3x4 inverse_bind_pose_transform;
+			float3x4 offset;
 			float3x4 current_transform;
 			Sphere sphere;
 			std::string name;

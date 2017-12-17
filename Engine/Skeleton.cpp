@@ -140,7 +140,7 @@ void Skeleton::Rigg::Draw(const float3x4& mesh_global_transform) const
 
 void Skeleton::Rigg::DrawBindPos(const float3x4 & mesh_global_transform) const
 {
-	root_joint.DrawBindPos(mesh_global_transform * transform);
+	root_joint.DrawBindPos(mesh_global_transform);
 }
 
 void Skeleton::Rigg::UpdateJointTransforms(const float3x4 & mesh_world_transform)
@@ -363,7 +363,7 @@ void Skeleton::Rigg::Joint::DrawBindPos(const float3x4 & mesh_global_transform) 
 	float4 y(0.0f, 1.0f, 0.0f, 1.0f);
 	float4 z(0.0f, 0.0f, 1.0f, 1.0f);
 
-	float3x4 transform(mesh_global_transform * inverse_bind_pose_transform);
+	float3x4 transform(mesh_global_transform * offset.Inverted());
 
 	pos = transform * pos;
 
@@ -400,7 +400,7 @@ void Skeleton::Rigg::Joint::DrawBindPos(const float3x4 & mesh_global_transform) 
 	for (std::vector<Joint>::const_iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 	{
 		float4 child_vec(0.0f, 0.0f, 0.0f, 1.0f);
-		float4x4 child_world_transform(mesh_global_transform * it->inverse_bind_pose_transform);
+		float4x4 child_world_transform(mesh_global_transform * it->offset.Inverted());
 		child_vec = child_world_transform * child_vec;
 
 		glVertex3f(pos.x, pos.y, pos.z);
@@ -412,7 +412,8 @@ void Skeleton::Rigg::Joint::DrawBindPos(const float3x4 & mesh_global_transform) 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Sphere
-	sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
+	Sphere joint_sphere(float3(pos.x, pos.y, pos.z), JOINT_SPHERE_RADIUS);
+	joint_sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
 
 	for (std::vector<Joint>::const_iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->DrawBindPos(mesh_global_transform);
@@ -438,7 +439,7 @@ void Skeleton::Rigg::Joint::SetWorldPositions(const float3x4 & parent_transform)
 
 void Skeleton::Rigg::Joint::ChangeTransforms(Animation* anim, double anim_time, bool interpolation)
 {
-	anim->GetJointPos(name, current_transform, inverse_bind_pose_transform, anim_time, interpolation);
+	anim->GetJointPos(name, current_transform, offset, anim_time, interpolation);
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->ChangeTransforms(anim, anim_time, interpolation);
@@ -450,7 +451,7 @@ void Skeleton::Rigg::Joint::GetVertices(const MeshSource* original, GLfloat * ve
 
 	for (std::vector<Weight>::iterator it = weights.begin(); it != weights.end(); ++it)
 	{
-		float3x4 skining_transform(mesh_transform * inverse_bind_pose_transform);
+		float3x4 skining_transform(mesh_transform * offset);
 
 		float3 vertex = skining_transform.TransformPos(original->vertices[it->vertex_id * 3], original->vertices[it->vertex_id * 3 + 1], original->vertices[it->vertex_id * 3 + 2]);
 

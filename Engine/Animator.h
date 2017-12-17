@@ -1,7 +1,7 @@
 #ifndef ANIMATOR
 #define ANIMATOR
 
-#include <map>
+#include <vector>
 #include <utility>
 #include "Component.h"
 
@@ -12,7 +12,7 @@ class Animator : public Component
 {
 private:
 	Skeleton* skeleton;
-	std::multimap<double,Animation*> animations;
+	std::vector<std::pair<float,Animation*>> animations;
 
 	//debug
 	bool draw_skeleton;
@@ -41,6 +41,11 @@ public:
 	void ChangeSkeleton(Skeleton* new_skeleton);
 
 	void StopUsingAnimation(const GameObject* go);
+};
+
+struct CompareAnims
+{
+	bool operator() (std::pair<double, Animation*> i, std::pair<double, Animation*> j) { return (i.first < j.first); }
 };
 
 
