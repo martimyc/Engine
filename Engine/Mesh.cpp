@@ -1321,3 +1321,8 @@ void Mesh::SetSource(MeshSource * source)
 {
 	this->source = source;
 }
+
+const MeshSource * Mesh::GetSource() const
+{
+	return source;
+}

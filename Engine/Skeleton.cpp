@@ -8,16 +8,16 @@
 #include "Mesh.h"
 #include "Skeleton.h"
 
-Skeleton::Skeleton(const std::string & name, const UID & uid) : Resource(RT_SKELETON, name, uid), skeleton(nullptr)
+Skeleton::Skeleton(const std::string & name, const UID & uid) : Resource(RT_SKELETON, name, uid), skeleton(nullptr), deformable_mesh(nullptr)
 {}
 
-Skeleton::Skeleton(const std::string & name, Rigg * source) : Resource(RT_SKELETON, name), skeleton(source)
+Skeleton::Skeleton(const std::string & name, Rigg * source) : Resource(RT_SKELETON, name), skeleton(source), deformable_mesh(nullptr)
 {}
 
 Skeleton::~Skeleton()
 {
 	delete skeleton;
-	delete original_mesh;
+	delete deformable_mesh;
 }
 
 void Skeleton::SetRigg(Rigg* new_rigg)
@@ -89,9 +89,28 @@ unsigned int Skeleton::GetNumJoints() const
 	return 0;
 }
 
-void Skeleton::OriginalMesh(const Mesh * mesh)
+void Skeleton::DeformableMesh(const Mesh * mesh)
 {
-	original_mesh = new Mesh(*mesh);
+	deformable_mesh = new MeshSource(*mesh->GetSource());
+}
+
+void Skeleton::UpdateMesh(const Mesh* original)
+{
+	skeleton->GetVertices(original->GetSource(), deformable_mesh->vertices, deformable_mesh->normals);
+
+	if (deformable_mesh != nullptr)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, deformable_mesh->vertex_id);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * deformable_mesh->num_vertices * 3,
+			deformable_mesh->vertices, GL_DYNAMIC_DRAW);
+
+		if (deformable_mesh->GetNormals() != nullptr)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, deformable_mesh->normals_id);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * deformable_mesh->num_vertices * 3,
+				deformable_mesh->vertices, GL_DYNAMIC_DRAW); //pdf said vertices here
+		}
+	}
 }
 
 Skeleton::Rigg::Rigg(): skeleton_hirarchy(false), selected_joint(nullptr)
@@ -143,6 +162,17 @@ void Skeleton::Rigg::ChangeJointTransforms(Animation* anim, double anim_time, bo
 unsigned int Skeleton::Rigg::GetNumJoints() const
 {
 	return num_joints;
+}
+
+void Skeleton::Rigg::GetVertices(const MeshSource * original, GLfloat * vertices, GLfloat * normals)
+{
+	/*memcpy(vertices, original->vertices, original->num_vertices * 3 * sizeof(GLfloat));
+	memcpy(normals, original->normals, original->num_vertices * 3 * sizeof(GLfloat));*/
+
+	memset(vertices, 0.0f, original->num_vertices * 3 * sizeof(GLfloat));
+	memset(normals, 0.0f, original->num_vertices * 3 * sizeof(GLfloat));
+
+	root_joint.GetVertices(original, vertices, normals, transform);
 }
 
 Skeleton::Rigg::Joint::Joint(): sphere(vec::zero, JOINT_SPHERE_RADIUS)
@@ -416,4 +446,28 @@ void Skeleton::Rigg::Joint::ChangeTransforms(Animation* anim, double anim_time, 
 
 	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
 		it->ChangeTransforms(anim, anim_time, interpolation);
+}
+
+void Skeleton::Rigg::Joint::GetVertices(const MeshSource* original, GLfloat * vertices, GLfloat * normals, const float3x4& parent_mesh)
+{
+	float3x4 mesh_transform(parent_mesh * current_transform);
+
+	for (std::vector<Weight>::iterator it = weights.begin(); it != weights.end(); ++it)
+	{
+		float3x4 skining_transform(mesh_transform * inverse_bind_pose_transform);
+
+		float3 vertex = skining_transform.TransformPos(original->vertices[it->vertex_id * 3], original->vertices[it->vertex_id * 3 + 1], original->vertices[it->vertex_id * 3 + 2]);
+		float3 normal = skining_transform.TransformPos(original->normals[it->vertex_id * 3], original->normals[it->vertex_id * 3 + 1], original->normals[it->vertex_id * 3 + 2]);
+
+		vertices[it->vertex_id * 3] += vertex.x * it->influence;
+		vertices[it->vertex_id * 3 + 1] += vertex.y * it->influence;
+		vertices[it->vertex_id * 3 + 2] += vertex.z * it->influence;
+
+		normals[it->vertex_id * 3] += normal.x * it->influence;
+		normals[it->vertex_id * 3 + 1] += normal.y * it->influence;
+		normals[it->vertex_id * 3 + 2] += normal.z * it->influence;
+	}
+
+	for (std::vector<Joint>::iterator it = child_joints.begin(); it != child_joints.end(); ++it)
+		it->GetVertices(original, vertices, normals, mesh_transform);
 }

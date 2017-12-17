@@ -16,7 +16,7 @@ Animator::Animator(Skeleton * skeleton, const GameObject* const go, bool enabled
 	float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
 	skeleton->SetWorldPositions(mesh_world_transform);
 	skeleton->UpdateJointTransforms(mesh_world_transform);
-	skeleton->OriginalMesh(game_object->GetMesh());
+	skeleton->DeformableMesh(game_object->GetMesh());
 }
 
 Animator::Animator(const Animator & copy, const GameObject* const go): Component(CT_ANIMATOR, go, copy.enabled), draw_skeleton(copy.draw_skeleton), draw_bind_pos(copy.draw_bind_pos)
@@ -136,6 +136,8 @@ bool Animator::Update()
 				float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
 				skeleton->UpdateJointTransforms(mesh_world_transform);
 			}
+
+			skeleton->UpdateMesh(game_object->GetMesh());
 		}
 		if (time >= begin && time <= end)
 		{
@@ -148,6 +150,8 @@ bool Animator::Update()
 				float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
 				skeleton->UpdateJointTransforms(mesh_world_transform);
 			}
+
+			skeleton->UpdateMesh(game_object->GetMesh());
 		}
 	}
 	return true;
