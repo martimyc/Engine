@@ -91,6 +91,8 @@ public:
 	void UpdateKDT(const GameObject* go);
 
 	void DeleteFocused();
+
+	void SaveGameObjects(char** iterator) const;
 };
 
 #endif // !_MODULE_SCENE_MANAGER

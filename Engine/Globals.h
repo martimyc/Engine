@@ -59,6 +59,7 @@ enum UPDATE_STATUS
 #define LIBRARY_PREFABS_FOLDER "\\Library\\Prefabs"
 #define LIBRARY_ANIMATIONS_FOLDER "\\Library\\Animations"
 #define LIBRARY_SKELETONS_FOLDER "\\Library\\Skeletons"
+#define LIBRARY_SCENES_FOLDER "\\Library\\Scenes"
 #define LIBRARY_FOLDER "\\Library"
 #define ASSETS_FOLDER "\\Assets"
 
@@ -69,6 +70,7 @@ enum UPDATE_STATUS
 #define FORMAT_PREFAB {0x50, 0x52, 0x45} //PRE
 #define FORMAT_ANIMATION {0x41, 0x4e, 0x49} //ANI
 #define FORMAT_SKELETON {0x52, 0x47, 0x47} //RGG
+#define FORMAT_SCENE {0x53, 0x43, 0x4e} //SCN
 
 #define SIZE_OF_UID 16
 

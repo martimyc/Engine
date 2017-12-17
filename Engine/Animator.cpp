@@ -71,6 +71,10 @@ void Animator::Inspector()
 	}
 }
 
+void Animator::SaveComponent(char ** iterator) const
+{
+}
+
 void Animator::AddAnimation(Animation * new_anim, float start_time)
 {
 	animations.insert(std::make_pair(double(start_time),new_anim));

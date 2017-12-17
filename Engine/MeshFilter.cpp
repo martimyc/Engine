@@ -37,6 +37,10 @@ void MeshFilter::Inspector()
 	}
 }
 
+void MeshFilter::SaveComponent(char ** iterator) const
+{
+}
+
 const std::string & MeshFilter::GetName() const
 {
 	return mesh->GetName();

@@ -33,7 +33,7 @@ public:
 	bool CopyTo(const std::string& path, const std::string& dir) const;
 
 	AssetDirectory* GenerateAssets(const std::string& directory) const;
-
+	
 	//Gets
 	bool Exsists(const char* path) const;
 	bool Exsists(const std::string& path) const;
@@ -45,6 +45,7 @@ public:
 	const std::string GetPrefabs() const;
 	const std::string GetSkeletons() const;
 	const std::string GetAnimations() const;
+	const std::string GetScenes() const;
 
 	bool IsMeta(const std::string& file) const;
 	bool HasMeta(const std::string& file, const std::string& directory) const;

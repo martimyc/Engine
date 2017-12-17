@@ -127,6 +127,8 @@ public:
 	void MetaLoad(const std::string& file, AssetDirectory* dir) const;
 
 	void ReImportWithMeta(time_t file_last_mod, const std::string& meta_file, AssetDirectory* dir) const;
+
+	const UID SaveScene() const;
 };
 
 
