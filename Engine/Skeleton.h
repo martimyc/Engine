@@ -55,7 +55,7 @@ private:
 
 			void ChangeTransforms(Animation* anim, double anim_time, bool interpolation = true);
 
-			void GetVertices(const MeshSource * original, GLfloat * vertices, GLfloat * normals, const float3x4& parent_mesh);
+			void GetVertices(const MeshSource * original, GLfloat * vertices, const float3x4& parent_mesh);
 		};
 
 		Joint root_joint;
@@ -82,7 +82,7 @@ private:
 
 		unsigned int GetNumJoints() const;
 
-		void GetVertices(const MeshSource* original, GLfloat* vertices, GLfloat* normals);
+		void GetVertices(const MeshSource* original, GLfloat* vertices);
 	};
 
 	Rigg* skeleton;
