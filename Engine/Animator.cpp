@@ -123,6 +123,10 @@ bool Animator::Update()
 		{
 			double tick = (time - animations.begin()->first) * animations.begin()->second->GetTicksPerSecond();
 			skeleton->ChangeJointTransforms(animations.begin()->second, tick, interpolation);
+
+			float4x4 world_transform(game_object->GetWorldTransform().Transposed());
+			float3x4 mesh_world_transform(world_transform.Col3(0), world_transform.Col3(1), world_transform.Col3(2), world_transform.Col3(3));
+			skeleton->UpdateJointTransforms(mesh_world_transform);
 		}
 	}
 	return true;

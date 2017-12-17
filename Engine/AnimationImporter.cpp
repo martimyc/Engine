@@ -80,8 +80,11 @@ const UID AnimationImporter::Import(const aiAnimation * animation, const Animati
 			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mTime, sizeof(double));
 			iterator += sizeof(double);
 
-			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mValue.w, sizeof(float) * 4);
-			iterator += sizeof(float) * 4;
+			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mValue.x, sizeof(float) * 3);
+			iterator += sizeof(float) * 3;
+
+			memcpy(iterator, &animation->mChannels[i]->mRotationKeys[j].mValue.w, sizeof(float));
+			iterator += sizeof(float);
 		}
 
 		//Scaling

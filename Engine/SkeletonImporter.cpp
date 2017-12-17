@@ -14,6 +14,8 @@ unsigned int SkeletonImporter::GetTotalSize(aiBone** bones, unsigned int num_bon
 {
 	unsigned int size = FORMAT_SIZE + sizeof(unsigned int);
 
+	size += sizeof(float) * 4 * 3;
+
 	for(int i = 0; i < num_bones; i++)
 	{ 
 		size += bones[i]->mName.length + 1;
@@ -21,7 +23,7 @@ unsigned int SkeletonImporter::GetTotalSize(aiBone** bones, unsigned int num_bon
 		size += bones[i]->mNumWeights * (sizeof(unsigned int) + sizeof(float));
 	}
 
-	size += (sizeof(float) * 4 * 3 + sizeof(unsigned int)) * num_bones ;
+	size += (sizeof(float) * 4 * 3 + sizeof(unsigned int)) * num_bones;
 	size += sizeof(unsigned int) * num_bones;
 
 	return size;
@@ -187,8 +189,10 @@ const UID SkeletonImporter::Import(aiBone ** bones, aiNode* scene_root_node, aiN
 
 	aiMatrix4x4 global_root_joint_parent(GetGlobalTransform(root_node->mParent));
 	aiMatrix4x4 global_mesh(GetGlobalTransform(mesh_node));
-	root_node->mTransformation = global_root_joint_parent * root_node->mTransformation;
-	root_node->mTransformation = global_mesh.Inverse() * root_node->mTransformation;
+	aiMatrix4x4 root_parent_mesh(global_mesh.Inverse() * global_root_joint_parent);
+
+	memcpy(iterator, &root_parent_mesh.a1, sizeof(float) * 4 * 3);
+	iterator += sizeof(float) * 4 * 3;
 
 	memcpy(iterator, &num_bones, sizeof(unsigned int));
 	iterator += sizeof(unsigned int);
@@ -246,6 +250,12 @@ bool SkeletonImporter::Load(Skeleton * to_load, const SkeletonLoadConfiguration*
 		iterator += FORMAT_SIZE;
 
 		Skeleton::Rigg* new_rigg = new Skeleton::Rigg;
+
+		for (int i = 0; i < 3; i++)
+		{
+			memcpy(&new_rigg->transform[i][0], iterator, sizeof(float) * 4);
+			iterator += sizeof(float) * 4;
+		}
 
 		memcpy(&new_rigg->num_joints, iterator, sizeof(unsigned int));
 		iterator += sizeof(unsigned int);

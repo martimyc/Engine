@@ -87,7 +87,7 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 {
 	float3 position(float3::zero);
 	Quat rotation(Quat::identity);
-	float3 scale(float3::zero);
+	float3 scale(float3::one);
 
 	//Position
 	std::vector<std::pair<double, float3>>::const_iterator upper_bound;
@@ -139,12 +139,13 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 			{
 				float weight = (time - lower_bound_rot->first) / (upper_bound_rot->first - lower_bound_rot->first);
 				rotation = lower_bound_rot->second.Slerp(upper_bound_rot->second, weight);
+				rotation.Normalize();
 			}
 		}
 	}
 
 	//Scaling
-	if (scale_samples.size() != 0)
+	/*if (scale_samples.size() != 0)
 	{
 		if (scale_samples.size() == 1)
 			scale = scale_samples.begin()->second, transform.TranslatePart();
@@ -165,9 +166,9 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 				scale = lower_bound->second.Lerp(upper_bound->second, weight), transform.TranslatePart();
 			}
 		}
-	}
+	}*/
 
-	transform = inverse_bind_pos * float3x4::FromTRS(position, rotation, scale).Inverted();
+	transform = float3x4::FromTRS(position, rotation, scale);
 }
 
 void Animation::UnLoad()

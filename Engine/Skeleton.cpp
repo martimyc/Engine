@@ -109,23 +109,23 @@ bool Skeleton::Rigg::Inspector()
 
 void Skeleton::Rigg::Draw(const float3x4& mesh_global_transform) const
 {
-	root_joint.Draw(mesh_global_transform, selected_joint);
+	root_joint.Draw(mesh_global_transform * transform, selected_joint);
 }
 
 void Skeleton::Rigg::DrawBindPos(const float3x4 & mesh_global_transform) const
 {
-	root_joint.DrawBindPos(mesh_global_transform);
+	root_joint.DrawBindPos(mesh_global_transform * transform);
 }
 
 void Skeleton::Rigg::UpdateJointTransforms(const float3x4 & mesh_world_transform)
 {
-	root_joint.UpdateTransforms(mesh_world_transform, selected_joint);
-	root_joint.SetWorldPositions(mesh_world_transform);
+	root_joint.UpdateTransforms(mesh_world_transform * transform, selected_joint);
+	root_joint.SetWorldPositions(mesh_world_transform * transform);
 }
 
 void Skeleton::Rigg::SetWorldPositions(const float3x4 & mesh_world_transform)
 {
-	root_joint.SetWorldPositions(mesh_world_transform);
+	root_joint.SetWorldPositions(mesh_world_transform * transform);
 }
 
 void Skeleton::Rigg::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation)

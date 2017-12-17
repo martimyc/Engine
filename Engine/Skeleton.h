@@ -55,6 +55,7 @@ private:
 		};
 
 		Joint root_joint;
+		float3x4 transform;
 
 		//inspector
 		Joint* selected_joint;
