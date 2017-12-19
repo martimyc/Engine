@@ -161,12 +161,12 @@ void Skeleton::Rigg::SetWorldPositions(const float3x4 & mesh_world_transform)
 
 void Skeleton::Rigg::ChangeJointTransforms(Animation* anim, double anim_time, bool interpolation)
 {
-		root_joint.ChangeTransforms(anim, anim_time, interpolation);
+	root_joint.ChangeTransforms(anim, anim_time, interpolation);
 }
 
 void Skeleton::Rigg::BlendJointTransforms(Animation * anim, double anim_time, Animation * blend, double blend_time, float weight, bool interpolation)
 {
-	root_joint.BlendTransforms(blend, anim_time, blend, blend_time, weight, interpolation);
+	root_joint.BlendTransforms(anim, anim_time, blend, blend_time, weight, interpolation);
 }
 
 unsigned int Skeleton::Rigg::GetNumJoints() const

@@ -62,6 +62,7 @@ public:
 	void GetTRS(float3& pos, Quat& rot, float3& scale, const std::string& joint_name, const float3x4 & offset, double anim_time, bool interpolation = true) const;
 
 	double GetLength() const;
+	double GetDurationInTicks() const;
 
 	void UnLoad();
 

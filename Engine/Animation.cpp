@@ -99,6 +99,14 @@ double Animation::GetLength() const
 		LOG("Source not loaded");
 }
 
+double Animation::GetDurationInTicks() const
+{
+	if (source != nullptr)
+		return source->duration;
+	else
+		LOG("Source not loaded");
+}
+
 void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & transform, const float3x4 & inverse_bind_pos, bool interpolation) const
 {
 	float3 position(float3::zero);
@@ -115,9 +123,16 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 			position = position_samples.begin()->second;
 		else
 		{
-			for (lower_bound = position_samples.begin(); lower_bound != position_samples.end(); ++lower_bound)
+			for (lower_bound = position_samples.begin(); lower_bound != position_samples.end() - 1; ++lower_bound)
 			{
 				upper_bound = lower_bound + 1;
+
+				if (time < lower_bound->first)
+				{
+					upper_bound = lower_bound;
+					break;
+				}
+
 				if (upper_bound->first >= time && lower_bound->first <= time)
 					break;
 			}
@@ -142,9 +157,16 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 			std::vector<std::pair<double, Quat>>::const_iterator upper_bound_rot;
 			std::vector<std::pair<double, Quat>>::const_iterator lower_bound_rot;
 
-			for (lower_bound_rot = rotation_samples.begin(); lower_bound_rot != rotation_samples.end(); ++lower_bound_rot)
+			for (lower_bound_rot = rotation_samples.begin(); lower_bound_rot != rotation_samples.end() - 1; ++lower_bound_rot)
 			{
 				upper_bound_rot = lower_bound_rot + 1;
+
+				if (time < lower_bound_rot->first)
+				{
+					upper_bound_rot = lower_bound_rot;
+					break;
+				}
+
 				if (upper_bound_rot->first >= time && lower_bound_rot->first <= time)
 					break;
 			}
@@ -167,10 +189,17 @@ void Animation::AnimationClip::Channel::GetTransform(double time, float3x4 & tra
 			scale = scale_samples.begin()->second, transform.TranslatePart();
 		else
 		{
-			for (lower_bound = scale_samples.begin(); lower_bound != scale_samples.end(); ++lower_bound)
+			for (lower_bound = scale_samples.begin(); lower_bound != scale_samples.end() - 1; ++lower_bound)
 			{
 				upper_bound = lower_bound + 1;
-				if ((lower_bound + 1)->first >= time && lower_bound->first <= time)
+
+				if (time < lower_bound->first)
+				{
+					upper_bound = lower_bound;
+					break;
+				}
+
+				if (upper_bound->first >= time && lower_bound->first <= time)
 					break;
 			}
 
@@ -231,6 +260,8 @@ void Animation::AnimationClip::Channel::GetTRS(float3 & position, Quat & rotatio
 				upper_bound_rot = lower_bound_rot + 1;
 				if (upper_bound_rot->first >= time && lower_bound_rot->first <= time)
 					break;
+				if (lower_bound_rot == rotation_samples.end() - 1)
+					upper_bound_rot = rotation_samples.begin();
 			}
 
 			if (interpolation == false)
@@ -239,7 +270,6 @@ void Animation::AnimationClip::Channel::GetTRS(float3 & position, Quat & rotatio
 			{
 				float weight = (time - lower_bound_rot->first) / (upper_bound_rot->first - lower_bound_rot->first);
 				rotation = lower_bound_rot->second.Slerp(upper_bound_rot->second, weight);
-				rotation.Normalize();
 			}
 		}
 	}

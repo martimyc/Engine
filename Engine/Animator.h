@@ -22,9 +22,9 @@ private:
 	bool blend;
 
 	//presentation
-	bool attack = false;
-	bool walk = false;
 	float weight = 0.0f;
+	bool weight_up = false;
+	bool weight_down = false;
 
 public:
 	Animator(Skeleton* skeleton, const GameObject* const go, bool enabled = true);

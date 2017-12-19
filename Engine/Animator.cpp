@@ -55,7 +55,9 @@ void Animator::Inspector()
 
 		ImGui::Checkbox("Draw Bind Position", &draw_bind_pos);
 		ImGui::Checkbox("Interpolation", &interpolation);
+		ImGui::Checkbox("In Place", &in_place);
 		ImGui::Checkbox("Blend Transition", &blend);
+		ImGui::InputFloat("Blend Weight", &weight);
 
 		if (skeleton->Inspector())
 			if (draw_skeleton)
@@ -69,9 +71,10 @@ void Animator::Inspector()
 
 		for (std::vector<std::pair<float,Animation*>>::iterator it = animations.begin(); it != animations.end(); ++it)
 		{
+			ImGui::PushID((void*)it->second);
+
 			it->second->Inspector();
 
-			ImGui::PushID((void*) it->second);
 			if (ImGui::DragFloat("Start Time", &it->first))
 				std::sort(animations.begin(), animations.end(), CompareAnims());
 			ImGui::PopID();
@@ -205,6 +208,40 @@ bool Animator::Update()
 	std::tuple<double, float, Animation*> first_animation(0.00, 0.0f, nullptr);
 	std::tuple<double, float, Animation*> second_animation(0.00, 0.0f, nullptr);
 
+	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT)
+	{
+		if (weight >= 1.0f)
+			weight -= 0.1f;
+		else
+			weight += 0.1f;
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_REPEAT)
+		weight_up = true;
+
+	if (weight_up)
+	{
+		weight += 1.0f / 60.0f;
+		if (weight >= 1.0f)
+		{
+			weight = 1.00f;
+			weight_down = true;
+			weight_up = false;
+		}
+	}
+
+	if (weight_down)
+	{
+		weight -= 1.0f / 60.0f;
+
+		if (weight <= 0.0f)
+		{
+			weight = 0.00f;
+			weight_down = false;
+		}
+	}
+
+
 	//Only For Presentation 
 	for (std::vector<std::pair<float, Animation*>>::const_iterator it = animations.begin(); it != animations.end(); ++it)
 	{
@@ -212,14 +249,18 @@ bool Animator::Update()
 		{
 			if (it->second->GetLoop() == true)
 			{
-				double anim_time = (int)(time / it->second->GetLength());
-				anim_time = time - anim_time * it->second->GetLength();
-				double tick = anim_time * it->second->GetTicksPerSecond();
+				double num_times_played;
+				double anim_time = time / it->second->GetLength();
+				anim_time = modf(anim_time, &num_times_played);
+				double tick = anim_time * it->second->GetDurationInTicks();
 
 				if (std::get<2>(first_animation) == nullptr)
 					first_animation = std::make_tuple(tick, it->first, it->second);
 				else
+				{
 					second_animation = std::make_tuple(tick, it->first, it->second);
+					break;
+				}
 			}
 			else if (time >= it->first && time <= it->first + it->second->GetLength())
 			{
@@ -228,18 +269,19 @@ bool Animator::Update()
 				if (std::get<2>(first_animation) == nullptr)
 					first_animation = std::make_tuple(tick, it->first, it->second);
 				else
+				{
 					second_animation = std::make_tuple(tick, it->first, it->second);
+					break;
+				}
 			}
-
-			if (std::get<2>(second_animation) != nullptr)
-				break;
 		}
 		else
 			if (it->second->GetLoop() == true)
 			{
-				double anim_time = (int)(time / it->second->GetLength());
-				anim_time = time - anim_time * it->second->GetLength();
-				double tick = anim_time * it->second->GetTicksPerSecond();
+				double num_times_played;
+				double anim_time = time / it->second->GetLength();
+				anim_time = modf(anim_time, &num_times_played);
+				double tick = anim_time * it->second->GetDurationInTicks();
 
 				first_animation = std::make_tuple(tick, it->first, it->second);
 				break;
@@ -262,16 +304,7 @@ bool Animator::Update()
 		if (std::get<2>(second_animation) == nullptr)
 			skeleton->ChangeJointTransforms(std::get<2>(first_animation), std::get<0>(first_animation), interpolation);
 		else
-		{
-			float weight = time - std::get<1>(second_animation);
-			float total_blend_time = std::get<1>(first_animation) + std::get<2>(first_animation)->GetLength() - std::get<1>(second_animation);
-			weight /= total_blend_time;
-
-			if (weight > 0.5)
-				int i = 0;
-
 			skeleton->BlendJointTransforms(std::get<2>(first_animation), std::get<0>(first_animation), std::get<2>(second_animation), std::get<0>(second_animation), weight, interpolation);
-		}
 
 		if (in_place)
 		{
