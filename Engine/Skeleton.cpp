@@ -203,28 +203,28 @@ bool Skeleton::Rigg::Joint::Inspector()
 
 	ImGui::Text("Rotation:");
 	ImGui::PushItemWidth(75.0f);
-	if(ImGui::DragFloat("a", &angles.x, 1.0f, 0.0f, 0.0f, "%.2f"))
+	if(ImGui::DragFloat("yaw", &angles.x, 1.0f, 0.0f, 0.0f, "%.2f"))
 		ret = true;
 	ImGui::SameLine();
 	ImGui::PushItemWidth(75.0f);
-	if(ImGui::DragFloat("b", &angles.y, 1.0f, 0.0f, 0.0f, "%.2f"))
+	if(ImGui::DragFloat("pitch", &angles.y, 1.0f, 0.0f, 0.0f, "%.2f"))
 		ret = true;
 	ImGui::SameLine();
 	ImGui::PushItemWidth(75.0f);
-	if(ImGui::DragFloat("c", &angles.z, 1.0f, 0.0f, 0.0f, "%.2f"))
+	if(ImGui::DragFloat("roll", &angles.z, 1.0f, 0.0f, 0.0f, "%.2f"))
 		ret = true;
 
 	ImGui::Text("Scaling:");
 	ImGui::PushItemWidth(75.0f);
-	if(ImGui::DragFloat("i", &scaling.x, 1.0f, 0.0f, 0.0f, "%.2f"))
+	if(ImGui::DragFloat("a", &scaling.x, 1.0f, 0.0f, 0.0f, "%.2f"))
 		ret = true;
 	ImGui::SameLine();
 	ImGui::PushItemWidth(75.0f);
-	if(ImGui::DragFloat("j", &scaling.y, 1.0f, 0.0f, 0.0f, "%.2f"))
+	if(ImGui::DragFloat("b", &scaling.y, 1.0f, 0.0f, 0.0f, "%.2f"))
 		ret = true;
 	ImGui::SameLine();
 	ImGui::PushItemWidth(75.0f);
-	if(ImGui::DragFloat("k", &scaling.z, 1.0f, 0.0f, 0.0f, "%.2f"))
+	if(ImGui::DragFloat("c", &scaling.z, 1.0f, 0.0f, 0.0f, "%.2f"))
 		ret = true;
 
 	return ret;
